@@ -22,6 +22,12 @@
                                     <p>Password:</p>
                                     <field name="api_password" password="True"/>
                                     <button id='toggle-password'>Show</button>
+                                    <p>WebRTC User:</p>
+                                    <field name="webrtc_user"/>
+                                    <p>WebRTC Password:</p>
+                                    <field name="webrtc_password"/>
+                                    <p>Virtual Number:</p>
+                                    <field name="virtual_number"/>
                                     <script>
                                         var toggleButton = document.getElementById('toggle-password');
                                         var passwordField = document.getElementsByName('api_password')[0];

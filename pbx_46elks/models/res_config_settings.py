@@ -8,6 +8,11 @@ class ResConfigSettings(models.TransientModel):
     
     api_username = fields.Char(string="Api Username", config_parameter='46elks.api_username')
     api_password = fields.Char(string="Api Password", config_parameter='46elks.api_password')
+    webrtc_user = fields.Char(string="WebRTC User", config_parameter='46elks.webrtc_user')
+    webrtc_password = fields.Char(string="WebRTC Number", config_parameter='46elks.webrtc_password')
+    virtual_number = fields.Char(string="Virtual Number", config_parameter='46elks.virtual_number')
+    
+    
     
     @api.model
     def _get_selection_options(self):

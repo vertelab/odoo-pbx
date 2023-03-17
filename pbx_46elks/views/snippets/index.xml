@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<odoo>   
+
+    <template id="webrtc_page" name="Webrtc Page">
+
+        <section class="container">
+
+            <h1>Make a call</h1>
+            <input id="to" name="to" type="text" value="" placeholder="+46706000001"/>
+            <p><small>Numbers must be formatted in the <a href="https://46elks.se/kb/e164">E164</a> format. e.g +46706000001</small></p>
+            <p id="status" class="status-message"></p>
+            <button id="call" onclick="make_call();">Call</button>
+            <button id="pickup" onclick="answer_call();">Pickup</button>
+            <button id="hangup" onclick="end_call();">Hangup</button>
+            <audio id="remoteAudio"></audio>
+        </section>
+
+    </template>
+
+</odoo>

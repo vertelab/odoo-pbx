@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<odoo>
+    <template id="assets_frontend" name="Webrtc style" inherit_id="website.assets_frontend" >
+        <xpath expr="//link[last()]" position="after">
+            <!-- <link rel="stylesheet" type="text/css" href="/pbx_46elks/static/src/scss/style.css"/> -->
+            <script type="text/javascript" src="/pbx_46elks/static/src/js/jssip-3.7.4.min.js"/>
+            <script type="text/javascript" src="/pbx_46elks/static/src/js/webrtc.js"/>
+        </xpath>
+    </template>
+</odoo>
