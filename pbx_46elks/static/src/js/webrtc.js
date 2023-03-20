@@ -70,47 +70,49 @@ function registerConnection(){
 		console.log("registrationFailed"); 
 		console.log(e); 
 	});
+
+	ua.on('newRTCSession', function(e){ 
+		session = e.session;
+	
+		// Bind events specific to this session
+		bindSessionEvents(session);
+	
+		// Check if session is initiated by a remote or local host
+		if (e.originator === "remote") {
+		
+			// Check if incoming call is you doing an outbound call
+			if (session.remote_identity.uri.user === inoutnumber ) {
+				
+				// set status message
+				set_status("Calling..");
+	
+				// Answer the call automatically
+				answer_call();
+	
+			} else {
+	
+				// Show/hide buttons
+				btnPickup.trigger("show");
+				btnHangup.trigger("show");
+				btnCall.trigger("hide");
+	
+				// Set status message
+				set_status("Incoming call from " +session.remote_identity.uri.user);
+			}
+	
+		} else if (e.originator === "local") {
+	
+				// Set status message
+				set_status("Calling..");
+		}
+	});
 }
 
 
 // ========================================
 // Check for incoming and outgoing sessions
 // ========================================
-ua.on('newRTCSession', function(e){ 
-	session = e.session;
 
-	// Bind events specific to this session
-	bindSessionEvents(session);
-
-	// Check if session is initiated by a remote or local host
-	if (e.originator === "remote") {
-	
-		// Check if incoming call is you doing an outbound call
-		if (session.remote_identity.uri.user === inoutnumber ) {
-			
-			// set status message
-			set_status("Calling..");
-
-			// Answer the call automatically
-			answer_call();
-
-		} else {
-
-			// Show/hide buttons
-			btnPickup.trigger("show");
-			btnHangup.trigger("show");
-			btnCall.trigger("hide");
-
-			// Set status message
-			set_status("Incoming call from " +session.remote_identity.uri.user);
-		}
-
-	} else if (e.originator === "local") {
-
-			// Set status message
-			set_status("Calling..");
-	}
-});
 
 // =====================
 // Make an outgoing call
