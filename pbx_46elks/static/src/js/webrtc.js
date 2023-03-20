@@ -10,27 +10,27 @@ var webrtcPass;
 var webrtcHost 		= '@voip.46elks.com';
 var webrtcSocket 	= 'wss://voip.46elks.com/w1/websocket';
 // var ua;
-function getCredentials(){
-	return $.ajax({
-		type: "GET",
-		url: "/webrtc/data",
-		dataType: "json",
-		success: function (data) {
-			webrtcUser = data.webrtc_user;
-			webrtcPass = data.webrtc_password;
-			inoutnumber = data.virtual_number;
-			console.log(inoutnumber)
-			console.log(webrtcUser)
-			console.log(webrtcPass)
-			// registerConnection();
-			// Use the retrieved data here
-		}
-	});
-}
+async function getData() {
+    const data = await $.ajax({
+        type: "GET",
+        url: "/webrtc/data",
+        dataType: "json"
+    });
 
-getCredentials().then( response => 
-	console.log(response)
-  );
+    webrtcUser = data.webrtc_user;
+    webrtcPass = data.webrtc_password;
+    inoutnumber = data.virtual_number;
+    console.log(inoutnumber);
+    console.log(webrtcUser);
+    console.log(webrtcPass);
+    // registerConnection();
+    // Use the retrieved data here
+    // do some other stuff after request is finished
+}
+console.log("request started!");
+
+getData();
+console.log("request finished!");
 
 //====================================================
 
