@@ -33,7 +33,7 @@ class CallController(http.Controller):
 
         url = "https://api.46elks.com/a1/calls"
         auth = (username, password)
-        headers = {'Content-Type': 'application/x-www-form-urlencoded'}
+        headers = {''} #Content-Type': 'application/x-www-form-urlencoded
         
         data = {
             'from': from_number,
@@ -47,6 +47,7 @@ class CallController(http.Controller):
     
         response = requests.post(url, auth=auth, headers=headers, data=data)
         _logger.error(response.text)
+        _logger.error(response.context)
 
         if response.status_code == 200:
             return response.text
