@@ -9,7 +9,7 @@ var webrtcUser;
 var webrtcPass;
 var webrtcHost 		= '@voip.46elks.com';
 var webrtcSocket 	= 'wss://voip.46elks.com/w1/websocket';
-
+var ua;
 $.ajax({
     type: "GET",
     url: "/webrtc/data",
@@ -21,6 +21,7 @@ $.ajax({
 		console.log(inoutnumber)
 		console.log(webrtcUser)
 		console.log(webrtcPass)
+		registerConnection();
         // Use the retrieved data here
     }
 });
@@ -50,24 +51,27 @@ if (!hasGetUserMedia()) {
 // ======================================
 // Configure and activate your user agent
 // ======================================
-var socket = new JsSIP.WebSocketInterface(webrtcSocket);
-var configuration = {
-	sockets  : [ socket ],
-	uri      : webrtcUser+webrtcHost,
-	password : webrtcPass,
-  	session_timers: false // If set to true, call will end after a minute or so
-};
+function registerConnection(){
+	var socket = new JsSIP.WebSocketInterface(webrtcSocket);
+	var configuration = {
+		sockets  : [ socket ],
+		uri      : webrtcUser+webrtcHost,
+		password : webrtcPass,
+		session_timers: false // If set to true, call will end after a minute or so
+	};
 
-var ua = new JsSIP.UA(configuration);
-ua.start();
+	ua = new JsSIP.UA(configuration);
+	ua.start();
 
-// ==============================================
-// If user agent was not successfully registrated
-// ==============================================
-ua.on('registrationFailed', function(e){
-	console.log("registrationFailed"); 
-	console.log(e); 
-});
+	// ==============================================
+	// If user agent was not successfully registrated
+	// ==============================================
+	ua.on('registrationFailed', function(e){
+		console.log("registrationFailed"); 
+		console.log(e); 
+	});
+}
+
 
 // ========================================
 // Check for incoming and outgoing sessions
@@ -107,7 +111,6 @@ ua.on('newRTCSession', function(e){
 			set_status("Calling..");
 	}
 });
-
 
 // =====================
 // Make an outgoing call
