@@ -38,7 +38,7 @@ class CallController(http.Controller):
         data = {
             'from': from_number,
             'to': to_number,
-            'voice_start': json.dumps(voice_start)
+            'voice_start': voice_start
         }
         
         _logger.error(voice_start)
