@@ -47,7 +47,6 @@ class CallController(http.Controller):
     
         response = requests.post(url, auth=auth, headers=headers, data=data)
         _logger.error(response.text)
-        _logger.error(response.context)
 
         if response.status_code == 200:
             return response.text
