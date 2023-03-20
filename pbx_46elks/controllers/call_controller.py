@@ -45,7 +45,7 @@ class CallController(http.Controller):
         _logger.error(from_number)
         _logger.error(to_number)
     
-        response = requests.post(url, auth=auth, headers=headers, data=data)
+        response = requests.post(url, auth=auth, data=data) #headers=headers,
         _logger.error(response.text)
         _logger.error(response.context)
 
