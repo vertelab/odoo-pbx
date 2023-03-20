@@ -9,23 +9,27 @@ var webrtcUser;
 var webrtcPass;
 var webrtcHost 		= '@voip.46elks.com';
 var webrtcSocket 	= 'wss://voip.46elks.com/w1/websocket';
-var ua;
-$.ajax({
-    type: "GET",
-    url: "/webrtc/data",
-    dataType: "json",
-    success: function (data) {
-        webrtcUser = data.webrtc_user;
-        webrtcPass = data.webrtc_password;
-        inoutnumber = data.virtual_number;
-		console.log(inoutnumber)
-		console.log(webrtcUser)
-		console.log(webrtcPass)
-		registerConnection();
-        // Use the retrieved data here
-    }
-});
-
+// var ua;
+function getCredentials(){
+	$.ajax({
+		type: "GET",
+		url: "/webrtc/data",
+		dataType: "json",
+		success: function (data) {
+			webrtcUser = data.webrtc_user;
+			webrtcPass = data.webrtc_password;
+			inoutnumber = data.virtual_number;
+			console.log(inoutnumber)
+			console.log(webrtcUser)
+			console.log(webrtcPass)
+			// registerConnection();
+			// Use the retrieved data here
+		}
+	});
+}
+getCredentials().then( response => 
+	console.log(response)
+  );
 
 //====================================================
 
@@ -51,62 +55,62 @@ if (!hasGetUserMedia()) {
 // ======================================
 // Configure and activate your user agent
 // ======================================
-function registerConnection(){
-	var socket = new JsSIP.WebSocketInterface(webrtcSocket);
-	var configuration = {
-		sockets  : [ socket ],
-		uri      : webrtcUser+webrtcHost,
-		password : webrtcPass,
-		session_timers: false // If set to true, call will end after a minute or so
-	};
+// function registerConnection(){
+var socket = new JsSIP.WebSocketInterface(webrtcSocket);
+var configuration = {
+	sockets  : [ socket ],
+	uri      : webrtcUser+webrtcHost,
+	password : webrtcPass,
+	session_timers: false // If set to true, call will end after a minute or so
+};
+console.log(configuration.uri);
+var ua = new JsSIP.UA(configuration);
+ua.start();
 
-	ua = new JsSIP.UA(configuration);
-	ua.start();
+// ==============================================
+// If user agent was not successfully registrated
+// ==============================================
+ua.on('registrationFailed', function(e){
+	console.log("registrationFailed"); 
+	console.log(e); 
+});
 
-	// ==============================================
-	// If user agent was not successfully registrated
-	// ==============================================
-	ua.on('registrationFailed', function(e){
-		console.log("registrationFailed"); 
-		console.log(e); 
-	});
+ua.on('newRTCSession', function(e){ 
+	session = e.session;
 
-	ua.on('newRTCSession', function(e){ 
-		session = e.session;
+	// Bind events specific to this session
+	bindSessionEvents(session);
+
+	// Check if session is initiated by a remote or local host
+	if (e.originator === "remote") {
 	
-		// Bind events specific to this session
-		bindSessionEvents(session);
-	
-		// Check if session is initiated by a remote or local host
-		if (e.originator === "remote") {
-		
-			// Check if incoming call is you doing an outbound call
-			if (session.remote_identity.uri.user === inoutnumber ) {
-				
-				// set status message
-				set_status("Calling..");
-	
-				// Answer the call automatically
-				answer_call();
-	
-			} else {
-	
-				// Show/hide buttons
-				btnPickup.trigger("show");
-				btnHangup.trigger("show");
-				btnCall.trigger("hide");
-	
-				// Set status message
-				set_status("Incoming call from " +session.remote_identity.uri.user);
-			}
-	
-		} else if (e.originator === "local") {
-	
-				// Set status message
-				set_status("Calling..");
+		// Check if incoming call is you doing an outbound call
+		if (session.remote_identity.uri.user === inoutnumber ) {
+			
+			// set status message
+			set_status("Calling..");
+
+			// Answer the call automatically
+			answer_call();
+
+		} else {
+
+			// Show/hide buttons
+			btnPickup.trigger("show");
+			btnHangup.trigger("show");
+			btnCall.trigger("hide");
+
+			// Set status message
+			set_status("Incoming call from " +session.remote_identity.uri.user);
 		}
-	});
-}
+
+	} else if (e.originator === "local") {
+
+			// Set status message
+			set_status("Calling..");
+	}
+});
+// }
 
 
 // ========================================
