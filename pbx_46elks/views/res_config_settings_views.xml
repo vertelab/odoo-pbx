@@ -7,7 +7,7 @@
             <field name="inherit_id" ref="base.res_config_settings_view_form"/>
             <field name="arch" type="xml">
                 <xpath expr="//div[hasclass('settings')]" position="inside">
-                    <div class="app_settings_block" data-string="46elks" string="Phone Settings" id="46elks" data-key="46elks">
+                    <div class="app_settings_block" data-string="pbx_46elks" string="Phone Settings" id="pbx_46elks" data-key="pbx_46elks">
                         <h2>Phone Settings</h2>
                         <div class="row mt16 o_settings_container" name="46elks_setting_container">
                             <div class="col-12 col-lg-6 o_setting_box"
@@ -56,7 +56,7 @@
             <field name="res_model">res.config.settings</field>
             <field name="view_mode">form</field>
             <field name="target">inline</field>
-            <field name="context">{'module' : '46elks', 'bin_size': False}</field>
+            <field name="context">{'module' : 'pbx_46elks', 'bin_size': False}</field>
         </record>
 
         <!-- <menuitem id="menu_event_global_settings" name="Settings"
