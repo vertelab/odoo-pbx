@@ -11,7 +11,7 @@ var webrtcHost 		= '@voip.46elks.com';
 var webrtcSocket 	= 'wss://voip.46elks.com/w1/websocket';
 // var ua;
 function getCredentials(){
-	$.ajax({
+	return $.ajax({
 		type: "GET",
 		url: "/webrtc/data",
 		dataType: "json",
@@ -27,6 +27,7 @@ function getCredentials(){
 		}
 	});
 }
+
 getCredentials().then( response => 
 	console.log(response)
   );
