@@ -10,15 +10,12 @@ class SmsController(http.Controller):
     @http.route('/46elks/sms/recieve/', type='http', auth='public', methods=['POST'], csrf=False)
     def recieve_sms(self, **kwargs):
         try:
-            referer = request.httprequest.headers.get('Referer', '')
-            _logger.error(f"Referer: {referer}")
-            _logger.error(f"Remote addr: {request.httprequest.remote_addr}")
-            
-            allowed_domain = '46elks.com'
-            
-            if allowed_domain not in referer:
-                _logger.error("Domain fail")
-                return Response(status=401)
+            allowed_ips = ['176.10.154.199', '85.24.146.132', '185.39.146.243']
+        
+            client_ip = request.httprequest.remote_addr
+            if client_ip not in allowed_ips:
+                _logger.error("domain fail")
+                return Response('Forbidden', status=403)
 
             _logger.error("domain succcess")
             recieved_message = kwargs.get('message')
