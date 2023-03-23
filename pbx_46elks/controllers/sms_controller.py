@@ -12,7 +12,7 @@ class SmsController(http.Controller):
         try:
             referer = request.httprequest.headers.get('Referer', '')
             _logger.error(f"Referer: {referer}")
-            _logger.error(f"Headers: {request.httprequest.headers}")
+            _logger.error(f"Remote addr: {request.httprequest.remote_addr}")
             
             allowed_domain = '46elks.com'
             
