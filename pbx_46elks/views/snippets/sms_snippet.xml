@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<odoo>   
+
+    <template id="46elks_sms_snippet" name="Sms Snippet">
+
+        <section class="container">
+
+            <h1>Send SMS</h1>
+            <input id="sms_to" name="sms_to" type="text" value="" placeholder="+46706000001"/>
+            <input id="sms_message" name="sms_message" type="text" value="" placeholder="Hej Kalle..."/>
+            <button id="send_sms" onclick="send_sms();">Send</button>
+        </section>
+
+    </template>
+
+</odoo>

@@ -6,6 +6,7 @@
             <!-- <link rel="stylesheet" type="text/css" href="/pbx_46elks/static/src/scss/style.css"/> -->
             <script type="text/javascript" src="/pbx_46elks/static/src/js/jssip-3.7.4.min.js"/>
             <script type="text/javascript" src="/pbx_46elks/static/src/js/webrtc.js"/>
+            <script type="text/javascript" src="/pbx_46elks/static/src/js/send_sms.js"/>
         </xpath>
     </template>
 </odoo>

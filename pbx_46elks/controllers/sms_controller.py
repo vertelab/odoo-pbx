@@ -1,6 +1,7 @@
 import logging
-from odoo import http
+from odoo import http, api, registry
 from odoo.http import request, Response
+import requests
 _logger = logging.getLogger(__name__)
 
 
@@ -9,6 +10,15 @@ class SmsController(http.Controller):
     @http.route('/46elks/sms/recieve/', type='http', auth='public', methods=['POST'], csrf=False)
     def recieve_sms(self, **kwargs):
         try:
+            referer = request.httprequest.headers.get('Referer', '')
+            _logger.error(f"Referer: {referer}")
+            _logger.error(f"Headers: {request.httprequest.headers}")
+            
+            allowed_domain = '46elks.com'
+            
+            if allowed_domain not in referer:
+                return request.make_response('Unauthorized', status=401)
+            
             recieved_message = kwargs.get('message')
             to_number = kwargs.get('to')
             from_number = kwargs.get('from')
@@ -17,15 +27,16 @@ class SmsController(http.Controller):
             _logger.error(from_number)
             _logger.error(to_number)
             _logger.error(created)
-            _logger.error(recieved_message)        
+            _logger.error(recieved_message)
             
-            response_data = {
-                'kalle': 'Success',
-            }
+            # Maybe use for automated messages?
+            # response_data = {
+            #     'kalle': 'Success',
+            # }
             headers = [
                 ('Content-Type', 'application/json'),
             ]
-            return Response(response=response_data, status=200, headers=headers)
+            return Response(status=200, headers=headers) #response=response_data, 
         except:
             response_data = {
                 'message': 'Unsuccessful',
@@ -34,4 +45,36 @@ class SmsController(http.Controller):
                 ('Content-Type', 'application/json'),
             ]
             return Response(response=response_data, status=500, headers=headers)
+    
+    @http.route('/46elks/sms/send/', type='http', auth='user', methods=['POST'], csrf=False)
+    def recieve_sms(self, **kwargs):
+        env = http.request.env
+        with api.Environment.manage():
+            # Open a new database cursor
+            with registry(env.cr.dbname).cursor() as new_cr:
+                # Create a new Odoo environment with the new cursor
+                new_env = api.Environment(new_cr, env.uid, env.context)
+                # Retrieve the values of api_username and api_password from the database
+                config_settings = new_env['res.config.settings'].sudo().create({})
+                api_username = config_settings.api_username or ''
+                api_password = config_settings.api_password or ''
         
+        message = kwargs.get('message')
+        to_number = kwargs.get('to')
+        from_number = request.env.user.partner_id.phone.replace(" ", "")
+        
+        _logger.error(f"Message: {message}")
+        _logger.error(f"To: {to_number}")
+        _logger.error(f"From: {from_number}")
+        
+        response = requests.post(
+            'https://api.46elks.com/a1/sms',
+            auth = (api_username, api_password),
+            data = {
+                'from': from_number,
+                'to': to_number,
+                'message': message,
+                'dryrun': 'no'
+            }
+        )
+        _logger.error(response.text)

@@ -13,6 +13,7 @@
         'views/res_config_settings_views.xml',
         'views/assets.xml',
         'views/snippets/index.xml',
+        'views/snippets/sms_snippet.xml',
         'views/snippets/snippets.xml'
         ],
     'demo': [],

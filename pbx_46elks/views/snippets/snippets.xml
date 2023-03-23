@@ -14,6 +14,9 @@
                         <keywords>hero, jumbotron</keywords>
                     </t>
 
+                    <t t-snippet="pbx_46elks.46elks_sms_snippet" t-thumbnail="/website/static/src/img/snippets_thumbs/s_banner.svg">
+                        <keywords>hero, jumbotron</keywords>
+                    </t>
                 </div>
             </div>
         </xpath>
