@@ -47,7 +47,7 @@ class SmsController(http.Controller):
             return Response(response=response_data, status=500, headers=headers)
     
     @http.route('/46elks/sms/send/', type='http', auth='user', methods=['POST'], csrf=False)
-    def recieve_sms(self, **kwargs):
+    def send_sms(self, **kwargs):
         env = http.request.env
         with api.Environment.manage():
             # Open a new database cursor
