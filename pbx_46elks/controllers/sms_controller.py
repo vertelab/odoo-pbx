@@ -20,7 +20,7 @@ class SmsController(http.Controller):
             _logger.error(recieved_message)        
             
             response_data = {
-                'message': 'Success',
+                'kalle': 'Success',
             }
             headers = [
                 ('Content-Type', 'application/json'),
