@@ -9,7 +9,7 @@ _logger = logging.getLogger(__name__)
 
 class CallController(http.Controller):
 
-    @http.route('/api/call/', type='http', auth='user', methods=['POST'], csrf=False)
+    @http.route('/46elks/call/', type='http', auth='user', methods=['POST'], csrf=False)
     def call_api(self, **kwargs):
         env = http.request.env
         with api.Environment.manage():
@@ -53,7 +53,7 @@ class CallController(http.Controller):
         else:
             return response.status_code
 
-    @http.route('/webrtc/data', type='http', auth='user', methods=['GET'], csrf=False)
+    @http.route('/46elks/webrtc/data', type='http', auth='user', methods=['GET'], csrf=False)
     def get_data(self):
         _logger.error("Funkar?")
         env = http.request.env

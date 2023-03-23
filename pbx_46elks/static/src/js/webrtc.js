@@ -12,7 +12,7 @@ var webrtcSocket 	= 'wss://voip.46elks.com/w1/websocket';
 var ua;
 $.ajax({
     type: "GET",
-    url: "/webrtc/data",
+    url: "/46elks/webrtc/data",
     dataType: "json",
     success: function (data) {
         webrtcUser = data.webrtc_user;
@@ -122,7 +122,7 @@ function make_call(){
 	connectData = {"connect": $("#to").val()};
 
 	$.post({
-		url: "/api/call/",
+		url: "/46elks/call/",
 		method: "POST",
 		data:{
 			voice_start: JSON.stringify(connectData),
