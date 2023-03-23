@@ -17,8 +17,10 @@ class SmsController(http.Controller):
             allowed_domain = '46elks.com'
             
             if allowed_domain not in referer:
-                return request.make_response('Unauthorized', status=401)
-            
+                _logger.error("Domain fail")
+                return Response(status=401)
+
+            _logger.error("domain succcess")
             recieved_message = kwargs.get('message')
             to_number = kwargs.get('to')
             from_number = kwargs.get('from')
