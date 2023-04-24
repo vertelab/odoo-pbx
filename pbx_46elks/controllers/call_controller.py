@@ -51,10 +51,10 @@ class CallController(http.Controller):
     def get_data(self):
         _logger.error("Funkar?")
         env = http.request.env
-        config_settings = env['res.config.settings'].sudo().create({})
+        config_settings = env['res.config.settings'].sudo()
         data = {
-            'webrtc_user': config_settings.webrtc_user or '',
-            'webrtc_password': config_settings.webrtc_password or '',
-            'virtual_number': config_settings.virtual_number or '',
+            'webrtc_user': config_settings.get_param('46elks.webrtc_user', default=''), 
+            'webrtc_password': config_settings.get_param('46elks.webrtc_password', default=''),
+            'virtual_number': config_settings.get_param('46elks.virtual_number', default=''),
         }
         return json.dumps(data)
