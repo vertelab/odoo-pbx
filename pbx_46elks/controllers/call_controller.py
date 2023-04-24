@@ -12,15 +12,9 @@ class CallController(http.Controller):
     @http.route('/46elks/call/', type='http', auth='user', methods=['POST'], csrf=False)
     def call_api(self, **kwargs):
         env = http.request.env
-        with api.Environment.manage():
-            # Open a new database cursor
-            with registry(env.cr.dbname).cursor() as new_cr:
-                # Create a new Odoo environment with the new cursor
-                new_env = api.Environment(new_cr, env.uid, env.context)
-                # Retrieve the values of api_username and api_password from the database
-                config_settings = new_env['res.config.settings'].sudo().create({})
-                api_username = config_settings.api_username or ''
-                api_password = config_settings.api_password or ''
+        IrConfigParameter = env['ir.config_parameter'].sudo()
+        api_username = IrConfigParameter.get_param('46elks.api_username', default='')
+        api_password = IrConfigParameter.get_param('46elks.api_password', default='')
         # Use the retrieved values to authenticate the API call
         username = api_username
         password = api_password

@@ -3,6 +3,9 @@
 from odoo import fields, models, api
 import socket
 from odoo.exceptions import ValidationError
+import logging
+from odoo.exceptions import UserError
+_logger = logging.getLogger(__name__)
 
 def is_valid_ip(ip):
     try:
@@ -26,6 +29,7 @@ class ResConfigSettings(models.TransientModel):
     def create(self, vals):
         
         ips = vals.get('allowed_ips')
+        _logger.error(ips)
         if ips:
             ip_addresses = ips.split(',')
         else:
