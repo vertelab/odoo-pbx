@@ -7,12 +7,20 @@ _logger = logging.getLogger(__name__)
 
 class SmsController(http.Controller):
 
-    @http.route('/46elks/sms/recieve/', type='http', auth='public', methods=['POST'], csrf=False)
+    @http.route('/46elks/sms/recieve/', type='http', auth='public', methods=['POST', 'GET'], csrf=False)
     def recieve_sms(self, **kwargs):
         try:
-            allowed_ips = ['176.10.154.199', '85.24.146.132', '185.39.146.243']
-        
+            allowed_ips_str = request.env['ir.config_parameter'].get_param('46elks.alowed_ips')
+            if allowed_ips_str:
+                allowed_ips_split = allowed_ips_str.split(',')
+                allowed_ips = []
+                for ip in allowed_ips_split:
+                    allowed_ips.append(ip.strip())
+            else:
+                return Response('Forbidden', status=403)
+            
             client_ip = request.httprequest.remote_addr
+            _logger.warning(client_ip)
             if client_ip not in allowed_ips:
                 _logger.error("domain fail")
                 return Response('Forbidden', status=403)
@@ -22,6 +30,9 @@ class SmsController(http.Controller):
             to_number = kwargs.get('to')
             from_number = kwargs.get('from')
             created = kwargs.get('created')
+            #test
+            hej = kwargs.get('hej')
+            _logger.error(hej)
 
             _logger.error(from_number)
             _logger.error(to_number)

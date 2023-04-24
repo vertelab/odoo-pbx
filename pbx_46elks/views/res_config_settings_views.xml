@@ -28,6 +28,8 @@
                                     <field name="webrtc_password"/>
                                     <p>Virtual Number:</p>
                                     <field name="virtual_number"/>
+                                    <p>Allowed Ip's:</p>
+                                    <field name="allowed_ips"/>
                                     <script>
                                         var toggleButton = document.getElementById('toggle-password');
                                         var passwordField = document.getElementsByName('api_password')[0];
