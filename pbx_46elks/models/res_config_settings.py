@@ -42,8 +42,6 @@ class ResConfigSettings(models.TransientModel):
                 raise ValidationError("Invalid Ip-adress")
         return super().create(vals)
         
-        # Sets the appropriate type depending on alcoholcontent in the ingredients.
-    #     super().create(vals)
     
     @api.model
     def _get_selection_options(self):
