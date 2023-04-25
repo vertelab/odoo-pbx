@@ -10,7 +10,7 @@ class SmsController(http.Controller):
     @http.route('/46elks/sms/recieve/', type='http', auth='public', methods=['POST', 'GET'], csrf=False)
     def recieve_sms(self, **kwargs):
         try:
-            allowed_ips_str = request.env['ir.config_parameter'].get_param('46elks.alowed_ips')
+            allowed_ips_str = request.env['ir.config_parameter'].sudo().get_param('46elks.alowed_ips')
             if allowed_ips_str:
                 allowed_ips_split = allowed_ips_str.split(',')
                 allowed_ips = []
