@@ -8,7 +8,7 @@
     'category': 'Theme',
     'website': "https://www.odoomates.tech",
     'license': 'LGPL-3',
-    'depends': ['website', 'base'],
+    'depends': ['website', 'base', 'contacts', 'sms'],
     'data': [
         'views/res_config_settings_views.xml',
         'views/assets.xml',

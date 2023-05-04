@@ -39,6 +39,9 @@ class SmsController(http.Controller):
             _logger.error(created)
             _logger.error(recieved_message)
             
+            
+            
+            
             # Maybe use for automated messages?
             # response_data = {
             #     'kalle': 'Success',
