@@ -36,8 +36,7 @@ class MailThread(models.AbstractModel):
             reciever = self.env['res.partner'].browse(partner_id)
             sender = self.env['res.partner'].browse(author_id)
             
-            to_phone_number = reciever.phone
-            to_phone_number = "kjhgsldhodihgoh"
+            to_phone_number = reciever.phone.replace("-", "").replace(" ", "")
             from_phone_number = sender.phone.replace("-", "").replace(" ", "")
             
             response = requests.post(
