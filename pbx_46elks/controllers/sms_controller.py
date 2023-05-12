@@ -10,6 +10,7 @@ class SmsController(http.Controller):
     @http.route('/46elks/sms/recieve/', type='http', auth='public', methods=['POST', 'GET'], csrf=False)
     def recieve_sms(self, **kwargs):
         try:
+            
             allowed_ips_str = request.env['ir.config_parameter'].sudo().get_param('46elks.alowed_ips')
             if allowed_ips_str:
                 allowed_ips_split = allowed_ips_str.split(',')
@@ -24,29 +25,9 @@ class SmsController(http.Controller):
                 _logger.error(f"Unauthorized IP({client_ip}) tried to post SMS")
                 return Response('Forbidden', status=403)
             
-            # sms_model = self.env['sms.sms']
+            sms_model = http.request.env['sms.sms']
+            sms_model.create_message_from_sms(kwargs)
 
-            # # Call the 'create_message_from_sms' function from the 'sms.sms' model
-            # sms_model.create_message_from_sms(kwargs)
-
-            _logger.error("domain succcess")
-            recieved_message = kwargs.get('message')
-            to_number = kwargs.get('to')
-            from_number = kwargs.get('from')
-            created = kwargs.get('created')
-            #test
-            hej = kwargs.get('hej')
-            _logger.error(hej)
-
-            _logger.error(from_number)
-            _logger.error(to_number)
-            _logger.error(created)
-            _logger.error(recieved_message)
-            
-            # Maybe use for automated messages?
-            # response_data = {
-            #     'kalle': 'Success',
-            # }
             headers = [
                 ('Content-Type', 'application/json'),
             ]
@@ -60,31 +41,3 @@ class SmsController(http.Controller):
             ]
             return Response(response=response_data, status=500, headers=headers)
         
-
-        
-    # @http.route('/46elks/sms/send/', type='http', auth='user', methods=['POST'], csrf=False)
-    # def send_sms(self, **kwargs):
-    #     env = http.request.env
-    #     IrConfigParameter = env['ir.config_parameter'].sudo()
-    #     api_username = IrConfigParameter.get_param('46elks.api_username', default='')
-    #     api_password = IrConfigParameter.get_param('46elks.api_password', default='')
-        
-    #     message = kwargs.get('message')
-    #     to_number = kwargs.get('to')
-    #     from_number = request.env.user.partner_id.phone.replace(" ", "")
-        
-    #     _logger.error(f"Message: {message}")
-    #     _logger.error(f"To: {to_number}")
-    #     _logger.error(f"From: {from_number}")
-        
-    #     response = requests.post(
-    #         'https://api.46elks.com/a1/sms',
-    #         auth = (api_username, api_password),
-    #         data = {
-    #             'from': from_number,
-    #             'to': to_number,
-    #             'message': message,
-    #             'dryrun': 'no'
-    #         }
-    #     )
-    #     _logger.error(response.text)

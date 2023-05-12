@@ -12,13 +12,8 @@ class MailThread(models.AbstractModel):
     
     def _message_post_after_hook(self, message, msg_vals):
         res = super()._message_post_after_hook(message, msg_vals)
-        env = http.request.env
-        IrConfigParameter = env['ir.config_parameter'].sudo()
-        provider = IrConfigParameter.get_param('46elks.provider', default='')
-        if msg_vals["message_type"] == "sms" and provider == "1":
+        if msg_vals["message_type"] == "sms" and self.get_provider() == "1":
             self.send_46elks_sms(msg_vals)
-        _logger.error("MailThread _message_post_after_hook - message : " + str(message))
-        _logger.error("MailThread _message_post_after_hook - msg_vals : " + str(msg_vals))
         return res
     
     def send_46elks_sms(self, msg_vals):
@@ -54,20 +49,9 @@ class MailThread(models.AbstractModel):
             
             for i in response:
                 _logger.error("--------------------" + str(i))
-                
-        
-        # values.update({
-        #     'author_id': author_id,
-        #     'email_from': email_from,
-        #     'model': self._name,
-        #     'res_id': self.id,
-        #     'body': body,
-        #     'subject': subject or False,
-        #     'message_type': message_type,
-        #     'parent_id': parent_id,
-        #     'subtype_id': subtype_id,
-        #     'partner_ids': partner_ids,
-        #     'channel_ids': channel_ids,
-        #     'add_sign': add_sign,
-        #     'record_name': record_name,
-        # })
+    
+    def get_provider(self):
+        env = http.request.env
+        IrConfigParameter = env['ir.config_parameter'].sudo()
+        provider = IrConfigParameter.get_param('46elks.provider', default='')
+        return provider
