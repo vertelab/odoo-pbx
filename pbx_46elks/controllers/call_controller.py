@@ -12,15 +12,12 @@ class CallController(http.Controller):
     @http.route('/46elks/call/', type='http', auth='user', methods=['POST'], csrf=False)
     def call_api(self, **kwargs):
         env = http.request.env
-        _logger.error("Kwargs: " + str(kwargs))
         IrConfigParameter = env['ir.config_parameter'].sudo()
         api_username = IrConfigParameter.get_param('46elks.api_username', default='')
         api_password = IrConfigParameter.get_param('46elks.api_password', default='')
         # Use the retrieved values to authenticate the API call
         username = api_username
         password = api_password
-        _logger.error(f"Username: {username}")
-        _logger.error(f"Password: {password}")
 
         from_number = kwargs.get('from')
         to_number = kwargs.get('to')
@@ -35,25 +32,16 @@ class CallController(http.Controller):
             'to': to_number,
             'voice_start': voice_start
         }
-        
-        _logger.error(voice_start)
-        _logger.error(from_number)
-        _logger.error(to_number)
-        _logger.error("Test------------------------------1")
         response = requests.post(url, auth=auth, headers=headers, data=data)
-        _logger.error(response.text)
 
         if response.status_code == 200:
-            _logger.error("Test------------------------------Success")
             return response.text
         
         else:
-            _logger.error("Test------------------------------Fail")
             return response.status_code
 
     @http.route('/46elks/webrtc/data', type='http', auth='user', methods=['GET'], csrf=False)
     def get_data(self):
-        _logger.error("Funkar?")
         env = http.request.env
         config_settings = env['ir.config_parameter'].sudo()
         data = {
@@ -61,5 +49,4 @@ class CallController(http.Controller):
             'webrtc_password': config_settings.get_param('46elks.webrtc_password', default=''),
             'virtual_number': config_settings.get_param('46elks.virtual_number', default=''),
         }
-        _logger.error("Get_Data: " + str(data))
         return json.dumps(data)

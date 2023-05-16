@@ -14,6 +14,7 @@ class SmsSms(models.Model):
 
         return super(SmsSms, self)._send(delete_all=delete_all, raise_exception=raise_exception)
 
+    # Overrides the function if 46elks is selected so that Odoo doesn't try to send messages using the built in method
     def _process_queue(self, ids=None):
         env = self.env
         _logger.error(f"{env=}")
@@ -25,19 +26,18 @@ class SmsSms(models.Model):
 
         return super(SmsSms, self)._process_queue(ids)
     
+    # Takes the values from the request and creates a mail.message
     def create_message_from_sms(self, values):
-        
         recieved_message = values.get('message') 
         to_number = values.get('to')
         from_number = values.get('from')
-        _logger.error("create_message_from_sms - 2")
         
-        partners = self.env['res.partner'].search([])
+        partners = self.env['res.partner'].sudo().search([])
 
-        # Find the partner with a matching cleaned phone number
+        # Find the partners with a matching cleaned phone number
+        # TODO: Add functionality for handling scenario where a partner cannot be found.
         to_partner = None
         from_partner = None
-
         for partner in partners:
             cleaned_phone = partner.phone.replace(" ", "") if partner.phone else ""
             cleaned_mobile = partner.mobile.replace(" ", "") if partner.mobile else ""
@@ -70,11 +70,10 @@ class SmsSms(models.Model):
             'attachment_ids': [],
         }
 
-        _logger.error("create_message_from_sms - 5")
-        _logger.error("create_message_from_sms - 6 = " + str(values_list))
-        
-
+        # Create the message using the data retrieved from the request and partners correlated to the message
         message_model = self.env['mail.message']
+        
+        # Need to add .sudo() in order for it to work
         message = message_model.create(values_list)
         
         kwargs = {
@@ -85,9 +84,11 @@ class SmsSms(models.Model):
         values_list['partner_ids'] = {to_partner.id}
         values_list['channel_ids'] = set()
         
+        # For notifying reviever of message delivered
         thread_model = self.env['mail.thread']
         thread_model._notify_thread(message, values_list, **kwargs)
-        
+    
+    # Function for checking which provider is selected in system parameters
     def get_provider(self):
         env = self.env
         IrConfigParameter = env['ir.config_parameter'].sudo()
