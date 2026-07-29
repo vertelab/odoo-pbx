@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record model="ir.ui.view" id="pbx_ivr_form_view">
+        <field name="model">pbx.ivr</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="tenant_id"/>
+                        <field name="name"/>
+                        <field name="extension"/>
+                        <field name="time_condition_id"/>
+                        <field name="timeout"/>
+                        <field name="invalid_retries"/>
+                        <field name="invalid_destination"/>
+                        <field name="active"/>
+                    </group>
+                    <group string="Greeting">
+                        <field name="greeting"/>
+                        <field name="greeting_tts"/>
+                    </group>
+                    <group string="Options">
+                        <field name="option_ids" mode="tree,form">
+                            <tree editable="bottom">
+                                <field name="digit"/>
+                                <field name="label"/>
+                                <field name="destination_type"/>
+                                <field name="destination"/>
+                                <field name="sequence" widget="handle"/>
+                            </tree>
+                        </field>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="pbx_ivr_list_view">
+        <field name="model">pbx.ivr</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="tenant_id"/>
+                <field name="name"/>
+                <field name="extension"/>
+                <field name="active"/>
+            </tree>
+        </field>
+    </record>
+
+    <record model="ir.actions.act_window" id="pbx_ivr_act_window">
+        <field name="name">IVR Menus</field>
+        <field name="res_model">pbx.ivr</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem
+        id="menu_pbx_ivr"
+        name="IVR Menus"
+        parent="pbx_base.menu_pbx_root"
+        action="pbx_ivr_act_window"
+        sequence="60"
+    />
+</odoo>

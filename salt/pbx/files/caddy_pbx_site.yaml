@@ -1,0 +1,11 @@
+# Caddy site for PBX WebSocket (WSS) reverse proxy
+site: pbx.vertel.se
+primary: ska
+enabled: true
+routes:
+  wss:
+    path: /ws
+    upstream: lxd-pbx:8089
+  health:
+    path: /health
+    upstream: lxd-pbx:8080

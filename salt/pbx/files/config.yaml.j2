@@ -1,0 +1,23 @@
+{# Jinja2 template for daemon config #}
+asterisk:
+  host: {{ pillar.get('pbx', {}).get('ami_host', 'localhost') }}
+  port: {{ pillar.get('pbx', {}).get('ami_port', 5038) }}
+  user: {{ pillar.get('pbx', {}).get('ami_user', 'pbx_admin') }}
+  secret: {{ pillar.get('pbx', {}).get('ami_secret', '') }}
+
+messaging:
+  type: rabbitmq
+  host: localhost
+  port: 5672
+  user: pbx
+  secret: {{ pillar.get('mq_password', '') }}
+  vhost: pbx
+
+tenants:
+  config_path: /etc/asterisk/tenants/
+
+daemon:
+  pid_file: /var/run/pbx-ami-daemon.pid
+  log_level: {{ pillar.get('pbx', {}).get('log_level', 'INFO') }}
+  reconnect_interval: 5
+  health_port: 8080

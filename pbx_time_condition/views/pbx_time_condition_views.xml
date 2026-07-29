@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record model="ir.ui.view" id="pbx_time_condition_form_view">
+        <field name="model">pbx.time_condition</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="tenant_id"/>
+                        <field name="name"/>
+                        <field name="timezone"/>
+                    </group>
+                    <group string="Schedule">
+                        <field name="days_of_week"/>
+                        <field name="start_time" widget="float_time"/>
+                        <field name="end_time" widget="float_time"/>
+                        <field name="holidays_calendar_id"/>
+                    </group>
+                    <group string="When time MATCHES — route to:">
+                        <field name="destination_match_type"/>
+                        <field name="destination_match_queue_id"
+                               attrs="{'required': [('destination_match_type', '=', 'queue')], 'invisible': [('destination_match_type', '!=', 'queue')]}"/>
+                        <field name="destination_match_ivr_id"
+                               attrs="{'required': [('destination_match_type', '=', 'ivr')], 'invisible': [('destination_match_type', '!=', 'ivr')]}"/>
+                        <field name="destination_match_extension_id"
+                               attrs="{'required': [('destination_match_type', 'in', ['extension', 'voicemail'])], 'invisible': [('destination_match_type', 'not in', ['extension', 'voicemail'])]}"/>
+                        <field name="destination_match_external"
+                               attrs="{'required': [('destination_match_type', '=', 'external')], 'invisible': [('destination_match_type', '!=', 'external')]}"/>
+                    </group>
+                    <group string="When time does NOT match — route to:">
+                        <field name="destination_nomatch_type"/>
+                        <field name="destination_nomatch_queue_id"
+                               attrs="{'required': [('destination_nomatch_type', '=', 'queue')], 'invisible': [('destination_nomatch_type', '!=', 'queue')]}"/>
+                        <field name="destination_nomatch_ivr_id"
+                               attrs="{'required': [('destination_nomatch_type', '=', 'ivr')], 'invisible': [('destination_nomatch_type', '!=', 'ivr')]}"/>
+                        <field name="destination_nomatch_extension_id"
+                               attrs="{'required': [('destination_nomatch_type', 'in', ['extension', 'voicemail'])], 'invisible': [('destination_nomatch_type', 'not in', ['extension', 'voicemail'])]}"/>
+                        <field name="destination_nomatch_external"
+                               attrs="{'required': [('destination_nomatch_type', '=', 'external')], 'invisible': [('destination_nomatch_type', '!=', 'external')]}"/>
+                    </group>
+                    <group>
+                        <field name="active"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="pbx_time_condition_list_view">
+        <field name="model">pbx.time_condition</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="tenant_id"/>
+                <field name="name"/>
+                <field name="days_of_week"/>
+                <field name="start_time" widget="float_time"/>
+                <field name="end_time" widget="float_time"/>
+                <field name="active"/>
+            </tree>
+        </field>
+    </record>
+
+    <record model="ir.actions.act_window" id="pbx_time_condition_act_window">
+        <field name="name">Time Conditions</field>
+        <field name="res_model">pbx.time_condition</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem
+        id="menu_pbx_time_conditions"
+        name="Time Conditions"
+        parent="pbx_base.menu_pbx_root"
+        action="pbx_time_condition_act_window"
+        sequence="55"
+    />
+</odoo>

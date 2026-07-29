@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Graph node definition for voip.call → PbxCall -->
+    <record id="graph_node_pbx_call" model="graph.node.definition">
+        <field name="model_id" ref="voip_oca.model_voip_call"/>
+        <field name="graph_label">PbxCall</field>
+        <field name="name_field">display_name</field>
+        <field name="node_properties">{
+            "phone_number": "phone_number",
+            "direction": "type_call",
+            "state": "state",
+            "create_date": "create_date"
+        }</field>
+        <field name="edge_definitions">[{
+            "type": "CALLER",
+            "target_label": "OdooPartner",
+            "target_id_field": "partner_id"
+        }, {
+            "type": "HANDLED_BY",
+            "target_label": "User",
+            "target_id_field": "user_id"
+        }]</field>
+        <field name="active">True</field>
+    </record>
+</odoo>

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record model="ir.ui.view" id="pbx_conference_form_view">
+        <field name="model">pbx.conference</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="tenant_id"/>
+                        <field name="name"/>
+                        <field name="extension"/>
+                        <field name="pin" password="True"/>
+                        <field name="admin_pin" password="True"/>
+                        <field name="max_participants"/>
+                        <field name="record"/>
+                        <field name="active"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="pbx_conference_list_view">
+        <field name="model">pbx.conference</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="tenant_id"/>
+                <field name="name"/>
+                <field name="extension"/>
+                <field name="max_participants"/>
+                <field name="active"/>
+            </tree>
+        </field>
+    </record>
+
+    <record model="ir.actions.act_window" id="pbx_conference_act_window">
+        <field name="name">Conferences</field>
+        <field name="res_model">pbx.conference</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem
+        id="menu_pbx_conferences"
+        name="Conferences"
+        parent="pbx_base.menu_pbx_root"
+        action="pbx_conference_act_window"
+        sequence="65"
+    />
+</odoo>

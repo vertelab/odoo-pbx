@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record model="ir.ui.view" id="pbx_tenant_form_view">
+        <field name="model">pbx.tenant</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="domain"/>
+                        <field name="server_id"/>
+                        <field name="company_id"/>
+                        <field name="plan"/>
+                        <field name="max_extensions"/>
+                        <field name="active"/>
+                    </group>
+                    <group string="Notes">
+                        <field name="notes"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="pbx_tenant_list_view">
+        <field name="model">pbx.tenant</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="domain"/>
+                <field name="server_id"/>
+                <field name="plan"/>
+                <field name="active"/>
+            </tree>
+        </field>
+    </record>
+
+    <record model="ir.actions.act_window" id="pbx_tenant_act_window">
+        <field name="name">Tenants</field>
+        <field name="res_model">pbx.tenant</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+</odoo>

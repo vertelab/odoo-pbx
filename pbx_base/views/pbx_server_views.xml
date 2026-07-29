@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record model="ir.ui.view" id="pbx_server_form_view">
+        <field name="model">pbx.server</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="host"/>
+                        <field name="ami_port"/>
+                        <field name="ami_user"/>
+                        <field name="ami_secret" password="True"/>
+                        <field name="config_path"/>
+                        <field name="spool_path"/>
+                        <field name="active"/>
+                        <field name="company_id"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="pbx_server_list_view">
+        <field name="model">pbx.server</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="host"/>
+                <field name="active"/>
+            </tree>
+        </field>
+    </record>
+
+    <record model="ir.actions.act_window" id="pbx_server_act_window">
+        <field name="name">PBX Servers</field>
+        <field name="res_model">pbx.server</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+</odoo>

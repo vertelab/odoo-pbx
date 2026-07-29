@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem
+        id="menu_pbx_admin_settings"
+        name="Settings"
+        parent="pbx_base.menu_pbx_root"
+        action="pbx_admin.pbx_admin_settings_action"
+        sequence="100"
+        groups="pbx_base.group_pbx_admin"
+    />
+
+    <record id="pbx_admin_settings_action" model="ir.actions.act_window">
+        <field name="name">PBX Settings</field>
+        <field name="res_model">pbx.admin.settings</field>
+        <field name="view_mode">form</field>
+        <field name="target">inline</field>
+    </record>
+</odoo>

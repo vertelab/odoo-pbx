@@ -1,0 +1,6 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_pbx_server_admin,access_pbx_server_admin,model_pbx_server,base.group_system,1,1,1,1
+access_pbx_tenant_admin,access_pbx_tenant_admin,model_pbx_tenant,base.group_system,1,1,1,1
+access_pbx_extension_admin,access_pbx_extension_admin,model_pbx_extension,base.group_system,1,1,1,1
+access_pbx_sub_extension_admin,access_pbx_sub_extension_admin,model_pbx_sub_extension,base.group_system,1,1,1,1
+access_pbx_trunk_admin,access_pbx_trunk_admin,model_pbx_trunk,base.group_system,1,1,1,1

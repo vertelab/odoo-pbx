@@ -1,0 +1,26 @@
+[Unit]
+Description=PBX AMI Daemon
+Documentation=https://github.com/vertelab/odoo-pbx
+After=network.target asterisk.service rabbitmq-server.service
+Requires=asterisk.service rabbitmq-server.service
+
+[Service]
+Type=simple
+User=pbx
+Group=pbx
+ExecStart=/opt/odoo-pbx/venv/bin/python -m pbx_ami_daemon.daemon --config /etc/pbx-ami-daemon/config.yaml
+Restart=always
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=pbx-ami-daemon
+
+# Security hardening
+NoNewPrivileges=yes
+ProtectSystem=full
+ProtectHome=yes
+ReadOnlyPaths=/
+ReadWritePaths=/var/log /var/run
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Extended tenant view for admin panel -->
+    <record model="ir.ui.view" id="pbx_tenant_admin_form_view">
+        <field name="model">pbx.tenant</field>
+        <field name="inherit_id" ref="pbx_base.pbx_tenant_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet" position="inside">
+                <group string="Admin Actions">
+                    <button name="generate_config" type="object" string="Generate Config" class="btn-primary"/>
+                    <button name="reload_asterisk" type="object" string="Reload Asterisk" class="btn-secondary"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+</odoo>

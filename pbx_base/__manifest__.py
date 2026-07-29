@@ -1,0 +1,21 @@
+{
+    "name": "PBX Base",
+    "version": "18.0.1.0.0",
+    "summary": "Core PBX abstraction for multi-tenant Asterisk management",
+    "category": "Productivity/VOIP",
+    "author": "Vertel AB",
+    "website": "https://github.com/vertelab/odoo-pbx",
+    "license": "AGPL-3",
+    "depends": ["base", "mail", "voip_oca"],
+    "data": [
+        "security/ir.model.access.csv",
+        "security/pbx_security.xml",
+        "views/pbx_server_views.xml",
+        "views/pbx_tenant_views.xml",
+        "views/pbx_extension_views.xml",
+        "views/pbx_trunk_views.xml",
+        "views/menus.xml",
+    ],
+    "installable": True,
+    "application": False,
+}

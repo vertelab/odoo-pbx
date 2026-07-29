@@ -1,0 +1,25 @@
+# pbx_ami_daemon configuration
+# Secrets should be provided via environment variables: ${ENV_VAR}
+
+asterisk:
+  host: localhost
+  port: 5038
+  user: pbx_admin
+  secret: ${ASTERISK_AMI_SECRET}
+
+messaging:
+  type: rabbitmq          # rabbitmq or nats
+  host: localhost
+  port: 5672
+  user: pbx
+  secret: ${MQ_SECRET}
+  vhost: pbx
+
+tenants:
+  config_path: /etc/asterisk/tenants/
+
+daemon:
+  pid_file: /var/run/pbx-ami-daemon.pid
+  log_level: INFO
+  reconnect_interval: 5   # seconds between AMI reconnect attempts
+  health_port: 8080       # health check HTTP endpoint

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem
+        id="menu_pbx_root"
+        name="PBX"
+        sequence="90"
+        groups="pbx_base.group_pbx_admin,pbx_base.group_pbx_operator"
+    />
+
+    <menuitem
+        id="menu_pbx_servers"
+        name="Servers"
+        parent="menu_pbx_root"
+        action="pbx_server_act_window"
+        sequence="10"
+    />
+
+    <menuitem
+        id="menu_pbx_tenants"
+        name="Tenants"
+        parent="menu_pbx_root"
+        action="pbx_tenant_act_window"
+        sequence="20"
+    />
+
+    <menuitem
+        id="menu_pbx_extensions"
+        name="Extensions"
+        parent="menu_pbx_root"
+        action="pbx_extension_act_window"
+        sequence="30"
+    />
+
+    <menuitem
+        id="menu_pbx_trunks"
+        name="SIP Trunks"
+        parent="menu_pbx_root"
+        action="pbx_trunk_act_window"
+        sequence="40"
+    />
+</odoo>

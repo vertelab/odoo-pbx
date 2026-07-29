@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record model="ir.ui.view" id="pbx_voicemail_message_list_view">
+        <field name="model">pbx.voicemail.message</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="is_read" widget="boolean_toggle"/>
+                <field name="caller_name"/>
+                <field name="caller_number"/>
+                <field name="duration"/>
+                <field name="create_date"/>
+            </tree>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="pbx_voicemail_message_form_view">
+        <field name="model">pbx.voicemail.message</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="caller_name"/>
+                        <field name="caller_number"/>
+                        <field name="duration"/>
+                        <field name="is_read"/>
+                        <field name="user_id"/>
+                    </group>
+                    <group string="Audio">
+                        <field name="audio_attachment_id" widget="binary"/>
+                    </group>
+                    <group string="Transcript">
+                        <field name="transcript"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record model="ir.actions.act_window" id="pbx_voicemail_message_act_window">
+        <field name="name">Voicemails</field>
+        <field name="res_model">pbx.voicemail.message</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('user_id', '=', uid)]</field>
+    </record>
+</odoo>

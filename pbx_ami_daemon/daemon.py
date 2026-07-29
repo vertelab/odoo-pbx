@@ -1,0 +1,447 @@
+#!/usr/bin/env python3
+# Copyright 2026 Vertel AB
+# License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
+"""
+pbx_ami_daemon — Bridges Asterisk AMI with RabbitMQ/NATS.
+
+Connects to Asterisk Manager Interface, listens for telephony events,
+filters by tenant domain, and publishes to RabbitMQ/NATS topics.
+Also subscribes to command topics and translates them to AMI actions.
+
+Usage:
+    pbx-ami-daemon --config /etc/pbx-ami-daemon/config.yaml
+"""
+
+import argparse
+import asyncio
+import json
+import logging
+import os
+import re
+import signal
+import socket
+import sys
+import time
+from typing import Optional
+
+import yaml
+
+try:
+    import aio_pika
+except ImportError:
+    aio_pika = None
+
+logger = logging.getLogger("pbx_ami_daemon")
+
+# ──────────────────────────────────────────────────────────────────
+# Configuration
+# ──────────────────────────────────────────────────────────────────
+
+
+def load_config(path: str) -> dict:
+    with open(path) as f:
+        raw = f.read()
+    # Expand ${ENV_VAR} placeholders
+    raw = os.path.expandvars(raw)
+    return yaml.safe_load(raw)
+
+
+# ──────────────────────────────────────────────────────────────────
+# State Cache
+# ──────────────────────────────────────────────────────────────────
+
+
+class StateCache:
+    """In-memory cache of device states, published on change."""
+
+    def __init__(self, publisher):
+        self._states: dict[str, dict] = {}
+        self._publisher = publisher
+
+    def set(self, extension: str, state: str):
+        old = self._states.get(extension, {}).get("state")
+        if old != state:
+            self._states[extension] = {"state": state, "updated": int(time.time())}
+            asyncio.ensure_future(
+                self._publisher(
+                    f"pbx.state.Device.{extension}",
+                    {"extension": extension, "state": state},
+                )
+            )
+
+    def get(self, extension: str) -> Optional[str]:
+        entry = self._states.get(extension)
+        return entry["state"] if entry else None
+
+    def all(self) -> dict:
+        return dict(self._states)
+
+
+# ──────────────────────────────────────────────────────────────────
+# AMI Connection
+# ──────────────────────────────────────────────────────────────────
+
+
+class AMIConnection:
+    """Persistent TCP connection to Asterisk Manager Interface."""
+
+    def __init__(self, host: str, port: int, user: str, secret: str):
+        self.host = host
+        self.port = port
+        self.user = user
+        self.secret = secret
+        self._reader: Optional[asyncio.StreamReader] = None
+        self._writer: Optional[asyncio.StreamWriter] = None
+        self._buffer = b""
+        self._event_queue: asyncio.Queue = asyncio.Queue()
+
+    async def connect(self):
+        self._reader, self._writer = await asyncio.open_connection(
+            self.host, self.port
+        )
+        # Read banner
+        banner = await asyncio.wait_for(self._reader.readline(), 5)
+        logger.info("AMI connected: %s", banner.decode().strip())
+
+        # Login
+        self._writer.write(
+            f"Action: Login\r\nUsername: {self.user}\r\nSecret: {self.secret}\r\n\r\n".encode()
+        )
+        await self._writer.drain()
+        response = await asyncio.wait_for(self._reader.readuntil(b"\r\n\r\n"), 5)
+        if b"Success" not in response:
+            raise ConnectionError(f"AMI login failed: {response.decode()}")
+
+        logger.info("AMI authenticated")
+
+    async def disconnect(self):
+        if self._writer:
+            self._writer.write(b"Action: Logoff\r\n\r\n")
+            await self._writer.drain()
+            self._writer.close()
+            self._writer = None
+            self._reader = None
+
+    async def send_action(self, action: str, **params) -> dict:
+        """Send an AMI action and return the parsed response."""
+        if not self._writer:
+            raise ConnectionError("Not connected")
+
+        msg = f"Action: {action}\r\n"
+        for k, v in params.items():
+            msg += f"{k}: {v}\r\n"
+        msg += "\r\n"
+
+        self._writer.write(msg.encode())
+        await self._writer.drain()
+
+        # Read response
+        response = await asyncio.wait_for(self._reader.readuntil(b"\r\n\r\n"), 10)
+        return self._parse_ami_message(response.decode())
+
+    async def read_events(self):
+        """Generator yielding parsed AMI events."""
+        while self._reader:
+            try:
+                line = await asyncio.wait_for(self._reader.readline(), 30)
+                if not line:
+                    raise ConnectionError("AMI connection closed")
+
+                self._buffer += line
+                if line == b"\r\n":
+                    raw = self._buffer.decode("utf-8", errors="replace")
+                    self._buffer = b""
+                    if raw.strip():
+                        yield self._parse_ami_message(raw)
+            except asyncio.TimeoutError:
+                # Send keepalive
+                pass
+            except Exception:
+                break
+
+    @staticmethod
+    def _parse_ami_message(raw: str) -> dict:
+        result = {}
+        for line in raw.strip().split("\r\n"):
+            if ": " in line:
+                key, _, value = line.partition(": ")
+                result[key.strip()] = value.strip()
+        return result
+
+
+# ──────────────────────────────────────────────────────────────────
+# Tenant Detection
+# ──────────────────────────────────────────────────────────────────
+
+
+def extract_tenant_from_event(event: dict) -> Optional[str]:
+    """Extract tenant domain from an AMI event.
+
+    Looks at Channel, CallerIDNum, Mailbox fields for @domain patterns.
+    """
+    candidates = [
+        event.get("Channel", ""),
+        event.get("CallerIDNum", ""),
+        event.get("Mailbox", ""),
+        event.get("DestChannel", ""),
+    ]
+
+    for candidate in candidates:
+        # SIP/domain-number or just number@domain
+        # Try SIP/ prefix first
+        sip_match = re.match(r"SIP/([^-]+)-", candidate)
+        if sip_match:
+            return sip_match.group(1)
+
+        # Try @domain suffix
+        at_match = re.search(r"@(\S+)", candidate)
+        if at_match:
+            domain = at_match.group(1)
+            # Filter out IP addresses
+            if not re.match(r"\d+\.\d+\.\d+\.\d+", domain):
+                return domain
+
+    return None
+
+
+# ──────────────────────────────────────────────────────────────────
+# Event Consumer
+# ──────────────────────────────────────────────────────────────────
+
+
+class EventConsumer:
+    """Consumes AMI events, filters by tenant, publishes to RabbitMQ."""
+
+    INTERESTING_EVENTS = {
+        "Newchannel",
+        "Hangup",
+        "Dial",
+        "Bridge",
+        "DeviceStateChange",
+        "QueueEntry",
+        "QueueMemberStatus",
+        "PeerStatus",
+        "VoicemailMessage",
+        "Newstate",
+    }
+
+    def __init__(self, ami: AMIConnection, publisher, state_cache: StateCache):
+        self.ami = ami
+        self.publisher = publisher
+        self.state_cache = state_cache
+
+    async def run(self):
+        async for event in self.ami.read_events():
+            event_name = event.get("Event", "")
+            if event_name not in self.INTERESTING_EVENTS:
+                continue
+
+            tenant = extract_tenant_from_event(event)
+            if not tenant:
+                continue
+
+            # Special handling for device state
+            if event_name in ("DeviceStateChange", "PeerStatus"):
+                device = event.get("Device", "")
+                state = event.get("State", "Unknown")
+                # Extract extension number from device name
+                ext_match = re.search(rf"{tenant}-(\d+)", device)
+                if ext_match:
+                    ext_number = ext_match.group(1)
+                    self.state_cache.set(ext_number, state)
+
+            # Publish to tenant-specific topic
+            topic = f"pbx.event.{tenant}.AMI.{event_name}"
+            await self.publisher(topic, event)
+
+
+# ──────────────────────────────────────────────────────────────────
+# Command Server
+# ──────────────────────────────────────────────────────────────────
+
+
+class CommandServer:
+    """Subscribes to RabbitMQ command topics, executes AMI actions."""
+
+    AMI_ACTION_MAP = {
+        "pbx.cmd.Action.Originate": "Originate",
+        "pbx.cmd.Action.Hangup": "Hangup",
+        "pbx.cmd.Action.Redirect": "Redirect",
+        "pbx.cmd.Action.QueuePause": "QueuePause",
+        "pbx.cmd.Action.Reload": "Command",
+    }
+
+    def __init__(self, ami: AMIConnection):
+        self.ami = ami
+
+    async def handle_command(self, routing_key: str, body: dict):
+        action = self.AMI_ACTION_MAP.get(routing_key)
+        if not action:
+            logger.warning("Unknown command topic: %s", routing_key)
+            return
+
+        params = body.copy()
+        params.pop("routing_key", None)
+
+        if routing_key == "pbx.cmd.Action.Reload":
+            params["Command"] = "pjsip reload"
+
+        if routing_key == "pbx.cmd.Action.ChanSpy":
+            action = "Originate"
+            # ChanSpy is an Originate to a special application
+            extension = params.pop("extension", "")
+            mode = params.pop("mode", "q")
+            params["Application"] = "ChanSpy"
+            params["Data"] = f"SIP/{extension},{mode}"
+
+        try:
+            response = await self.ami.send_action(action, **params)
+            logger.debug("AMI action %s response: %s", action, response)
+            return response
+        except Exception as e:
+            logger.error("AMI action %s failed: %s", action, e)
+            return None
+
+
+# ──────────────────────────────────────────────────────────────────
+# Health Check Server
+# ──────────────────────────────────────────────────────────────────
+
+
+async def health_check_handler(reader, writer):
+    writer.write(b"HTTP/1.1 200 OK\r\nContent-Type: application/json\r\n\r\n")
+    writer.write(b'{"status": "ok"}\r\n')
+    await writer.drain()
+    writer.close()
+
+
+async def start_health_server(port: int):
+    server = await asyncio.start_server(health_check_handler, "0.0.0.0", port)
+    logger.info("Health check server on port %d", port)
+    return server
+
+
+# ──────────────────────────────────────────────────────────────────
+# Main
+# ──────────────────────────────────────────────────────────────────
+
+
+async def amain(config_path: str):
+    config = load_config(config_path)
+
+    # Setup logging
+    log_level = config.get("daemon", {}).get("log_level", "INFO")
+    logging.basicConfig(
+        level=getattr(logging, log_level),
+        format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
+    )
+
+    cfg_ami = config["asterisk"]
+    cfg_mq = config["messaging"]
+    cfg_daemon = config.get("daemon", {})
+    reconnect_interval = cfg_daemon.get("reconnect_interval", 5)
+    health_port = cfg_daemon.get("health_port", 8080)
+
+    # Connect to AMI
+    ami = AMIConnection(
+        cfg_ami["host"], cfg_ami["port"], cfg_ami["user"], cfg_ami["secret"]
+    )
+
+    # Setup messaging (RabbitMQ or NATS)
+    mq_type = cfg_mq.get("type", "rabbitmq")
+
+    if mq_type == "rabbitmq" and aio_pika:
+        # RabbitMQ publisher
+        connection = await aio_pika.connect_robust(
+            host=cfg_mq["host"],
+            port=cfg_mq["port"],
+            login=cfg_mq["user"],
+            password=cfg_mq["secret"],
+            virtualhost=cfg_mq.get("vhost", "/"),
+        )
+        channel = await connection.channel()
+        exchange = await channel.declare_exchange(
+            "pbx", aio_pika.ExchangeType.TOPIC, durable=True
+        )
+
+        async def publisher(routing_key: str, data: dict):
+            message = aio_pika.Message(
+                body=json.dumps(data).encode(),
+                content_type="application/json",
+            )
+            await exchange.publish(message, routing_key=routing_key)
+
+        # Command subscriber
+        cmd_queue = await channel.declare_queue("pbx-ami-daemon-commands", durable=True)
+        await cmd_queue.bind(exchange, routing_key="pbx.cmd.Action.#")
+
+        cmd_server = CommandServer(ami)
+
+        async def on_command(message: aio_pika.IncomingMessage):
+            async with message.process():
+                body = json.loads(message.body.decode())
+                await cmd_server.handle_command(message.routing_key, body)
+
+        await cmd_queue.consume(on_command)
+
+    elif mq_type == "rabbitmq" and not aio_pika:
+        logger.error("aio_pika not installed. Install with: pip install aio-pika")
+        sys.exit(1)
+
+    else:
+        # Fallback: log-only publisher (for testing without RabbitMQ)
+        async def publisher(routing_key: str, data: dict):
+            logger.debug("[%s] %s", routing_key, json.dumps(data)[:200])
+
+        logger.warning("No messaging backend configured — events are logged only")
+
+    # State cache
+    state_cache = StateCache(publisher)
+
+    # Health check
+    health_server = await start_health_server(health_port)
+
+    # Main loop: connect AMI, run event consumer, reconnect on failure
+    while True:
+        try:
+            await ami.connect()
+            consumer = EventConsumer(ami, publisher, state_cache)
+            logger.info("Event consumer started")
+            await consumer.run()
+        except (ConnectionError, OSError) as e:
+            logger.error("AMI connection error: %s. Reconnecting in %ds...", e, reconnect_interval)
+            await ami.disconnect()
+            await asyncio.sleep(reconnect_interval)
+        except asyncio.CancelledError:
+            break
+
+    health_server.close()
+
+
+def main():
+    parser = argparse.ArgumentParser(description="PBX AMI Daemon")
+    parser.add_argument("--config", "-c", default="/etc/pbx-ami-daemon/config.yaml")
+    args = parser.parse_args()
+
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+
+    main_task = loop.create_task(amain(args.config))
+
+    def shutdown(sig, frame):
+        logger.info("Shutting down...")
+        main_task.cancel()
+
+    signal.signal(signal.SIGTERM, shutdown)
+    signal.signal(signal.SIGINT, shutdown)
+
+    try:
+        loop.run_until_complete(main_task)
+    except KeyboardInterrupt:
+        pass
+    finally:
+        loop.close()
+
+
+if __name__ == "__main__":
+    main()
