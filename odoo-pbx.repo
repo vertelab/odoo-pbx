@@ -1,3 +1,3 @@
 git@github.com:OCA/connector-telephony.git usr/share/odooext-OCA-connector-telephony 18.0
 git@github.com:vertelab/odoo-pbx.git usr/share/odoo-pbx 18.0
-modules:voip_oca,pbx_base,pbx_admin,pbx_tenant
+modules:voip_oca,pbx_base,pbx_admin,pbx_tenant,pbx_queue,pbx_ivr,pbx_time_condition,pbx_conference,pbx_recording,pbx_crm,pbx_helpdesk,pbx_ai
