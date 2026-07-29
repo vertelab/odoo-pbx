@@ -1,0 +1,9 @@
+[odoo-pbx]
+name = Vertel Odoo PBX
+url = https://github.com/vertelab/odoo-pbx.git
+branch = 18.0
+target = /usr/share/odoo-pbx
+modules = pbx_base,pbx_admin,pbx_tenant,pbx_queue,pbx_ivr,pbx_time_condition,pbx_conference,pbx_recording,pbx_crm,pbx_helpdesk,pbx_ai
+post_install = |
+    echo "odoo-pbx installed. Restart Odoo to load modules."
+    echo "Install plugins as needed: pbx_queue, pbx_ivr, pbx_time_condition, pbx_recording, pbx_crm, pbx_helpdesk, pbx_conference, pbx_ai"
