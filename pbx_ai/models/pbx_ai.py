@@ -41,7 +41,8 @@ class PbxAI(models.AbstractModel):
         return "odoo.ai" in self.env.registry
 
     def _has_ai_agent_core(self):
-        return "ai.agent.core" in self.env.registry or "ai.company.memory" in self.env.registry
+        return "ai.company.memory" in self.env.registry or \
+            "ai.coworker" in self.env.registry
 
     def _create_company_memory(self, voip_call, transcript):
         memory_model = self.env.get("ai.company.memory")
