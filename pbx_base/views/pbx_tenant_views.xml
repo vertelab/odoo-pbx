@@ -38,6 +38,6 @@
     <record model="ir.actions.act_window" id="pbx_tenant_act_window">
         <field name="name">Tenants</field>
         <field name="res_model">pbx.tenant</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">list,form</field>
     </record>
 </odoo>

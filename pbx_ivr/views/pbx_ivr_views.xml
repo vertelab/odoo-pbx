@@ -50,7 +50,7 @@
     <record model="ir.actions.act_window" id="pbx_ivr_act_window">
         <field name="name">IVR Menus</field>
         <field name="res_model">pbx.ivr</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">list,form</field>
     </record>
 
     <menuitem

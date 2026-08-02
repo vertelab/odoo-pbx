@@ -36,7 +36,7 @@
     <record model="ir.actions.act_window" id="pbx_conference_act_window">
         <field name="name">Conferences</field>
         <field name="res_model">pbx.conference</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">list,form</field>
     </record>
 
     <menuitem
