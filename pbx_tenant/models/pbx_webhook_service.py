@@ -40,13 +40,15 @@ class PbxWebhookService(models.AbstractModel):
             )
 
         # 2) Partner resolution (defensive — side-effects from other modules
-        #    must not break the event flow)
+        #    must not break the event flow). Savepoint: ai_agent_core's
+        #    partner-watch may fail on some environments; roll back locally.
         caller = event.get("CallerIDNum") or event.get("CallerID1") or ""
         if event_name in ("Newchannel", "Hangup", "VoicemailMessage", "UserEvent") and caller:
             try:
-                partner, created = self.env["pbx.partner.resolver"].resolve(
-                    caller, event.get("CallerIDName") or caller
-                )
+                with self.env.cr.savepoint():
+                    partner, created = self.env["pbx.partner.resolver"].resolve(
+                        caller, event.get("CallerIDName") or caller
+                    )
                 payload["partner"] = {
                     "id": partner.id,
                     "name": partner.display_name if partner else "",
