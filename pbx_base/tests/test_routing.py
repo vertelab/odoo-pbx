@@ -6,7 +6,7 @@ from datetime import datetime, timedelta
 from odoo.tests import TransactionCase, tagged
 
 
-@tagged("post_install", "-at_install")
+@tagged("-post_install", "at_install")
 class TestPbxRouting(TransactionCase):
     """Routing layer tests: inbound/outbound generation, trunk endpoints,
     destination mixin, time-based routing with resource.calendar."""
