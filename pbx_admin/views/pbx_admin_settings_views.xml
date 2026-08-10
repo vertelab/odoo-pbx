@@ -16,7 +16,7 @@
                     </group>
                     <group string="Billing API">
                         <field name="billing_api_enabled"/>
-                        <field name="billing_api_token" password="True" attrs="{'invisible': [('billing_api_enabled', '=', False)]}"/>
+                        <field name="billing_api_token" password="True"  invisible="billing_api_enabled == False"/>
                     </group>
                     <group string="Zabbix">
                         <field name="zabbix_url"/>

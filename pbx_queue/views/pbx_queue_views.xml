@@ -9,17 +9,17 @@
                         <field name="tenant_id"/>
                         <field name="name"/>
                         <field name="extension"/>
-                        <field name="strategy" attrs="{'readonly': [('is_ring_group', '=', True)]}"/>
-                        <field name="timeout" attrs="{'readonly': [('is_ring_group', '=', True)]}"/>
-                        <field name="max_wait_time" attrs="{'invisible': [('is_ring_group', '=', True)]}"/>
-                        <field name="overflow_destination" attrs="{'invisible': [('is_ring_group', '=', True)]}"/>
-                        <field name="join_empty" attrs="{'invisible': [('is_ring_group', '=', True)]}"/>
+                        <field name="strategy"  readonly="is_ring_group == True"/>
+                        <field name="timeout"  readonly="is_ring_group == True"/>
+                        <field name="max_wait_time"  invisible="is_ring_group == True"/>
+                        <field name="overflow_destination"  invisible="is_ring_group == True"/>
+                        <field name="join_empty"  invisible="is_ring_group == True"/>
                         <field name="announce_position"/>
                         <field name="is_ring_group"/>
                         <field name="is_manual"/>
-                        <field name="timeout_seconds" attrs="{'invisible': [('is_ring_group', '=', True)]}"/>
-                        <field name="timeout_action" attrs="{'invisible': [('is_ring_group', '=', True)]}"/>
-                        <field name="manual_target_queue_id" attrs="{'invisible': [('is_ring_group', '=', True)]}"/>
+                        <field name="timeout_seconds"  invisible="is_ring_group == True"/>
+                        <field name="timeout_action"  invisible="is_ring_group == True"/>
+                        <field name="manual_target_queue_id"  invisible="is_ring_group == True"/>
                         <field name="active"/>
                     </group>
                     <group string="Agents">

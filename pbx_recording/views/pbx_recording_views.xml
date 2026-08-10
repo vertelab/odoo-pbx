@@ -8,8 +8,8 @@
                     <group>
                         <field name="tenant_id"/>
                         <field name="scope"/>
-                        <field name="queue_id" attrs="{'invisible': [('scope', '!=', 'queue')], 'required': [('scope', '=', 'queue')]}"/>
-                        <field name="extension_id" attrs="{'invisible': [('scope', '!=', 'extension')], 'required': [('scope', '=', 'extension')]}"/>
+                        <field name="queue_id"  required="scope == 'queue'" invisible="scope != 'queue'"/>
+                        <field name="extension_id"  required="scope == 'extension'" invisible="scope != 'extension'"/>
                         <field name="mode"/>
                         <field name="active"/>
                     </group>
