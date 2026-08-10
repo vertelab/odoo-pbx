@@ -86,16 +86,14 @@
             <field name="ivr_id" ref="demo_ivr"/>
             <field name="digit">1</field>
             <field name="label">Tala med reception</field>
-            <field name="destination_type">queue</field>
-            <field name="destination">Reception</field>
+            <field name="destination_id" ref="demo_queue_reception"/>
             <field name="sequence">10</field>
         </record>
         <record id="demo_ivr_opt_support" model="pbx.ivr.option">
             <field name="ivr_id" ref="demo_ivr"/>
             <field name="digit">2</field>
             <field name="label">Support</field>
-            <field name="destination_type">queue</field>
-            <field name="destination">Support</field>
+            <field name="destination_id" ref="demo_queue_support"/>
             <field name="sequence">20</field>
         </record>
 

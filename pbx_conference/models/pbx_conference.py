@@ -6,7 +6,7 @@ from odoo import fields, models
 
 class PbxConference(models.Model):
     _name = "pbx.conference"
-    _inherit = ["pbx.plugin"]
+    _inherit = ["pbx.plugin", "pbx.destination.mixin"]
     _description = "PBX Conference Room"
 
     tenant_id = fields.Many2one("pbx.tenant", required=True, ondelete="cascade")
@@ -18,6 +18,27 @@ class PbxConference(models.Model):
     record = fields.Boolean(default=False, help="Record conference?")
     active = fields.Boolean(default=True)
     company_id = fields.Many2one(related="tenant_id.company_id", store=True)
+
+    def get_internal_dialplan(self, tenant):
+        """Make conference rooms reachable by their internal extension number."""
+        lines = []
+        conferences = self.search(
+            [("tenant_id", "=", tenant.id), ("active", "=", True)]
+        )
+        for conf in conferences:
+            lines.append(
+                "exten => %s,1,Goto(%s-conf-%s,s,1)"
+                % (conf.extension, tenant.domain, self._slug(conf.name))
+            )
+        return "\n".join(lines)
+
+    def get_dialplan_target(self):
+        self.ensure_one()
+        return ("%s-conf-%s" % (self.tenant_id.domain, self._slug(self.name)), "s", "1")
+
+    @staticmethod
+    def _slug(name):
+        return (name or "").lower().replace(" ", "-")
 
     def get_config_snippets(self, tenant):
         conferences = self.search([("tenant_id", "=", tenant.id), ("active", "=", True)])

@@ -3,10 +3,12 @@
 
 from odoo import fields, models
 
+from odoo.addons.pbx_base.models.pbx_destination_mixin import DESTINATION_MODELS
+
 
 class PbxQueue(models.Model):
     _name = "pbx.queue"
-    _inherit = ["pbx.plugin"]
+    _inherit = ["pbx.plugin", "pbx.destination.mixin"]
     _description = "PBX Call Queue"
 
     tenant_id = fields.Many2one("pbx.tenant", required=True, ondelete="cascade")
@@ -26,7 +28,11 @@ class PbxQueue(models.Model):
     )
     timeout = fields.Integer(default=60, help="Seconds before trying next agent")
     max_wait_time = fields.Integer(default=300, help="Max wait time before overflow")
-    overflow_destination = fields.Char(help="Destination on overflow (extension, IVR, voicemail)")
+    overflow_destination_id = fields.Reference(
+        selection=DESTINATION_MODELS,
+        string="Overflow Destination",
+        help="Destination on overflow (extension, IVR, voicemail)",
+    )
     join_empty = fields.Boolean(default=True, help="Accept calls when no agents are logged in?")
     announce_position = fields.Boolean(default=False)
     is_ring_group = fields.Boolean(
@@ -67,6 +73,25 @@ class PbxQueue(models.Model):
             "queues.conf": self._generate_queues_conf(queues),
             "extensions_queue.conf": self._generate_queue_dialplan(queues),
         }
+
+    def get_internal_dialplan(self, tenant):
+        """Make queues reachable by their internal extension number."""
+        lines = []
+        queues = self.search([("tenant_id", "=", tenant.id), ("active", "=", True)])
+        for q in queues:
+            lines.append(
+                "exten => %s,1,Goto(%s-queue-%s,s,1)"
+                % (q.extension, tenant.domain, self._slug(q.name))
+            )
+        return "\n".join(lines)
+
+    def get_dialplan_target(self):
+        self.ensure_one()
+        return ("%s-queue-%s" % (self.tenant_id.domain, self._slug(self.name)), "s", "1")
+
+    @staticmethod
+    def _slug(name):
+        return (name or "").lower().replace(" ", "-")
 
     def _generate_queue_dialplan(self, queues):
         """Per-queue originate context (FOP2 drag&drop / click-to-call).

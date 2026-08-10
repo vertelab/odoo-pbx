@@ -17,28 +17,10 @@
                         <field name="holidays_calendar_id"/>
                     </group>
                     <group string="When time MATCHES — route to:">
-                        <field name="destination_match_type"/>
-                        <field name="destination_match_queue_id"
-                                required="destination_match_type == 'queue'" invisible="destination_match_type != 'queue'"/>
-                        <field name="destination_match_ivr_id"
-                                required="destination_match_type == 'ivr'" invisible="destination_match_type != 'ivr'"/>
-                        <field name="destination_match_extension_id"
-                               required="destination_match_type in ['extension', 'voicemail']"
-                               invisible="destination_match_type not in ['extension', 'voicemail']"/>
-                        <field name="destination_match_external"
-                                required="destination_match_type == 'external'" invisible="destination_match_type != 'external'"/>
+                        <field name="destination_match_id"/>
                     </group>
                     <group string="When time does NOT match — route to:">
-                        <field name="destination_nomatch_type"/>
-                        <field name="destination_nomatch_queue_id"
-                                required="destination_nomatch_type == 'queue'" invisible="destination_nomatch_type != 'queue'"/>
-                        <field name="destination_nomatch_ivr_id"
-                                required="destination_nomatch_type == 'ivr'" invisible="destination_nomatch_type != 'ivr'"/>
-                        <field name="destination_nomatch_extension_id"
-                               required="destination_nomatch_type in ['extension', 'voicemail']"
-                               invisible="destination_nomatch_type not in ['extension', 'voicemail']"/>
-                        <field name="destination_nomatch_external"
-                                required="destination_nomatch_type == 'external'" invisible="destination_nomatch_type != 'external'"/>
+                        <field name="destination_nomatch_id"/>
                     </group>
                     <group>
                         <field name="active"/>

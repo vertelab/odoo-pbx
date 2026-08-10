@@ -17,6 +17,15 @@ class PbxPlugin(models.AbstractModel):
         self.ensure_one()
         return {}
 
+    def get_internal_dialplan(self, tenant):
+        """Return dialplan lines contributed to the tenant's [domain-internal] context.
+
+        Returns str with lines like 'exten => 20,1,Goto(domain-queue-support,s,1)'.
+        Makes queues, IVRs and conferences reachable by their internal number.
+        """
+        self.ensure_one()
+        return ""
+
     def get_ami_handlers(self):
         """Return AMI event -> handler mappings.
 

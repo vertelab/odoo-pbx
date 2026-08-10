@@ -4,6 +4,11 @@ from . import pbx_extension
 from . import pbx_sub_extension
 from . import pbx_trunk
 from . import pbx_plugin
+from . import pbx_destination_mixin
+from . import pbx_voicemail_destination
+from . import pbx_custom_destination
+from . import pbx_inbound_route
+from . import pbx_outbound_route
 from . import pbx_config_generator
 from . import pbx_mq
 from . import res_config_settings

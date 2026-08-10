@@ -6,7 +6,7 @@
     "author": "Vertel AB",
     "website": "https://github.com/vertelab/odoo-pbx",
     "license": "AGPL-3",
-    "depends": ["pbx_base"],
+    "depends": ["pbx_base", "resource"],
     "data": [
         "security/ir.model.access.csv",
         "views/pbx_time_condition_views.xml",

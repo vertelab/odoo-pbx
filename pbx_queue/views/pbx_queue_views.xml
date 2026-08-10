@@ -12,7 +12,7 @@
                         <field name="strategy"  readonly="is_ring_group == True"/>
                         <field name="timeout"  readonly="is_ring_group == True"/>
                         <field name="max_wait_time"  invisible="is_ring_group == True"/>
-                        <field name="overflow_destination"  invisible="is_ring_group == True"/>
+                        <field name="overflow_destination_id"  invisible="is_ring_group == True"/>
                         <field name="join_empty"  invisible="is_ring_group == True"/>
                         <field name="announce_position"/>
                         <field name="is_ring_group"/>

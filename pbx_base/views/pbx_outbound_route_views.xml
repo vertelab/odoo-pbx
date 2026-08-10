@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record model="ir.ui.view" id="pbx_outbound_route_form_view">
+        <field name="model">pbx.outbound_route</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="tenant_id"/>
+                        <field name="name"/>
+                        <field name="sequence"/>
+                        <field name="pattern" placeholder="e.g. _0. or _00."/>
+                    </group>
+                    <group string="Trunks (failover order)">
+                        <field name="trunk_ids" mode="list">
+                            <list editable="bottom">
+                                <field name="sequence" widget="handle"/>
+                                <field name="trunk_id"/>
+                                <field name="continue_"/>
+                            </list>
+                        </field>
+                    </group>
+                    <group string="Number handling">
+                        <field name="strip_digits"/>
+                        <field name="prepend_digits"/>
+                        <field name="outbound_callerid"/>
+                        <field name="password" password="True"/>
+                        <field name="emergency_route"/>
+                    </group>
+                    <group string="Time restriction">
+                        <field name="time_source"/>
+                        <field name="time_condition_id"
+                                invisible="time_source != 'time_condition'"/>
+                        <field name="calendar_id"
+                                invisible="time_source != 'calendar'"/>
+                    </group>
+                    <group string="Failover">
+                        <field name="failover_destination_id"
+                                help="Where the call goes when every trunk fails"/>
+                    </group>
+                    <group>
+                        <field name="active"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="pbx_outbound_route_list_view">
+        <field name="model">pbx.outbound_route</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="sequence" widget="handle"/>
+                <field name="tenant_id"/>
+                <field name="name"/>
+                <field name="pattern"/>
+                <field name="trunk_count" string="Trunks"/>
+                <field name="time_source"/>
+                <field name="emergency_route"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
+    <record model="ir.actions.act_window" id="pbx_outbound_route_act_window">
+        <field name="name">Outbound Routes</field>
+        <field name="res_model">pbx.outbound_route</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <menuitem
+        id="menu_pbx_outbound_routes"
+        name="Outbound Routes"
+        parent="pbx_base.menu_pbx_root"
+        action="pbx_outbound_route_act_window"
+        sequence="45"
+    />
+</odoo>

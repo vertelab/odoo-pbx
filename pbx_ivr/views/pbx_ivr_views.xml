@@ -12,7 +12,7 @@
                         <field name="time_condition_id"/>
                         <field name="timeout"/>
                         <field name="invalid_retries"/>
-                        <field name="invalid_destination"/>
+                        <field name="invalid_destination_id"/>
                         <field name="active"/>
                     </group>
                     <group string="Greeting">
@@ -22,10 +22,9 @@
                     <group string="Options">
                         <field name="option_ids" mode="list">
                             <list editable="bottom">
-                                <field name="digit"/>
+                        <field name="digit"/>
                                 <field name="label"/>
-                                <field name="destination_type"/>
-                                <field name="destination"/>
+                                <field name="destination_id"/>
                                 <field name="sequence" widget="handle"/>
                             </list>
                         </field>

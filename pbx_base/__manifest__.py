@@ -6,7 +6,7 @@
     "author": "Vertel AB",
     "website": "https://github.com/vertelab/odoo-pbx",
     "license": "AGPL-3",
-    "depends": ["base", "mail", "voip_oca"],
+    "depends": ["base", "mail", "resource", "voip_oca"],
     "data": [
         "security/ir.model.access.csv",
         "security/pbx_security.xml",
@@ -14,6 +14,8 @@
         "views/pbx_tenant_views.xml",
         "views/pbx_extension_views.xml",
         "views/pbx_trunk_views.xml",
+        "views/pbx_inbound_route_views.xml",
+        "views/pbx_outbound_route_views.xml",
         "views/menus.xml",
         "views/res_config_settings_views.xml",
     ],

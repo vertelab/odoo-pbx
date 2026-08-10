@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record model="ir.ui.view" id="pbx_inbound_route_form_view">
+        <field name="model">pbx.inbound_route</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="tenant_id"/>
+                        <field name="description"/>
+                        <field name="sequence"/>
+                    </group>
+                    <group string="Match">
+                        <field name="did" placeholder="e.g. 08-123456 or _08[0-9]."/>
+                        <field name="cid" placeholder="e.g. 070-5551234"/>
+                    </group>
+                    <group string="Destination">
+                        <field name="destination_id"/>
+                    </group>
+                    <group>
+                        <field name="active"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="pbx_inbound_route_list_view">
+        <field name="model">pbx.inbound_route</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="sequence" widget="handle"/>
+                <field name="tenant_id"/>
+                <field name="did"/>
+                <field name="cid"/>
+                <field name="destination_id"/>
+                <field name="description"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
+    <record model="ir.actions.act_window" id="pbx_inbound_route_act_window">
+        <field name="name">Inbound Routes</field>
+        <field name="res_model">pbx.inbound_route</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <menuitem
+        id="menu_pbx_inbound_routes"
+        name="Inbound Routes"
+        parent="pbx_base.menu_pbx_root"
+        action="pbx_inbound_route_act_window"
+        sequence="35"
+    />
+</odoo>

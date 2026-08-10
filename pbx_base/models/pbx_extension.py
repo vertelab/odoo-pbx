@@ -6,6 +6,7 @@ from odoo import fields, models
 
 class PbxExtension(models.Model):
     _name = "pbx.extension"
+    _inherit = ["pbx.destination.mixin"]
     _description = "PBX Extension (public number)"
 
     tenant_id = fields.Many2one("pbx.tenant", required=True, ondelete="cascade")
@@ -39,3 +40,11 @@ class PbxExtension(models.Model):
             "Extension number must be unique within a tenant!",
         ),
     ]
+
+    def get_dialplan_target(self):
+        self.ensure_one()
+        return ("%s-ext-%s" % (self.tenant_id.domain, self.public_number), "s", "1")
+
+    def get_internal_number(self):
+        self.ensure_one()
+        return self.public_number
