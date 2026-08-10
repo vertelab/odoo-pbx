@@ -24,6 +24,11 @@ class PbxExtension(models.Model):
         [("sequential", "Sequential"), ("parallel", "Parallel")],
         default="sequential",
     )
+    sub_extension_ids = fields.One2many(
+        "pbx.sub_extension",
+        "extension_id",
+        string="Sub-Extensions",
+    )
     active = fields.Boolean(default=True)
     company_id = fields.Many2one(related="tenant_id.company_id", store=True)
 
