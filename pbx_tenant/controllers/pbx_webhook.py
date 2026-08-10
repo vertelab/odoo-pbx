@@ -44,6 +44,7 @@ class PbxWebhook(http.Controller):
             request.env["pbx.webhook.service"].sudo().handle_event(tenant, topic, event)
         except Exception as e:
             _logger.exception("Webhook handling failed for %s", tenant)
+            request.env.cr.rollback()
             return request.make_json_response(
                 {"status": "error", "error": str(e)}, status=500
             )
