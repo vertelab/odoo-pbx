@@ -3,13 +3,13 @@
     <record model="ir.ui.view" id="pbx_voicemail_message_list_view">
         <field name="model">pbx.voicemail.message</field>
         <field name="arch" type="xml">
-            <tree>
+            <list>
                 <field name="is_read" widget="boolean_toggle"/>
                 <field name="caller_name"/>
                 <field name="caller_number"/>
                 <field name="duration"/>
                 <field name="create_date"/>
-            </tree>
+            </list>
         </field>
     </record>
 

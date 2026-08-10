@@ -20,14 +20,14 @@
                         <field name="greeting_tts"/>
                     </group>
                     <group string="Options">
-                        <field name="option_ids" mode="tree,form">
-                            <tree editable="bottom">
+                        <field name="option_ids" mode="list">
+                            <list editable="bottom">
                                 <field name="digit"/>
                                 <field name="label"/>
                                 <field name="destination_type"/>
                                 <field name="destination"/>
                                 <field name="sequence" widget="handle"/>
-                            </tree>
+                            </list>
                         </field>
                     </group>
                 </sheet>
