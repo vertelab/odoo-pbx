@@ -12,27 +12,42 @@ _logger = logging.getLogger(__name__)
 class PbxWebhook(http.Controller):
     """Receives events from the pbx_ami_daemon.
 
-    Payload: {"tenant": "vertel.se", "topic": "pbx.event.vertel.AMI.Newchannel", "event": {...}}
+    Payload (raw JSON body):
+        {"tenant": "vertel.se", "topic": "pbx.event.vertel.AMI.Newchannel", "event": {...}}
     Auth: Bearer token (ir.config_parameter `pbx.webhook.token`, or per-tenant
     `pbx.webhook.token.<domain>`).
     """
 
-    @http.route("/pbx/webhook", type="json", auth="none", csrf=False, methods=["POST"])
-    def webhook(self, tenant=None, topic=None, event=None, **kwargs):
+    @http.route("/pbx/webhook", type="http", auth="none", csrf=False, methods=["POST"])
+    def webhook(self, **kwargs):
+        try:
+            payload = request.get_json_data() or {}
+        except Exception:
+            payload = {}
+        tenant = payload.get("tenant") or payload.get("domain")
+        event = payload.get("event")
+        topic = payload.get("topic", "")
+
         if not tenant or not event:
-            return {"status": "error", "error": "missing tenant or event"}
+            return request.make_json_response(
+                {"status": "error", "error": "missing tenant or event"}
+            )
 
         token = self._token_for(tenant)
         auth = request.httprequest.headers.get("Authorization", "")
         if not token or auth != f"Bearer {token}":
-            return {"status": "error", "error": "unauthorized"}
+            return request.make_json_response(
+                {"status": "error", "error": "unauthorized"}, status=403
+            )
 
         try:
-            request.env["pbx.webhook.service"].handle_event(tenant, topic or "", event)
+            request.env["pbx.webhook.service"].handle_event(tenant, topic, event)
         except Exception as e:
             _logger.exception("Webhook handling failed for %s", tenant)
-            return {"status": "error", "error": str(e)}
-        return {"status": "ok"}
+            return request.make_json_response(
+                {"status": "error", "error": str(e)}, status=500
+            )
+        return request.make_json_response({"status": "ok"})
 
     def _token_for(self, tenant):
         ICP = request.env["ir.config_parameter"].sudo()
