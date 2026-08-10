@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <data noupdate="1">
+    <data>
         <!-- PBX-server + tenant för demo/test -->
         <record id="demo_server" model="pbx.server">
             <field name="name">luke18 test</field>
@@ -99,9 +99,10 @@
             <field name="sequence">20</field>
         </record>
 
-        <!-- Admin får receptionist-anknytningen (FOP2 visar allt) -->
+        <!-- Admin får receptionist-anknytningen (FOP2 visar allt) + PBX-grupper -->
         <record id="base.user_admin" model="res.users">
             <field name="pbx_extension_id" ref="demo_ext_reception"/>
+            <field name="groups_id" eval="[(4, ref('pbx_base.group_pbx_operator')), (4, ref('pbx_base.group_pbx_admin'))]"/>
         </record>
 
         <!-- Test-token för webhook (daemon → Odoo) -->
