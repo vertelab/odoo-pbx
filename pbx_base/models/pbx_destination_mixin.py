@@ -42,12 +42,15 @@ class PbxDestinationMixin(models.AbstractModel):
     def _render_destination(self, ref_value):
         """Render a fields.Reference destination to a dialplan Goto() string.
 
-        ref_value is a Reference value such as "pbx.queue,5" or an empty
-        string when no destination is set.
+        ref_value may be a resolved recordset (Odoo reads Reference fields
+        as recordsets) or a "model,id" string.
         """
         if not ref_value:
             return "Hangup()"
-        model, _, res_id = ref_value.partition(",")
-        record = self.env[model].browse(int(res_id))
+        if isinstance(ref_value, models.Model):
+            record = ref_value
+        else:
+            model, _, res_id = ref_value.partition(",")
+            record = self.env[model].browse(int(res_id))
         ctx, exten, prio = record.get_dialplan_target()
         return "Goto(%s,%s,%s)" % (ctx, exten, prio)

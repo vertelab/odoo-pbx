@@ -153,10 +153,15 @@ class PbxIvrOption(models.Model):
         filtered by model (e.g. 'pbx.queue')."""
         if not self.destination_id:
             return None
-        m, _, rid = self.destination_id.partition(",")
-        if model and m != model:
+        dest = self.destination_id
+        if isinstance(dest, models.Model):
+            record = dest
+        else:
+            m, _, rid = dest.partition(",")
+            record = self.env[m].browse(int(rid))
+        if model and record._name != model:
             return None
-        return self.env[m].browse(int(rid))
+        return record
 
     def _get_destination_lines(self):
         """Return dialplan lines for this option.
