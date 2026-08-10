@@ -77,7 +77,7 @@ class VoicemailService(models.AbstractModel):
         call = self.env["voip.call"].sudo().create(
             {
                 "phone_number": caller_number,
-                "direction": "incoming",
+                "type_call": "incoming",
                 "state": "voicemail",
                 "end_date": fields.Datetime.now(),
                 "partner_id": partner.id if partner else False,
