@@ -9,6 +9,6 @@
         <field name="name">FOP2</field>
         <field name="parent_id" ref="pbx_base.menu_pbx_root"/>
         <field name="action" ref="pbx_tenant_fop2_action"/>
-        <field name="sequence" string="10"/>
+        <field name="sequence" eval="10"/>
     </record>
 </odoo>
