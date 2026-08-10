@@ -22,6 +22,7 @@ import signal
 import socket
 import sys
 import time
+import urllib.request
 from typing import Optional
 
 import yaml
@@ -205,6 +206,52 @@ def extract_tenant_from_event(event: dict) -> Optional[str]:
 
 
 # ──────────────────────────────────────────────────────────────────
+# Webhook Publisher
+# ──────────────────────────────────────────────────────────────────
+
+
+class WebhookPublisher:
+    """POSTs events to the tenant Odoo /pbx/webhook endpoint.
+
+    Uses urllib in a worker thread to avoid a new async dependency.
+    Empty url disables the webhook leg (MQ publishing still works).
+    """
+
+    def __init__(self, url: str = "", token: str = "", tokens: Optional[dict] = None):
+        self.url = url
+        self.token = token
+        self.tokens = tokens or {}
+
+    def _token_for(self, tenant: str) -> str:
+        return self.tokens.get(tenant, self.token)
+
+    def post(self, tenant: str, routing_key: str, data: dict):
+        if not self.url:
+            return
+        token = self._token_for(tenant)
+        payload = json.dumps(
+            {"tenant": tenant, "topic": routing_key, "event": data}
+        ).encode()
+        req = urllib.request.Request(
+            self.url,
+            data=payload,
+            headers={
+                "Content-Type": "application/json",
+                "Authorization": f"Bearer {token}",
+            },
+            method="POST",
+        )
+        try:
+            with urllib.request.urlopen(req, timeout=5) as resp:
+                resp.read()
+        except Exception as e:
+            logger.warning("Webhook POST failed: %s", e)
+
+    async def publish(self, tenant: str, routing_key: str, data: dict):
+        await asyncio.to_thread(self.post, tenant, routing_key, data)
+
+
+# ──────────────────────────────────────────────────────────────────
 # Event Consumer
 # ──────────────────────────────────────────────────────────────────
 
@@ -223,12 +270,14 @@ class EventConsumer:
         "PeerStatus",
         "VoicemailMessage",
         "Newstate",
+        "UserEvent",
     }
 
-    def __init__(self, ami: AMIConnection, publisher, state_cache: StateCache):
+    def __init__(self, ami: AMIConnection, publisher, state_cache: StateCache, webhook=None):
         self.ami = ami
         self.publisher = publisher
         self.state_cache = state_cache
+        self.webhook = webhook or WebhookPublisher()
 
     async def run(self):
         async for event in self.ami.read_events():
@@ -253,6 +302,7 @@ class EventConsumer:
             # Publish to tenant-specific topic
             topic = f"pbx.event.{tenant}.AMI.{event_name}"
             await self.publisher(topic, event)
+            await self.webhook.publish(tenant, topic, event)
 
 
 # ──────────────────────────────────────────────────────────────────
@@ -304,6 +354,78 @@ class CommandServer:
 
 
 # ──────────────────────────────────────────────────────────────────
+# Config Consumer
+# ──────────────────────────────────────────────────────────────────
+
+
+class ConfigConsumer:
+    """Applies Asterisk config delivered by Odoo via pbx.config.#.
+
+    Message body:
+        {
+          "domain": "vertel.se",
+          "version": 42,
+          "files": {"pjsip.conf": "...", "extensions.conf": "..."},
+          "reload": true
+        }
+
+    Files are written atomically to {config_path}/{domain}-{filename}
+    and, when reload is requested, Asterisk is reloaded over AMI.
+    """
+
+    def __init__(self, ami: AMIConnection, config_path: str, publisher=None):
+        self.ami = ami
+        self.config_path = config_path
+        self.publisher = publisher
+
+    async def apply_config(self, message):
+        body = json.loads(message.body.decode())
+        domain = body.get("domain")
+        version = body.get("version", 0)
+        files = body.get("files", {})
+        if not domain or not isinstance(files, dict):
+            logger.warning("Config message missing domain/files")
+            return
+
+        try:
+            os.makedirs(self.config_path, exist_ok=True)
+            for filename, content in files.items():
+                safe_name = os.path.basename(filename)
+                filepath = os.path.join(self.config_path, f"{domain}-{safe_name}")
+                tmp = filepath + ".tmp"
+                with open(tmp, "w") as f:
+                    f.write(content or "")
+                os.replace(tmp, filepath)
+                logger.info("Wrote %s (version %s)", filepath, version)
+
+            if body.get("reload", True):
+                for cmd in ("pjsip reload", "dialplan reload", "voicemail reload"):
+                    try:
+                        await self.ami.send_action("Command", Command=cmd)
+                    except Exception as e:
+                        logger.error("Reload %s failed: %s", cmd, e)
+
+            if self.publisher:
+                try:
+                    await self.publisher(
+                        f"pbx.state.Config.{domain}",
+                        {"domain": domain, "version": version, "status": "applied"},
+                    )
+                except Exception as e:
+                    logger.debug("Ack publish failed: %s", e)
+        except Exception as e:
+            logger.error("Config apply failed for %s: %s", domain, e)
+            if self.publisher:
+                try:
+                    await self.publisher(
+                        f"pbx.state.Config.{domain}",
+                        {"domain": domain, "version": version, "status": "error", "error": str(e)},
+                    )
+                except Exception:
+                    pass
+
+
+# ──────────────────────────────────────────────────────────────────
 # Health Check Server
 # ──────────────────────────────────────────────────────────────────
 
@@ -339,8 +461,17 @@ async def amain(config_path: str):
     cfg_ami = config["asterisk"]
     cfg_mq = config["messaging"]
     cfg_daemon = config.get("daemon", {})
+    cfg_tenants = config.get("tenants", {})
+    cfg_webhook = config.get("webhook", {})
     reconnect_interval = cfg_daemon.get("reconnect_interval", 5)
     health_port = cfg_daemon.get("health_port", 8080)
+    tenants_config_path = cfg_tenants.get("config_path", "/etc/asterisk/tenants/")
+
+    webhook = WebhookPublisher(
+        url=cfg_webhook.get("url", ""),
+        token=cfg_webhook.get("token", ""),
+        tokens=cfg_webhook.get("tokens", {}) or {},
+    )
 
     # Connect to AMI
     ami = AMIConnection(
@@ -384,6 +515,18 @@ async def amain(config_path: str):
 
         await cmd_queue.consume(on_command)
 
+        # Config subscriber (Odoo-ägd config-generering → filer + reload)
+        cfg_queue = await channel.declare_queue("pbx-ami-daemon-config", durable=True)
+        await cfg_queue.bind(exchange, routing_key="pbx.config.#")
+
+        config_consumer = ConfigConsumer(ami, tenants_config_path, publisher)
+
+        async def on_config(message: aio_pika.IncomingMessage):
+            async with message.process():
+                await config_consumer.apply_config(message)
+
+        await cfg_queue.consume(on_config)
+
     elif mq_type == "rabbitmq" and not aio_pika:
         logger.error("aio_pika not installed. Install with: pip install aio-pika")
         sys.exit(1)
@@ -405,8 +548,8 @@ async def amain(config_path: str):
     while True:
         try:
             await ami.connect()
-            consumer = EventConsumer(ami, publisher, state_cache)
-            logger.info("Event consumer started")
+            consumer = EventConsumer(ami, publisher, state_cache, webhook)
+            logger.info("Event consumer started (webhook=%s)", webhook.url or "disabled")
             await consumer.run()
         except (ConnectionError, OSError) as e:
             logger.error("AMI connection error: %s. Reconnecting in %ds...", e, reconnect_interval)

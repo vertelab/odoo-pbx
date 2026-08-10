@@ -8,6 +8,7 @@ Requires=asterisk.service rabbitmq-server.service
 Type=simple
 User=pbx
 Group=pbx
+SupplementaryGroups=asterisk
 ExecStart=/opt/odoo-pbx/venv/bin/python -m pbx_ami_daemon.daemon --config /etc/pbx-ami-daemon/config.yaml
 Restart=always
 RestartSec=5
@@ -20,7 +21,7 @@ NoNewPrivileges=yes
 ProtectSystem=full
 ProtectHome=yes
 ReadOnlyPaths=/
-ReadWritePaths=/var/log /var/run
+ReadWritePaths=/var/log /var/run /etc/asterisk/tenants
 
 [Install]
 WantedBy=multi-user.target

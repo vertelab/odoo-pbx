@@ -15,6 +15,11 @@ messaging:
   secret: ${MQ_SECRET}
   vhost: pbx
 
+webhook:
+  url: https://odoo.example.com/pbx/webhook   # Odoo /pbx/webhook endpoint
+  token: ${PBX_WEBHOOK_TOKEN}                  # default Bearer token
+  tokens: {}                                   # per-tenant overrides: {vertel.se: token}
+
 tenants:
   config_path: /etc/asterisk/tenants/
 
