@@ -38,12 +38,12 @@
     <record model="ir.ui.view" id="pbx_ivr_list_view">
         <field name="model">pbx.ivr</field>
         <field name="arch" type="xml">
-            <tree>
+            <list>
                 <field name="tenant_id"/>
                 <field name="name"/>
                 <field name="extension"/>
                 <field name="active"/>
-            </tree>
+            </list>
         </field>
     </record>
 

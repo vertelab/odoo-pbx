@@ -25,13 +25,13 @@
     <record model="ir.ui.view" id="pbx_tenant_list_view">
         <field name="model">pbx.tenant</field>
         <field name="arch" type="xml">
-            <tree>
+            <list>
                 <field name="name"/>
                 <field name="domain"/>
                 <field name="server_id"/>
                 <field name="plan"/>
                 <field name="active"/>
-            </tree>
+            </list>
         </field>
     </record>
 

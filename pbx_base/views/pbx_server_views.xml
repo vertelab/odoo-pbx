@@ -24,11 +24,11 @@
     <record model="ir.ui.view" id="pbx_server_list_view">
         <field name="model">pbx.server</field>
         <field name="arch" type="xml">
-            <tree>
+            <list>
                 <field name="name"/>
                 <field name="host"/>
                 <field name="active"/>
-            </tree>
+            </list>
         </field>
     </record>
 

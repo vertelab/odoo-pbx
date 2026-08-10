@@ -21,12 +21,12 @@
     <record model="ir.ui.view" id="pbx_recording_policy_list_view">
         <field name="model">pbx.recording.policy</field>
         <field name="arch" type="xml">
-            <tree>
+            <list>
                 <field name="tenant_id"/>
                 <field name="scope"/>
                 <field name="mode"/>
                 <field name="active"/>
-            </tree>
+            </list>
         </field>
     </record>
 

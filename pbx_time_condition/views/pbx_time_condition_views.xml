@@ -49,14 +49,14 @@
     <record model="ir.ui.view" id="pbx_time_condition_list_view">
         <field name="model">pbx.time_condition</field>
         <field name="arch" type="xml">
-            <tree>
+            <list>
                 <field name="tenant_id"/>
                 <field name="name"/>
                 <field name="days_of_week"/>
                 <field name="start_time" widget="float_time"/>
                 <field name="end_time" widget="float_time"/>
                 <field name="active"/>
-            </tree>
+            </list>
         </field>
     </record>
 
