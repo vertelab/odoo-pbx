@@ -13,6 +13,9 @@
         "views/res_users_views.xml",
         "views/pbx_fop2_views.xml",
     ],
+    "demo": [
+        "demo/demo.xml",
+    ],
     "assets": {
         "web.assets_backend": [
             "pbx_tenant/static/src/**/*",

@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- PBX-server + tenant för demo/test -->
+        <record id="demo_server" model="pbx.server">
+            <field name="name">luke18 test</field>
+            <field name="host">localhost</field>
+            <field name="config_path">/tmp/pbx-test</field>
+        </record>
+
+        <record id="demo_tenant" model="pbx.tenant">
+            <field name="name">Vertel Test</field>
+            <field name="domain">vertel.test</field>
+            <field name="server_id" ref="demo_server"/>
+        </record>
+
+        <!-- Anknytningar med beskrivning (FOP2-grid) -->
+        <record id="demo_ext_reception" model="pbx.extension">
+            <field name="tenant_id" ref="demo_tenant"/>
+            <field name="public_number">10</field>
+            <field name="callerid_name">Reception</field>
+            <field name="description">Reception</field>
+            <field name="is_receptionist">True</field>
+        </record>
+
+        <record id="demo_ext_anna" model="pbx.extension">
+            <field name="tenant_id" ref="demo_tenant"/>
+            <field name="public_number">11</field>
+            <field name="callerid_name">Anna</field>
+            <field name="description">Anna – Support</field>
+        </record>
+
+        <record id="demo_ext_bjorn" model="pbx.extension">
+            <field name="tenant_id" ref="demo_tenant"/>
+            <field name="public_number">12</field>
+            <field name="callerid_name">Björn</field>
+            <field name="description">Björn – Ledning</field>
+        </record>
+
+        <!-- Sub-anknytningar -->
+        <record id="demo_sub_reception_1" model="pbx.sub_extension">
+            <field name="extension_id" ref="demo_ext_reception"/>
+            <field name="number">101</field>
+            <field name="label">Odoo</field>
+            <field name="type">browser</field>
+            <field name="priority">1</field>
+        </record>
+        <record id="demo_sub_anna_1" model="pbx.sub_extension">
+            <field name="extension_id" ref="demo_ext_anna"/>
+            <field name="number">111</field>
+            <field name="label">Yealink</field>
+            <field name="type">hardware</field>
+            <field name="priority">1</field>
+        </record>
+
+        <!-- Köer: Reception (manuell) + Support (timeout → manuell) -->
+        <record id="demo_queue_reception" model="pbx.queue">
+            <field name="tenant_id" ref="demo_tenant"/>
+            <field name="name">Reception</field>
+            <field name="extension">31</field>
+            <field name="is_manual">True</field>
+        </record>
+
+        <record id="demo_queue_support" model="pbx.queue">
+            <field name="tenant_id" ref="demo_tenant"/>
+            <field name="name">Support</field>
+            <field name="extension">20</field>
+            <field name="timeout_seconds">45</field>
+            <field name="timeout_action">route_to_manual_queue</field>
+            <field name="manual_target_queue_id" ref="demo_queue_reception"/>
+        </record>
+
+        <record id="demo_queue_member_anna" model="pbx.queue.member">
+            <field name="queue_id" ref="demo_queue_support"/>
+            <field name="extension_id" ref="demo_ext_anna"/>
+            <field name="penalty">0</field>
+        </record>
+
+        <!-- IVR: Huvudmeny med val 1 → Reception (manuell), 2 → Support -->
+        <record id="demo_ivr" model="pbx.ivr">
+            <field name="tenant_id" ref="demo_tenant"/>
+            <field name="name">Huvudmeny</field>
+            <field name="extension">30</field>
+        </record>
+        <record id="demo_ivr_opt_reception" model="pbx.ivr.option">
+            <field name="ivr_id" ref="demo_ivr"/>
+            <field name="digit">1</field>
+            <field name="label">Tala med reception</field>
+            <field name="destination_type">queue</field>
+            <field name="destination">Reception</field>
+            <field name="sequence">10</field>
+        </record>
+        <record id="demo_ivr_opt_support" model="pbx.ivr.option">
+            <field name="ivr_id" ref="demo_ivr"/>
+            <field name="digit">2</field>
+            <field name="label">Support</field>
+            <field name="destination_type">queue</field>
+            <field name="destination">Support</field>
+            <field name="sequence">20</field>
+        </record>
+
+        <!-- Admin får receptionist-anknytningen (FOP2 visar allt) -->
+        <record id="base.user_admin" model="res.users">
+            <field name="pbx_extension_id" ref="demo_ext_reception"/>
+        </record>
+
+        <!-- Test-token för webhook (daemon → Odoo) -->
+        <record id="demo_webhook_token" model="ir.config_parameter">
+            <field name="key">pbx.webhook.token</field>
+            <field name="value">test-token-123</field>
+        </record>
+    </data>
+</odoo>
