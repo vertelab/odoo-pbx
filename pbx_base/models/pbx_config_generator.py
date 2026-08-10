@@ -229,8 +229,7 @@ class PbxConfigGenerator(models.AbstractModel):
                 )
 
         # Internal dialing contributed by plugins (queues, IVRs, conferences)
-        plugins = self.env["pbx.plugin"].search([])
-        for plugin in plugins:
+        for plugin in self._get_plugin_recordsets():
             snippet = plugin.get_internal_dialplan(tenant)
             if snippet:
                 internal_entries.append(snippet)
@@ -529,6 +528,21 @@ class PbxConfigGenerator(models.AbstractModel):
             mailboxes="\n".join(mailboxes) if mailboxes else "",
         )
 
+    def _get_plugin_recordsets(self):
+        """Yield one recordset per concrete model implementing pbx.plugin.
+
+        pbx.plugin is an AbstractModel with no table — plugins must be
+        collected by scanning the registry for models inheriting it.
+        """
+        for model_name, model in self.env.registry.items():
+            if model._abstract:
+                continue
+            inherits = model._inherit or []
+            if isinstance(inherits, str):
+                inherits = [inherits]
+            if "pbx.plugin" in inherits:
+                yield self.env[model_name]
+
     # ------------------------------------------------------------------
     # Orchestration
     # ------------------------------------------------------------------
@@ -541,8 +555,7 @@ class PbxConfigGenerator(models.AbstractModel):
         }
 
         # Collect plugin snippets
-        plugins = self.env["pbx.plugin"].search([])
-        for plugin in plugins:
+        for plugin in self._get_plugin_recordsets():
             snippets = plugin.get_config_snippets(tenant)
             for filename, content in snippets.items():
                 if filename in configs:
