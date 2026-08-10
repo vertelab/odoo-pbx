@@ -30,9 +30,14 @@ class PbxWebhookService(models.AbstractModel):
         payload = {"topic": topic, "event": event}
 
         # 1) Real-time broadcast — must never be blocked
-        self.env["bus.bus"].sendone(f"pbx.{tenant_domain}", payload)
+        # Odoo 18 bus: _sendone(channel, notification_type, message)
+        self.env["bus.bus"]._sendone(
+            f"pbx.{tenant_domain}", "pbx_event", payload
+        )
         if event_name == "UserEvent" and event.get("UserEvent") == "ManualRequired":
-            self.env["bus.bus"].sendone(f"pbx.{tenant_domain}.reception", payload)
+            self.env["bus.bus"]._sendone(
+                f"pbx.{tenant_domain}.reception", "pbx_event", payload
+            )
 
         # 2) Partner resolution (defensive — side-effects from other modules
         #    must not break the event flow)
@@ -47,7 +52,9 @@ class PbxWebhookService(models.AbstractModel):
                     "name": partner.display_name if partner else "",
                     "created": created,
                 }
-                self.env["bus.bus"].sendone(f"pbx.{tenant_domain}", payload)
+                self.env["bus.bus"]._sendone(
+                    f"pbx.{tenant_domain}", "pbx_event", payload
+                )
             except Exception as e:
                 _logger.warning("Partner resolution failed for %s: %s", caller, e)
 

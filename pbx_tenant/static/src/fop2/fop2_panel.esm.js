@@ -78,7 +78,10 @@ export class Fop2Panel extends Component {
         }
         const channel = `pbx.${this.state.domain}`;
         this.bus.addChannel(channel);
-        this._sub = this.bus.subscribe(channel, (payload) => this.onEvent(payload));
+        // Odoo 18 bus: subscribe on notification_type, receive payload
+        this._sub = this.bus.subscribe("pbx_event", (payload) =>
+            this.onEvent(payload)
+        );
     }
 
     cleanup() {
