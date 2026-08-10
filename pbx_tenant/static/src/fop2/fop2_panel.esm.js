@@ -4,6 +4,7 @@
 */
 
 import {Component, useState, onMounted, onWillUnmount} from "@odoo/owl";
+import {rpc} from "@web/core/network/rpc";
 import {useService} from "@web/core/utils/hooks";
 import {registry} from "@web/core/registry";
 
@@ -37,7 +38,6 @@ export class Fop2Panel extends Component {
     static template = "pbx_tenant.Fop2Panel";
 
     setup() {
-        this.rpc = useService("rpc");
         this.bus = useService("bus_service");
         this.state = useState({
             loading: true,
@@ -59,8 +59,8 @@ export class Fop2Panel extends Component {
 
     async init() {
         const [grid, widgets] = await Promise.all([
-            this.rpc("/pbx/fop2/grid"),
-            this.rpc("/pbx/fop2/widgets"),
+            rpc("/pbx/fop2/grid"),
+            rpc("/pbx/fop2/widgets"),
         ]);
         this.state.domain = grid.domain || "";
         this.state.isReceptionist = grid.is_receptionist || false;
@@ -262,7 +262,7 @@ export class Fop2Panel extends Component {
     // ── actions ──────────────────────────────────────────────────
 
     async callAction(route, params) {
-        return this.rpc(route, params || {});
+        return rpc(route, params || {});
     }
 
     hangup(channel) {
