@@ -96,13 +96,18 @@ class PbxFop2(http.Controller):
 
     @http.route("/pbx/fop2/widgets", type="json", auth="user", methods=["POST"])
     def fop2_widgets(self, **kwargs):
-        """Collect FOP2 widget declarations from all pbx.plugin models."""
+        """Collect FOP2 widget declarations from all concrete pbx.plugin models."""
         tenant = self._current_tenant()
         if not tenant:
             return {"widgets": []}
         widgets = []
-        for plugin in request.env["pbx.plugin"].search([]):
-            widgets += plugin.get_fop2_widgets()
+        for model_name in self.env.registry.keys():
+            model = self.env[model_name]
+            inherits = model._inherit or []
+            if isinstance(inherits, str):
+                inherits = [inherits]
+            if "pbx.plugin" in inherits and model._name != "pbx.plugin":
+                widgets += model.get_fop2_widgets()
         return {"widgets": widgets}
 
     # ── actions (Odoo → MQ → daemon → AMI) ───────────────────────
