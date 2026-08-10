@@ -11,6 +11,11 @@
         "security/ir.model.access.csv",
         "views/pbx_recording_views.xml",
     ],
+        "assets": {
+        "web.assets_backend": [
+            "pbx_recording/static/src/**/*",
+        ],
+    },
     "installable": True,
     "application": False,
 }

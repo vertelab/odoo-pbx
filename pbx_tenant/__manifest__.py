@@ -11,6 +11,7 @@
         "security/ir.model.access.csv",
         "views/pbx_voicemail_views.xml",
         "views/res_users_views.xml",
+        "views/pbx_fop2_views.xml",
     ],
     "assets": {
         "web.assets_backend": [

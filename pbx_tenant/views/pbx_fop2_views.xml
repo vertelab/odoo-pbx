@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="pbx_tenant_fop2_action" model="ir.actions.client">
+        <field name="name">FOP2 Operatörspanel</field>
+        <field name="tag">pbx_tenant.fop2_panel</field>
+    </record>
+
+    <record id="pbx_tenant_fop2_menu" model="ir.ui.menu">
+        <field name="name">FOP2</field>
+        <field name="parent_id" ref="pbx_base.menu_pbx_root"/>
+        <field name="action" ref="pbx_tenant_fop2_action"/>
+        <field name="sequence" string="10"/>
+    </record>
+</odoo>

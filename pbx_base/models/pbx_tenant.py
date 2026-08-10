@@ -36,5 +36,4 @@ class PbxTenant(models.Model):
         """Reload Asterisk configuration for this tenant's server."""
         self.ensure_one()
         generator = self.env["pbx.config.generator"]
-        generator.generate_config()
         return generator.reload_asterisk(self.server_id)

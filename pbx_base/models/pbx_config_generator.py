@@ -200,9 +200,24 @@ class PbxConfigGenerator(models.AbstractModel):
         return configs
 
     def write_config(self, tenant):
-        """Write generated config files to the Asterisk server."""
-        server = tenant.server_id
+        """Deploy generated config to the Asterisk server via RabbitMQ.
+
+        The pbx_ami_daemon consumes `pbx.config.<domain>` and writes the
+        files to /etc/asterisk/tenants/ then reloads Asterisk.
+        Falls back to local disk when MQ is not configured (dev).
+        """
         configs = self.generate_all(tenant)
+        mq = self.env["pbx.mq.publisher"]
+        if mq.publish_config(tenant, configs):
+            _logger.info("Deployed config via MQ for tenant %s", tenant.domain)
+            return True
+        return self.write_config_local(tenant, configs)
+
+    def write_config_local(self, tenant, configs=None):
+        """Write generated config files to local disk (dev fallback)."""
+        server = tenant.server_id
+        if configs is None:
+            configs = self.generate_all(tenant)
         tenant_dir = f"{server.config_path}/tenants/{tenant.domain}"
 
         # Create directory if needed

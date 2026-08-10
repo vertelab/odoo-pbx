@@ -15,6 +15,7 @@
         "views/pbx_extension_views.xml",
         "views/pbx_trunk_views.xml",
         "views/menus.xml",
+        "views/res_config_settings_views.xml",
     ],
     "installable": True,
     "application": False,

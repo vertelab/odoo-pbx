@@ -48,9 +48,26 @@ class PbxIvr(models.Model):
             lines.append(f"exten => s,n,Background({domain}-greeting-{ivr.name.lower().replace(' ', '-')})")
             lines.append(f"exten => s,n,WaitExten({ivr.timeout})")
 
+            t_handled = False
             for opt in ivr.option_ids.sorted("sequence"):
-                dest = opt._get_destination()
-                lines.append(f"exten => {opt.digit},1,{dest}")
+                for lineno, line in enumerate(opt._get_destination_lines()):
+                    lines.append(f"exten => {opt.digit},{lineno + 1},{line}")
+                # Queue timeout → manuell hantering (UserEvent + routing)
+                if opt.destination_type == "queue" and not t_handled:
+                    q = self.env["pbx.queue"].search(
+                        [("tenant_id", "=", ivr.tenant_id.id), ("name", "=", opt.destination)],
+                        limit=1,
+                    )
+                    if q and q.timeout_seconds:
+                        qname = f"{domain}-{q.name.lower().replace(' ', '-')}"
+                        if q.timeout_action == "route_to_manual_queue" and q.manual_target_queue_id:
+                            tq = q.manual_target_queue_id
+                            tqname = f"{domain}-{tq.name.lower().replace(' ', '-')}"
+                            lines.append(f"exten => t,1,UserEvent(ManualRequired,source=queue_timeout,queue={qname},target={tqname})")
+                            lines.append(f"exten => t,n,Queue({tqname})")
+                        elif q.timeout_action == "hangup":
+                            lines.append(f"exten => t,1,Hangup()")
+                        t_handled = True
 
             lines.append(f"exten => i,1,Playback(invalid)")
             lines.append(f"exten => i,n,Goto(s,1)")
@@ -68,7 +85,25 @@ class PbxIvr(models.Model):
         return f"{h:02d}:{m:02d}"
 
     def get_fop2_widgets(self):
-        return [{"name": "ivr_panel", "component": "PbxIvrPanel", "props": {}}]
+        widgets = []
+        ivrs = self.search(
+            [("company_id", "=", self.env.user.company_id.id), ("active", "=", True)]
+        )
+        for ivr in ivrs:
+            widgets.append(
+                {
+                    "name": f"ivr_panel_{ivr.id}",
+                    "component": "PbxIvrPanel",
+                    "props": {
+                        "ivr": {
+                            "key": ivr.extension,
+                            "name": ivr.name,
+                            "options": len(ivr.option_ids),
+                        }
+                    },
+                }
+            )
+        return widgets
 
 
 class PbxIvrOption(models.Model):
@@ -94,17 +129,34 @@ class PbxIvrOption(models.Model):
     destination = fields.Char(required=True, help="Target extension, queue name, or external number")
     sequence = fields.Integer(default=10)
 
-    def _get_destination(self):
+    def _get_destination_lines(self):
+        """Return dialplan lines for this option.
+
+        Supports UserEvent(ManualRequired) for manual/reception queues and
+        the `t`-option for queues with a configured timeout.
+        """
+        domain = self.ivr_id.tenant_id.domain
         if self.destination_type == "extension":
-            return f"Dial(SIP/{self.ivr_id.tenant_id.domain}-{self.destination},30)"
+            return [f"Dial(SIP/{domain}-{self.destination},30)", "Hangup()"]
         elif self.destination_type == "queue":
-            return f"Queue({self.ivr_id.tenant_id.domain}-{self.destination.lower().replace(' ', '-')})"
+            q = self.env["pbx.queue"].search(
+                [("tenant_id", "=", self.ivr_id.tenant_id.id), ("name", "=", self.destination)],
+                limit=1,
+            )
+            qname = f"{domain}-{self.destination.lower().replace(' ', '-')}"
+            lines = []
+            if q and q.is_manual:
+                lines.append(f"UserEvent(ManualRequired,source=ivr_reception,queue={qname})")
+            queue_opt = ",t" if (q and q.timeout_seconds) else ""
+            lines.append(f"Queue({qname}{queue_opt})")
+            lines.append("Hangup()")
+            return lines
         elif self.destination_type == "voicemail":
-            return f"Voicemail({self.destination}@{self.ivr_id.tenant_id.domain},u)"
+            return [f"Voicemail({self.destination}@{domain},u)", "Hangup()"]
         elif self.destination_type == "phonenumber":
-            return f"Dial(SIP/{self.destination}@trunk,30)"
+            return [f"Dial(SIP/{self.destination}@trunk,30)", "Hangup()"]
         elif self.destination_type == "ivr":
-            return f"Goto({self.ivr_id.tenant_id.domain}-ivr-{self.destination.lower().replace(' ', '-')},s,1)"
+            return [f"Goto({domain}-ivr-{self.destination.lower().replace(' ', '-')},s,1)"]
         elif self.destination_type == "conference":
-            return f"ConfBridge({self.ivr_id.tenant_id.domain}-{self.destination.lower().replace(' ', '-')})"
-        return "Hangup()"
+            return [f"ConfBridge({domain}-{self.destination.lower().replace(' ', '-')})", "Hangup()"]
+        return ["Hangup()"]

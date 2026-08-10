@@ -12,6 +12,14 @@ class PbxExtension(models.Model):
     public_number = fields.Char(required=True)
     user_id = fields.Many2one("res.users", string="Odoo User")
     callerid_name = fields.Char()
+    description = fields.Char(
+        string="Description",
+        help="Visas i FOP2-panelen, t.ex. 'Reception', 'Anna – Support'",
+    )
+    is_receptionist = fields.Boolean(
+        string="Receptionist",
+        help="Receptionist ser alla anknytningar + allt inkommande + manuell hantering i FOP2",
+    )
     ring_strategy = fields.Selection(
         [("sequential", "Sequential"), ("parallel", "Parallel")],
         default="sequential",

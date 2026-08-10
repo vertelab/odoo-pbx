@@ -11,6 +11,11 @@
         "security/ir.model.access.csv",
         "views/pbx_conference_views.xml",
     ],
+        "assets": {
+        "web.assets_backend": [
+            "pbx_conference/static/src/**/*",
+        ],
+    },
     "installable": True,
     "application": False,
 }

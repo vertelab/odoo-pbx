@@ -318,6 +318,7 @@ class CommandServer:
         "pbx.cmd.Action.Hangup": "Hangup",
         "pbx.cmd.Action.Redirect": "Redirect",
         "pbx.cmd.Action.QueuePause": "QueuePause",
+        "pbx.cmd.Action.MixMonitor": "MixMonitor",
         "pbx.cmd.Action.Reload": "Command",
     }
 

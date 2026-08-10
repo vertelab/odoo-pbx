@@ -5,6 +5,8 @@ from . import pbx_sub_extension
 from . import pbx_trunk
 from . import pbx_plugin
 from . import pbx_config_generator
+from . import pbx_mq
+from . import res_config_settings
 from . import voip_pbx_patch
 from . import voip_call_patch
 from . import res_users_patch

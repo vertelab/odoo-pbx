@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="pbx_recording.PbxRecordingControl">
+        <div class="o_pbx_fop2_tile o_pbx_recording_tile o_pbx_state_gray">
+            <div class="o_pbx_fop2_desc">Inspelning</div>
+            <div class="o_pbx_fop2_desc" t-if="props.incoming.length">
+                Samtal: <t t-esc="props.incoming[0].number"/>
+            </div>
+            <button
+                class="btn btn-sm o_pbx_rec_btn"
+                t-on-click="() => this.toggle()"
+            >
+                <t t-esc="state.recording ? 'Stoppa' : 'Spela in'"/>
+            </button>
+        </div>
+    </t>
+</templates>

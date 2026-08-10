@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="res_config_settings_view_form_pbx" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.pbx</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form" position="inside">
+                <app data-string="PBX" string="PBX" name="pbx">
+                    <block title="RabbitMQ (actions + config-transport)">
+                        <setting string="Message broker">
+                            <div class="content-group">
+                                <div class="row mt16">
+                                    <label string="Host" for="pbx_mq_host" class="col-lg-3 o_light_label"/>
+                                    <field name="pbx_mq_host" class="col-lg-3"/>
+                                </div>
+                                <div class="row mt16">
+                                    <label string="Port" for="pbx_mq_port" class="col-lg-3 o_light_label"/>
+                                    <field name="pbx_mq_port" class="col-lg-3"/>
+                                </div>
+                                <div class="row mt16">
+                                    <label string="User" for="pbx_mq_user" class="col-lg-3 o_light_label"/>
+                                    <field name="pbx_mq_user" class="col-lg-3"/>
+                                </div>
+                                <div class="row mt16">
+                                    <label string="Password" for="pbx_mq_password" class="col-lg-3 o_light_label"/>
+                                    <field name="pbx_mq_password" class="col-lg-3"/>
+                                </div>
+                                <div class="row mt16">
+                                    <label string="Vhost" for="pbx_mq_vhost" class="col-lg-3 o_light_label"/>
+                                    <field name="pbx_mq_vhost" class="col-lg-3"/>
+                                </div>
+                            </div>
+                        </setting>
+                    </block>
+                    <block title="Webhook (daemon → Odoo)">
+                        <setting string="PBX Webhook Token">
+                            <div class="content-group">
+                                <div class="row mt16">
+                                    <label string="Bearer-token" for="pbx_webhook_token" class="col-lg-3 o_light_label"/>
+                                    <field name="pbx_webhook_token" class="col-lg-6"/>
+                                </div>
+                            </div>
+                        </setting>
+                    </block>
+                </app>
+            </xpath>
+        </field>
+    </record>
+</odoo>

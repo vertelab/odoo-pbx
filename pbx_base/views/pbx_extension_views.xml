@@ -10,19 +10,21 @@
                         <field name="public_number"/>
                         <field name="user_id"/>
                         <field name="callerid_name"/>
+                        <field name="description"/>
+                        <field name="is_receptionist"/>
                         <field name="ring_strategy"/>
                         <field name="active"/>
                     </group>
                     <group string="Sub-Extensions">
-                        <field name="sub_extension_ids" mode="tree,form">
-                            <tree editable="bottom">
+                        <field name="sub_extension_ids" mode="list">
+                            <list editable="bottom">
                                 <field name="number"/>
                                 <field name="label"/>
                                 <field name="type"/>
                                 <field name="priority"/>
                                 <field name="transport"/>
                                 <field name="active"/>
-                            </tree>
+                            </list>
                         </field>
                     </group>
                 </sheet>
@@ -33,14 +35,16 @@
     <record model="ir.ui.view" id="pbx_extension_list_view">
         <field name="model">pbx.extension</field>
         <field name="arch" type="xml">
-            <tree>
+            <list>
                 <field name="tenant_id"/>
                 <field name="public_number"/>
                 <field name="user_id"/>
                 <field name="callerid_name"/>
+                <field name="description"/>
+                <field name="is_receptionist"/>
                 <field name="ring_strategy"/>
                 <field name="active"/>
-            </tree>
+            </list>
         </field>
     </record>
 

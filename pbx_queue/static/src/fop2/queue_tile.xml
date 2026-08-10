@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="pbx_queue.PbxQueuePanel">
+        <div
+            class="o_pbx_fop2_tile o_pbx_queue_tile o_pbx_state_{(props.waiting || {})[props.queue.name] > 0 ? 'yellow' : 'green'}"
+            t-if="props.queue"
+        >
+            <div class="o_pbx_fop2_num"><t t-esc="props.queue.key"/></div>
+            <div class="o_pbx_fop2_desc"><t t-esc="props.queue.name"/></div>
+            <div t-if="(props.waiting || {})[props.queue.name]" class="o_pbx_fop2_badge">
+                <t t-esc="(props.waiting || {})[props.queue.name]"/> väntar
+            </div>
+            <div t-if="props.queue.is_manual" class="o_pbx_fop2_badge o_pbx_manual_badge">manuell</div>
+            <div class="o_pbx_fop2_members" t-if="props.queue.members.length">
+                <t t-foreach="props.queue.members" t-as="m" t-key="m">
+                    <span
+                        class="o_pbx_fop2_member o_pbx_state_{(props.states || {})[m] || 'gray'}"
+                        t-esc="m"
+                        title="Agentstatus"
+                    />
+                </t>
+            </div>
+        </div>
+    </t>
+</templates>

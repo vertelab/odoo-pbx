@@ -46,6 +46,9 @@ class PbxRecordingPolicy(models.Model):
     def get_fop2_widgets(self):
         return [{"name": "recording_control", "component": "PbxRecordingControl", "props": {}}]
 
+    def get_recording_widget_config(self):
+        return {"mode": self.mode}
+
     def handle_recording_event(self, event_data):
         """Process a Recording.New event from RabbitMQ.
         Uploads .wav to Garage S3 via ir.attachment, links to voip.call.

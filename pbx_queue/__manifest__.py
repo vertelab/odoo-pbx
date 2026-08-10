@@ -11,6 +11,11 @@
         "security/ir.model.access.csv",
         "views/pbx_queue_views.xml",
     ],
+        "assets": {
+        "web.assets_backend": [
+            "pbx_queue/static/src/**/*",
+        ],
+    },
     "installable": True,
     "application": False,
 }

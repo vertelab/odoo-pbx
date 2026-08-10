@@ -11,6 +11,11 @@
         "security/ir.model.access.csv",
         "views/pbx_ivr_views.xml",
     ],
+        "assets": {
+        "web.assets_backend": [
+            "pbx_ivr/static/src/**/*",
+        ],
+    },
     "installable": True,
     "application": False,
 }
