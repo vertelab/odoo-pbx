@@ -11,7 +11,6 @@ class PbxInboundRoute(models.Model):
     _description = "PBX Inbound Route (DID/CID -> destination)"
     _order = "sequence, id"
 
-    tenant_id = fields.Many2one("pbx.tenant", required=True, ondelete="cascade")
     sequence = fields.Integer(default=10, help="Lower sequence is matched first")
     did = fields.Char(
         string="DID",
@@ -28,12 +27,15 @@ class PbxInboundRoute(models.Model):
     )
     description = fields.Char()
     active = fields.Boolean(default=True)
-    company_id = fields.Many2one(related="tenant_id.company_id", store=True)
+    company_id = fields.Many2one(
+        "res.company", string="Company", required=True,
+        default=lambda self: self.env.company,
+    )
 
     _sql_constraints = [
         (
             "inbound_route_unique",
-            "unique(tenant_id, did, cid)",
+            "unique(company_id, did, cid)",
             "An inbound route with this DID/CID combination already exists!",
         ),
     ]

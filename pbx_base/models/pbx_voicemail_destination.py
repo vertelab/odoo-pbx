@@ -9,7 +9,6 @@ class PbxVoicemailDestination(models.Model):
     _inherit = ["pbx.destination.mixin"]
     _description = "PBX Voicemail Destination"
 
-    tenant_id = fields.Many2one("pbx.tenant", required=True, ondelete="cascade")
     extension_id = fields.Many2one(
         "pbx.extension", string="Extension", required=True, ondelete="cascade"
     )
@@ -21,7 +20,7 @@ class PbxVoicemailDestination(models.Model):
 
     def get_dialplan_target(self):
         self.ensure_one()
-        domain = self.tenant_id.domain
+        domain = self.env["ir.config_parameter"].get_param("pbx.domain", "")
         return ("%s-vm-%s" % (domain, self.extension_id.public_number), "s", "1")
 
     def get_internal_number(self):

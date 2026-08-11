@@ -1,2 +1,5 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_pbx_admin_settings,access_pbx_admin_settings,model_pbx_admin_settings,base.group_system,1,1,1,1
+access_pbx_server_admin,access_pbx_server_admin,model_pbx_server,pbx_base.group_pbx_office,1,1,1,1
+access_pbx_tenant_admin,access_pbx_tenant_admin,model_pbx_tenant,pbx_base.group_pbx_office,1,1,1,1
+access_pbx_tenant_operator,access_pbx_tenant_operator,model_pbx_tenant,pbx_base.group_pbx_operator,1,0,0,0

@@ -6,7 +6,6 @@
             <form>
                 <sheet>
                     <group>
-                        <field name="tenant_id"/>
                         <field name="name"/>
                         <field name="sequence"/>
                         <field name="pattern" placeholder="e.g. _0. or _00."/>
@@ -51,7 +50,6 @@
         <field name="arch" type="xml">
             <list>
                 <field name="sequence" widget="handle"/>
-                <field name="tenant_id"/>
                 <field name="name"/>
                 <field name="pattern"/>
                 <field name="trunk_count" string="Trunks"/>

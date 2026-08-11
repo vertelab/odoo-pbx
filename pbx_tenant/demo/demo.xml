@@ -1,22 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
-        <!-- PBX-server + tenant för demo/test -->
-        <record id="demo_server" model="pbx.server">
-            <field name="name">luke18 test</field>
-            <field name="host">localhost</field>
-            <field name="config_path">/tmp/pbx-test</field>
-        </record>
-
-        <record id="demo_tenant" model="pbx.tenant">
-            <field name="name">Vertel Test</field>
-            <field name="domain">vertel.test</field>
-            <field name="server_id" ref="demo_server"/>
-        </record>
-
-        <!-- Anknytningar med beskrivning (FOP2-grid) -->
+        <!-- Anknytningar med beskrivning (Operator Panel-grid).
+             Instansen administrerar bara sin egen växel (company). -->
         <record id="demo_ext_reception" model="pbx.extension">
-            <field name="tenant_id" ref="demo_tenant"/>
             <field name="public_number">10</field>
             <field name="callerid_name">Reception</field>
             <field name="description">Reception</field>
@@ -24,14 +11,12 @@
         </record>
 
         <record id="demo_ext_anna" model="pbx.extension">
-            <field name="tenant_id" ref="demo_tenant"/>
             <field name="public_number">11</field>
             <field name="callerid_name">Anna</field>
             <field name="description">Anna – Support</field>
         </record>
 
         <record id="demo_ext_bjorn" model="pbx.extension">
-            <field name="tenant_id" ref="demo_tenant"/>
             <field name="public_number">12</field>
             <field name="callerid_name">Björn</field>
             <field name="description">Björn – Ledning</field>

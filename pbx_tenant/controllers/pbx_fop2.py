@@ -25,14 +25,12 @@ class PbxFop2(http.Controller):
         env = request.env
         return env[model_name] if model_name in env else None
 
-    def _current_tenant(self):
-        user = request.env.user
-        ext = user.pbx_extension_id
-        if ext and ext.tenant_id:
-            return ext.tenant_id
-        return request.env["pbx.tenant"].search(
-            [("company_id", "=", user.company_id.id)], limit=1
-        )
+    def _pbx_domain(self):
+        """Instansens egen SIP-domän (settings)."""
+        return request.env["ir.config_parameter"].get_param("pbx.domain", "")
+
+    def _pbx_company(self):
+        return request.env.user.company_id.id
 
     def _is_receptionist(self):
         ext = request.env.user.pbx_extension_id
@@ -42,23 +40,24 @@ class PbxFop2(http.Controller):
 
     @http.route("/pbx/fop2/grid", type="json", auth="user", methods=["POST"])
     def fop2_grid(self, **kwargs):
-        tenant = self._current_tenant()
-        if not tenant:
+        domain = self._pbx_domain()
+        if not domain:
             return {"extensions": [], "queues": [], "ivrs": [], "is_receptionist": False}
+        company = self._pbx_company()
 
         is_receptionist = self._is_receptionist()
         user_ext = request.env.user.pbx_extension_id
 
         extensions = request.env["pbx.extension"].search(
-            [("tenant_id", "=", tenant.id), ("active", "=", True)]
+            [("company_id", "=", company), ("active", "=", True)]
         )
         queues_model = self._env_model("pbx.queue")
         queues = queues_model.search(
-            [("tenant_id", "=", tenant.id), ("active", "=", True)]
+            [("company_id", "=", company), ("active", "=", True)]
         ) if queues_model else []
         ivrs_model = self._env_model("pbx.ivr")
         ivrs = ivrs_model.search(
-            [("tenant_id", "=", tenant.id), ("active", "=", True)]
+            [("company_id", "=", company), ("active", "=", True)]
         ) if ivrs_model else []
 
         if not is_receptionist and user_ext:
@@ -73,7 +72,7 @@ class PbxFop2(http.Controller):
             ivrs = ivrs_model.search([("id", "=", False)]) if ivrs_model else []
 
         return {
-            "domain": tenant.domain,
+            "domain": domain,
             "extensions": [
                 {
                     "key": e.public_number,
@@ -107,8 +106,7 @@ class PbxFop2(http.Controller):
     @http.route("/pbx/fop2/widgets", type="json", auth="user", methods=["POST"])
     def fop2_widgets(self, **kwargs):
         """Collect FOP2 widget declarations from all concrete pbx.plugin models."""
-        tenant = self._current_tenant()
-        if not tenant:
+        if not self._pbx_domain():
             return {"widgets": []}
         env = request.env
         widgets = []
@@ -152,13 +150,12 @@ class PbxFop2(http.Controller):
         """
         user = request.env.user
         ext = user.pbx_extension_id
-        tenant = self._current_tenant()
-        if not ext or not tenant:
-            return {"status": "error", "error": "no extension/tenant"}
+        domain = self._pbx_domain()
+        if not ext or not domain:
+            return {"status": "error", "error": "no extension/domain"}
         if not target:
             return {"status": "error", "error": "missing target"}
 
-        domain = tenant.domain
         context = f"{domain}-internal"
         if target.startswith("queue:"):
             queue_model = self._env_model("pbx.queue")
@@ -166,21 +163,21 @@ class PbxFop2(http.Controller):
                 return {"status": "error", "error": "pbx_queue module not installed"}
             queue_name = target.split(":", 1)[1]
             q = queue_model.search(
-                [("tenant_id", "=", tenant.id), ("name", "=", queue_name)], limit=1
+                [("company_id", "=", self._pbx_company()), ("name", "=", queue_name)], limit=1
             )
             if not q:
                 return {"status": "error", "error": "queue not found"}
             qname = q.name.lower().replace(" ", "-")
             ok = request.env["pbx.mq.publisher"].action_originate(
-                tenant.server_id,
-                f"SIP/{domain}-{ext.public_number}",
+                None,
+                f"PJSIP/{domain}-{ext.public_number}",
                 f"{domain}-queue-{qname}",
                 "s",
             )
             return {"status": "ok" if ok else "error"}
         else:
             target_ext = request.env["pbx.extension"].search(
-                [("tenant_id", "=", tenant.id), ("public_number", "=", target)], limit=1
+                [("company_id", "=", self._pbx_company()), ("public_number", "=", target)], limit=1
             )
             if target_ext:
                 context = f"{domain}-internal"
@@ -195,7 +192,7 @@ class PbxFop2(http.Controller):
                 context = f"{domain}-outbound"
                 exten = target
             ok = request.env["pbx.mq.publisher"].action_originate(
-                tenant.server_id, f"SIP/{domain}-{ext.public_number}", context, exten
+                None, f"PJSIP/{domain}-{ext.public_number}", context, exten
             )
             return {"status": "ok" if ok else "error"}
 
@@ -206,7 +203,7 @@ class PbxFop2(http.Controller):
         if not ext or not queue:
             return {"status": "error", "error": "missing queue/extension"}
         ok = request.env["pbx.mq.publisher"].action_queue_pause(
-            f"SIP/{ext.tenant_id.domain}-{ext.public_number}", queue, paused
+            f"PJSIP/{self._pbx_domain()}-{ext.public_number}", queue, paused
         )
         return {"status": "ok" if ok else "error"}
 

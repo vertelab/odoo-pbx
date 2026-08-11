@@ -10,7 +10,6 @@ class PbxVoicemailMessage(models.Model):
     _order = "create_date desc"
 
     extension_id = fields.Many2one("pbx.extension", required=True, ondelete="cascade")
-    tenant_id = fields.Many2one(related="extension_id.tenant_id", store=True)
     user_id = fields.Many2one(
         "res.users",
         related="extension_id.user_id",
@@ -23,7 +22,10 @@ class PbxVoicemailMessage(models.Model):
     transcript = fields.Text()
     is_read = fields.Boolean(default=False)
     call_id = fields.Many2one("voip.call", string="Related Call")
-    company_id = fields.Many2one(related="tenant_id.company_id", store=True)
+    company_id = fields.Many2one(
+        "res.company", string="Company", required=True,
+        default=lambda self: self.env.company,
+    )
 
     def mark_read(self):
         self.is_read = True

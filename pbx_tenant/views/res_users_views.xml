@@ -11,32 +11,33 @@
         </field>
     </record>
 
-    <!-- Self-service: Follow-me settings on user profile -->
+    <!-- Self-service: Follow-me settings under the VOIP tab (voip_oca) -->
     <record model="ir.ui.view" id="res_users_form_pbx_settings">
         <field name="model">res.users</field>
         <field name="inherit_id" ref="base.view_users_form"/>
         <field name="arch" type="xml">
-            <xpath expr="//page[@name='access_rights']" position="after">
-                <page string="Follow-me" name="pbx_settings"
-                      invisible="[('pbx_extension_id', '=', False)]">
-                    <group string="Ringstrategi">
-                        <field name="pbx_extension_id" invisible="1"/>
-                        <field name="pbx_ring_strategy"/>
-                        <field name="pbx_skip_if_busy"/>
-                    </group>
-                    <group string="Enheter (Sub-Extensions)">
-                        <field name="pbx_sub_extension_ids" mode="list">
-                            <list editable="bottom">
-                                <field name="type" readonly="1"/>
-                                <field name="label"/>
-                                <field name="number" readonly="1"/>
-                                <field name="priority"/>
-                                <field name="ring_timeout"/>
-                                <field name="active"/>
-                            </list>
-                        </field>
-                    </group>
-                </page>
+            <xpath expr="//page[@name='voip']" position="inside">
+                <group string="Follow-me" name="follow_me"
+                      invisible="[('pbx_extension_id', '=', False)]"
+                      colspan="2">
+                    <field name="pbx_extension_id" invisible="1"/>
+                    <field name="pbx_ring_strategy"/>
+                    <field name="pbx_skip_if_busy"/>
+                </group>
+                <group string="Enheter (Sub-Extensions)" name="follow_me_devices"
+                      invisible="[('pbx_extension_id', '=', False)]"
+                      colspan="2">
+                    <field name="pbx_sub_extension_ids" mode="list">
+                        <list editable="bottom">
+                            <field name="type" readonly="1"/>
+                            <field name="label"/>
+                            <field name="number" readonly="1"/>
+                            <field name="priority"/>
+                            <field name="ring_timeout"/>
+                            <field name="active"/>
+                        </list>
+                    </field>
+                </group>
             </xpath>
         </field>
     </record>

@@ -31,15 +31,11 @@ class VoicemailService(models.AbstractModel):
         duration = int(event_data.get("duration", 0))
         file_path = event_data.get("file_path", "")
 
-        # Find the extension
+        # Find the extension. Instansen administrerar bara sin egen växel
+        # (company-scopad via ir.rule) — ingen tenant-post krävs lokalt.
         public_number = mailbox.split("@")[0] if "@" in mailbox else mailbox
-        tenant = self.env["pbx.tenant"].search([("domain", "=", domain)], limit=1)
-        if not tenant:
-            _logger.warning("Unknown tenant domain in voicemail: %s", domain)
-            return
-
         extension = self.env["pbx.extension"].search(
-            [("tenant_id", "=", tenant.id), ("public_number", "=", public_number)],
+            [("public_number", "=", public_number)],
             limit=1,
         )
         if not extension:

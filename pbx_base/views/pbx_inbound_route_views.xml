@@ -6,7 +6,6 @@
             <form>
                 <sheet>
                     <group>
-                        <field name="tenant_id"/>
                         <field name="description"/>
                         <field name="sequence"/>
                     </group>
@@ -30,7 +29,6 @@
         <field name="arch" type="xml">
             <list>
                 <field name="sequence" widget="handle"/>
-                <field name="tenant_id"/>
                 <field name="did"/>
                 <field name="cid"/>
                 <field name="destination_id"/>

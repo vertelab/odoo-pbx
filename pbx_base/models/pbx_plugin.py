@@ -8,8 +8,8 @@ class PbxPlugin(models.AbstractModel):
     _name = "pbx.plugin"
     _description = "PBX Plugin Interface"
 
-    def get_config_snippets(self, tenant):
-        """Return Asterisk config snippets for a tenant.
+    def get_config_snippets(self, domain, company):
+        """Return Asterisk config snippets for the instance.
 
         Returns dict: {filename: content}
         Called during config generation for each active plugin.
@@ -17,8 +17,8 @@ class PbxPlugin(models.AbstractModel):
         self.ensure_one()
         return {}
 
-    def get_internal_dialplan(self, tenant):
-        """Return dialplan lines contributed to the tenant's [domain-internal] context.
+    def get_internal_dialplan(self, domain, company):
+        """Return dialplan lines contributed to the [domain-internal] context.
 
         Returns str with lines like 'exten => 20,1,Goto(domain-queue-support,s,1)'.
         Makes queues, IVRs and conferences reachable by their internal number.

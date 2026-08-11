@@ -9,7 +9,6 @@ class PbxExtension(models.Model):
     _inherit = ["pbx.destination.mixin"]
     _description = "PBX Extension (public number)"
 
-    tenant_id = fields.Many2one("pbx.tenant", required=True, ondelete="cascade")
     public_number = fields.Char(required=True)
     user_id = fields.Many2one("res.users", string="Odoo User")
     callerid_name = fields.Char()
@@ -36,19 +35,23 @@ class PbxExtension(models.Model):
         string="Sub-Extensions",
     )
     active = fields.Boolean(default=True)
-    company_id = fields.Many2one(related="tenant_id.company_id", store=True)
+    company_id = fields.Many2one(
+        "res.company", string="Company", required=True,
+        default=lambda self: self.env.company,
+    )
 
     _sql_constraints = [
         (
-            "extension_tenant_unique",
-            "unique(tenant_id, public_number)",
-            "Extension number must be unique within a tenant!",
+            "extension_company_unique",
+            "unique(company_id, public_number)",
+            "Extension number must be unique within the company!",
         ),
     ]
 
     def get_dialplan_target(self):
         self.ensure_one()
-        return ("%s-ext-%s" % (self.tenant_id.domain, self.public_number), "s", "1")
+        domain = self.env["ir.config_parameter"].get_param("pbx.domain", "")
+        return ("%s-ext-%s" % (domain, self.public_number), "s", "1")
 
     def get_internal_number(self):
         self.ensure_one()

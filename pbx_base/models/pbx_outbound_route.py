@@ -11,7 +11,6 @@ class PbxOutboundRoute(models.Model):
     _description = "PBX Outbound Route"
     _order = "sequence, id"
 
-    tenant_id = fields.Many2one("pbx.tenant", required=True, ondelete="cascade")
     sequence = fields.Integer(default=10, help="Lower sequence is tried first")
     name = fields.Char(required=True)
     pattern = fields.Char(
@@ -59,7 +58,10 @@ class PbxOutboundRoute(models.Model):
     )
     trunk_count = fields.Integer(compute="_compute_trunk_count", string="Trunks")
     active = fields.Boolean(default=True)
-    company_id = fields.Many2one(related="tenant_id.company_id", store=True)
+    company_id = fields.Many2one(
+        "res.company", string="Company", required=True,
+        default=lambda self: self.env.company,
+    )
 
     def _compute_trunk_count(self):
         for route in self:

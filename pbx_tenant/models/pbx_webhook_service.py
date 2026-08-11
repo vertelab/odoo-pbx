@@ -19,11 +19,10 @@ class PbxWebhookService(models.AbstractModel):
     _description = "PBX Webhook Event Service"
 
     def handle_event(self, tenant_domain, topic, event):
-        tenant = self.env["pbx.tenant"].search(
-            [("domain", "=", tenant_domain)], limit=1
-        )
-        if not tenant:
-            _logger.warning("Webhook event for unknown tenant: %s", tenant_domain)
+        # Instansen administrerar bara sin egen domän (settings) — men vi
+        # accepterar webhook-event för den domänen som anropas.
+        if tenant_domain != self.env["ir.config_parameter"].get_param("pbx.domain", ""):
+            _logger.warning("Webhook event for unknown tenant domain: %s", tenant_domain)
             return
 
         event_name = event.get("Event", "")
@@ -63,7 +62,7 @@ class PbxWebhookService(models.AbstractModel):
         # 3) Voicemail → existing inbox handler (defensive)
         if event_name == "VoicemailMessage":
             try:
-                self._handle_voicemail(tenant, event)
+                self._handle_voicemail(tenant_domain, event)
             except Exception as e:
                 _logger.warning("Voicemail handling failed: %s", e)
 
@@ -75,7 +74,7 @@ class PbxWebhookService(models.AbstractModel):
             file_path = f"{spool_dir.rstrip('/')}/msg0001.wav"
         self.env["pbx.voicemail.service"].handle_voicemail_event(
             {
-                "domain": tenant.domain,
+                "domain": self.env["ir.config_parameter"].get_param("pbx.domain", ""),
                 "mailbox": mailbox,
                 "callerid_num": event.get("CallerIDNum", ""),
                 "callerid_name": event.get("CallerIDName", ""),

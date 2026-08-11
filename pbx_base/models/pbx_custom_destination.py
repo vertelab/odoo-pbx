@@ -9,7 +9,6 @@ class PbxCustomDestination(models.Model):
     _inherit = ["pbx.destination.mixin"]
     _description = "PBX Custom Destination (raw dialplan goto-triple)"
 
-    tenant_id = fields.Many2one("pbx.tenant", required=True, ondelete="cascade")
     name = fields.Char(required=True)
     context = fields.Char(
         required=True,

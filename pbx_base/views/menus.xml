@@ -68,23 +68,4 @@
         action="pbx_outbound_route_act_window"
         sequence="50"
     />
-
-    <!-- ── Central administration (Ledningssystem only) ─────────────── -->
-    <menuitem
-        id="menu_pbx_servers"
-        name="Servers"
-        parent="menu_pbx_configuration"
-        action="pbx_server_act_window"
-        sequence="60"
-        groups="pbx_base.group_pbx_central"
-    />
-
-    <menuitem
-        id="menu_pbx_tenants"
-        name="Tenants"
-        parent="menu_pbx_configuration"
-        action="pbx_tenant_act_window"
-        sequence="70"
-        groups="pbx_base.group_pbx_central"
-    />
 </odoo>

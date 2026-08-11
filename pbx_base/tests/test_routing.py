@@ -14,23 +14,10 @@ class TestPbxRouting(TransactionCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        cls.server = cls.env["pbx.server"].create(
-            {
-                "name": "Test Server",
-                "host": "127.0.0.1",
-                "config_path": "/tmp/pbx-test",
-            }
-        )
-        cls.tenant = cls.env["pbx.tenant"].create(
-            {
-                "name": "Test AB",
-                "domain": "test.se",
-                "server_id": cls.server.id,
-            }
-        )
+        cls.env["ir.config_parameter"].set_param("pbx.domain", "test.se")
         cls.ext10 = cls.env["pbx.extension"].create(
             {
-                "tenant_id": cls.tenant.id,
+                "company_id": cls.env.company.id,
                 "public_number": "10",
                 "callerid_name": "Reception",
                 "sub_extension_ids": [
@@ -41,7 +28,7 @@ class TestPbxRouting(TransactionCase):
         )
         cls.ext11 = cls.env["pbx.extension"].create(
             {
-                "tenant_id": cls.tenant.id,
+                "company_id": cls.env.company.id,
                 "public_number": "11",
                 "callerid_name": "Anna",
                 "sub_extension_ids": [
@@ -50,10 +37,10 @@ class TestPbxRouting(TransactionCase):
             }
         )
         cls.voicemail_dest = cls.env["pbx.voicemail.destination"].create(
-            {"tenant_id": cls.tenant.id, "extension_id": cls.ext10.id}
+            {"extension_id": cls.ext10.id}
         )
         cls.custom_dest = cls.env["pbx.custom.destination"].create(
-            {"tenant_id": cls.tenant.id, "name": "Blackhole", "context": "app-blackhole"}
+            {"name": "Blackhole", "context": "app-blackhole"}
         )
         cls.generator = cls.env["pbx.config.generator"]
 
@@ -89,7 +76,7 @@ class TestPbxRouting(TransactionCase):
     def test_trunk_endpoints_generated(self):
         trunk = self.env["pbx.trunk"].create(
             {
-                "tenant_id": self.tenant.id,
+                "company_id": self.env.company.id,
                 "name": "Telia",
                 "host": "sip.telia.se",
                 "username": "user1",
@@ -97,7 +84,7 @@ class TestPbxRouting(TransactionCase):
                 "callerid": "08-123456",
             }
         )
-        pjsip = self.generator.generate_pjsip(self.tenant)
+        pjsip = self.generator.generate_pjsip("test.se", self.env.company.id)
         self.assertIn("[test.se-trunk-telia]", pjsip)
         self.assertIn("context = test.se-from-trunk", pjsip)
         self.assertIn("contact = sip:sip.telia.se:5060", pjsip)
@@ -112,7 +99,7 @@ class TestPbxRouting(TransactionCase):
     def _inbound(self, did="", cid="", sequence=10, destination=None):
         return self.env["pbx.inbound_route"].create(
             {
-                "tenant_id": self.tenant.id,
+                "company_id": self.env.company.id,
                 "did": did,
                 "cid": cid,
                 "sequence": sequence,
@@ -124,7 +111,7 @@ class TestPbxRouting(TransactionCase):
     def test_inbound_route_ordering(self):
         self._inbound(did="08-123456", sequence=10)
         self._inbound(sequence=99)  # catch-all
-        dialplan = self.generator.generate_extensions(self.tenant)
+        dialplan = self.generator.generate_extensions("test.se", self.env.company.id)
         self.assertIn("exten => 08-123456,1,NoOp", dialplan)
         self.assertIn("exten => s,1,NoOp(Inbound:", dialplan)
         # specific DID emitted before the catch-all
@@ -137,20 +124,20 @@ class TestPbxRouting(TransactionCase):
 
     def test_inbound_did_cid(self):
         self._inbound(did="08-123456", cid="070-5551234")
-        dialplan = self.generator.generate_extensions(self.tenant)
+        dialplan = self.generator.generate_extensions("test.se", self.env.company.id)
         self.assertIn("exten => 08-123456/070-5551234,1,NoOp", dialplan)
         self.assertIn("Set(__FROM_DID=08-123456)", dialplan)
 
     def test_inbound_cid_only(self):
         self._inbound(cid="070-5551234")
-        dialplan = self.generator.generate_extensions(self.tenant)
+        dialplan = self.generator.generate_extensions("test.se", self.env.company.id)
         self.assertIn("exten => _.,1,NoOp", dialplan)
         self.assertIn('GotoIf($["${CALLERID(num)}" = "070-5551234"]?', dialplan)
 
     def test_inbound_catch_all_fallback(self):
         # no catch-all route -> ss-noservice fallback for unmatched DIDs
         self._inbound(did="08-123456")
-        dialplan = self.generator.generate_extensions(self.tenant)
+        dialplan = self.generator.generate_extensions("test.se", self.env.company.id)
         self.assertIn("exten => _.,1,NoOp(No DID or CID match)", dialplan)
         self.assertIn("Playback(ss-noservice)", dialplan)
 
@@ -160,7 +147,7 @@ class TestPbxRouting(TransactionCase):
     def _trunk(self, name="Telia"):
         return self.env["pbx.trunk"].create(
             {
-                "tenant_id": self.tenant.id,
+                "company_id": self.env.company.id,
                 "name": name,
                 "host": "sip.%s.se" % name.lower(),
             }
@@ -170,7 +157,7 @@ class TestPbxRouting(TransactionCase):
                   time_source="none", calendar=None):
         return self.env["pbx.outbound_route"].create(
             {
-                "tenant_id": self.tenant.id,
+                "company_id": self.env.company.id,
                 "name": "Route %s" % sequence,
                 "pattern": pattern,
                 "sequence": sequence,
@@ -188,7 +175,7 @@ class TestPbxRouting(TransactionCase):
         t1 = self._trunk("Telia")
         t2 = self._trunk("Fortnox")
         self._outbound([t1, t2])
-        dialplan = self.generator.generate_extensions(self.tenant)
+        dialplan = self.generator.generate_extensions("test.se", self.env.company.id)
         self.assertIn("[test.se-outbound]", dialplan)
         self.assertIn("Dial(PJSIP/${DIAL_NUMBER}@test.se-trunk-telia,60,tT)", dialplan)
         self.assertIn("Dial(PJSIP/${DIAL_NUMBER}@test.se-trunk-fortnox,60,tT)", dialplan)
@@ -200,7 +187,7 @@ class TestPbxRouting(TransactionCase):
         trunk = self._trunk()
         route = self.env["pbx.outbound_route"].create(
             {
-                "tenant_id": self.tenant.id,
+                "company_id": self.env.company.id,
                 "name": "International",
                 "pattern": "_00.",
                 "sequence": 20,
@@ -209,7 +196,7 @@ class TestPbxRouting(TransactionCase):
                 "trunk_ids": [(0, 0, {"trunk_id": trunk.id})],
             }
         )
-        dialplan = self.generator.generate_extensions(self.tenant)
+        dialplan = self.generator.generate_extensions("test.se", self.env.company.id)
         self.assertIn("Set(DIAL_NUMBER=+46${EXTEN:2})", dialplan)
 
     def test_outbound_failover_destination(self):
@@ -218,7 +205,7 @@ class TestPbxRouting(TransactionCase):
             [trunk],
             failover="%s,%d" % (self.voicemail_dest._name, self.voicemail_dest.id),
         )
-        dialplan = self.generator.generate_extensions(self.tenant)
+        dialplan = self.generator.generate_extensions("test.se", self.env.company.id)
         self.assertIn("[test.se-outbound-failover]", dialplan)
         self.assertIn("Goto(test.se-vm-10,s,1)", dialplan)
 
@@ -255,7 +242,7 @@ class TestPbxRouting(TransactionCase):
             }
         )
         self._outbound([trunk], time_source="calendar", calendar=cal)
-        dialplan = self.generator.generate_extensions(self.tenant)
+        dialplan = self.generator.generate_extensions("test.se", self.env.company.id)
         # attendance gate
         self.assertIn("GotoIfTime(08:00-17:00,tue,*,*?", dialplan)
         # leave day skips the route
@@ -265,7 +252,7 @@ class TestPbxRouting(TransactionCase):
     # Internal dialing + app contexts
     # ------------------------------------------------------------------
     def test_internal_dialing_and_app_contexts(self):
-        dialplan = self.generator.generate_extensions(self.tenant)
+        dialplan = self.generator.generate_extensions("test.se", self.env.company.id)
         # extension reachable internally -> ring-group app context
         self.assertIn("exten => 10,1,Goto(test.se-ext-10,s,1)", dialplan)
         self.assertIn("[test.se-ext-10]", dialplan)

@@ -6,7 +6,6 @@
             <form>
                 <sheet>
                     <group>
-                        <field name="tenant_id"/>
                         <field name="name"/>
                         <field name="host"/>
                         <field name="port"/>
@@ -25,7 +24,6 @@
         <field name="model">pbx.trunk</field>
         <field name="arch" type="xml">
             <list>
-                <field name="tenant_id"/>
                 <field name="name"/>
                 <field name="host"/>
                 <field name="channels"/>

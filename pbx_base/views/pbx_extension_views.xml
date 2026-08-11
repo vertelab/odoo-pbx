@@ -6,7 +6,6 @@
             <form>
                 <sheet>
                     <group>
-                        <field name="tenant_id"/>
                         <field name="public_number"/>
                         <field name="user_id"/>
                         <field name="callerid_name"/>
@@ -38,7 +37,6 @@
         <field name="model">pbx.extension</field>
         <field name="arch" type="xml">
             <list>
-                <field name="tenant_id"/>
                 <field name="public_number"/>
                 <field name="user_id"/>
                 <field name="callerid_name"/>

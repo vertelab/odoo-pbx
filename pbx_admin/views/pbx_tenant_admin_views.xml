@@ -3,7 +3,7 @@
     <!-- Extended tenant view for admin panel -->
     <record model="ir.ui.view" id="pbx_tenant_admin_form_view">
         <field name="model">pbx.tenant</field>
-        <field name="inherit_id" ref="pbx_base.pbx_tenant_form_view"/>
+        <field name="inherit_id" ref="pbx_admin.pbx_tenant_form_view"/>
         <field name="arch" type="xml">
             <xpath expr="//sheet" position="inside">
                 <group string="Admin Actions">

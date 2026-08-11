@@ -20,22 +20,8 @@
         <field name="implied_ids" eval="[(4, ref('group_pbx_office'))]"/>
     </record>
 
-    <!-- Central administration (Asterisk servers + tenant/domain leases).
-         Only assigned in the management system (Ledningssystem); customer
-         Odoo instances never see the Servers/Tenants menus. -->
-    <record id="group_pbx_central" model="res.groups">
-        <field name="name">PBX Central Admin</field>
-        <field name="category_id" ref="base.module_category_hidden"/>
-        <field name="implied_ids" eval="[(4, ref('group_pbx_admin'))]"/>
-    </record>
 
     <!-- Record Rules: Tenant isolation by company_id -->
-    <record id="rule_pbx_tenant_company" model="ir.rule">
-        <field name="name">PBX Tenant: company isolation</field>
-        <field name="model_id" ref="model_pbx_tenant"/>
-        <field name="domain_force">[('company_id', 'in', [False] + company_ids)]</field>
-    </record>
-
     <record id="rule_pbx_extension_company" model="ir.rule">
         <field name="name">PBX Extension: company isolation</field>
         <field name="model_id" ref="model_pbx_extension"/>
@@ -80,5 +66,23 @@
         <field name="perm_write" eval="True"/>
         <field name="perm_create" eval="False"/>
         <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <!-- Office/Admin: full access to all extensions (administrerar växeln).
+         Odoo 18 kombinerar globala regler (AND) med gruppregler (OR) —
+         utan dessa regler skulle operator-begränsningen (egen anknytning)
+         även träffa office/admin via implied-grupper. -->
+    <record id="rule_pbx_extension_all" model="ir.rule">
+        <field name="name">PBX Extension: full access (office/admin)</field>
+        <field name="model_id" ref="model_pbx_extension"/>
+        <field name="groups" eval="[(6, 0, [ref('group_pbx_office'), ref('group_pbx_admin')])]"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+    </record>
+
+    <record id="rule_pbx_sub_extension_all" model="ir.rule">
+        <field name="name">PBX Sub-Extension: full access (office/admin)</field>
+        <field name="model_id" ref="model_pbx_sub_extension"/>
+        <field name="groups" eval="[(6, 0, [ref('group_pbx_office'), ref('group_pbx_admin')])]"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
     </record>
 </odoo>

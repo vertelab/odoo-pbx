@@ -17,7 +17,6 @@ class PbxSubExtension(models.Model):
     _description = "PBX Sub Extension (individual device)"
 
     extension_id = fields.Many2one("pbx.extension", required=True, ondelete="cascade")
-    tenant_id = fields.Many2one(related="extension_id.tenant_id", store=True)
     number = fields.Char(required=True)
     label = fields.Char(help="e.g. Odoo, Yealink, Mobile")
     type = fields.Selection(

@@ -10,8 +10,6 @@
     "data": [
         "security/pbx_security.xml",
         "security/ir.model.access.csv",
-        "views/pbx_server_views.xml",
-        "views/pbx_tenant_views.xml",
         "views/pbx_extension_views.xml",
         "views/pbx_trunk_views.xml",
         "views/pbx_inbound_route_views.xml",
