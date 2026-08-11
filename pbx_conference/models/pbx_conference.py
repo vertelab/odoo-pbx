@@ -50,7 +50,7 @@ class PbxConference(models.Model):
         }
 
     def _generate_conference_dialplan(self, conferences):
-        """Per-conference originate context (FOP2 click-to-join).
+        """Per-conference originate context (Operator Panel click-to-join).
 
         Redirect/Originate to Context=<domain>-conf-<name>, Exten=s.
         """
@@ -84,7 +84,7 @@ class PbxConference(models.Model):
             lines.append("announce_user_count = yes")
         return "\n".join(lines)
 
-    def get_fop2_widgets(self):
+    def get_operator_panel_widgets(self):
         widgets = []
         confs = self.search(
             [("company_id", "=", self.env.user.company_id.id), ("active", "=", True)]

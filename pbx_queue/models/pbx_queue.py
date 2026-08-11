@@ -40,7 +40,7 @@ class PbxQueue(models.Model):
     )
     is_manual = fields.Boolean(
         string="Manual/Reception Queue",
-        help="Calls here need manual handling — FOP2 visar dem med [Hantera]",
+        help="Calls here need manual handling — Operator Panel visar dem med [Hantera]",
     )
     timeout_seconds = fields.Integer(
         string="Timeout (s)",
@@ -97,7 +97,7 @@ class PbxQueue(models.Model):
         return (name or "").lower().replace(" ", "-")
 
     def _generate_queue_dialplan(self, domain, queues):
-        """Per-queue originate context (FOP2 drag&drop / click-to-call).
+        """Per-queue originate context (Operator Panel drag&drop / click-to-call).
 
         Redirect/Originate to Context=<domain>-queue-<name>, Exten=s.
         Timeout (t) → UserEvent(ManualRequired) + route to manual queue.
@@ -129,7 +129,7 @@ class PbxQueue(models.Model):
             lines.append(f"strategy = {strategy}")
             lines.append(f"timeout = {timeout}")
             if q.is_manual:
-                lines.append("; Manual/reception queue — kräver manuell hantering i FOP2")
+                lines.append("; Manual/reception queue — kräver manuell hantering i Operator Panel")
             if not q.is_ring_group:
                 max_wait = q.timeout_seconds or q.max_wait_time
                 lines.append(f"max-wait-time = {max_wait}")
@@ -140,7 +140,7 @@ class PbxQueue(models.Model):
                 )
         return "\n".join(lines)
 
-    def get_fop2_widgets(self):
+    def get_operator_panel_widgets(self):
         widgets = []
         queues = self.search(
             [("company_id", "=", self.env.user.company_id.id), ("active", "=", True)]

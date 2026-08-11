@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <record id="pbx_tenant_fop2_action" model="ir.actions.client">
+    <record id="pbx_tenant_operator_panel_action" model="ir.actions.client">
         <field name="name">Operator Panel</field>
-        <field name="tag">pbx_tenant.fop2_panel</field>
+        <field name="tag">pbx_tenant.operator_panel</field>
     </record>
 
-    <!-- Operator Panel (internkod FOP2 = Flash Operator Panel 2).
+    <!-- Operator Panel (internkod Operator Panel = Flash Operator Panel 2).
          Visas för alla PBX-roller (operator/office/admin) direkt under
          PBX-huvudmenyn. -->
-    <record id="pbx_tenant_fop2_menu" model="ir.ui.menu">
+    <record id="pbx_tenant_operator_panel_menu" model="ir.ui.menu">
         <field name="name">Operator Panel</field>
         <field name="parent_id" ref="pbx_base.menu_pbx_root"/>
-        <field name="action" ref="pbx_tenant_fop2_action"/>
+        <field name="action" ref="pbx_tenant_operator_panel_action"/>
         <field name="sequence" eval="10"/>
         <field name="groups_id" eval="[(4, ref('pbx_base.group_pbx_operator')), (4, ref('pbx_base.group_pbx_office')), (4, ref('pbx_base.group_pbx_admin'))]"/>
     </record>

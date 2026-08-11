@@ -8,7 +8,7 @@ import {rpc} from "@web/core/network/rpc";
 import {useService} from "@web/core/utils/hooks";
 import {registry} from "@web/core/registry";
 
-/** Map Asterisk device states to FOP2 colors. */
+/** Map Asterisk device states to Operator Panel colors. */
 function stateColor(state) {
     switch (state) {
         case "NOT_INUSE":
@@ -34,8 +34,8 @@ function extFromDevice(device, domain) {
     return m ? m[1] : null;
 }
 
-export class Fop2Panel extends Component {
-    static template = "pbx_tenant.Fop2Panel";
+export class OperatorPanel extends Component {
+    static template = "pbx_tenant.OperatorPanel";
 
     setup() {
         this.bus = useService("bus_service");
@@ -59,8 +59,8 @@ export class Fop2Panel extends Component {
 
     async init() {
         const [grid, widgets] = await Promise.all([
-            rpc("/pbx/fop2/grid"),
-            rpc("/pbx/fop2/widgets"),
+            rpc("/pbx/operator_panel/grid"),
+            rpc("/pbx/operator_panel/widgets"),
         ]);
         this.state.domain = grid.domain || "";
         this.state.isReceptionist = grid.is_receptionist || false;
@@ -217,7 +217,7 @@ export class Fop2Panel extends Component {
     // ── widget registry ─────────────────────────────────────────
 
     tileComponent(name) {
-        return registry.category("fop2.tiles").get(name, {component: null}).component;
+        return registry.category("operator_panel.tiles").get(name, {component: null}).component;
     }
 
     tileProps(props) {
@@ -266,19 +266,19 @@ export class Fop2Panel extends Component {
     }
 
     hangup(channel) {
-        this.callAction("/pbx/fop2/hangup", {channel});
+        this.callAction("/pbx/operator_panel/hangup", {channel});
     }
 
     chanspy(extension, mode) {
-        this.callAction("/pbx/fop2/chanspy", {extension, mode});
+        this.callAction("/pbx/operator_panel/chanspy", {extension, mode});
     }
 
     originate(target) {
-        this.callAction("/pbx/fop2/originate", {target});
+        this.callAction("/pbx/operator_panel/originate", {target});
     }
 
     queuePause(queue, paused) {
-        this.callAction("/pbx/fop2/queue_pause", {queue, paused});
+        this.callAction("/pbx/operator_panel/queue_pause", {queue, paused});
     }
 
     redirectToQueue(channel, queue) {
@@ -286,7 +286,7 @@ export class Fop2Panel extends Component {
             return;
         }
         const qname = queue.description.toLowerCase().replace(/\s+/g, "-");
-        this.callAction("/pbx/fop2/redirect", {
+        this.callAction("/pbx/operator_panel/redirect", {
             channel,
             context: `${this.state.domain}-queue-${qname}`,
             exten: "s",
@@ -300,7 +300,7 @@ export class Fop2Panel extends Component {
     }
 
     redirectToAgent(channel, agentNumber) {
-        this.callAction("/pbx/fop2/redirect", {
+        this.callAction("/pbx/operator_panel/redirect", {
             channel,
             context: `${this.state.domain}-internal`,
             exten: agentNumber,
@@ -315,7 +315,7 @@ export class Fop2Panel extends Component {
 
     handleManual(entry) {
         const context = entry.target || `${this.state.domain}-reception`;
-        this.callAction("/pbx/fop2/redirect", {
+        this.callAction("/pbx/operator_panel/redirect", {
             channel: entry.channel,
             context,
             exten: "s",
@@ -336,4 +336,4 @@ export class Fop2Panel extends Component {
     }
 }
 
-registry.category("actions").add("pbx_tenant.fop2_panel", Fop2Panel);
+registry.category("actions").add("pbx_tenant.operator_panel", OperatorPanel);

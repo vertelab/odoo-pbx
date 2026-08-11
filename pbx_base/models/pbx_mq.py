@@ -73,7 +73,7 @@ class PbxMqPublisher(models.AbstractModel):
             _logger.error("MQ publish %s failed: %s", routing_key, e)
             return False
 
-    # ── Actions (FOP2 → AMI via daemon) ─────────────────────────
+    # ── Actions (Operator Panel → AMI via daemon) ─────────────────────────
 
     def action_hangup(self, channel, server_id=False):
         return self.publish(

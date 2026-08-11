@@ -14,4 +14,4 @@ PbxIvrPanel.props = {
     ivr: {type: Object, optional: true},
 };
 
-registry.category("fop2.tiles").add("PbxIvrPanel", PbxIvrPanel);
+registry.category("operator_panel.tiles").add("PbxIvrPanel", PbxIvrPanel);

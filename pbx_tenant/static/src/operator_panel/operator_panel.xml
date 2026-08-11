@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <templates xml:space="preserve">
-    <t t-name="pbx_tenant.Fop2Panel">
-        <div class="o_pbx_fop2">
-            <div class="o_pbx_fop2_header">
-                <span class="o_pbx_fop2_title">FOP2 — <t t-esc="state.domain"/></span>
+    <t t-name="pbx_tenant.OperatorPanel">
+        <div class="o_pbx_operator_panel">
+            <div class="o_pbx_operator_panel_header">
+                <span class="o_pbx_operator_panel_title">Operator Panel — <t t-esc="state.domain"/></span>
                 <button
                     t-if="state.isReceptionist"
                     class="btn btn-sm btn-secondary"
@@ -11,45 +11,45 @@
                 >Ring reception</button>
             </div>
 
-            <div t-if="state.loading" class="p-3 text-muted">Laddar FOP2…</div>
+            <div t-if="state.loading" class="p-3 text-muted">Laddar Operator Panel…</div>
 
             <t t-else="">
-                <div class="o_pbx_fop2_grid">
+                <div class="o_pbx_operator_panel_grid">
                     <t t-foreach="state.extensions" t-as="ext" t-key="ext.key">
                         <div
-                            class="o_pbx_fop2_tile o_pbx_state_{state.states[ext.key] || 'gray'}"
+                            class="o_pbx_operator_panel_tile o_pbx_state_{state.states[ext.key] || 'gray'}"
                             title="Click-to-call — släpp ett samtal här för transfer"
                             t-on-click="() => this.originate(ext.key)"
                             t-on-dragover="(ev) => this.onDragOver(ev)"
                             t-on-drop="(ev) => this.onDropToAgent(ev, ext)"
                         >
-                            <img t-if="ext.image" t-att-src="ext.image" class="o_pbx_fop2_avatar" alt=""/>
-                            <div class="o_pbx_fop2_num"><t t-esc="ext.key"/></div>
-                            <div class="o_pbx_fop2_desc"><t t-esc="ext.description"/></div>
+                            <img t-if="ext.image" t-att-src="ext.image" class="o_pbx_operator_panel_avatar" alt=""/>
+                            <div class="o_pbx_operator_panel_num"><t t-esc="ext.key"/></div>
+                            <div class="o_pbx_operator_panel_desc"><t t-esc="ext.description"/></div>
                         </div>
                     </t>
 
                     <t t-foreach="state.queues" t-as="q" t-key="q.key">
                         <div
-                            class="o_pbx_fop2_tile o_pbx_queue_tile o_pbx_state_{(state.waiting[q.description] || 0) > 0 ? 'yellow' : 'green'}"
+                            class="o_pbx_operator_panel_tile o_pbx_queue_tile o_pbx_state_{(state.waiting[q.description] || 0) > 0 ? 'yellow' : 'green'}"
                             title="Click-to-call till kö — släpp ett samtal här för transfer"
                             t-on-click="() => this.originate('queue:' + q.description)"
                             t-on-dragover="(ev) => this.onDragOver(ev)"
                             t-on-drop="(ev) => this.onDropToQueue(ev, q)"
                         >
-                            <div class="o_pbx_fop2_num"><t t-esc="q.key"/></div>
-                            <div class="o_pbx_fop2_desc"><t t-esc="q.description"/></div>
-                            <div t-if="state.waiting[q.description]" class="o_pbx_fop2_badge">
+                            <div class="o_pbx_operator_panel_num"><t t-esc="q.key"/></div>
+                            <div class="o_pbx_operator_panel_desc"><t t-esc="q.description"/></div>
+                            <div t-if="state.waiting[q.description]" class="o_pbx_operator_panel_badge">
                                 <t t-esc="state.waiting[q.description]"/> väntar
                             </div>
-                            <div t-if="q.is_manual" class="o_pbx_fop2_badge o_pbx_manual_badge">manuell</div>
+                            <div t-if="q.is_manual" class="o_pbx_operator_panel_badge o_pbx_manual_badge">manuell</div>
                         </div>
                     </t>
 
                     <t t-foreach="state.ivrs" t-as="ivr" t-key="ivr.key">
-                        <div class="o_pbx_fop2_tile o_pbx_ivr_tile o_pbx_state_gray">
-                            <div class="o_pbx_fop2_num"><t t-esc="ivr.key"/></div>
-                            <div class="o_pbx_fop2_desc"><t t-esc="ivr.description"/></div>
+                        <div class="o_pbx_operator_panel_tile o_pbx_ivr_tile o_pbx_state_gray">
+                            <div class="o_pbx_operator_panel_num"><t t-esc="ivr.key"/></div>
+                            <div class="o_pbx_operator_panel_desc"><t t-esc="ivr.description"/></div>
                         </div>
                     </t>
 
@@ -61,14 +61,14 @@
                     </t>
                 </div>
 
-                <div class="o_pbx_fop2_sections">
-                    <div class="o_pbx_fop2_section">
+                <div class="o_pbx_operator_panel_sections">
+                    <div class="o_pbx_operator_panel_section">
                         <h6>Inkommande</h6>
                         <t t-foreach="state.incoming" t-as="call" t-key="call.uniqueid || call.channel">
-                            <div class="o_pbx_fop2_call" draggable="true" t-on-dragstart="(ev) => this.onDragStart(ev, call)">
-                                <span class="o_pbx_fop2_call_num"><t t-esc="call.number"/></span>
-                                <span t-if="call.name" class="o_pbx_fop2_call_name"><t t-esc="call.name"/></span>
-                                <span class="o_pbx_fop2_call_dur"><t t-esc="fmtDuration(call.started)"/></span>
+                            <div class="o_pbx_operator_panel_call" draggable="true" t-on-dragstart="(ev) => this.onDragStart(ev, call)">
+                                <span class="o_pbx_operator_panel_call_num"><t t-esc="call.number"/></span>
+                                <span t-if="call.name" class="o_pbx_operator_panel_call_name"><t t-esc="call.name"/></span>
+                                <span class="o_pbx_operator_panel_call_dur"><t t-esc="fmtDuration(call.started)"/></span>
                                 <button
                                     class="btn btn-sm btn-secondary"
                                     t-on-click="() => this.hangup(call.channel)"
@@ -78,13 +78,13 @@
                         <span t-if="state.incoming.length === 0" class="text-muted">Inga inkommande samtal</span>
                     </div>
 
-                    <div class="o_pbx_fop2_section" t-if="state.isReceptionist">
+                    <div class="o_pbx_operator_panel_section" t-if="state.isReceptionist">
                         <h6>Manuell hantering</h6>
                         <t t-foreach="state.manual" t-as="m" t-key="m.id">
-                            <div class="o_pbx_fop2_manual">
-                                <span class="o_pbx_fop2_call_num"><t t-esc="m.number"/></span>
-                                <span t-if="m.name" class="o_pbx_fop2_call_name"><t t-esc="m.name"/></span>
-                                <span class="o_pbx_fop2_call_name" t-esc="m.source"/>
+                            <div class="o_pbx_operator_panel_manual">
+                                <span class="o_pbx_operator_panel_call_num"><t t-esc="m.number"/></span>
+                                <span t-if="m.name" class="o_pbx_operator_panel_call_name"><t t-esc="m.name"/></span>
+                                <span class="o_pbx_operator_panel_call_name" t-esc="m.source"/>
                                 <button
                                     class="btn btn-sm btn-primary"
                                     t-on-click="() => this.handleManual(m)"

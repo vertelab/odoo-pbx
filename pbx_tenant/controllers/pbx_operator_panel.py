@@ -9,8 +9,8 @@ from odoo.http import request
 _logger = logging.getLogger(__name__)
 
 
-class PbxFop2(http.Controller):
-    """FOP2 operator panel — data + actions.
+class PbxOperatorPanel(http.Controller):
+    """Operator Panel operator panel — data + actions.
 
     Grid: extensions + queues + IVR as virtual extensions, scoped by role
     (receptionist sees everything, agent sees own queues).
@@ -38,8 +38,8 @@ class PbxFop2(http.Controller):
 
     # ── data ─────────────────────────────────────────────────────
 
-    @http.route("/pbx/fop2/grid", type="json", auth="user", methods=["POST"])
-    def fop2_grid(self, **kwargs):
+    @http.route("/pbx/operator_panel/grid", type="json", auth="user", methods=["POST"])
+    def operator_panel_grid(self, **kwargs):
         domain = self._pbx_domain()
         if not domain:
             return {"extensions": [], "queues": [], "ivrs": [], "is_receptionist": False}
@@ -107,9 +107,9 @@ class PbxFop2(http.Controller):
             "is_receptionist": is_receptionist,
         }
 
-    @http.route("/pbx/fop2/widgets", type="json", auth="user", methods=["POST"])
-    def fop2_widgets(self, **kwargs):
-        """Collect FOP2 widget declarations from all concrete pbx.plugin models."""
+    @http.route("/pbx/operator_panel/widgets", type="json", auth="user", methods=["POST"])
+    def operator_panel_widgets(self, **kwargs):
+        """Collect Operator Panel widget declarations from all concrete pbx.plugin models."""
         if not self._pbx_domain():
             return {"widgets": []}
         env = request.env
@@ -120,34 +120,34 @@ class PbxFop2(http.Controller):
             if isinstance(inherits, str):
                 inherits = [inherits]
             if "pbx.plugin" in inherits and model._name != "pbx.plugin":
-                widgets += model.get_fop2_widgets()
+                widgets += model.get_operator_panel_widgets()
         return {"widgets": widgets}
 
     # ── actions (Odoo → MQ → daemon → AMI) ───────────────────────
 
-    @http.route("/pbx/fop2/hangup", type="json", auth="user", methods=["POST"])
-    def fop2_hangup(self, channel=None, **kwargs):
+    @http.route("/pbx/operator_panel/hangup", type="json", auth="user", methods=["POST"])
+    def operator_panel_hangup(self, channel=None, **kwargs):
         if not channel:
             return {"status": "error", "error": "missing channel"}
         ok = request.env["pbx.mq.publisher"].action_hangup(channel)
         return {"status": "ok" if ok else "error"}
 
-    @http.route("/pbx/fop2/redirect", type="json", auth="user", methods=["POST"])
-    def fop2_redirect(self, channel=None, context=None, exten=None, priority=1, **kwargs):
+    @http.route("/pbx/operator_panel/redirect", type="json", auth="user", methods=["POST"])
+    def operator_panel_redirect(self, channel=None, context=None, exten=None, priority=1, **kwargs):
         if not channel or not context or not exten:
             return {"status": "error", "error": "missing channel/context/exten"}
         ok = request.env["pbx.mq.publisher"].action_redirect(channel, context, exten, priority)
         return {"status": "ok" if ok else "error"}
 
-    @http.route("/pbx/fop2/chanspy", type="json", auth="user", methods=["POST"])
-    def fop2_chanspy(self, extension=None, mode="q", **kwargs):
+    @http.route("/pbx/operator_panel/chanspy", type="json", auth="user", methods=["POST"])
+    def operator_panel_chanspy(self, extension=None, mode="q", **kwargs):
         if not extension:
             return {"status": "error", "error": "missing extension"}
         ok = request.env["pbx.mq.publisher"].action_chanspy(extension, mode)
         return {"status": "ok" if ok else "error"}
 
-    @http.route("/pbx/fop2/originate", type="json", auth="user", methods=["POST"])
-    def fop2_originate(self, target=None, **kwargs):
+    @http.route("/pbx/operator_panel/originate", type="json", auth="user", methods=["POST"])
+    def operator_panel_originate(self, target=None, **kwargs):
         """Click-to-call: ring the operator's device, then the target.
 
         target = extension number, queue (queue:<name>) or external number.
@@ -200,8 +200,8 @@ class PbxFop2(http.Controller):
             )
             return {"status": "ok" if ok else "error"}
 
-    @http.route("/pbx/fop2/queue_pause", type="json", auth="user", methods=["POST"])
-    def fop2_queue_pause(self, queue=None, paused=True, **kwargs):
+    @http.route("/pbx/operator_panel/queue_pause", type="json", auth="user", methods=["POST"])
+    def operator_panel_queue_pause(self, queue=None, paused=True, **kwargs):
         user = request.env.user
         ext = user.pbx_extension_id
         if not ext or not queue:
@@ -211,16 +211,16 @@ class PbxFop2(http.Controller):
         )
         return {"status": "ok" if ok else "error"}
 
-    @http.route("/pbx/fop2/mixmonitor", type="json", auth="user", methods=["POST"])
-    def fop2_mixmonitor(self, channel=None, file="recording", stop=True, **kwargs):
+    @http.route("/pbx/operator_panel/mixmonitor", type="json", auth="user", methods=["POST"])
+    def operator_panel_mixmonitor(self, channel=None, file="recording", stop=True, **kwargs):
         """Start/stop MixMonitor recording on a channel."""
         if not channel:
             return {"status": "error", "error": "missing channel"}
         ok = request.env["pbx.mq.publisher"].action_mixmonitor(channel, file, stop)
         return {"status": "ok" if ok else "error"}
 
-    @http.route("/pbx/fop2/deploy_config", type="json", auth="user", methods=["POST"])
-    def fop2_deploy_config(self, **kwargs):
+    @http.route("/pbx/operator_panel/deploy_config", type="json", auth="user", methods=["POST"])
+    def operator_panel_deploy_config(self, **kwargs):
         """Regenerate + deploy tenant config via MQ (Odoo-ägd)."""
         tenant = self._current_tenant()
         if not tenant:

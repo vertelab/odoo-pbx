@@ -1,6 +1,6 @@
 {
     "name": "PBX Tenant",
-    "version": "18.0.1.3.0",
+    "version": "18.0.1.4.0",
     "summary": "Customer PBX module with softphone, Operator Panel, and voicemail",
     "category": "Productivity/VOIP",
     "author": "Vertel AB",
@@ -11,7 +11,7 @@
         "security/ir.model.access.csv",
         "views/pbx_voicemail_views.xml",
         "views/res_users_views.xml",
-        "views/pbx_fop2_views.xml",
+        "views/pbx_operator_panel_views.xml",
     ],
     "demo": [
         "demo/demo.xml",

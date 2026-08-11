@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="pbx_ivr.PbxIvrPanel">
+        <div class="o_pbx_operator_panel_tile o_pbx_ivr_tile o_pbx_state_gray" t-if="props.ivr">
+            <div class="o_pbx_operator_panel_num"><t t-esc="props.ivr.key"/></div>
+            <div class="o_pbx_operator_panel_desc"><t t-esc="props.ivr.name"/></div>
+            <div class="o_pbx_operator_panel_badge" t-if="props.ivr.options">IVR · <t t-esc="props.ivr.options"/> val</div>
+        </div>
+    </t>
+</templates>

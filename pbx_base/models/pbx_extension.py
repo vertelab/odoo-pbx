@@ -22,11 +22,11 @@ class PbxExtension(models.Model):
             self.callerid_name = self.user_id.name
     description = fields.Char(
         string="Description",
-        help="Visas i FOP2-panelen, t.ex. 'Reception', 'Anna – Support'",
+        help="Visas i Operator Panel-panelen, t.ex. 'Reception', 'Anna – Support'",
     )
     is_receptionist = fields.Boolean(
         string="Receptionist",
-        help="Receptionist ser alla anknytningar + allt inkommande + manuell hantering i FOP2",
+        help="Receptionist ser alla anknytningar + allt inkommande + manuell hantering i Operator Panel",
     )
     ring_strategy = fields.Selection(
         [("sequential", "Sequential"), ("parallel", "Parallel")],

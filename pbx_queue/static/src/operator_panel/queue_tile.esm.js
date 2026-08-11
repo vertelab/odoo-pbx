@@ -18,4 +18,4 @@ PbxQueuePanel.props = {
     onAction: {type: Function, optional: true},
 };
 
-registry.category("fop2.tiles").add("PbxQueuePanel", PbxQueuePanel);
+registry.category("operator_panel.tiles").add("PbxQueuePanel", PbxQueuePanel);

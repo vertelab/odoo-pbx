@@ -82,5 +82,5 @@ class PbxAI(models.AbstractModel):
     def get_config_snippets(self, tenant):
         return {}
 
-    def get_fop2_widgets(self):
+    def get_operator_panel_widgets(self):
         return [{"name": "ai_transcript", "component": "PbxAiTranscript", "props": {}}]

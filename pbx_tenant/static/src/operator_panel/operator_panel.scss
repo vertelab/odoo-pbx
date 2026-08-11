@@ -1,28 +1,28 @@
-.o_pbx_fop2 {
+.o_pbx_operator_panel {
     padding: 16px;
     display: flex;
     flex-direction: column;
     gap: 16px;
 }
 
-.o_pbx_fop2_header {
+.o_pbx_operator_panel_header {
     display: flex;
     align-items: center;
     justify-content: space-between;
 }
 
-.o_pbx_fop2_title {
+.o_pbx_operator_panel_title {
     font-size: 1.2rem;
     font-weight: 600;
 }
 
-.o_pbx_fop2_grid {
+.o_pbx_operator_panel_grid {
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
 }
 
-.o_pbx_fop2_tile {
+.o_pbx_operator_panel_tile {
     width: 150px;
     min-height: 72px;
     border-radius: 8px;
@@ -36,41 +36,41 @@
     transition: transform 0.1s;
 }
 
-.o_pbx_fop2_tile:hover {
+.o_pbx_operator_panel_tile:hover {
     transform: translateY(-2px);
 }
 
-.o_pbx_fop2_tile.o_pbx_state_green {
+.o_pbx_operator_panel_tile.o_pbx_state_green {
     border-color: #28a745;
     background: #e9f7ec;
 }
 
-.o_pbx_fop2_tile.o_pbx_state_red {
+.o_pbx_operator_panel_tile.o_pbx_state_red {
     border-color: #dc3545;
     background: #fbe9eb;
 }
 
-.o_pbx_fop2_tile.o_pbx_state_yellow {
+.o_pbx_operator_panel_tile.o_pbx_state_yellow {
     border-color: #ffc107;
     background: #fff8e1;
 }
 
-.o_pbx_fop2_tile.o_pbx_state_gray {
+.o_pbx_operator_panel_tile.o_pbx_state_gray {
     border-color: #adb5bd;
     background: #f1f3f5;
 }
 
-.o_pbx_fop2_num {
+.o_pbx_operator_panel_num {
     font-weight: 700;
     font-size: 1.1rem;
 }
 
-.o_pbx_fop2_desc {
+.o_pbx_operator_panel_desc {
     font-size: 0.85rem;
     color: #495057;
 }
 
-.o_pbx_fop2_badge {
+.o_pbx_operator_panel_badge {
     align-self: flex-start;
     font-size: 0.7rem;
     background: #ffc107;
@@ -79,26 +79,26 @@
     padding: 1px 6px;
 }
 
-.o_pbx_fop2_badge.o_pbx_manual_badge {
+.o_pbx_operator_panel_badge.o_pbx_manual_badge {
     background: #dc3545;
     color: #fff;
 }
 
-.o_pbx_fop2_sections {
+.o_pbx_operator_panel_sections {
     display: flex;
     gap: 16px;
     flex-wrap: wrap;
 }
 
-.o_pbx_fop2_section {
+.o_pbx_operator_panel_section {
     flex: 1 1 380px;
     border: 1px solid #dee2e6;
     border-radius: 8px;
     padding: 12px;
 }
 
-.o_pbx_fop2_call,
-.o_pbx_fop2_manual {
+.o_pbx_operator_panel_call,
+.o_pbx_operator_panel_manual {
     display: flex;
     align-items: center;
     gap: 8px;
@@ -106,30 +106,30 @@
     border-bottom: 1px solid #f1f3f5;
 }
 
-.o_pbx_fop2_call_num {
+.o_pbx_operator_panel_call_num {
     font-weight: 600;
     font-variant-numeric: tabular-nums;
 }
 
-.o_pbx_fop2_call_name {
+.o_pbx_operator_panel_call_name {
     color: #6c757d;
     font-size: 0.85rem;
 }
 
-.o_pbx_fop2_call_dur {
+.o_pbx_operator_panel_call_dur {
     margin-left: auto;
     color: #6c757d;
     font-size: 0.8rem;
     font-variant-numeric: tabular-nums;
 }
 
-.o_pbx_fop2_members {
+.o_pbx_operator_panel_members {
     display: flex;
     gap: 4px;
     margin-top: 4px;
 }
 
-.o_pbx_fop2_member {
+.o_pbx_operator_panel_member {
     width: 20px;
     height: 20px;
     border-radius: 50%;
@@ -141,19 +141,19 @@
     color: #fff;
 }
 
-.o_pbx_fop2_member.o_pbx_state_green {
+.o_pbx_operator_panel_member.o_pbx_state_green {
     background: #28a745;
 }
 
-.o_pbx_fop2_member.o_pbx_state_red {
+.o_pbx_operator_panel_member.o_pbx_state_red {
     background: #dc3545;
 }
 
-.o_pbx_fop2_member.o_pbx_state_yellow {
+.o_pbx_operator_panel_member.o_pbx_state_yellow {
     background: #ffc107;
 }
 
-.o_pbx_fop2_member.o_pbx_state_gray {
+.o_pbx_operator_panel_member.o_pbx_state_gray {
     background: #adb5bd;
 }
 
@@ -161,7 +161,7 @@
     margin-top: 6px;
 }
 
-.o_pbx_fop2_avatar {
+.o_pbx_operator_panel_avatar {
     width: 34px;
     height: 34px;
     border-radius: 50%;

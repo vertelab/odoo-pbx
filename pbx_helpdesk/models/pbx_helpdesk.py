@@ -13,7 +13,7 @@ class PbxHelpdesk(models.AbstractModel):
     _inherit = ["pbx.plugin"]
     _description = "PBX Helpdesk Integration"
 
-    def get_fop2_widgets(self):
+    def get_operator_panel_widgets(self):
         return [{"name": "helpdesk_popup", "component": "PbxHelpdeskPopup", "props": {}}]
 
     def get_notification_handlers(self):

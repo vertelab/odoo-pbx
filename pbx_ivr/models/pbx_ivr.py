@@ -113,7 +113,7 @@ class PbxIvr(models.Model):
         m = int(round((hours_float - h) * 60))
         return f"{h:02d}:{m:02d}"
 
-    def get_fop2_widgets(self):
+    def get_operator_panel_widgets(self):
         widgets = []
         ivrs = self.search(
             [("company_id", "=", self.env.user.company_id.id), ("active", "=", True)]

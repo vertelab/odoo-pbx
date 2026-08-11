@@ -43,7 +43,7 @@ class PbxRecordingPolicy(models.Model):
         lines.append("same => n,Return()")
         return "\n".join(lines)
 
-    def get_fop2_widgets(self):
+    def get_operator_panel_widgets(self):
         return [{"name": "recording_control", "component": "PbxRecordingControl", "props": {}}]
 
     def get_recording_widget_config(self):

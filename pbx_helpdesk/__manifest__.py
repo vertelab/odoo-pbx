@@ -1,6 +1,6 @@
 {
     "name": "PBX Helpdesk",
-    "version": "18.0.1.0.0",
+    "version": "18.0.1.1.0",
     "summary": "Helpdesk integration for PBX — ticket popup, SLA monitoring",
     "category": "Productivity/VOIP",
     "author": "Vertel AB",

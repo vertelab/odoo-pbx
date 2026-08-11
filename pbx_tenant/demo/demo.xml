@@ -46,7 +46,7 @@
             <field name="priority">1</field>
         </record>
 
-        <!-- Admin får receptionist-anknytningen (FOP2 visar allt) + PBX-grupper -->
+        <!-- Admin får receptionist-anknytningen (Operator Panel visar allt) + PBX-grupper -->
         <record id="base.user_admin" model="res.users">
             <field name="pbx_extension_id" ref="demo_ext_reception"/>
             <field name="groups_id" eval="[(4, ref('pbx_base.group_pbx_operator')), (4, ref('pbx_base.group_pbx_admin'))]"/>

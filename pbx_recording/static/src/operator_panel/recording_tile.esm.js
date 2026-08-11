@@ -19,7 +19,7 @@ export class PbxRecordingControl extends Component {
             return;
         }
         this.state.recording = !this.state.recording;
-        this.props.onAction("/pbx/fop2/mixmonitor", {
+        this.props.onAction("/pbx/operator_panel/mixmonitor", {
             channel: call.channel,
             file: `recording-${call.uniqueid || Date.now()}`,
             stop: this.state.recording ? false : true,
@@ -32,4 +32,4 @@ PbxRecordingControl.props = {
     onAction: {type: Function, optional: true},
 };
 
-registry.category("fop2.tiles").add("PbxRecordingControl", PbxRecordingControl);
+registry.category("operator_panel.tiles").add("PbxRecordingControl", PbxRecordingControl);

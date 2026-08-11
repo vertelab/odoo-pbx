@@ -42,8 +42,8 @@ class PbxPlugin(models.AbstractModel):
         self.ensure_one()
         return []
 
-    def get_fop2_widgets(self):
-        """Return OWL components for the customer FOP2 panel.
+    def get_operator_panel_widgets(self):
+        """Return OWL components for the customer Operator Panel panel.
 
         Returns list of {name, component, props}
         """

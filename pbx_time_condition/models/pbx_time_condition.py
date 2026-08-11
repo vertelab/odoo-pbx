@@ -102,5 +102,5 @@ class PbxTimeCondition(models.Model):
         m = int(round((hours_float - h) * 60))
         return "%02d:%02d" % (h, m)
 
-    def get_fop2_widgets(self):
+    def get_operator_panel_widgets(self):
         return [{"name": "time_condition_panel", "component": "PbxTimeConditionPanel", "props": {}}]

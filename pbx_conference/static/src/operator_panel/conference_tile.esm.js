@@ -10,7 +10,7 @@ export class PbxConferencePanel extends Component {
     static template = "pbx_conference.PbxConferencePanel";
 
     join() {
-        this.props.onAction("/pbx/fop2/originate", {
+        this.props.onAction("/pbx/operator_panel/originate", {
             target: `conference:${this.props.conference.name}`,
         });
     }
@@ -21,4 +21,4 @@ PbxConferencePanel.props = {
     onAction: {type: Function, optional: true},
 };
 
-registry.category("fop2.tiles").add("PbxConferencePanel", PbxConferencePanel);
+registry.category("operator_panel.tiles").add("PbxConferencePanel", PbxConferencePanel);

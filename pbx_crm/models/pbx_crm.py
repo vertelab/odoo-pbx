@@ -13,7 +13,7 @@ class PbxCrm(models.AbstractModel):
     _inherit = ["pbx.plugin"]
     _description = "PBX CRM Integration"
 
-    def get_fop2_widgets(self):
+    def get_operator_panel_widgets(self):
         return [{"name": "crm_popup", "component": "PbxCrmPopup", "props": {}}]
 
     def get_notification_handlers(self):
