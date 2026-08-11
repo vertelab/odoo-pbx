@@ -79,6 +79,10 @@ class PbxFop2(http.Controller):
                     "type": "extension",
                     "description": e.description or e.callerid_name or e.user_id.name or e.public_number,
                     "is_receptionist": e.is_receptionist,
+                    "image": (
+                        "/web/image/res.users/%s/image_128" % e.user_id.id
+                        if e.user_id else ""
+                    ),
                 }
                 for e in extensions
             ],

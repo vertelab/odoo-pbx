@@ -5,6 +5,7 @@
              Instansen administrerar bara sin egen växel (company). -->
         <record id="demo_ext_reception" model="pbx.extension">
             <field name="public_number">10</field>
+            <field name="user_id" ref="base.user_admin"/>
             <field name="callerid_name">Reception</field>
             <field name="description">Reception</field>
             <field name="is_receptionist">True</field>
@@ -12,6 +13,7 @@
 
         <record id="demo_ext_anna" model="pbx.extension">
             <field name="public_number">11</field>
+            <field name="user_id" ref="base.user_demo"/>
             <field name="callerid_name">Anna</field>
             <field name="description">Anna – Support</field>
         </record>

@@ -9,7 +9,7 @@ class PbxAdminSettings(models.TransientModel):
     _inherit = "res.config.settings"
     _description = "PBX Admin Settings"
 
-    default_server_id = fields.Many2one(
+    server_id = fields.Many2one(
         "pbx.server",
         string="Default Asterisk Server",
         config_parameter="pbx_admin.default_server_id",

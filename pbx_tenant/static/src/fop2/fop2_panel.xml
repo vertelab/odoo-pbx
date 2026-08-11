@@ -23,6 +23,7 @@
                             t-on-dragover="(ev) => this.onDragOver(ev)"
                             t-on-drop="(ev) => this.onDropToAgent(ev, ext)"
                         >
+                            <img t-if="ext.image" t-att-src="ext.image" class="o_pbx_fop2_avatar" alt=""/>
                             <div class="o_pbx_fop2_num"><t t-esc="ext.key"/></div>
                             <div class="o_pbx_fop2_desc"><t t-esc="ext.description"/></div>
                         </div>
