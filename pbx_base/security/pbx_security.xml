@@ -16,6 +16,15 @@
         <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
     </record>
 
+    <!-- Central administration (Asterisk servers + tenant/domain leases).
+         Only assigned in the management system (Ledningssystem); customer
+         Odoo instances never see the Servers/Tenants menus. -->
+    <record id="group_pbx_central" model="res.groups">
+        <field name="name">PBX Central Admin</field>
+        <field name="category_id" ref="base.module_category_hidden"/>
+        <field name="implied_ids" eval="[(4, ref('group_pbx_admin'))]"/>
+    </record>
+
     <!-- Record Rules: Tenant isolation by company_id -->
     <record id="rule_pbx_tenant_company" model="ir.rule">
         <field name="name">PBX Tenant: company isolation</field>

@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    <record id="pbx_config_settings_action" model="ir.actions.act_window">
+        <field name="name">PBX Settings</field>
+        <field name="res_model">res.config.settings</field>
+        <field name="view_mode">form</field>
+        <field name="target">inline</field>
+    </record>
+
     <record id="res_config_settings_view_form_pbx" model="ir.ui.view">
         <field name="name">res.config.settings.view.form.pbx</field>
         <field name="model">res.config.settings</field>
@@ -7,6 +14,28 @@
         <field name="arch" type="xml">
             <xpath expr="//form" position="inside">
                 <app data-string="PBX" string="PBX" name="pbx">
+                    <block title="Grundinställningar">
+                        <setting string="Tenant">
+                            <div class="content-group">
+                                <div class="row mt16">
+                                    <label string="SIP Domain" for="pbx_tenant_domain" class="col-lg-3 o_light_label"/>
+                                    <field name="pbx_tenant_domain" class="col-lg-3"/>
+                                </div>
+                                <div class="row mt16">
+                                    <label string="Plan" for="pbx_tenant_plan" class="col-lg-3 o_light_label"/>
+                                    <field name="pbx_tenant_plan" class="col-lg-3"/>
+                                </div>
+                                <div class="row mt16">
+                                    <label string="Max Extensions" for="pbx_tenant_max_extensions" class="col-lg-3 o_light_label"/>
+                                    <field name="pbx_tenant_max_extensions" class="col-lg-3"/>
+                                </div>
+                                <div class="row mt16">
+                                    <label string="PBX Server" for="pbx_server_name" class="col-lg-3 o_light_label"/>
+                                    <field name="pbx_server_name" class="col-lg-3"/>
+                                </div>
+                            </div>
+                        </setting>
+                    </block>
                     <block title="RabbitMQ (actions + config-transport)">
                         <setting string="Message broker">
                             <div class="content-group">

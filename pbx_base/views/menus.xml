@@ -1,57 +1,73 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    <!-- Configuration — tenant-local PBX administration.
+         In a standard customer Odoo only Settings + the domain-local items
+         are visible. Servers/Tenants (central Asterisk + domain leases)
+         are guarded by group_pbx_central, assigned only in Ledningssystem. -->
     <menuitem
-        id="menu_pbx_root"
-        name="PBX"
-        sequence="90"
+        id="menu_pbx_config_root"
+        name="Configuration"
+        sequence="100"
         groups="pbx_base.group_pbx_admin,pbx_base.group_pbx_operator"
     />
 
+    <!-- Settings first — opens res.config.settings with the PBX app block -->
     <menuitem
-        id="menu_pbx_servers"
-        name="Servers"
-        parent="menu_pbx_root"
-        action="pbx_server_act_window"
+        id="menu_pbx_settings"
+        name="Settings"
+        parent="menu_pbx_config_root"
+        action="pbx_config_settings_action"
         sequence="10"
-    />
-
-    <menuitem
-        id="menu_pbx_tenants"
-        name="Tenants"
-        parent="menu_pbx_root"
-        action="pbx_tenant_act_window"
-        sequence="20"
     />
 
     <menuitem
         id="menu_pbx_extensions"
         name="Extensions"
-        parent="menu_pbx_root"
+        parent="menu_pbx_config_root"
         action="pbx_extension_act_window"
-        sequence="30"
+        sequence="20"
     />
 
     <menuitem
         id="menu_pbx_trunks"
         name="SIP Trunks"
-        parent="menu_pbx_root"
+        parent="menu_pbx_config_root"
         action="pbx_trunk_act_window"
-        sequence="40"
+        sequence="30"
     />
 
     <menuitem
         id="menu_pbx_inbound_routes"
         name="Inbound Routes"
-        parent="menu_pbx_root"
+        parent="menu_pbx_config_root"
         action="pbx_inbound_route_act_window"
-        sequence="35"
+        sequence="40"
     />
 
     <menuitem
         id="menu_pbx_outbound_routes"
         name="Outbound Routes"
-        parent="menu_pbx_root"
+        parent="menu_pbx_config_root"
         action="pbx_outbound_route_act_window"
-        sequence="45"
+        sequence="50"
+    />
+
+    <!-- ── Central administration (Ledningssystem only) ─────────────── -->
+    <menuitem
+        id="menu_pbx_servers"
+        name="Servers"
+        parent="menu_pbx_config_root"
+        action="pbx_server_act_window"
+        sequence="60"
+        groups="pbx_base.group_pbx_central"
+    />
+
+    <menuitem
+        id="menu_pbx_tenants"
+        name="Tenants"
+        parent="menu_pbx_config_root"
+        action="pbx_tenant_act_window"
+        sequence="70"
+        groups="pbx_base.group_pbx_central"
     />
 </odoo>
