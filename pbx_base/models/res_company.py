@@ -46,3 +46,13 @@ class ResCompany(models.Model):
         string="STUN Server",
         help="t.ex. stun.vertel.se:3478",
     )
+    config_dirty = fields.Boolean(
+        string="PBX Config Dirty",
+        default=False,
+        help="True när konfigurationsändringar väntar på att synkas till Asterisk.",
+    )
+
+    def _pbx_mark_dirty(self):
+        """Markera att konfigurationen behöver synkas till Asterisk."""
+        if not self.config_dirty:
+            self.config_dirty = True

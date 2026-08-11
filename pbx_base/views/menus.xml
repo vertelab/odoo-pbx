@@ -37,6 +37,34 @@
         sequence="10"
     />
 
+    <!-- Sync: skicka konfigurationen till Asterisk (via MQ → pbx_ami_daemon) -->
+    <record id="action_pbx_sync" model="ir.actions.server">
+        <field name="name">Sync to Asterisk</field>
+        <field name="model_id" ref="model_pbx_config_generator"/>
+        <field name="state">code</field>
+        <field name="code">
+result = env['pbx.config.generator'].sync_current_company()
+action = {
+    'type': 'ir.actions.client',
+    'tag': 'display_notification',
+    'params': {
+        'title': 'PBX Sync',
+        'message': result.get('message', ''),
+        'type': 'success' if result.get('ok') else 'danger',
+        'sticky': True,
+    },
+}
+        </field>
+    </record>
+    <menuitem
+        id="menu_pbx_sync"
+        name="Sync"
+        parent="menu_pbx_configuration"
+        action="action_pbx_sync"
+        sequence="5"
+        groups="pbx_base.group_pbx_admin"
+    />
+
     <menuitem
         id="menu_pbx_extensions"
         name="Extensions"

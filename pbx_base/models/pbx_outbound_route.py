@@ -8,7 +8,7 @@ from .pbx_destination_mixin import destination_models
 
 class PbxOutboundRoute(models.Model):
     _name = "pbx.outbound_route"
-    _inherit = ["mail.thread", "mail.activity.mixin"]
+    _inherit = ["mail.thread", "mail.activity.mixin", "pbx.config.dirty.mixin"]
     _description = "PBX Outbound Route"
     _order = "sequence, id"
 
@@ -35,11 +35,8 @@ class PbxOutboundRoute(models.Model):
         string="Time Restriction",
         default="none",
     )
-    time_condition_id = fields.Many2one(
-        "pbx.time_condition",
-        string="Time Condition",
-        help="Used when time_source = Time Condition",
-    )
+    # time_condition_id läggs till av pbx_time_condition (plugin) — modellen
+    # finns bara när den modulen är installerad.
     calendar_id = fields.Many2one(
         "resource.calendar",
         string="Working Hours",

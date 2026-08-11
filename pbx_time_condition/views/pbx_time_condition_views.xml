@@ -57,4 +57,16 @@
         action="pbx_time_condition_act_window"
         sequence="55"
     />
+
+    <!-- Outbound route: Time Condition-fältet (finns bara när pluginen är installerad) -->
+    <record model="ir.ui.view" id="outbound_route_form_time_condition">
+        <field name="model">pbx.outbound_route</field>
+        <field name="inherit_id" ref="pbx_base.pbx_outbound_route_form_view"/>
+        <field name="arch" type="xml">
+            <field name="time_source" position="after">
+                <field name="time_condition_id"
+                        invisible="time_source != 'time_condition'"/>
+            </field>
+        </field>
+    </record>
 </odoo>

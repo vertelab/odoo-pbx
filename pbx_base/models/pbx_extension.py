@@ -8,7 +8,7 @@ from .pbx_sub_extension import _generate_sip_secret
 
 class PbxExtension(models.Model):
     _name = "pbx.extension"
-    _inherit = ["pbx.destination.mixin", "mail.thread", "mail.activity.mixin"]
+    _inherit = ["pbx.destination.mixin", "mail.thread", "mail.activity.mixin", "pbx.config.dirty.mixin"]
     _description = "PBX Extension (public number)"
 
     public_number = fields.Char(required=True)
@@ -31,8 +31,8 @@ class PbxExtension(models.Model):
 
     @api.model_create_multi
     def create(self, vals_list):
-        """Generera delat SIP-lösenord, skapa implicit Odoo VOIP-enhet och
-        synka voip_oca-inställningarna på den kopplade användaren."""
+        """Generera delat SIP-lösenord, skapa implicit Odoo VOIP-enhet, synka
+        user-länken (pbx_extension_id) och voip_oca-inställningarna."""
         for vals in vals_list:
             vals.setdefault("password", _generate_sip_secret())
         extensions = super().create(vals_list)
@@ -46,15 +46,35 @@ class PbxExtension(models.Model):
                         "sequence": 1,
                     }
                 )
+            ext._sync_user_link()
             ext._sync_voip()
         return extensions
 
     def write(self, vals):
+        old_links = {}
+        if vals.get("user_id"):
+            for ext in self:
+                old_links[ext.id] = ext.user_id
         res = super().write(vals)
+        for ext in self:
+            if ext.id in old_links:
+                old = old_links[ext.id]
+                if old and old != ext.user_id and old.pbx_extension_id == ext:
+                    old.pbx_extension_id = False
+            ext._sync_user_link()
         if vals.get("user_id") or vals.get("password"):
             for ext in self:
                 ext._sync_voip()
         return res
+
+    def _sync_user_link(self):
+        """Säkerställ att user.pbx_extension_id pekar på denna extension."""
+        self.ensure_one()
+        user = self.user_id
+        if not user:
+            return
+        if user.pbx_extension_id != self:
+            user.pbx_extension_id = self.id
 
     def _sync_voip(self):
         """Synka voip_oca-inställningarna på den kopplade användaren.

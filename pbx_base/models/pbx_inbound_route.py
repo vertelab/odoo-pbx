@@ -8,7 +8,7 @@ from .pbx_destination_mixin import destination_models
 
 class PbxInboundRoute(models.Model):
     _name = "pbx.inbound_route"
-    _inherit = ["mail.thread", "mail.activity.mixin"]
+    _inherit = ["mail.thread", "mail.activity.mixin", "pbx.config.dirty.mixin"]
     _description = "PBX Inbound Route (DID/CID -> destination)"
     _order = "sequence, id"
 

@@ -29,8 +29,6 @@
                     </group>
                     <group string="Time restriction">
                         <field name="time_source"/>
-                        <field name="time_condition_id"
-                                invisible="time_source != 'time_condition'"/>
                         <field name="calendar_id"
                                 invisible="time_source != 'calendar'"/>
                     </group>

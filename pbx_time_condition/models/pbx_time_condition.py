@@ -5,7 +5,7 @@ from datetime import timedelta
 
 from odoo import fields, models
 
-from odoo.addons.pbx_base.models.pbx_destination_mixin import DESTINATION_MODELS
+from odoo.addons.pbx_base.models.pbx_destination_mixin import destination_models
 
 
 class PbxTimeCondition(models.Model):
@@ -30,12 +30,12 @@ class PbxTimeCondition(models.Model):
 
     # Polymorphic destinations (pbx.destination.mixin)
     destination_match_id = fields.Reference(
-        selection=DESTINATION_MODELS,
+        selection=destination_models,
         string="Match Destination",
         required=True,
     )
     destination_nomatch_id = fields.Reference(
-        selection=DESTINATION_MODELS,
+        selection=destination_models,
         string="No-Match Destination",
         required=True,
     )
@@ -104,3 +104,15 @@ class PbxTimeCondition(models.Model):
 
     def get_operator_panel_widgets(self):
         return [{"name": "time_condition_panel", "component": "PbxTimeConditionPanel", "props": {}}]
+
+
+class PbxOutboundRoute(models.Model):
+    """Tillägg på outbound-route när pbx_time_condition är installerat."""
+
+    _inherit = "pbx.outbound_route"
+
+    time_condition_id = fields.Many2one(
+        "pbx.time_condition",
+        string="Time Condition",
+        help="Used when time_source = Time Condition",
+    )

@@ -14,6 +14,7 @@ def _generate_sip_secret(length=16):
 
 class PbxSubExtension(models.Model):
     _name = "pbx.sub_extension"
+    _inherit = ["pbx.config.dirty.mixin"]
     _description = "PBX Sub Extension (individual device)"
 
     extension_id = fields.Many2one("pbx.extension", required=True, ondelete="cascade")

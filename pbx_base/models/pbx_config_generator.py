@@ -478,7 +478,11 @@ class PbxConfigGenerator(models.AbstractModel):
         Holidays (resource.calendar.leaves) always skip to miss_label;
         attendance/time-condition matches jump to match_label.
         """
-        if route.time_source == "time_condition" and route.time_condition_id:
+        if (
+            route.time_source == "time_condition"
+            and "time_condition_id" in route._fields
+            and route.time_condition_id
+        ):
             tc = route.time_condition_id
             lines = self._holiday_skip_lines(tc.holidays_calendar_id, miss_label)
             lines.append(
@@ -649,3 +653,37 @@ class PbxConfigGenerator(models.AbstractModel):
             return True
         _logger.warning("MQ not configured — config not deployed for %s", domain)
         return False
+
+    def get_sync_state(self):
+        """Current sync state for the user's company (used by the systray)."""
+        company = self.env.company
+        return {
+            "dirty": bool(company.config_dirty),
+            "domain": company.pbx_domain or "",
+        }
+
+    def sync_current_company(self):
+        """Deploy config for the current user's company to Asterisk.
+
+        Returns a dict with ok/message for the UI notification. Marks the
+        company clean on success.
+        """
+        company = self.env.company
+        domain = company.pbx_domain
+        if not domain:
+            return {
+                "ok": False,
+                "message": "Ingen SIP-domän satt för företaget (Settings → PBX).",
+            }
+        ok = self.write_config(domain, company)
+        if ok:
+            company.config_dirty = False
+            return {
+                "ok": True,
+                "message": "Konfiguration skickad till Asterisk för %s." % domain,
+            }
+        return {
+            "ok": False,
+            "message": "Konfigurationen kunde inte skickas (%s) — kontrollera RabbitMQ-inställningarna."
+            % domain,
+        }

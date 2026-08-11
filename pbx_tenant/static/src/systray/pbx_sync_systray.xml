@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="pbx_tenant.PbxSyncSystray">
+        <div class="o_pbx_sync_systray" t-att-title="state.dirty ? 'PBX: ändringar väntar på synk' : 'PBX: konfiguration i synk'">
+            <button
+                type="button"
+                class="btn btn-link o_pbx_sync_btn"
+                t-attf-class="o_pbx_sync_btn {{state.dirty ? 'o_pbx_sync_dirty' : ''}}"
+                t-on-click="_sync"
+                t-att-disabled="state.syncing"
+            >
+                <i t-attf-class="fa {{state.dirty ? 'fa-cloud-upload' : 'fa-cloud'}}"/>
+                <span t-if="state.dirty" class="o_pbx_sync_badge" title="Ändringar väntar"/>
+            </button>
+        </div>
+    </t>
+</templates>
