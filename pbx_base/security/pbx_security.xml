@@ -1,19 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <record id="group_pbx_admin" model="res.groups">
-        <field name="name">PBX Administrator</field>
-        <field name="category_id" ref="base.module_category_hidden"/>
-    </record>
-
+    <!-- Grundroll: får använda Operator Panel (FOP), ser varken
+         Applications eller Configuration. -->
     <record id="group_pbx_operator" model="res.groups">
         <field name="name">PBX Operator</field>
         <field name="category_id" ref="base.module_category_hidden"/>
+        <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
     </record>
 
-    <record id="group_pbx_user" model="res.groups">
-        <field name="name">PBX User</field>
+    <record id="group_pbx_office" model="res.groups">
+        <field name="name">PBX Office</field>
         <field name="category_id" ref="base.module_category_hidden"/>
-        <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        <field name="implied_ids" eval="[(4, ref('group_pbx_operator'))]"/>
+    </record>
+
+    <record id="group_pbx_admin" model="res.groups">
+        <field name="name">PBX Admin</field>
+        <field name="category_id" ref="base.module_category_hidden"/>
+        <field name="implied_ids" eval="[(4, ref('group_pbx_office'))]"/>
     </record>
 
     <!-- Central administration (Asterisk servers + tenant/domain leases).
@@ -59,7 +63,7 @@
     <record id="rule_pbx_extension_own" model="ir.rule">
         <field name="name">PBX Extension: own extension only</field>
         <field name="model_id" ref="model_pbx_extension"/>
-        <field name="groups" eval="[(4, ref('group_pbx_user'))]"/>
+        <field name="groups" eval="[(6, 0, [ref('group_pbx_operator')])]"/>
         <field name="domain_force">[('user_id', '=', user.id)]</field>
         <field name="perm_read" eval="True"/>
         <field name="perm_write" eval="True"/>
@@ -70,7 +74,7 @@
     <record id="rule_pbx_sub_extension_own" model="ir.rule">
         <field name="name">PBX Sub-Extension: via own extension</field>
         <field name="model_id" ref="model_pbx_sub_extension"/>
-        <field name="groups" eval="[(4, ref('group_pbx_user'))]"/>
+        <field name="groups" eval="[(6, 0, [ref('group_pbx_operator')])]"/>
         <field name="domain_force">[('extension_id.user_id', '=', user.id)]</field>
         <field name="perm_read" eval="True"/>
         <field name="perm_write" eval="True"/>

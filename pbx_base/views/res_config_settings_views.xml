@@ -15,12 +15,24 @@
             <xpath expr="//form" position="inside">
                 <app data-string="PBX" string="PBX" name="pbx">
                     <block title="Grundinställningar">
-                        <setting string="Tenant">
+                        <setting string="Min telefon-växel">
                             <div class="content-group">
                                 <div class="row mt16">
-                                    <label string="SIP Domain" for="pbx_tenant_domain" class="col-lg-3 o_light_label"/>
-                                    <field name="pbx_tenant_domain" class="col-lg-3"/>
+                                    <label string="SIP Domain" for="pbx_domain" class="col-lg-3 o_light_label"/>
+                                    <field name="pbx_domain" class="col-lg-3"/>
                                 </div>
+                                <div class="row mt16">
+                                    <label string="PBX Server" for="pbx_server_host" class="col-lg-3 o_light_label"/>
+                                    <field name="pbx_server_host" class="col-lg-3"/>
+                                </div>
+                                <div class="row mt16">
+                                    <label string="API Key" for="pbx_api_key" class="col-lg-3 o_light_label"/>
+                                    <field name="pbx_api_key" class="col-lg-3"/>
+                                </div>
+                            </div>
+                        </setting>
+                        <setting string="Leasavtal (från central förvaltning)">
+                            <div class="content-group">
                                 <div class="row mt16">
                                     <label string="Plan" for="pbx_tenant_plan" class="col-lg-3 o_light_label"/>
                                     <field name="pbx_tenant_plan" class="col-lg-3"/>
@@ -28,10 +40,6 @@
                                 <div class="row mt16">
                                     <label string="Max Extensions" for="pbx_tenant_max_extensions" class="col-lg-3 o_light_label"/>
                                     <field name="pbx_tenant_max_extensions" class="col-lg-3"/>
-                                </div>
-                                <div class="row mt16">
-                                    <label string="PBX Server" for="pbx_server_name" class="col-lg-3 o_light_label"/>
-                                    <field name="pbx_server_name" class="col-lg-3"/>
                                 </div>
                             </div>
                         </setting>

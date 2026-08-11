@@ -1,7 +1,7 @@
 {
     "name": "PBX Tenant",
     "version": "18.0.1.1.0",
-    "summary": "Customer PBX module with softphone, FOP2 panel, and voicemail",
+    "summary": "Customer PBX module with softphone, Operator Panel, and voicemail",
     "category": "Productivity/VOIP",
     "author": "Vertel AB",
     "website": "https://github.com/vertelab/odoo-pbx",

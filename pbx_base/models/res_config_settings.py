@@ -7,13 +7,25 @@ from odoo import fields, models, api
 class ResConfigSettings(models.TransientModel):
     _inherit = "res.config.settings"
 
-    # ── Grundinställningar (read-only tenant info, defined centrally) ──
-    pbx_tenant_domain = fields.Char(
+    # ── Grundinställningar (per-instans; sätts vid provisioning) ──
+    pbx_domain = fields.Char(
         string="SIP Domain",
-        readonly=True,
-        compute="_compute_pbx_tenant_info",
-        help="Tenant's SIP domain, defined by the central management system.",
+        config_parameter="pbx.domain",
+        help="Tenant's SIP domain on the Asterisk server, e.g. vertel.se",
     )
+    pbx_server_host = fields.Char(
+        string="PBX Server",
+        config_parameter="pbx.server.host",
+        help="Asterisk server address",
+    )
+    pbx_api_key = fields.Char(
+        string="API Key",
+        config_parameter="pbx.api.key",
+        groups="base.group_system",
+        help="API key used towards the Asterisk server / provisioning daemon",
+    )
+
+    # Read-only tenant info (defined centrally in the management system)
     pbx_tenant_plan = fields.Selection(
         [("standard", "Standard"), ("premium", "Premium"), ("enterprise", "Enterprise")],
         string="Plan",
@@ -22,11 +34,6 @@ class ResConfigSettings(models.TransientModel):
     )
     pbx_tenant_max_extensions = fields.Integer(
         string="Max Extensions",
-        readonly=True,
-        compute="_compute_pbx_tenant_info",
-    )
-    pbx_server_name = fields.Char(
-        string="PBX Server",
         readonly=True,
         compute="_compute_pbx_tenant_info",
     )
@@ -42,10 +49,8 @@ class ResConfigSettings(models.TransientModel):
     def _compute_pbx_tenant_info(self):
         for rec in self:
             tenant = rec._get_pbx_tenant()
-            rec.pbx_tenant_domain = tenant.domain
             rec.pbx_tenant_plan = tenant.plan
             rec.pbx_tenant_max_extensions = tenant.max_extensions
-            rec.pbx_server_name = tenant.server_id.name
 
     # ── RabbitMQ + webhook ──
     pbx_mq_host = fields.Char(

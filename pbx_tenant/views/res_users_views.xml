@@ -11,20 +11,20 @@
         </field>
     </record>
 
-    <!-- Self-service: PBX Settings tab on user profile -->
+    <!-- Self-service: Follow-me settings on user profile -->
     <record model="ir.ui.view" id="res_users_form_pbx_settings">
         <field name="model">res.users</field>
         <field name="inherit_id" ref="base.view_users_form"/>
         <field name="arch" type="xml">
             <xpath expr="//page[@name='access_rights']" position="after">
-                <page string="PBX Settings" name="pbx_settings"
+                <page string="Follow-me" name="pbx_settings"
                       invisible="[('pbx_extension_id', '=', False)]">
-                    <group>
+                    <group string="Ringstrategi">
                         <field name="pbx_extension_id" invisible="1"/>
                         <field name="pbx_ring_strategy"/>
                         <field name="pbx_skip_if_busy"/>
                     </group>
-                    <group string="Devices (Sub-Extensions)">
+                    <group string="Enheter (Sub-Extensions)">
                         <field name="pbx_sub_extension_ids" mode="list">
                             <list editable="bottom">
                                 <field name="type" readonly="1"/>

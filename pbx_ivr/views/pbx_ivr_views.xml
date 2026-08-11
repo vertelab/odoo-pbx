@@ -55,7 +55,7 @@
     <menuitem
         id="menu_pbx_ivr"
         name="IVR Menus"
-        parent="pbx_base.menu_pbx_root"
+        parent="pbx_base.menu_pbx_applications"
         action="pbx_ivr_act_window"
         sequence="60"
     />

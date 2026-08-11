@@ -1,21 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <!-- Configuration — tenant-local PBX administration.
-         In a standard customer Odoo only Settings + the domain-local items
-         are visible. Servers/Tenants (central Asterisk + domain leases)
-         are guarded by group_pbx_central, assigned only in Ledningssystem. -->
+    <!-- PBX — main menu. Visible to PBX Operator, PBX Office and PBX Admin.
+         FOP (operator panel) is added by pbx_tenant under this root.
+         Applications (queues/IVR) is filled by pbx_queue/pbx_ivr.
+         Configuration is PBX Admin only (+ Servers/Tenants = central). -->
     <menuitem
-        id="menu_pbx_config_root"
-        name="Configuration"
-        sequence="100"
-        groups="pbx_base.group_pbx_admin,pbx_base.group_pbx_operator"
+        id="menu_pbx_root"
+        name="PBX"
+        sequence="90"
+        groups="pbx_base.group_pbx_operator,pbx_base.group_pbx_office,pbx_base.group_pbx_admin"
     />
 
-    <!-- Settings first — opens res.config.settings with the PBX app block -->
+    <!-- Applications: queues, IVR etc. (office + admin) -->
+    <menuitem
+        id="menu_pbx_applications"
+        name="Applications"
+        parent="menu_pbx_root"
+        sequence="20"
+        groups="pbx_base.group_pbx_office,pbx_base.group_pbx_admin"
+    />
+
+    <!-- Configuration: settings + domain-local entities (admin only) -->
+    <menuitem
+        id="menu_pbx_configuration"
+        name="Configuration"
+        parent="menu_pbx_root"
+        sequence="30"
+        groups="pbx_base.group_pbx_admin"
+    />
+
     <menuitem
         id="menu_pbx_settings"
         name="Settings"
-        parent="menu_pbx_config_root"
+        parent="menu_pbx_configuration"
         action="pbx_config_settings_action"
         sequence="10"
     />
@@ -23,7 +40,7 @@
     <menuitem
         id="menu_pbx_extensions"
         name="Extensions"
-        parent="menu_pbx_config_root"
+        parent="menu_pbx_configuration"
         action="pbx_extension_act_window"
         sequence="20"
     />
@@ -31,7 +48,7 @@
     <menuitem
         id="menu_pbx_trunks"
         name="SIP Trunks"
-        parent="menu_pbx_config_root"
+        parent="menu_pbx_configuration"
         action="pbx_trunk_act_window"
         sequence="30"
     />
@@ -39,7 +56,7 @@
     <menuitem
         id="menu_pbx_inbound_routes"
         name="Inbound Routes"
-        parent="menu_pbx_config_root"
+        parent="menu_pbx_configuration"
         action="pbx_inbound_route_act_window"
         sequence="40"
     />
@@ -47,7 +64,7 @@
     <menuitem
         id="menu_pbx_outbound_routes"
         name="Outbound Routes"
-        parent="menu_pbx_config_root"
+        parent="menu_pbx_configuration"
         action="pbx_outbound_route_act_window"
         sequence="50"
     />
@@ -56,7 +73,7 @@
     <menuitem
         id="menu_pbx_servers"
         name="Servers"
-        parent="menu_pbx_config_root"
+        parent="menu_pbx_configuration"
         action="pbx_server_act_window"
         sequence="60"
         groups="pbx_base.group_pbx_central"
@@ -65,7 +82,7 @@
     <menuitem
         id="menu_pbx_tenants"
         name="Tenants"
-        parent="menu_pbx_config_root"
+        parent="menu_pbx_configuration"
         action="pbx_tenant_act_window"
         sequence="70"
         groups="pbx_base.group_pbx_central"
