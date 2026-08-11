@@ -102,8 +102,10 @@ same => n,Hangup()
 EXT_CONTEXT_TEMPLATE = """\
 [{domain}-ext-{public_number}]
 exten => s,1,NoOp(Ring group for {public_number})
-same => n,Dial({dial_string},30)
-same => n,Voicemail({public_number}@{domain},u)
+{busy_gates}{dial_lines}same => n,Voicemail({public_number}@{domain},u)
+same => n,Hangup()
+same => n(done),Hangup()
+same => n(busy),Voicemail({public_number}@{domain},b)
 same => n,Hangup()
 """
 
@@ -202,20 +204,44 @@ class PbxConfigGenerator(models.AbstractModel):
                 "exten => %s,1,Goto(%s-ext-%s,s,1)"
                 % (ext.public_number, domain, ext.public_number)
             )
+
+            # Build busy gates (DEVICE_STATE check per active sub)
+            busy_gates = ""
+            if ext.skip_if_busy:
+                for sub in active_subs:
+                    busy_gates += (
+                        'same => n,GotoIf($["${{DEVICE_STATE(PJSIP/{domain}-{number})}}"'
+                        ' = "INUSE"]?busy)\n'
+                    ).format(domain=domain, number=sub.number)
+
+            # Build dial lines
+            dial_lines = ""
             if ext.ring_strategy == "parallel":
-                dial_string = "&".join(
-                    "SIP/%s-%s" % (domain, sub.number) for sub in active_subs
-                )
-            else:
-                dial_string = "&".join(
-                    "SIP/%s-%s" % (domain, sub.number)
+                dial_peers = "&".join(
+                    "PJSIP/%s-%s" % (domain, sub.number)
                     for sub in active_subs.sorted("priority")
                 )
+                max_timeout = max(sub.ring_timeout or 30 for sub in active_subs)
+                dial_lines = "same => n,Dial(%s,%d)\n" % (dial_peers, max_timeout)
+            else:
+                sorted_subs = active_subs.sorted("priority")
+                for i, sub in enumerate(sorted_subs):
+                    to = sub.ring_timeout or 30
+                    dial_lines += (
+                        "same => n,Dial(PJSIP/{domain}-{number},{timeout})\n"
+                    ).format(domain=domain, number=sub.number, timeout=to)
+                    if i + 1 < len(sorted_subs):
+                        dial_lines += (
+                            'same => n,GotoIf($["${{DIALSTATUS}}"'
+                            ' != "NOANSWER"]?done)\n'
+                        )
+
             ext_contexts.append(
                 EXT_CONTEXT_TEMPLATE.format(
                     domain=domain,
                     public_number=ext.public_number,
-                    dial_string=dial_string,
+                    busy_gates=busy_gates,
+                    dial_lines=dial_lines,
                 )
             )
             vm_sub = ext.sub_extension_ids.filtered(

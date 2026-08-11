@@ -13,6 +13,7 @@
                         <field name="description"/>
                         <field name="is_receptionist"/>
                         <field name="ring_strategy"/>
+                        <field name="skip_if_busy"/>
                         <field name="active"/>
                     </group>
                     <group string="Sub-Extensions">
@@ -22,6 +23,7 @@
                                 <field name="label"/>
                                 <field name="type"/>
                                 <field name="priority"/>
+                                <field name="ring_timeout"/>
                                 <field name="transport"/>
                                 <field name="active"/>
                             </list>
@@ -43,6 +45,7 @@
                 <field name="description"/>
                 <field name="is_receptionist"/>
                 <field name="ring_strategy"/>
+                <field name="skip_if_busy"/>
                 <field name="active"/>
             </list>
         </field>

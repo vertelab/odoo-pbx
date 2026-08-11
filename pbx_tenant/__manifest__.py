@@ -1,6 +1,6 @@
 {
     "name": "PBX Tenant",
-    "version": "18.0.1.0.0",
+    "version": "18.0.1.1.0",
     "summary": "Customer PBX module with softphone, FOP2 panel, and voicemail",
     "category": "Productivity/VOIP",
     "author": "Vertel AB",

@@ -32,13 +32,22 @@ class PbxSubExtension(models.Model):
         required=True,
     )
     priority = fields.Integer(default=1, help="Ring priority (1 = first, 99 = last)")
+    ring_timeout = fields.Integer(
+        default=30,
+        help="How long (seconds) to ring this device before giving up. "
+             "In sequential mode each device gets its own timeout; "
+             "in parallel mode the longest timeout among active devices is used.",
+    )
     transport = fields.Selection(
         [("wss", "WebSocket Secure"), ("udp", "UDP"), ("tcp", "TCP")],
         default="wss",
     )
     username = fields.Char(default=lambda self: _generate_sip_secret(8))
     secret = fields.Char(default=lambda self: _generate_sip_secret())
-    active = fields.Boolean(default=True)
+    active = fields.Boolean(
+        default=True,
+        help="When unchecked, this device is excluded from the generated dialplan.",
+    )
 
     # Voicemail fields
     greeting = fields.Many2one("ir.attachment", string="Greeting")
