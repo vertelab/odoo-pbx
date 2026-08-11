@@ -67,12 +67,4 @@
         <field name="res_model">pbx.outbound_route</field>
         <field name="view_mode">list,form</field>
     </record>
-
-    <menuitem
-        id="menu_pbx_outbound_routes"
-        name="Outbound Routes"
-        parent="pbx_base.menu_pbx_root"
-        action="pbx_outbound_route_act_window"
-        sequence="45"
-    />
 </odoo>

@@ -53,50 +53,6 @@
             <field name="priority">1</field>
         </record>
 
-        <!-- Köer: Reception (manuell) + Support (timeout → manuell) -->
-        <record id="demo_queue_reception" model="pbx.queue">
-            <field name="tenant_id" ref="demo_tenant"/>
-            <field name="name">Reception</field>
-            <field name="extension">31</field>
-            <field name="is_manual">True</field>
-        </record>
-
-        <record id="demo_queue_support" model="pbx.queue">
-            <field name="tenant_id" ref="demo_tenant"/>
-            <field name="name">Support</field>
-            <field name="extension">20</field>
-            <field name="timeout_seconds">45</field>
-            <field name="timeout_action">route_to_manual_queue</field>
-            <field name="manual_target_queue_id" ref="demo_queue_reception"/>
-        </record>
-
-        <record id="demo_queue_member_anna" model="pbx.queue.member">
-            <field name="queue_id" ref="demo_queue_support"/>
-            <field name="extension_id" ref="demo_ext_anna"/>
-            <field name="penalty">0</field>
-        </record>
-
-        <!-- IVR: Huvudmeny med val 1 → Reception (manuell), 2 → Support -->
-        <record id="demo_ivr" model="pbx.ivr">
-            <field name="tenant_id" ref="demo_tenant"/>
-            <field name="name">Huvudmeny</field>
-            <field name="extension">30</field>
-        </record>
-        <record id="demo_ivr_opt_reception" model="pbx.ivr.option">
-            <field name="ivr_id" ref="demo_ivr"/>
-            <field name="digit">1</field>
-            <field name="label">Tala med reception</field>
-            <field name="destination_id" ref="demo_queue_reception"/>
-            <field name="sequence">10</field>
-        </record>
-        <record id="demo_ivr_opt_support" model="pbx.ivr.option">
-            <field name="ivr_id" ref="demo_ivr"/>
-            <field name="digit">2</field>
-            <field name="label">Support</field>
-            <field name="destination_id" ref="demo_queue_support"/>
-            <field name="sequence">20</field>
-        </record>
-
         <!-- Admin får receptionist-anknytningen (FOP2 visar allt) + PBX-grupper -->
         <record id="base.user_admin" model="res.users">
             <field name="pbx_extension_id" ref="demo_ext_reception"/>

@@ -45,12 +45,4 @@
         <field name="res_model">pbx.inbound_route</field>
         <field name="view_mode">list,form</field>
     </record>
-
-    <menuitem
-        id="menu_pbx_inbound_routes"
-        name="Inbound Routes"
-        parent="pbx_base.menu_pbx_root"
-        action="pbx_inbound_route_act_window"
-        sequence="35"
-    />
 </odoo>

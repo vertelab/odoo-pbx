@@ -38,4 +38,20 @@
         action="pbx_trunk_act_window"
         sequence="40"
     />
+
+    <menuitem
+        id="menu_pbx_inbound_routes"
+        name="Inbound Routes"
+        parent="menu_pbx_root"
+        action="pbx_inbound_route_act_window"
+        sequence="35"
+    />
+
+    <menuitem
+        id="menu_pbx_outbound_routes"
+        name="Outbound Routes"
+        parent="menu_pbx_root"
+        action="pbx_outbound_route_act_window"
+        sequence="45"
+    />
 </odoo>
