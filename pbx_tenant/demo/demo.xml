@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
+        <!-- Företagets SIP-domän (multicompany: domänen ligger på res.company) -->
+        <record id="base.main_company" model="res.company">
+            <field name="pbx_domain">vertel.test</field>
+            <field name="pbx_server_host">localhost</field>
+        </record>
+
         <!-- Anknytningar med beskrivning (Operator Panel-grid).
              Instansen administrerar bara sin egen växel (company). -->
         <record id="demo_ext_reception" model="pbx.extension">

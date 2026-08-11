@@ -13,3 +13,4 @@ from . import res_config_settings
 from . import voip_pbx_patch
 from . import voip_call_patch
 from . import res_users_patch
+from . import res_company

@@ -52,7 +52,7 @@ class PbxIvr(models.Model):
 
     def get_dialplan_target(self):
         self.ensure_one()
-        domain = self.env["ir.config_parameter"].get_param("pbx.domain", "")
+        domain = self.company_id.pbx_domain or ""
         return ("%s-ivr-%s" % (domain, self._slug(self.name)), "s", "1")
 
     @staticmethod
@@ -176,7 +176,7 @@ class PbxIvrOption(models.Model):
         if not self.destination_id:
             return ["Hangup()"]
         record = self._get_destination_record()
-        domain = self.env["ir.config_parameter"].get_param("pbx.domain", "")
+        domain = self.company_id.pbx_domain or ""
         if record._name == "pbx.queue":
             qname = "%s-%s" % (domain, self.ivr_id._slug(record.name))
             lines = []

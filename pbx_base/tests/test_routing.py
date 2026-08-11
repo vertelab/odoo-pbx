@@ -14,7 +14,7 @@ class TestPbxRouting(TransactionCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        cls.env["ir.config_parameter"].set_param("pbx.domain", "test.se")
+        cls.env.company.pbx_domain = "test.se"
         cls.ext10 = cls.env["pbx.extension"].create(
             {
                 "company_id": cls.env.company.id,

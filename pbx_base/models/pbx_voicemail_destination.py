@@ -20,7 +20,7 @@ class PbxVoicemailDestination(models.Model):
 
     def get_dialplan_target(self):
         self.ensure_one()
-        domain = self.env["ir.config_parameter"].get_param("pbx.domain", "")
+        domain = self.company_id.pbx_domain or ""
         return ("%s-vm-%s" % (domain, self.extension_id.public_number), "s", "1")
 
     def get_internal_number(self):

@@ -7,22 +7,25 @@ from odoo import fields, models, api
 class ResConfigSettings(models.TransientModel):
     _inherit = "res.config.settings"
 
-    # ── Grundinställningar (per-instans; sätts vid provisioning) ──
+    # ── Grundinställningar (per företag — multicompany) ──
     pbx_domain = fields.Char(
         string="SIP Domain",
-        config_parameter="pbx.domain",
-        help="Tenant's SIP domain on the Asterisk server, e.g. vertel.se",
+        related="company_id.pbx_domain",
+        readonly=False,
+        help="Företagets SIP-domän på Asterisk-servern (per företag).",
     )
     pbx_server_host = fields.Char(
         string="PBX Server",
-        config_parameter="pbx.server.host",
-        help="Asterisk server address",
+        related="company_id.pbx_server_host",
+        readonly=False,
+        help="Asterisk-serveradress (per företag).",
     )
     pbx_api_key = fields.Char(
         string="API Key",
-        config_parameter="pbx.api.key",
+        related="company_id.pbx_api_key",
+        readonly=False,
         groups="base.group_system",
-        help="API key used towards the Asterisk server / provisioning daemon",
+        help="API-nyckel mot Asterisk-servern / provisioning-daemon (per företag).",
     )
 
     # Read-only tenant info (defined centrally in the management system)

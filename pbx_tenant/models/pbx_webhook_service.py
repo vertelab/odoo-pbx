@@ -21,7 +21,9 @@ class PbxWebhookService(models.AbstractModel):
     def handle_event(self, tenant_domain, topic, event):
         # Instansen administrerar bara sin egen domän (settings) — men vi
         # accepterar webhook-event för den domänen som anropas.
-        if tenant_domain != self.env["ir.config_parameter"].get_param("pbx.domain", ""):
+        if not self.env["res.company"].search_count(
+            [("pbx_domain", "=", tenant_domain)]
+        ):
             _logger.warning("Webhook event for unknown tenant domain: %s", tenant_domain)
             return
 

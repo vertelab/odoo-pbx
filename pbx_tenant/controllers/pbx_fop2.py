@@ -26,8 +26,8 @@ class PbxFop2(http.Controller):
         return env[model_name] if model_name in env else None
 
     def _pbx_domain(self):
-        """Instansens egen SIP-domän (settings)."""
-        return request.env["ir.config_parameter"].get_param("pbx.domain", "")
+        """Användarens företags SIP-domän (multicompany)."""
+        return request.env.user.company_id.pbx_domain or ""
 
     def _pbx_company(self):
         return request.env.user.company_id.id

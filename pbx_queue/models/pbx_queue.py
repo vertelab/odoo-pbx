@@ -89,7 +89,7 @@ class PbxQueue(models.Model):
 
     def get_dialplan_target(self):
         self.ensure_one()
-        domain = self.env["ir.config_parameter"].get_param("pbx.domain", "")
+        domain = self.company_id.pbx_domain or ""
         return ("%s-queue-%s" % (domain, self._slug(self.name)), "s", "1")
 
     @staticmethod
