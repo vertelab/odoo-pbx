@@ -19,6 +19,12 @@ class PbxFop2(http.Controller):
 
     # ── helpers ──────────────────────────────────────────────────
 
+    def _env_model(self, model_name):
+        """Return an empty recordset for model_name, or None if the model's
+        module (pbx_queue/pbx_ivr) is not installed on this instance."""
+        env = request.env
+        return env[model_name] if model_name in env else None
+
     def _current_tenant(self):
         user = request.env.user
         ext = user.pbx_extension_id
@@ -46,21 +52,25 @@ class PbxFop2(http.Controller):
         extensions = request.env["pbx.extension"].search(
             [("tenant_id", "=", tenant.id), ("active", "=", True)]
         )
-        queues = request.env["pbx.queue"].search(
+        queues_model = self._env_model("pbx.queue")
+        queues = queues_model.search(
             [("tenant_id", "=", tenant.id), ("active", "=", True)]
-        )
-        ivrs = request.env["pbx.ivr"].search(
+        ) if queues_model else []
+        ivrs_model = self._env_model("pbx.ivr")
+        ivrs = ivrs_model.search(
             [("tenant_id", "=", tenant.id), ("active", "=", True)]
-        )
+        ) if ivrs_model else []
 
         if not is_receptionist and user_ext:
             # Agent: own extension + queues the user is a member of
-            member_queues = request.env["pbx.queue.member"].search(
-                [("extension_id", "=", user_ext.id)]
-            ).queue_id
-            queues = queues & member_queues
+            member_model = self._env_model("pbx.queue.member")
+            if member_model is not None:
+                member_queues = member_model.search(
+                    [("extension_id", "=", user_ext.id)]
+                ).queue_id
+                queues = queues & member_queues
             extensions = extensions.filtered(lambda e: e.id == user_ext.id)
-            ivrs = request.env["pbx.ivr"].search([("id", "=", False)])
+            ivrs = ivrs_model.search([("id", "=", False)]) if ivrs_model else []
 
         return {
             "domain": tenant.domain,
@@ -150,8 +160,11 @@ class PbxFop2(http.Controller):
         domain = tenant.domain
         context = f"{domain}-internal"
         if target.startswith("queue:"):
+            queue_model = self._env_model("pbx.queue")
+            if queue_model is None:
+                return {"status": "error", "error": "pbx_queue module not installed"}
             queue_name = target.split(":", 1)[1]
-            q = request.env["pbx.queue"].search(
+            q = queue_model.search(
                 [("tenant_id", "=", tenant.id), ("name", "=", queue_name)], limit=1
             )
             if not q:
