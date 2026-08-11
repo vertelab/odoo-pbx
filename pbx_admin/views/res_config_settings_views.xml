@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="res_config_settings_view_form_pbx_admin" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.pbx.admin</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="pbx_base.res_config_settings_view_form_pbx"/>
+        <field name="arch" type="xml">
+            <xpath expr="//app[@name='pbx']" position="inside">
+                <block title="Central förvaltning (MSP)">
+                    <setting string="Standard Asterisk Server">
+                        <div class="content-group">
+                            <div class="row mt16">
+                                <label string="Server" for="server_id" class="col-lg-3 o_light_label"/>
+                                <field name="server_id" class="col-lg-3"/>
+                            </div>
+                        </div>
+                    </setting>
+                    <setting string="RabbitMQ (central transport)">
+                        <div class="content-group">
+                            <div class="row mt16">
+                                <label string="Host" for="rabbitmq_host" class="col-lg-3 o_light_label"/>
+                                <field name="rabbitmq_host" class="col-lg-3"/>
+                            </div>
+                            <div class="row mt16">
+                                <label string="Port" for="rabbitmq_port" class="col-lg-3 o_light_label"/>
+                                <field name="rabbitmq_port" class="col-lg-3"/>
+                            </div>
+                            <div class="row mt16">
+                                <label string="User" for="rabbitmq_user" class="col-lg-3 o_light_label"/>
+                                <field name="rabbitmq_user" class="col-lg-3"/>
+                            </div>
+                            <div class="row mt16">
+                                <label string="Secret" for="rabbitmq_secret" class="col-lg-3 o_light_label"/>
+                                <field name="rabbitmq_secret" class="col-lg-3"/>
+                            </div>
+                        </div>
+                    </setting>
+                    <setting string="Billing API">
+                        <div class="content-group">
+                            <div class="row mt16">
+                                <label string="Enabled" for="billing_api_enabled" class="col-lg-3 o_light_label"/>
+                                <field name="billing_api_enabled" class="col-lg-3"/>
+                            </div>
+                            <div class="row mt16">
+                                <label string="Token" for="billing_api_token" class="col-lg-3 o_light_label"/>
+                                <field name="billing_api_token" class="col-lg-3"/>
+                            </div>
+                        </div>
+                    </setting>
+                    <setting string="Zabbix (serverövervakning)">
+                        <div class="content-group">
+                            <div class="row mt16">
+                                <label string="URL" for="zabbix_url" class="col-lg-3 o_light_label"/>
+                                <field name="zabbix_url" class="col-lg-3"/>
+                            </div>
+                            <div class="row mt16">
+                                <label string="Token" for="zabbix_token" class="col-lg-3 o_light_label"/>
+                                <field name="zabbix_token" class="col-lg-3"/>
+                            </div>
+                        </div>
+                    </setting>
+                </block>
+            </xpath>
+        </field>
+    </record>
+</odoo>

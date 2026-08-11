@@ -40,9 +40,9 @@
     <menuitem
         id="menu_pbx_extensions"
         name="Extensions"
-        parent="menu_pbx_configuration"
+        parent="menu_pbx_applications"
         action="pbx_extension_act_window"
-        sequence="20"
+        sequence="10"
     />
 
     <menuitem

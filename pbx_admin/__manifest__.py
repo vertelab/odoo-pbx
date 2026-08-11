@@ -12,7 +12,7 @@
         "security/pbx_admin_security.xml",
         "views/pbx_server_views.xml",
         "views/pbx_tenant_views.xml",
-        "views/pbx_admin_settings_views.xml",
+        "views/res_config_settings_views.xml",
         "views/pbx_tenant_admin_views.xml",
         "views/menus.xml",
     ],
