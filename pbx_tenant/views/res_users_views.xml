@@ -17,16 +17,13 @@
         <field name="inherit_id" ref="base.view_users_form"/>
         <field name="arch" type="xml">
             <xpath expr="//page[@name='voip']" position="inside">
-                <group string="Follow-me" name="follow_me"
-                      invisible="[('pbx_extension_id', '=', False)]"
-                      colspan="2">
+                <group string="Follow-me" name="follow_me" colspan="2">
+                    <div class="text-muted" invisible="pbx_extension_id">Ingen PBX-anknytning kopplad till användaren.</div>
                     <field name="pbx_extension_id" invisible="1"/>
                     <field name="pbx_ring_strategy"/>
                     <field name="pbx_skip_if_busy"/>
                 </group>
-                <group string="Enheter (Sub-Extensions)" name="follow_me_devices"
-                      invisible="[('pbx_extension_id', '=', False)]"
-                      colspan="2">
+                <group string="Enheter (Sub-Extensions)" name="follow_me_devices" colspan="2">
                     <field name="pbx_sub_extension_ids" mode="list">
                         <list editable="bottom">
                             <field name="type" readonly="1"/>
@@ -49,16 +46,13 @@
         <field name="inherit_id" ref="base.view_users_form_simple_modif"/>
         <field name="arch" type="xml">
             <xpath expr="//page[@name='voip']" position="inside">
-                <group string="Follow-me" name="follow_me"
-                      invisible="[('pbx_extension_id', '=', False)]"
-                      colspan="2">
+                <group string="Follow-me" name="follow_me" colspan="2">
+                    <div class="text-muted" invisible="pbx_extension_id">Ingen PBX-anknytning kopplad till användaren.</div>
                     <field name="pbx_extension_id" invisible="1"/>
                     <field name="pbx_ring_strategy"/>
                     <field name="pbx_skip_if_busy"/>
                 </group>
-                <group string="Enheter (Sub-Extensions)" name="follow_me_devices"
-                      invisible="[('pbx_extension_id', '=', False)]"
-                      colspan="2">
+                <group string="Enheter (Sub-Extensions)" name="follow_me_devices" colspan="2">
                     <field name="pbx_sub_extension_ids" mode="list">
                         <list editable="bottom">
                             <field name="type" readonly="1"/>
