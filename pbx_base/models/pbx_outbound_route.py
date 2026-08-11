@@ -3,11 +3,12 @@
 
 from odoo import fields, models
 
-from .pbx_destination_mixin import DESTINATION_MODELS
+from .pbx_destination_mixin import destination_models
 
 
 class PbxOutboundRoute(models.Model):
     _name = "pbx.outbound_route"
+    _inherit = ["mail.thread", "mail.activity.mixin"]
     _description = "PBX Outbound Route"
     _order = "sequence, id"
 
@@ -21,7 +22,7 @@ class PbxOutboundRoute(models.Model):
         "pbx.outbound.route.trunk", "route_id", string="Trunks"
     )
     failover_destination_id = fields.Reference(
-        selection=DESTINATION_MODELS,
+        selection=destination_models,
         string="Failover Destination",
         help="Where the call goes when every trunk in this route fails",
     )

@@ -18,17 +18,19 @@
                     <group string="Sub-Extensions">
                         <field name="sub_extension_ids" mode="list">
                             <list editable="bottom">
-                                <field name="number"/>
-                                <field name="label"/>
+                                <field name="priority" string="Ringordning" widget="handle"/>
                                 <field name="type"/>
-                                <field name="priority"/>
+                                <field name="label"/>
+                                <field name="number" readonly="1"/>
                                 <field name="ring_timeout"/>
                                 <field name="transport"/>
+                                <field name="sip_config_display" readonly="1" optional="hide"/>
                                 <field name="active"/>
                             </list>
                         </field>
                     </group>
                 </sheet>
+                <chatter/>
             </form>
         </field>
     </record>

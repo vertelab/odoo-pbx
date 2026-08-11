@@ -23,14 +23,14 @@
                     <field name="pbx_ring_strategy"/>
                     <field name="pbx_skip_if_busy"/>
                 </group>
-                <group string="Enheter (Sub-Extensions)" name="follow_me_devices" colspan="2">
-                    <field name="pbx_sub_extension_ids" mode="list">
+                <group string="Enheter" name="follow_me_devices" colspan="2">
+                    <field name="pbx_sub_extension_ids" string="" mode="list">
                         <list editable="bottom">
+                            <field name="priority" string="Ringordning" widget="handle"/>
                             <field name="type" readonly="1"/>
                             <field name="label"/>
-                            <field name="number" readonly="1"/>
-                            <field name="priority"/>
                             <field name="ring_timeout"/>
+                            <field name="sip_config_display" readonly="1"/>
                             <field name="active"/>
                         </list>
                     </field>
@@ -52,14 +52,14 @@
                     <field name="pbx_ring_strategy"/>
                     <field name="pbx_skip_if_busy"/>
                 </group>
-                <group string="Enheter (Sub-Extensions)" name="follow_me_devices" colspan="2">
-                    <field name="pbx_sub_extension_ids" mode="list">
+                <group string="Enheter" name="follow_me_devices" colspan="2">
+                    <field name="pbx_sub_extension_ids" string="" mode="list">
                         <list editable="bottom">
+                            <field name="priority" string="Ringordning" widget="handle"/>
                             <field name="type" readonly="1"/>
                             <field name="label"/>
-                            <field name="number" readonly="1"/>
-                            <field name="priority"/>
                             <field name="ring_timeout"/>
+                            <field name="sip_config_display" readonly="1"/>
                             <field name="active"/>
                         </list>
                     </field>

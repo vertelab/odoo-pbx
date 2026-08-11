@@ -3,15 +3,23 @@
 
 from odoo import fields, models
 
-from .pbx_destination_mixin import DESTINATION_MODELS
+from .pbx_destination_mixin import destination_models
 
 
 class PbxInboundRoute(models.Model):
     _name = "pbx.inbound_route"
+    _inherit = ["mail.thread", "mail.activity.mixin"]
     _description = "PBX Inbound Route (DID/CID -> destination)"
     _order = "sequence, id"
 
     sequence = fields.Integer(default=10, help="Lower sequence is matched first")
+
+    def _compute_display_name(self):
+        for rec in self:
+            did = rec.did or "*"
+            cid = rec.cid or "*"
+            dest = rec.destination_id.display_name if rec.destination_id else ""
+            rec.display_name = "%s → %s" % (did, dest or "?")
     did = fields.Char(
         string="DID",
         help="Number or Asterisk pattern to match. Empty = any DID",
@@ -21,7 +29,7 @@ class PbxInboundRoute(models.Model):
         help="Caller ID match. Empty = any caller",
     )
     destination_id = fields.Reference(
-        selection=DESTINATION_MODELS,
+        selection=destination_models,
         string="Destination",
         required=True,
     )

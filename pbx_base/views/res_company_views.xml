@@ -12,6 +12,11 @@
                         <field name="pbx_server_host"/>
                         <field name="pbx_api_key" password="True"/>
                     </group>
+                    <group>
+                        <field name="pbx_sip_port"/>
+                        <field name="pbx_stun_enabled"/>
+                        <field name="pbx_stun_server" invisible="not pbx_stun_enabled"/>
+                    </group>
                 </group>
             </xpath>
         </field>

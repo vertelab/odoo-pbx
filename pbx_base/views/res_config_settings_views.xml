@@ -29,6 +29,18 @@
                                     <label string="API Key" for="pbx_api_key" class="col-lg-3 o_light_label"/>
                                     <field name="pbx_api_key" class="col-lg-3"/>
                                 </div>
+                                <div class="row mt16">
+                                    <label string="SIP Port" for="pbx_sip_port" class="col-lg-3 o_light_label"/>
+                                    <field name="pbx_sip_port" class="col-lg-3"/>
+                                </div>
+                                <div class="row mt16">
+                                    <label string="STUN aktiverad" for="pbx_stun_enabled" class="col-lg-3 o_light_label"/>
+                                    <field name="pbx_stun_enabled" class="col-lg-3"/>
+                                </div>
+                                <div class="row mt16" invisible="not pbx_stun_enabled">
+                                    <label string="STUN Server" for="pbx_stun_server" class="col-lg-3 o_light_label"/>
+                                    <field name="pbx_stun_server" class="col-lg-3"/>
+                                </div>
                             </div>
                         </setting>
                         <setting string="Leasavtal (från central förvaltning)">

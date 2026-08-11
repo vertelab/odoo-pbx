@@ -6,6 +6,7 @@ from odoo import fields, models
 
 class PbxTrunk(models.Model):
     _name = "pbx.trunk"
+    _inherit = ["mail.thread", "mail.activity.mixin"]
     _description = "PBX SIP Trunk"
 
     name = fields.Char(required=True, help="e.g. Telia")

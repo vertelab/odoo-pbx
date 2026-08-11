@@ -27,6 +27,23 @@ class ResConfigSettings(models.TransientModel):
         groups="base.group_system",
         help="API-nyckel mot Asterisk-servern / provisioning-daemon (per företag).",
     )
+    pbx_sip_port = fields.Char(
+        string="SIP Port",
+        related="company_id.pbx_sip_port",
+        readonly=False,
+        help="SIP-port för enheter (per företag).",
+    )
+    pbx_stun_enabled = fields.Boolean(
+        string="STUN aktiverad",
+        related="company_id.pbx_stun_enabled",
+        readonly=False,
+    )
+    pbx_stun_server = fields.Char(
+        string="STUN Server",
+        related="company_id.pbx_stun_server",
+        readonly=False,
+        help="t.ex. stun.vertel.se:3478",
+    )
 
     # Read-only tenant info (defined centrally in the management system)
     pbx_tenant_plan = fields.Selection(

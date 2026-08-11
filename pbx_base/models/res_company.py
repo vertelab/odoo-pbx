@@ -26,3 +26,17 @@ class ResCompany(models.Model):
         groups="base.group_system",
         help="API-nyckel mot Asterisk-servern / provisioning-daemon",
     )
+    pbx_sip_port = fields.Char(
+        string="SIP Port",
+        default="5061",
+        help="SIP-port för enheter (5061 för WSS/WebRTC, 5060 för UDP/TCP)",
+    )
+    pbx_stun_enabled = fields.Boolean(
+        string="STUN aktiverad",
+        default=False,
+        help="Slå på STUN för enheter bakom NAT (mobil/desktop).",
+    )
+    pbx_stun_server = fields.Char(
+        string="STUN Server",
+        help="t.ex. stun.vertel.se:3478",
+    )

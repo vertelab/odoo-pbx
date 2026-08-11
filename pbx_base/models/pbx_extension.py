@@ -1,17 +1,25 @@
 # Copyright 2026 Vertel AB
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 
-from odoo import fields, models
+from odoo import api, fields, models
 
 
 class PbxExtension(models.Model):
     _name = "pbx.extension"
-    _inherit = ["pbx.destination.mixin"]
+    _inherit = ["pbx.destination.mixin", "mail.thread", "mail.activity.mixin"]
     _description = "PBX Extension (public number)"
 
     public_number = fields.Char(required=True)
     user_id = fields.Many2one("res.users", string="Odoo User")
-    callerid_name = fields.Char()
+    callerid_name = fields.Char(
+        help="Visas som namn på utgående samtal. Fylls i från användarens namn "
+             "när en användare kopplas — kan överskrivas manuellt."
+    )
+
+    @api.onchange("user_id")
+    def _onchange_user_id(self):
+        if self.user_id and not self.callerid_name:
+            self.callerid_name = self.user_id.name
     description = fields.Char(
         string="Description",
         help="Visas i FOP2-panelen, t.ex. 'Reception', 'Anna – Support'",
@@ -47,6 +55,12 @@ class PbxExtension(models.Model):
             "Extension number must be unique within the company!",
         ),
     ]
+
+    def _compute_display_name(self):
+        for rec in self:
+            user = rec.user_id.name or ""
+            base = rec.public_number or rec.callerid_name or ""
+            rec.display_name = "%s – %s" % (base, user) if user else base
 
     def get_dialplan_target(self):
         self.ensure_one()

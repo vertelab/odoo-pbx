@@ -16,6 +16,7 @@
                         <field name="active"/>
                     </group>
                 </sheet>
+                <chatter/>
             </form>
         </field>
     </record>

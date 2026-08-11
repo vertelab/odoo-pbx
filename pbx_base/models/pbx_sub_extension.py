@@ -4,7 +4,7 @@
 import secrets
 import string
 
-from odoo import fields, models
+from odoo import api, fields, models
 
 
 def _generate_sip_secret(length=16):
@@ -17,11 +17,16 @@ class PbxSubExtension(models.Model):
     _description = "PBX Sub Extension (individual device)"
 
     extension_id = fields.Many2one("pbx.extension", required=True, ondelete="cascade")
-    number = fields.Char(required=True)
+    number = fields.Char(
+        string="Nummer",
+        readonly=True,
+        help="SIP-identitet för enheten (auto-genererat, t.ex. 101 för anknytning 10). "
+             "Har ingen koppling till ringordningen — priority styr i vilken ordning enheterna ringer.",
+    )
     label = fields.Char(help="e.g. Odoo, Yealink, Mobile")
     type = fields.Selection(
         [
-            ("browser", "Browser (WSS)"),
+            ("browser", "Odoo VOIP"),
             ("desktop", "Desktop Softphone"),
             ("hardware", "Hardware Phone"),
             ("mobile", "Mobile"),
@@ -47,6 +52,59 @@ class PbxSubExtension(models.Model):
         default=True,
         help="When unchecked, this device is excluded from the generated dialplan.",
     )
+
+    sip_config_display = fields.Char(
+        string="SIP-konfiguration",
+        compute="_compute_sip_config_display",
+        help="Genererade SIP-parametrar för enheten: username, lösenord, server, port, "
+             "domän, protokoll och STUN.",
+    )
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        """Auto-generera `number` (SIP-identitet) när den inte anges.
+
+        Konvention: {extension.public_number}{index} → anknytning 10 får enheter
+        101, 102, 103…  Minsta lediga nummer väljs så att raderingar/prio-byten
+        aldrig orsakar kollisioner eller omnumrering.
+        """
+        for vals in vals_list:
+            if not vals.get("number") and vals.get("extension_id"):
+                vals["number"] = self._next_free_number(vals["extension_id"])
+        return super().create(vals_list)
+
+    @api.model
+    def _next_free_number(self, extension_id):
+        ext = self.env["pbx.extension"].browse(extension_id)
+        prefix = "".join(ch for ch in str(ext.public_number or "") if ch.isdigit())
+        if not prefix:
+            prefix = "0"
+        existing = set(
+            self.env["pbx.sub_extension"]
+            .search([("extension_id", "=", extension_id)])
+            .mapped("number")
+        )
+        i = 1
+        while True:
+            candidate = "%s%d" % (prefix, i)
+            if candidate not in existing:
+                return candidate
+            i += 1
+
+    @api.depends("username", "secret", "transport", "extension_id.company_id")
+    def _compute_sip_config_display(self):
+        for rec in self:
+            company = rec.extension_id.company_id
+            server = company.pbx_server_host or "«central inställning saknas»"
+            domain = company.pbx_domain or "—"
+            port = company.pbx_sip_port or (5061 if rec.transport == "wss" else 5060)
+            stun = ""
+            if company.pbx_stun_enabled and company.pbx_stun_server:
+                stun = " | STUN: %s" % company.pbx_stun_server
+            rec.sip_config_display = (
+                "Användare: %s | Lösenord: %s | Server: %s:%s | Domän: %s | "
+                "Protokoll: %s%s" % (rec.username, rec.secret, server, port, domain, rec.transport, stun)
+            )
 
     # Voicemail fields
     greeting = fields.Many2one("ir.attachment", string="Greeting")

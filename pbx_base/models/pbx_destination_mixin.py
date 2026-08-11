@@ -3,20 +3,40 @@
 
 from odoo import api, models
 
-#: Destination models shown in every fields.Reference destination picker.
-#: Every listed model must implement pbx.destination.mixin and provide
-#: get_dialplan_target() returning a (context, exten, prio) goto-triple —
-#: the single dialplan language used by inbound routes, IVR options, time
-#: conditions, queue overflows and outbound failover (FreePBX-style dest).
-DESTINATION_MODELS = [
+#: Destination models that always exist when pbx_base is installed.
+BASE_DESTINATION_MODELS = [
     ("pbx.extension", "Extension"),
+    ("pbx.voicemail.destination", "Voicemail"),
+    ("pbx.custom.destination", "Custom"),
+]
+
+#: Destination models provided by optional plugin modules.
+PLUGIN_DESTINATION_MODELS = [
     ("pbx.queue", "Queue"),
     ("pbx.ivr", "IVR"),
     ("pbx.time_condition", "Time Condition"),
     ("pbx.conference", "Conference"),
-    ("pbx.voicemail.destination", "Voicemail"),
-    ("pbx.custom.destination", "Custom"),
 ]
+
+
+def destination_models(records=None):
+    """Selection for fields.Reference destination pickers.
+
+    Returns only destination models whose module is actually installed
+    (present in the registry/env). Plugin destinations (queue/ivr/conference/
+    time_condition) are only offered when their module is installed.
+
+    Odoo invokes the callable lazily via ``determine(selection, recordset)``
+    with the model's recordset; ``records.env`` tells us which models exist.
+    When called before env is ready (records=None), all plugins are included
+    and the next lazy evaluation filters correctly.
+    """
+    env = getattr(records, "env", None)
+    models = list(BASE_DESTINATION_MODELS)
+    for model, label in PLUGIN_DESTINATION_MODELS:
+        if env is None or model in env:
+            models.append((model, label))
+    return models
 
 
 class PbxDestinationMixin(models.AbstractModel):
