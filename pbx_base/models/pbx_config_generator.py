@@ -164,7 +164,7 @@ class PbxConfigGenerator(models.AbstractModel):
                         public_number=ext.public_number,
                         callerid_name=ext.callerid_name or ext.user_id.name or "",
                         username=sub.username,
-                        secret=sub.secret,
+                        secret=ext.password or sub.secret,
                     )
                 )
 
@@ -229,12 +229,12 @@ class PbxConfigGenerator(models.AbstractModel):
             if ext.ring_strategy == "parallel":
                 dial_peers = "&".join(
                     "PJSIP/%s-%s" % (domain, sub.number)
-                    for sub in active_subs.sorted("priority")
+                    for sub in active_subs.sorted("sequence")
                 )
                 max_timeout = max(sub.ring_timeout or 30 for sub in active_subs)
                 dial_lines = "same => n,Dial(%s,%d)\n" % (dial_peers, max_timeout)
             else:
-                sorted_subs = active_subs.sorted("priority")
+                sorted_subs = active_subs.sorted("sequence")
                 for i, sub in enumerate(sorted_subs):
                     to = sub.ring_timeout or 30
                     dial_lines += (

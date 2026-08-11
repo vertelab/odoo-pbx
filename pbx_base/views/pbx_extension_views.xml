@@ -5,6 +5,7 @@
         <field name="arch" type="xml">
             <form>
                 <sheet>
+                    <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger" invisible="active"/>
                     <group>
                         <field name="public_number"/>
                         <field name="user_id"/>
@@ -15,12 +16,11 @@
                         <field name="skip_if_busy"/>
                         <field name="respect_schedule"/>
                         <field name="respect_calendar"/>
-                        <field name="active"/>
                     </group>
                     <group string="Sub-Extensions">
                         <field name="sub_extension_ids" mode="list">
                             <list editable="bottom">
-                                <field name="priority" string="Ringordning" widget="handle"/>
+                                <field name="sequence" string="Sequence" widget="handle"/>
                                 <field name="type"/>
                                 <field name="label"/>
                                 <field name="number" readonly="1"/>
@@ -48,7 +48,6 @@
                 <field name="is_receptionist"/>
                 <field name="ring_strategy"/>
                 <field name="skip_if_busy"/>
-                <field name="active"/>
             </list>
         </field>
     </record>

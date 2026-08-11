@@ -36,14 +36,14 @@
             <field name="number">101</field>
             <field name="label">Odoo</field>
             <field name="type">browser</field>
-            <field name="priority">1</field>
+            <field name="sequence">1</field>
         </record>
         <record id="demo_sub_anna_1" model="pbx.sub_extension">
             <field name="extension_id" ref="demo_ext_anna"/>
             <field name="number">111</field>
             <field name="label">Yealink</field>
             <field name="type">hardware</field>
-            <field name="priority">1</field>
+            <field name="sequence">1</field>
         </record>
 
         <!-- Admin får receptionist-anknytningen (Operator Panel visar allt) + PBX-grupper -->

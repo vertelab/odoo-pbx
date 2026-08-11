@@ -16,6 +16,11 @@
         <field name="model">res.users</field>
         <field name="inherit_id" ref="base.view_users_form"/>
         <field name="arch" type="xml">
+            <!-- Dölj voip_oca:s PBX/Username/Password — värdena sätts automatiskt
+                 av pbx_base (implicit Odoo VOIP-enhet + delat lösenord). -->
+            <xpath expr="//page[@name='voip']/group[field[@name='voip_pbx_id']]" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
             <xpath expr="//page[@name='voip']" position="inside">
                 <group string="Follow-me" name="follow_me" colspan="2">
                     <div class="text-muted" invisible="pbx_extension_id">Ingen PBX-anknytning kopplad till användaren.</div>
@@ -28,8 +33,8 @@
                 <group string="Enheter" name="follow_me_devices" colspan="2">
                     <field name="pbx_sub_extension_ids" string="" mode="list">
                         <list editable="bottom">
-                            <field name="priority" string="Ringordning" widget="handle"/>
-                            <field name="type" readonly="1"/>
+                            <field name="sequence" string="Sequence" widget="handle"/>
+                            <field name="type"/>
                             <field name="label"/>
                             <field name="ring_timeout"/>
                             <field name="sip_config_display" readonly="1"/>
@@ -47,6 +52,10 @@
         <field name="model">res.users</field>
         <field name="inherit_id" ref="base.view_users_form_simple_modif"/>
         <field name="arch" type="xml">
+            <!-- Dölj voip_oca:s PBX/Username/Password — värdena sätts automatiskt. -->
+            <xpath expr="//page[@name='voip']/group[field[@name='voip_pbx_id']]" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
             <xpath expr="//page[@name='voip']" position="inside">
                 <group string="Follow-me" name="follow_me" colspan="2">
                     <div class="text-muted" invisible="pbx_extension_id">Ingen PBX-anknytning kopplad till användaren.</div>
@@ -59,8 +68,8 @@
                 <group string="Enheter" name="follow_me_devices" colspan="2">
                     <field name="pbx_sub_extension_ids" string="" mode="list">
                         <list editable="bottom">
-                            <field name="priority" string="Ringordning" widget="handle"/>
-                            <field name="type" readonly="1"/>
+                            <field name="sequence" string="Sequence" widget="handle"/>
+                            <field name="type"/>
                             <field name="label"/>
                             <field name="ring_timeout"/>
                             <field name="sip_config_display" readonly="1"/>

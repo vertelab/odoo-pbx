@@ -21,7 +21,7 @@ class PbxSubExtension(models.Model):
         string="Nummer",
         readonly=True,
         help="SIP-identitet för enheten (auto-genererat, t.ex. 101 för anknytning 10). "
-             "Har ingen koppling till ringordningen — priority styr i vilken ordning enheterna ringer.",
+             "Har ingen koppling till ringordningen — sequence styr i vilken ordning enheterna ringer.",
     )
     label = fields.Char(help="e.g. Odoo, Yealink, Mobile")
     type = fields.Selection(
@@ -35,9 +35,13 @@ class PbxSubExtension(models.Model):
         default="browser",
         required=True,
     )
-    priority = fields.Integer(default=1, help="Ring priority (1 = first, 99 = last)")
+    sequence = fields.Integer(
+        default=1,
+        string="Sequence",
+        help="Ringordning (1 = först). Number har ingen koppling till ringordningen.",
+    )
     ring_timeout = fields.Integer(
-        default=30,
+        default=10,
         help="How long (seconds) to ring this device before giving up. "
              "In sequential mode each device gets its own timeout; "
              "in parallel mode the longest timeout among active devices is used.",
@@ -91,7 +95,7 @@ class PbxSubExtension(models.Model):
                 return candidate
             i += 1
 
-    @api.depends("username", "secret", "transport", "extension_id.company_id")
+    @api.depends("username", "secret", "transport", "extension_id.password", "extension_id.company_id")
     def _compute_sip_config_display(self):
         for rec in self:
             company = rec.extension_id.company_id
@@ -101,9 +105,10 @@ class PbxSubExtension(models.Model):
             stun = ""
             if company.pbx_stun_enabled and company.pbx_stun_server:
                 stun = " | STUN: %s" % company.pbx_stun_server
+            shared = rec.extension_id.password or rec.secret
             rec.sip_config_display = (
                 "Användare: %s | Lösenord: %s | Server: %s:%s | Domän: %s | "
-                "Protokoll: %s%s" % (rec.username, rec.secret, server, port, domain, rec.transport, stun)
+                "Protokoll: %s%s" % (rec.username, shared, server, port, domain, rec.transport, stun)
             )
 
     # Voicemail fields

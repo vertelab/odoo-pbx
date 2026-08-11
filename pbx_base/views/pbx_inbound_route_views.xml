@@ -5,6 +5,7 @@
         <field name="arch" type="xml">
             <form>
                 <sheet>
+                    <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger" invisible="active"/>
                     <group>
                         <field name="description"/>
                         <field name="sequence"/>
@@ -17,7 +18,6 @@
                         <field name="destination_id"/>
                     </group>
                     <group>
-                        <field name="active"/>
                     </group>
                 </sheet>
                 <chatter/>
@@ -34,7 +34,6 @@
                 <field name="cid"/>
                 <field name="destination_id"/>
                 <field name="description"/>
-                <field name="active"/>
             </list>
         </field>
     </record>

@@ -3,6 +3,8 @@
 
 from odoo import api, fields, models
 
+from .pbx_sub_extension import _generate_sip_secret
+
 
 class PbxExtension(models.Model):
     _name = "pbx.extension"
@@ -11,6 +13,12 @@ class PbxExtension(models.Model):
 
     public_number = fields.Char(required=True)
     user_id = fields.Many2one("res.users", string="Odoo User")
+    password = fields.Char(
+        string="SIP Password",
+        groups="base.group_user",
+        help="Personligt SIP-lösenord som gäller för alla enheter på anknytningen. "
+             "Auto-genereras och skrivs in i den genererade pjsip-konfigurationen.",
+    )
     callerid_name = fields.Char(
         help="Visas som namn på utgående samtal. Fylls i från användarens namn "
              "när en användare kopplas — kan överskrivas manuellt."
@@ -20,6 +28,67 @@ class PbxExtension(models.Model):
     def _onchange_user_id(self):
         if self.user_id and not self.callerid_name:
             self.callerid_name = self.user_id.name
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        """Generera delat SIP-lösenord, skapa implicit Odoo VOIP-enhet och
+        synka voip_oca-inställningarna på den kopplade användaren."""
+        for vals in vals_list:
+            vals.setdefault("password", _generate_sip_secret())
+        extensions = super().create(vals_list)
+        for ext in extensions:
+            if not ext.sub_extension_ids.filtered(lambda s: s.type == "browser"):
+                self.env["pbx.sub_extension"].create(
+                    {
+                        "extension_id": ext.id,
+                        "type": "browser",
+                        "label": "Odoo VOIP",
+                        "sequence": 1,
+                    }
+                )
+            ext._sync_voip()
+        return extensions
+
+    def write(self, vals):
+        res = super().write(vals)
+        if vals.get("user_id") or vals.get("password"):
+            for ext in self:
+                ext._sync_voip()
+        return res
+
+    def _sync_voip(self):
+        """Synka voip_oca-inställningarna på den kopplade användaren.
+
+        - PBX (voip.pbx) hämtas/skapas från företagets Asterisk-konfig
+          (domain + ws_server från res.company.pbx_server_host)
+        - Username från den implicita browser-sub-extensionen (Odoo VOIP)
+        - Lösenord = personens delade SIP-lösenord (gäller alla enheter)
+        """
+        self.ensure_one()
+        if "voip.pbx" not in self.env or not self.user_id:
+            return
+        company = self.company_id
+        domain = company.pbx_domain or ""
+        pbx = self.env["voip.pbx"].search([("domain", "=", domain)], limit=1)
+        if not pbx:
+            host = company.pbx_server_host or "localhost"
+            ws_server = host if host.startswith(("ws://", "wss://")) else "wss://%s" % host
+            pbx = self.env["voip.pbx"].create(
+                {
+                    "name": company.pbx_domain or company.name or "PBX",
+                    "domain": domain,
+                    "ws_server": ws_server,
+                    "mode": "prod",
+                }
+            )
+        browser_sub = self.sub_extension_ids.filtered(lambda s: s.type == "browser")[:1]
+        self.user_id.write(
+            {
+                "voip_pbx_id": pbx.id,
+                "voip_username": browser_sub.username if browser_sub else "",
+                "voip_password": self.password or "",
+            }
+        )
     description = fields.Char(
         string="Description",
         help="Visas i Operator Panel-panelen, t.ex. 'Reception', 'Anna – Support'",
