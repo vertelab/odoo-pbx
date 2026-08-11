@@ -110,9 +110,10 @@ class PbxFop2(http.Controller):
         tenant = self._current_tenant()
         if not tenant:
             return {"widgets": []}
+        env = request.env
         widgets = []
-        for model_name in self.env.registry.keys():
-            model = self.env[model_name]
+        for model_name in env.registry.keys():
+            model = env[model_name]
             inherits = model._inherit or []
             if isinstance(inherits, str):
                 inherits = [inherits]
