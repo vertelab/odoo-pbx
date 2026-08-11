@@ -11,6 +11,7 @@
                         <field name="pbx_domain"/>
                         <field name="pbx_server_host"/>
                         <field name="pbx_api_key" password="True"/>
+                        <field name="pbx_odoo_url"/>
                     </group>
                     <group>
                         <field name="pbx_sip_port"/>

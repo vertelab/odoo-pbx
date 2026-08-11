@@ -26,6 +26,12 @@ class ResCompany(models.Model):
         groups="base.group_system",
         help="API-nyckel mot Asterisk-servern / provisioning-daemon",
     )
+    pbx_odoo_url = fields.Char(
+        string="Odoo URL",
+        help="Kundens Odoo-bas-URL som den genererade dialplanen anropar för "
+             "tillgänglighetskontroll (t.ex. https://crm.vertel.se). "
+             "Tom = använd web.base.url.",
+    )
     pbx_sip_port = fields.Char(
         string="SIP Port",
         default="5061",

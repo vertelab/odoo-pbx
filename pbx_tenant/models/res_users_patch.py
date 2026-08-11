@@ -16,6 +16,14 @@ class ResUsers(models.Model):
         related="pbx_extension_id.skip_if_busy",
         readonly=False,
     )
+    pbx_respect_schedule = fields.Boolean(
+        related="pbx_extension_id.respect_schedule",
+        readonly=False,
+    )
+    pbx_respect_calendar = fields.Boolean(
+        related="pbx_extension_id.respect_calendar",
+        readonly=False,
+    )
     pbx_sub_extension_ids = fields.One2many(
         related="pbx_extension_id.sub_extension_ids",
         readonly=False,

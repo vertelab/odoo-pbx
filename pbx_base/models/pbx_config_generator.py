@@ -102,10 +102,21 @@ same => n,Hangup()
 EXT_CONTEXT_TEMPLATE = """\
 [{domain}-ext-{public_number}]
 exten => s,1,NoOp(Ring group for {public_number})
-{busy_gates}{dial_lines}same => n,Voicemail({public_number}@{domain},u)
+{busy_gates}{availability_gates}{dial_lines}same => n,Voicemail({public_number}@{domain},u)
 same => n,Hangup()
 same => n(done),Hangup()
 same => n(busy),Voicemail({public_number}@{domain},b)
+same => n,Hangup()
+{availability_announcement}"""
+
+# Announcement played when the person is unavailable (outside work hours or
+# busy in the calendar): "personen är tillbaka HH:MM" via SayUnixTime, then
+# voicemail. OC_AVAIL is set by the availability gate: "ok:<ts>" | "busy:<ts>".
+AVAILABILITY_ANNOUNCEMENT_TEMPLATE = """\
+same => n(unavailable),NoOp(Person unavailable — next ${CUT(OC_AVAIL,:,2)})
+same => n,GotoIf($["${{CUT(OC_AVAIL,:,2)}}" = "0"]?unavail_noannounce)
+same => n,SayUnixTime(${{CUT(OC_AVAIL,:,2)}},,%H:%M)
+same => n(unavail_noannounce),Voicemail({public_number}@{domain},u)
 same => n,Hangup()
 """
 
@@ -235,12 +246,20 @@ class PbxConfigGenerator(models.AbstractModel):
                             ' != "NOANSWER"]?done)\n'
                         )
 
+            # Availability gate (respect_schedule/respect_calendar)
+            availability_gates = self._availability_gates(ext, company)
+            availability_announcement = self._availability_announcement(
+                domain, ext.public_number, bool(availability_gates)
+            )
+
             ext_contexts.append(
                 EXT_CONTEXT_TEMPLATE.format(
                     domain=domain,
                     public_number=ext.public_number,
                     busy_gates=busy_gates,
+                    availability_gates=availability_gates,
                     dial_lines=dial_lines,
+                    availability_announcement=availability_announcement,
                 )
             )
             vm_sub = ext.sub_extension_ids.filtered(
@@ -569,6 +588,35 @@ class PbxConfigGenerator(models.AbstractModel):
     # ------------------------------------------------------------------
     # Orchestration
     # ------------------------------------------------------------------
+    def _availability_gates(self, ext, company):
+        """CURL check of Odoo availability before follow-me ringing.
+
+        Only emitted when the extension respects schedule/calendar AND an Odoo
+        URL is configured. The endpoint returns ``ok:<ts>`` or ``busy:<ts>``;
+        on CURL failure the variable is empty → the call proceeds (fail-open).
+        """
+        if not (ext.respect_schedule or ext.respect_calendar):
+            return ""
+        if isinstance(company, models.Model):
+            company_rec = company
+        else:
+            company_rec = self.env["res.company"].browse(company)
+        odoo_url = company_rec.pbx_odoo_url or self.env["ir.config_parameter"].get_param(
+            "web.base.url", ""
+        )
+        if not odoo_url:
+            return ""
+        token = self.env["ir.config_parameter"].get_param("pbx.webhook.token", "")
+        return ext._render_availability_gate(odoo_url=odoo_url, webhook_token=token)
+
+    def _availability_announcement(self, domain, public_number, active=False):
+        """Label block reached via the availability gate when unavailable."""
+        if not active:
+            return ""
+        return AVAILABILITY_ANNOUNCEMENT_TEMPLATE.format(
+            domain=domain, public_number=public_number
+        )
+
     def generate_all(self, domain, company):
         """Generate all config files for the instance, incl. plugin snippets."""
         configs = {

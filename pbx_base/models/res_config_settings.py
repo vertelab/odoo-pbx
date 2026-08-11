@@ -27,6 +27,12 @@ class ResConfigSettings(models.TransientModel):
         groups="base.group_system",
         help="API-nyckel mot Asterisk-servern / provisioning-daemon (per företag).",
     )
+    pbx_odoo_url = fields.Char(
+        string="Odoo URL",
+        related="company_id.pbx_odoo_url",
+        readonly=False,
+        help="Kundens Odoo-bas-URL för tillgänglighetskontroll i genererad dialplan.",
+    )
     pbx_sip_port = fields.Char(
         string="SIP Port",
         related="company_id.pbx_sip_port",

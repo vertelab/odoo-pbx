@@ -13,6 +13,8 @@
                         <field name="is_receptionist"/>
                         <field name="ring_strategy"/>
                         <field name="skip_if_busy"/>
+                        <field name="respect_schedule"/>
+                        <field name="respect_calendar"/>
                         <field name="active"/>
                     </group>
                     <group string="Sub-Extensions">

@@ -30,6 +30,10 @@
                                     <field name="pbx_api_key" class="col-lg-3"/>
                                 </div>
                                 <div class="row mt16">
+                                    <label string="Odoo URL" for="pbx_odoo_url" class="col-lg-3 o_light_label"/>
+                                    <field name="pbx_odoo_url" class="col-lg-3"/>
+                                </div>
+                                <div class="row mt16">
                                     <label string="SIP Port" for="pbx_sip_port" class="col-lg-3 o_light_label"/>
                                     <field name="pbx_sip_port" class="col-lg-3"/>
                                 </div>
