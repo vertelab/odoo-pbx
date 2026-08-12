@@ -32,7 +32,7 @@
                         </group>
                     </group>
                     <group string="Parametrar i mallen" colspan="2">
-                        <field name="config_template" widget="code" options="{'mode': 'json'}"/>
+                        <field name="config_template" widget="code" options="{'mode': 'javascript'}"/>
                     </group>
                 </sheet>
             </form>
@@ -43,7 +43,6 @@
         <field name="name">Device Templates</field>
         <field name="res_model">pbx.device.template</field>
         <field name="view_mode">list,form</field>
-        <field name="context">{'search_default_group_device_type': 1}</field>
     </record>
 
     <record id="pbx_device_template_search" model="ir.ui.view">
