@@ -15,7 +15,11 @@
                 <t t-name="card">
                     <div t-attf-class="oe_kanban_global_click o_kanban_record_has_image_fill #{kanban_color}">
                         <div class="o_kanban_image">
-                            <img t-att-src="image_1920" class="o_image_64_cover" alt="Tenant"/>
+                            <img t-if="image_1920" t-att-src="image_1920"
+                                 class="o_image_64_cover" alt="Tenant"/>
+                            <span t-else="" class="o_kanban_placeholder">
+                                <i class="fa fa-building-o"/>
+                            </span>
                             <div class="o_kanban_record_title">
                                 <field name="name"/>
                             </div>
