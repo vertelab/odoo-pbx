@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Salt-brygga: minion-id + deploy-knapp + status på tenanten -->
+    <record id="pbx_tenant_salt_form" model="ir.ui.view">
+        <field name="name">pbx.tenant.salt.form</field>
+        <field name="model">pbx.tenant</field>
+        <field name="inherit_id" ref="pbx_admin.pbx_tenant_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//group[field[@name='max_extensions']]" position="after">
+                <group string="SaltStack-deploy" name="saltstack">
+                    <field name="minion_id"/>
+                    <field name="deploy_status"/>
+                    <field name="last_deploy"/>
+                    <button name="deploy_config" type="object" string="Deploy"
+                            class="btn-primary" icon="fa-cloud-upload"
+                            confirm="Deploya växelinfo till minionen? (salt state.apply odoo.pbx)"/>
+                    <field name="deploy_log" colspan="2" readonly="1" placeholder="Deploy-logg…"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+</odoo>
