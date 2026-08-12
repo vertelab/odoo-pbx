@@ -59,7 +59,7 @@
             <field name="value">test-token-123</field>
         </record>
     </data>
-</odoo>
+
 
 <!-- Device Templates (pbx-device-templates): en mall per enhetstyp -->
 <record id="demo_template_browser" model="pbx.device.template">
@@ -101,3 +101,4 @@
         "token": {"label": "Provisioneringstoken", "source": "device", "field": "provisioning_token", "order": 7}
     }</field>
 </record>
+</odoo>
