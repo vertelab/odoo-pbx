@@ -1,6 +1,6 @@
 {
     "name": "PBX CRM",
-    "version": "18.0.1.1.0",
+    "version": "18.0.1.2.0",
     "summary": "CRM integration for PBX — lead popup, call logging",
     "category": "Productivity/VOIP",
     "author": "Vertel AB",
@@ -10,6 +10,7 @@
     "data": [
         "security/ir.model.access.csv",
         "views/res_config_settings_views.xml",
+        "views/crm_click_to_call_views.xml",
     ],
     "installable": True,
     "auto_install": False,

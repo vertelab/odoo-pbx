@@ -67,6 +67,13 @@ class PbxSubExtension(models.Model):
              "domän, protokoll och STUN.",
     )
 
+    config = fields.Json(
+        string="SIP-konfiguration (resolverad)",
+        compute="_compute_config",
+        help="Per-parameter SIP-konfiguration populerad från enhetstypens mall "
+             "(pbx.device.template) med skarpa data.",
+    )
+
     @api.model_create_multi
     def create(self, vals_list):
         """Auto-generera `number` (SIP-identitet) när den inte anges.
@@ -168,6 +175,93 @@ class PbxSubExtension(models.Model):
                 "Användare: %s | Lösenord: %s | Server: %s:%s | Domän: %s | "
                 "Protokoll: %s%s" % (rec.username, shared, server, port, domain, rec.transport, stun)
             )
+
+    @api.depends(
+        "type",
+        "username",
+        "secret",
+        "transport",
+        "mac_address",
+        "provisioning_token",
+        "extension_id.password",
+        "extension_id.public_number",
+        "extension_id.user_id",
+        "extension_id.company_id",
+    )
+    def _compute_config(self):
+        """Resolverad SIP-konfiguration från enhetstypens mall."""
+        for rec in self:
+            template = self.env["pbx.device.template"].search(
+                [
+                    ("device_type", "=", rec.type),
+                    ("company_id", "=", rec.extension_id.company_id.id),
+                    ("active", "=", True),
+                ],
+                limit=1,
+            )
+            if not template or not template.config_template:
+                rec.config = False
+                continue
+            rec.config = rec._populate_config(template.config_template)
+
+    def _populate_config(self, config_template):
+        """Fyll mallens parameterdefinitioner med skarpa data.
+
+        Returns {"<param_key>": {"label": …, "value": <skarpt värde>, "help": …}}
+        """
+        self.ensure_one()
+        resolved = {}
+        ext = self.extension_id
+        company = ext.company_id
+        sources = {
+            "device": self,
+            "extension": ext,
+            "company": company,
+            "user": ext.user_id,
+        }
+        for key, spec in sorted(
+            (config_template or {}).items(),
+            key=lambda kv: (kv[1] or {}).get("order", 99),
+        ):
+            if not isinstance(spec, dict):
+                continue
+            source = spec.get("source")
+            only_if = spec.get("only_if")
+            if only_if and not getattr(company, only_if, False):
+                continue
+            if source == "static":
+                value = spec.get("value", "")
+            else:
+                record = sources.get(source)
+                if record is None:
+                    continue
+                value = getattr(record, spec.get("field", ""), False)
+                if value in (False, None):
+                    value = ""
+                value = str(value)
+            resolved[key] = {
+                "label": spec.get("label", key),
+                "value": value,
+                "help": spec.get("help", ""),
+            }
+        return resolved
+
+    config_display = fields.Char(
+        string="SIP-konfiguration (detalj)",
+        compute="_compute_config_display",
+        help="Läsbar per-parameter SIP-konfiguration (från enhetstypens mall).",
+    )
+
+    @api.depends("config", "sip_config_display")
+    def _compute_config_display(self):
+        for rec in self:
+            if rec.config:
+                rec.config_display = "\n".join(
+                    "%s: %s" % (p["label"], p["value"])
+                    for p in rec.config.values()
+                )
+            else:
+                rec.config_display = rec.sip_config_display
 
     # Voicemail fields
     greeting = fields.Many2one("ir.attachment", string="Greeting")

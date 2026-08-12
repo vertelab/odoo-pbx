@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Click-to-call: ring-ikon intill telefonnummerfält i CRM -->
+    <record id="crm_lead_click_to_call" model="ir.ui.view">
+        <field name="name">crm.lead.click.to.call</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="crm.crm_lead_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='phone']" position="attributes">
+                <attribute name="widget">pbx_call</attribute>
+            </xpath>
+            <xpath expr="//field[@name='mobile']" position="attributes">
+                <attribute name="widget">pbx_call</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="partner_click_to_call" model="ir.ui.view">
+        <field name="name">res.partner.click.to.call</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='phone']" position="attributes">
+                <attribute name="widget">pbx_call</attribute>
+            </xpath>
+            <xpath expr="//field[@name='mobile']" position="attributes">
+                <attribute name="widget">pbx_call</attribute>
+            </xpath>
+        </field>
+    </record>
+</odoo>

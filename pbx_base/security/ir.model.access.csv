@@ -14,3 +14,6 @@ access_pbx_sub_extension_user,access_pbx_sub_extension_user,model_pbx_sub_extens
 access_pbx_call_operator,pbx.call.operator,model_pbx_call,pbx_base.group_pbx_operator,1,0,0,0
 access_pbx_call_office,pbx.call.office,model_pbx_call,pbx_base.group_pbx_office,1,1,1,1
 access_pbx_call_admin,pbx.call.admin,model_pbx_call,pbx_base.group_pbx_admin,1,1,1,1
+access_pbx_device_template_admin,access_pbx_device_template_admin,model_pbx_device_template,base.group_system,1,1,1,1
+access_pbx_device_template_office,access_pbx_device_template_office,model_pbx_device_template,pbx_base.group_pbx_office,1,1,1,1
+access_pbx_device_template_user,access_pbx_device_template_user,model_pbx_device_template,pbx_base.group_pbx_operator,1,0,0,0

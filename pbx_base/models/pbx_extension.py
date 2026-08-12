@@ -1,9 +1,12 @@
 # Copyright 2026 Vertel AB
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 
-from odoo import api, fields, models
+from odoo import _, api, fields, models
+from odoo.exceptions import UserError
 
 from .pbx_sub_extension import _generate_sip_secret
+
+import re
 
 
 class PbxExtension(models.Model):
@@ -42,8 +45,16 @@ class PbxExtension(models.Model):
                     company, vals["public_number"]
                 )
         extensions = super().create(vals_list)
+        self.env.flush_all()
+        batch_has_browser = any(
+            cmd[0] == 0 and cmd[2].get("type") == "browser"
+            for vals in vals_list
+            for cmd in vals.get("sub_extension_ids") or []
+        )
         for ext in extensions:
-            if not ext.sub_extension_ids.filtered(lambda s: s.type == "browser"):
+            if not batch_has_browser and not ext.sub_extension_ids.filtered(
+                lambda s: s.type == "browser"
+            ):
                 self.env["pbx.sub_extension"].create(
                     {
                         "extension_id": ext.id,
@@ -273,3 +284,56 @@ class PbxExtension(models.Model):
             "same => n,Set(OC_AVAIL=${{CURL({url}/pbx/availability/{num}?token={tok})}})\n"
             'same => n,GotoIf($["${{CUT(OC_AVAIL,:,1)}}" = "busy"]?unavailable)\n'
         ).format(url=odoo_url, num=self.public_number, tok=webhook_token)
+
+    # ------------------------------------------------------------------
+    # Click-to-call
+    # ------------------------------------------------------------------
+
+    @api.model
+    def action_click_to_call_current_user(self, number):
+        """Click-to-call för inloggad användare (anropas via RPC/route)."""
+        ext = self.search([("user_id", "=", self.env.user.id)], limit=1)
+        if not ext:
+            raise UserError(_("Du har ingen PBX-anknytning kopplad."))
+        return ext.action_click_to_call(number)
+
+    def action_click_to_call(self, number):
+        """Ring användarens första aktiva enhet och koppla målnumret.
+
+        Publicerar ``pbx.cmd.Action.Originate`` (→ daemonen kör AMI Originate):
+        channel = PJSIP/<domain>-<sub.number> (användarens telefon ringer först),
+        exten = <normaliserat nummer>, context = <domain>-outbound.
+        """
+        self.ensure_one()
+        if not self.user_id:
+            raise UserError(_("Anknytningen har ingen användare kopplad."))
+        device = self.sub_extension_ids.filtered(
+            lambda s: s.active and s.type != "voicemail"
+        ).sorted("sequence")[:1]
+        if not device:
+            raise UserError(_("Ingen aktiv enhet finns på anknytningen."))
+        number = self._normalize_click_number(number)
+        if not number:
+            raise UserError(_("Ogiltigt telefonnummer."))
+        company = self.company_id
+        domain = company.pbx_domain
+        if not domain:
+            raise UserError(_("Ingen SIP-domän är konfigurerad för företaget."))
+        channel = "PJSIP/%s-%s" % (domain, device.number)
+        ok = self.env["pbx.mq.publisher"].action_originate(
+            server=company.pbx_server_host or "asterisk",
+            channel=channel,
+            context="%s-outbound" % domain,
+            exten=number,
+        )
+        return {
+            "ok": bool(ok),
+            "channel": channel,
+            "exten": number,
+            "device": device.number,
+        }
+
+    @staticmethod
+    def _normalize_click_number(number):
+        """'+46 (70) 123-456' / '0701-23 45 67' → '+4670123456' / '0701234567'."""
+        return re.sub(r"[\s\(\)\-\.]", "", number or "").strip()

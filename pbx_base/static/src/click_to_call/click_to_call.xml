@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<templates xml:space="preserve">
+    <t t-name="pbx_base.PbxCallButton" owl="1">
+        <button
+            class="btn btn-link o_pbx_click_to_call"
+            type="button"
+            title="Click-to-call"
+            t-on-click="onClickCall"
+            t-att-disabled="state.calling ? true : undefined"
+        >
+            <i class="fa fa-phone"/>
+            <t t-if="state.calling"><i class="fa fa-spinner fa-spin ms-1"/></t>
+        </button>
+    </t>
+
+    <t t-name="pbx_base.PbxCallField" owl="1">
+        <div class="o_pbx_call_wrap input-group">
+            <input
+                type="text"
+                class="form-control"
+                t-model="value"
+                t-on-change="onChange"
+            />
+            <span class="input-group-append">
+                <PbxCallButton number="value"/>
+            </span>
+        </div>
+    </t>
+</templates>
