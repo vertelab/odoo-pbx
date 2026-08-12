@@ -12,7 +12,7 @@
                 <field name="minion_id"/>
                 <field name="image_1920" widget="image"/>
                 <field name="active"/>
-                <t t-name="kanban-box">
+                <t t-name="card">
                     <div t-attf-class="oe_kanban_global_click o_kanban_record_has_image_fill #{kanban_color}">
                         <div class="o_kanban_image">
                             <img t-att-src="image_1920" class="o_image_64_cover" alt="Tenant"/>
@@ -42,14 +42,16 @@
         <field name="name">res.partner.tenant.form</field>
         <field name="model">res.partner</field>
         <field name="inherit_id" ref="base.view_partner_form"/>
-        <field name="groups_id" eval="[(4, ref('pbx_base.group_pbx_office'))]"/>
         <field name="arch" type="xml">
-            <!-- Header-knapp: Minion-sync (visas bara för tenanter) -->
-            <xpath expr="//header" position="inside">
-                <button name="deploy_config" type="object" string="Minion-sync"
-                        class="btn-primary" icon="fa-cloud-upload"
-                        invisible="not is_pbx_tenant"
-                        confirm="Deploya växelinfo till minionen? (salt state.apply odoo.pbx)"/>
+            <!-- Header-knapp: Minion-sync (base-partner-vyn har ingen <header> i
+                 Odoo 18 — lägg till en före <sheet>; knappen visas bara för tenanter) -->
+            <xpath expr="//sheet" position="before">
+                <header>
+                    <button name="deploy_config" type="object" string="Minion-sync"
+                            class="btn-primary" icon="fa-cloud-upload"
+                            invisible="not is_pbx_tenant"
+                            confirm="Deploya växelinfo till minionen? (salt state.apply odoo.pbx)"/>
+                </header>
             </xpath>
             <!-- Tenant-sektion: domän, server, minion + deploy-status -->
             <xpath expr="//div[hasclass('oe_title')]" position="after">

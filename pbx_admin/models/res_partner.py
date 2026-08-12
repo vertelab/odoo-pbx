@@ -120,7 +120,7 @@ class ResPartner(models.Model):
             "password": ICP.get_param("pbx.mq.password", ""),
             "vhost": ICP.get_param("pbx.mq.vhost", "pbx"),
         }
-        company = self.commercial_partner_id
+        company = self.company_id
         return {
             "pbx": {
                 "domain": self.domain or "",
