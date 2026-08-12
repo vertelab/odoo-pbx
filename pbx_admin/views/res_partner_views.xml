@@ -1,5 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+
+    <!-- is_pbx_tenant på standard-partnerformuläret (Misc-gruppen, i höjd med company) -->
+    <record id="res_partner_pbx_tenant_flag" model="ir.ui.view">
+        <field name="name">res.partner.pbx.tenant.flag</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//group[@name='misc']" position="inside">
+                <field name="is_pbx_tenant" string="PBX-tenant"/>
+            </xpath>
+        </field>
+    </record>
+
     <!-- Tenants kanban (res.partner + is_pbx_tenant) -->
     <record id="pbx_tenant_kanban" model="ir.ui.view">
         <field name="name">res.partner.tenant.kanban</field>
@@ -41,45 +54,47 @@
         </field>
     </record>
 
-    <!-- Tenant form: ärv res.partner-formuläret — header-knapp + tenant-sektion + Notes -->
+    <!-- Tenant form: helt eget formulär — namn/bild + PBX-unika fält + länk till res.partner -->
     <record id="pbx_tenant_form" model="ir.ui.view">
         <field name="name">res.partner.tenant.form</field>
         <field name="model">res.partner</field>
-        <field name="inherit_id" ref="base.view_partner_form"/>
         <field name="arch" type="xml">
-            <!-- Header-knapp: Minion-sync (base-partner-vyn har ingen <header> i
-                 Odoo 18 — lägg till en före <sheet>; knappen visas bara för tenanter) -->
-            <xpath expr="//sheet" position="before">
+            <form string="PBX Tenant">
                 <header>
                     <button name="deploy_config" type="object" string="Minion-sync"
                             class="btn-primary" icon="fa-cloud-upload"
-                            invisible="not is_pbx_tenant"
                             confirm="Deploya växelinfo till minionen? (salt state.apply odoo.pbx)"/>
+                    <button name="action_open_partner" type="object" string="Öppna partner"
+                            class="btn-secondary" icon="fa-external-link"/>
                 </header>
-            </xpath>
-            <!-- Tenant-sektion: domän, server, minion + deploy-status -->
-            <xpath expr="//div[hasclass('oe_title')]" position="after">
-                <group string="PBX" name="pbx_tenant_info" invisible="not is_pbx_tenant" col="4">
-                    <group>
-                        <field name="is_pbx_tenant" invisible="1"/>
-                        <field name="domain"/>
-                        <field name="server_id"/>
-                        <field name="minion_id"/>
-                        <field name="deploy_status"/>
-                        <field name="last_deploy"/>
+                <sheet>
+                    <field name="is_pbx_tenant" invisible="1"/>
+                    <div class="oe_title">
+                        <field name="image_1920" widget="image" class="oe_avatar" readonly="1"/>
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+                    <group string="PBX">
+                        <group>
+                            <field name="domain"/>
+                            <field name="server_id"/>
+                            <field name="minion_id"/>
+                        </group>
+                        <group>
+                            <field name="deploy_status"/>
+                            <field name="last_deploy"/>
+                        </group>
                     </group>
                     <group string="Deploy-logg">
                         <field name="deploy_log" readonly="1" nolabel="1"
                                placeholder="Minion-sync-logg…"/>
                     </group>
-                </group>
-            </xpath>
-            <!-- Notebook: Notes-sida (no-label på comment) -->
-            <xpath expr="//notebook" position="inside">
-                <page string="Notes" name="pbx_tenant_notes" invisible="not is_pbx_tenant">
-                    <field name="comment" nolabel="1" placeholder="Anteckningar om tenanten…"/>
-                </page>
-            </xpath>
+                    <notebook>
+                        <page string="Notes" name="pbx_tenant_notes">
+                            <field name="comment" nolabel="1" placeholder="Anteckningar om tenanten…"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
         </field>
     </record>
 

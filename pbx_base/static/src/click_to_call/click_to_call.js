@@ -25,7 +25,8 @@ export class PbxCallButton extends Component {
             );
             this.notification.add(`Ringer ${this.props.number}`, { type: "success" });
         } catch (e) {
-            this.notification.add(e.message || "Kunde inte ringa", { type: "danger" });
+            const msg = e.data?.message || e.message || "Kunde inte ringa";
+            this.notification.add(msg, { type: "danger" });
         } finally {
             this.state.calling = false;
         }

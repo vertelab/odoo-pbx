@@ -131,3 +131,14 @@ class ResPartner(models.Model):
                 "db_name": ICP.get_param("pbx_admin.salt_db_name", "odoo"),
             }
         }
+
+    def action_open_partner(self):
+        """Öppna den underliggande res.partner-posten (fullständigt formulär)."""
+        self.ensure_one()
+        return {
+            "type": "ir.actions.act_window",
+            "res_model": "res.partner",
+            "view_mode": "form",
+            "res_id": self.id,
+            "target": "current",
+        }
