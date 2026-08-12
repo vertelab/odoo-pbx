@@ -17,3 +17,10 @@ class PbxServer(models.Model):
     spool_path = fields.Char(default="/var/spool/asterisk")
     active = fields.Boolean(default=True)
     company_id = fields.Many2one("res.company", string="Company")
+
+    def reload_asterisk(self):
+        """Ladda om Asterisk (pjsip) via MQ → daemonen (AMI Command)."""
+        self.ensure_one()
+        mq = self.env["pbx.mq.publisher"]
+        ok = mq.publish("pbx.cmd.Action.Reload", {"Command": "pjsip reload"})
+        return {"ok": bool(ok)}

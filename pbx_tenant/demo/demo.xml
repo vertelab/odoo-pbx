@@ -101,4 +101,13 @@
         "token": {"label": "Provisioneringstoken", "source": "device", "field": "provisioning_token", "order": 7}
     }</field>
 </record>
+
+
+<!-- Tenant som res.partner (pbx-tenant-as-partner) -->
+<record id="demo_tenant_partner" model="res.partner">
+    <field name="name">Vertel Test</field>
+    <field name="is_pbx_tenant">True</field>
+    <field name="domain">vertel.test</field>
+    <field name="comment">Demotenant för PBX-test.</field>
+</record>
 </odoo>

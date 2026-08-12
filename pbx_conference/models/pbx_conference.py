@@ -9,7 +9,7 @@ class PbxConference(models.Model):
     _inherit = ["pbx.plugin", "pbx.destination.mixin"]
     _description = "PBX Conference Room"
 
-    tenant_id = fields.Many2one("pbx.tenant", required=True, ondelete="cascade")
+    tenant_id = fields.Many2one("res.partner", string="Tenant", required=True, ondelete="cascade", domain="[('is_pbx_tenant', '=', True)]")
     name = fields.Char(required=True, help="e.g. Ledningsmöte")
     extension = fields.Char(required=True, help="Internal extension for the conference")
     pin = fields.Char(help="PIN code for participants")
@@ -34,7 +34,7 @@ class PbxConference(models.Model):
         if vals.get("extension") or vals.get("tenant_id"):
             for rec in self:
                 tenant = (
-                    self.env["pbx.tenant"].browse(vals["tenant_id"])
+                    self.env["res.partner"].browse(vals["tenant_id"])
                     if vals.get("tenant_id")
                     else rec.tenant_id
                 )
@@ -46,10 +46,10 @@ class PbxConference(models.Model):
         return super().write(vals)
 
     def _company_from_vals(self, vals):
-        """Company från tenant_id i vals (pbx.tenant lever i pbx_admin)."""
+        """Company från tenant_id (tenant = res.partner med is_pbx_tenant)."""
         tenant_id = vals.get("tenant_id")
-        if tenant_id and "pbx.tenant" in self.env:
-            tenant = self.env["pbx.tenant"].browse(tenant_id)
+        if tenant_id:
+            tenant = self.env["res.partner"].browse(tenant_id)
             return tenant.company_id
         return False
 

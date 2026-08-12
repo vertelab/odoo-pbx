@@ -1,6 +1,6 @@
 {
     "name": "PBX Recording",
-    "version": "18.0.1.1.0",
+    "version": "18.0.1.2.0",
     "summary": "Call recording with Garage S3 storage",
     "category": "Productivity/VOIP",
     "author": "Vertel AB",

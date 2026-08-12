@@ -1,23 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <!-- Central administration: Asterisk servers + tenant/domain leases.
-         pbx_admin installeras bara centralt (Ledningssystem). PBX Office
-         (och därmed PBX Admin) administrerar servers/tenants här. -->
+    <!-- Tenants = första valet direkt under PBX-roten (kanban) -->
+    <menuitem
+        id="menu_pbx_tenants"
+        name="Tenants"
+        parent="pbx_base.menu_pbx_root"
+        action="pbx_tenant_act_window"
+        sequence="5"
+        groups="pbx_base.group_pbx_office"
+    />
+
+    <!-- Central administration: Asterisk servers -->
     <menuitem
         id="menu_pbx_servers"
         name="Servers"
         parent="pbx_base.menu_pbx_configuration"
         action="pbx_server_act_window"
         sequence="60"
-        groups="pbx_base.group_pbx_office"
-    />
-
-    <menuitem
-        id="menu_pbx_tenants"
-        name="Tenants"
-        parent="pbx_base.menu_pbx_configuration"
-        action="pbx_tenant_act_window"
-        sequence="70"
         groups="pbx_base.group_pbx_office"
     />
 </odoo>

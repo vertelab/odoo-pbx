@@ -13,7 +13,7 @@ class PbxTimeCondition(models.Model):
     _inherit = ["pbx.plugin", "pbx.destination.mixin"]
     _description = "PBX Time Condition"
 
-    tenant_id = fields.Many2one("pbx.tenant", required=True, ondelete="cascade")
+    tenant_id = fields.Many2one("res.partner", string="Tenant", required=True, ondelete="cascade", domain="[('is_pbx_tenant', '=', True)]")
     name = fields.Char(required=True, help="e.g. Office Hours")
     timezone = fields.Char(default="Europe/Stockholm")
     days_of_week = fields.Char(

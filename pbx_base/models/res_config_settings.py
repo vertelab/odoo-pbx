@@ -51,36 +51,6 @@ class ResConfigSettings(models.TransientModel):
         help="t.ex. stun.vertel.se:3478",
     )
 
-    # Read-only tenant info (defined centrally in the management system)
-    pbx_tenant_plan = fields.Selection(
-        [("standard", "Standard"), ("premium", "Premium"), ("enterprise", "Enterprise")],
-        string="Plan",
-        readonly=True,
-        compute="_compute_pbx_tenant_info",
-    )
-    pbx_tenant_max_extensions = fields.Integer(
-        string="Max Extensions",
-        readonly=True,
-        compute="_compute_pbx_tenant_info",
-    )
-
-    @api.model
-    def _get_pbx_tenant(self):
-        """The tenant record of the current company — only exists when
-        pbx_admin (central management system) is installed."""
-        if "pbx.tenant" not in self.env:
-            return None
-        return self.env["pbx.tenant"].search(
-            [("company_id", "=", self.env.company.id)], limit=1
-        )
-
-    @api.depends("company_id")
-    def _compute_pbx_tenant_info(self):
-        for rec in self:
-            tenant = rec._get_pbx_tenant()
-            rec.pbx_tenant_plan = tenant.plan if tenant else False
-            rec.pbx_tenant_max_extensions = tenant.max_extensions if tenant else 0
-
     # ── RabbitMQ + webhook ──
     pbx_mq_host = fields.Char(
         string="RabbitMQ Host",

@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Tenants kanban (res.partner + is_pbx_tenant) -->
+    <record id="pbx_tenant_kanban" model="ir.ui.view">
+        <field name="name">res.partner.tenant.kanban</field>
+        <field name="model">res.partner</field>
+        <field name="arch" type="xml">
+            <kanban class="o_kanban_mobile" default_group_by="none">
+                <field name="name"/>
+                <field name="domain"/>
+                <field name="server_id"/>
+                <field name="minion_id"/>
+                <field name="image_1920" widget="image"/>
+                <field name="active"/>
+                <t t-name="kanban-box">
+                    <div t-attf-class="oe_kanban_global_click o_kanban_record_has_image_fill #{kanban_color}">
+                        <div class="o_kanban_image">
+                            <img t-att-src="image_1920" class="o_image_64_cover" alt="Tenant"/>
+                            <div class="o_kanban_record_title">
+                                <field name="name"/>
+                            </div>
+                            <div class="o_kanban_record_subtitle">
+                                <field name="domain"/>
+                            </div>
+                        </div>
+                        <div class="o_kanban_record_bottom">
+                            <span t-if="server_id" class="o_kanban_record_subtitle">
+                                <i class="fa fa-server"/> <field name="server_id"/>
+                            </span>
+                            <span t-if="minion_id" class="o_kanban_record_subtitle ms-2">
+                                <i class="fa fa-robot"/> <field name="minion_id"/>
+                            </span>
+                        </div>
+                    </div>
+                </t>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Tenant form: ärv res.partner-formuläret — header-knapp + tenant-sektion + Notes -->
+    <record id="pbx_tenant_form" model="ir.ui.view">
+        <field name="name">res.partner.tenant.form</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="groups_id" eval="[(4, ref('pbx_base.group_pbx_office'))]"/>
+        <field name="arch" type="xml">
+            <!-- Header-knapp: Minion-sync (visas bara för tenanter) -->
+            <xpath expr="//header" position="inside">
+                <button name="deploy_config" type="object" string="Minion-sync"
+                        class="btn-primary" icon="fa-cloud-upload"
+                        invisible="not is_pbx_tenant"
+                        confirm="Deploya växelinfo till minionen? (salt state.apply odoo.pbx)"/>
+            </xpath>
+            <!-- Tenant-sektion: domän, server, minion + deploy-status -->
+            <xpath expr="//div[hasclass('oe_title')]" position="after">
+                <group string="PBX" name="pbx_tenant_info" invisible="not is_pbx_tenant" col="4">
+                    <group>
+                        <field name="is_pbx_tenant" invisible="1"/>
+                        <field name="domain"/>
+                        <field name="server_id"/>
+                        <field name="minion_id"/>
+                        <field name="deploy_status"/>
+                        <field name="last_deploy"/>
+                    </group>
+                    <group string="Deploy-logg">
+                        <field name="deploy_log" readonly="1" nolabel="1"
+                               placeholder="Minion-sync-logg…"/>
+                    </group>
+                </group>
+            </xpath>
+            <!-- Notebook: Notes-sida (no-label på comment) -->
+            <xpath expr="//notebook" position="inside">
+                <page string="Notes" name="pbx_tenant_notes" invisible="not is_pbx_tenant">
+                    <field name="comment" nolabel="1" placeholder="Anteckningar om tenanten…"/>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Action: Tenants (bara partners med is_pbx_tenant) -->
+    <record id="pbx_tenant_act_window" model="ir.actions.act_window">
+        <field name="name">Tenants</field>
+        <field name="res_model">res.partner</field>
+        <field name="view_mode">kanban,form</field>
+        <field name="domain">[('is_pbx_tenant', '=', True)]</field>
+        <field name="context">{'default_is_pbx_tenant': True, 'search_default_group_by': []}</field>
+        <field name="view_ids" eval="[(5, 0, 0), (0, 0, {'view_mode': 'kanban', 'view_id': ref('pbx_tenant_kanban')}), (0, 0, {'view_mode': 'form', 'view_id': ref('pbx_tenant_form')})]"/>
+    </record>
+</odoo>

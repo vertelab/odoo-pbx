@@ -35,17 +35,19 @@ class BillingController(http.Controller):
                 status=401,
             )
 
-        tenants = request.env["pbx.tenant"].sudo().search([])
+        tenants = request.env["res.partner"].sudo().search(
+            [("is_pbx_tenant", "=", True)]
+        )
         result = []
         for tenant in tenants:
             extensions = request.env["pbx.extension"].sudo().search_count(
-                [("tenant_id", "=", tenant.id), ("active", "=", True)]
+                [("company_id", "=", tenant.company_id.id), ("active", "=", True)]
             )
             result.append(
                 {
                     "id": tenant.id,
                     "domain": tenant.domain,
-                    "plan": tenant.plan,
+                    "plan": "standard",
                     "extensions_count": extensions,
                     "queues_count": 0,  # Filled by pbx_queue plugin
                     "conference_rooms": 0,  # Filled by pbx_conference plugin
@@ -76,8 +78,10 @@ class BillingController(http.Controller):
                 status=401,
             )
 
-        tenant = request.env["pbx.tenant"].sudo().browse(tenant_id)
-        if not tenant.exists():
+        tenant = request.env["res.partner"].sudo().search(
+            [("id", "=", tenant_id), ("is_pbx_tenant", "=", True)], limit=1
+        )
+        if not tenant:
             return request.make_response(
                 json.dumps({"error": "Not found"}),
                 headers=[("Content-Type", "application/json")],
@@ -85,7 +89,7 @@ class BillingController(http.Controller):
             )
 
         extensions = request.env["pbx.extension"].sudo().search_count(
-            [("tenant_id", "=", tenant.id), ("active", "=", True)]
+            [("company_id", "=", tenant.company_id.id), ("active", "=", True)]
         )
 
         return request.make_response(
@@ -93,7 +97,7 @@ class BillingController(http.Controller):
                 {
                     "id": tenant.id,
                     "domain": tenant.domain,
-                    "plan": tenant.plan,
+                    "plan": "standard",
                     "extensions_count": extensions,
                     "queues_count": 0,
                     "conference_rooms": 0,

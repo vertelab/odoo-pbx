@@ -49,14 +49,6 @@
                         </setting>
                         <setting string="Leasavtal (från central förvaltning)">
                             <div class="content-group">
-                                <div class="row mt16">
-                                    <label string="Plan" for="pbx_tenant_plan" class="col-lg-3 o_light_label"/>
-                                    <field name="pbx_tenant_plan" class="col-lg-3"/>
-                                </div>
-                                <div class="row mt16">
-                                    <label string="Max Extensions" for="pbx_tenant_max_extensions" class="col-lg-3 o_light_label"/>
-                                    <field name="pbx_tenant_max_extensions" class="col-lg-3"/>
-                                </div>
                             </div>
                         </setting>
                     </block>

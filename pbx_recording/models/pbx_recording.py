@@ -9,7 +9,7 @@ class PbxRecordingPolicy(models.Model):
     _inherit = ["pbx.plugin"]
     _description = "PBX Recording Policy"
 
-    tenant_id = fields.Many2one("pbx.tenant", required=True, ondelete="cascade")
+    tenant_id = fields.Many2one("res.partner", string="Tenant", required=True, ondelete="cascade", domain="[('is_pbx_tenant', '=', True)]")
     scope = fields.Selection(
         [("tenant", "Tenant"), ("queue", "Queue"), ("extension", "Extension")],
         required=True,
