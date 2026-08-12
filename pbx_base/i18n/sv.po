@@ -1,0 +1,1410 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* pbx_base
+#
+msgstr ""
+"Project-Id-Version: Odoo Server 18.0-20260701\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-08-12 10:54+0000\n"
+"PO-Revision-Date: 2026-08-12 10:54+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_res_config_settings__pbx_api_key
+#: model_terms:ir.ui.view,arch_db:pbx_base.res_config_settings_view_form_pbx
+msgstr "API-nyckel"
+
+#. module: pbx_base
+#: model:ir.model.fields,help:pbx_base.field_res_company__pbx_api_key
+msgstr ""
+
+#. module: pbx_base
+#: model:ir.model.fields,help:pbx_base.field_res_config_settings__pbx_api_key
+msgstr "API-nyckel mot Asterisk-servern / provisioning-daemon (per företag)."
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_extension__message_needaction
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_inbound_route__message_needaction
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_outbound_route__message_needaction
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_trunk__message_needaction
+msgstr "Åtgärd krävs"
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_device_template__active
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_extension__active
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_inbound_route__active
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_outbound_route__active
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_sub_extension__active
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_trunk__active
+msgstr "Aktiv"
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_extension__activity_ids
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_inbound_route__activity_ids
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_outbound_route__activity_ids
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_trunk__activity_ids
+msgstr ""
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_extension__activity_exception_decoration
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_inbound_route__activity_exception_decoration
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_outbound_route__activity_exception_decoration
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_trunk__activity_exception_decoration
+msgstr ""
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_extension__activity_state
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_inbound_route__activity_state
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_outbound_route__activity_state
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_trunk__activity_state
+msgstr ""
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_extension__activity_type_icon
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_inbound_route__activity_type_icon
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_outbound_route__activity_type_icon
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_trunk__activity_type_icon
+msgstr ""
+
+#. module: pbx_base
+#: model:ir.model.constraint,message:pbx_base.constraint_pbx_inbound_route_inbound_route_unique
+msgstr ""
+
+#. module: pbx_base
+#: model_terms:ir.ui.view,arch_db:pbx_base.pbx_call_list_view
+msgstr ""
+
+#. module: pbx_base
+#. odoo-python
+#: code:addons/pbx_base/models/pbx_extension.py:0
+msgstr "Anknytningen har ingen användare kopplad."
+
+#. module: pbx_base
+#: model:ir.model.fields.selection,name:pbx_base.selection__pbx_call__pbx_handling__answered
+msgstr "Besvarad"
+
+#. module: pbx_base
+#: model_terms:ir.ui.view,arch_db:pbx_base.pbx_call_list_view
+#: model_terms:ir.ui.view,arch_db:pbx_base.pbx_call_search_view
+msgstr "Användare"
+
+#. module: pbx_base
+#: model:ir.ui.menu,name:pbx_base.menu_pbx_applications
+msgstr "Applikationer"
+
+#. module: pbx_base
+#: model_terms:ir.ui.view,arch_db:pbx_base.pbx_extension_form_view
+#: model_terms:ir.ui.view,arch_db:pbx_base.pbx_inbound_route_form_view
+#: model_terms:ir.ui.view,arch_db:pbx_base.pbx_outbound_route_form_view
+#: model_terms:ir.ui.view,arch_db:pbx_base.pbx_trunk_form_view
+msgstr "Arkiverad"
+
+#. module: pbx_base
+#: model:ir.model.fields,help:pbx_base.field_pbx_outbound_route__pattern
+msgstr "Asterisk-uppringningsmönster, t.ex. _0. (nationellt) eller _00. (internationellt)"
+
+#. module: pbx_base
+#: model:ir.model.fields,help:pbx_base.field_pbx_custom_destination__context
+msgstr "Asterisk-dialplan-kontext, t.ex. app-blackhole"
+
+#. module: pbx_base
+#: model:ir.model.fields,help:pbx_base.field_res_config_settings__pbx_server_host
+msgstr "Asterisk-serveradress (per företag)."
+
+#. module: pbx_base
+#: model:ir.model.fields,help:pbx_base.field_res_company__pbx_server_host
+msgstr "Asterisk-serveradress (tom = använd global setting)"
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_extension__message_attachment_count
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_inbound_route__message_attachment_count
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_outbound_route__message_attachment_count
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_trunk__message_attachment_count
+msgstr "Antal bilagor"
+
+#. module: pbx_base
+#: model_terms:ir.ui.view,arch_db:pbx_base.res_config_settings_view_form_pbx
+msgstr ""
+
+#. module: pbx_base
+#: model:ir.model.fields,help:pbx_base.field_res_config_settings__pbx_webhook_token
+msgstr "Bearer-token som pbx_ami_daemon använder mot /pbx/webhook"
+
+#. module: pbx_base
+#: model_terms:ir.ui.view,arch_db:pbx_base.pbx_call_form_view
+msgstr "Samtal"
+
+#. module: pbx_base
+#: model:ir.actions.act_window,name:pbx_base.pbx_call_act_window
+#: model:ir.ui.menu,name:pbx_base.menu_pbx_call_history
+msgstr "Samtalshistorik"
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_call__callerid_name
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_inbound_route__cid
+msgstr "Nummerpresentation"
+
+#. module: pbx_base
+#: model:ir.model.fields,help:pbx_base.field_pbx_inbound_route__cid
+msgstr "Nummerpresentations-matchning. Tom = vilken som helst"
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_extension__callerid_name
+msgstr "Namn på nummerpresentation"
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_res_partner__pbx_call_count
+#: model:ir.model.fields,field_description:pbx_base.field_res_users__pbx_call_count
+#: model_terms:ir.ui.view,arch_db:pbx_base.pbx_call_list_view
+#: model_terms:ir.ui.view,arch_db:pbx_base.view_partner_form_pbx_call
+msgstr "Samtal"
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_trunk__channels
+msgstr "Kanaler"
+
+#. module: pbx_base
+#. odoo-javascript
+#: code:addons/pbx_base/static/src/click_to_call/click_to_call.xml:0
+msgstr "Klick-till-samtal"
+
+#. module: pbx_base
+#: model:ir.model,name:pbx_base.model_res_company
+msgstr "Företag"
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_call__company_id
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_device_template__company_id
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_extension__company_id
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_inbound_route__company_id
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_outbound_route__company_id
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_outbound_route_trunk__company_id
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_trunk__company_id
+#: model:ir.model.fields,field_description:pbx_base.field_voip_call__company_id
+#: model:ir.model.fields,field_description:pbx_base.field_voip_pbx__company_id
+msgstr "Företag"
+
+#. module: pbx_base
+#: model:ir.model,name:pbx_base.model_res_config_settings
+msgstr "Inställningar"
+
+#. module: pbx_base
+#: model:ir.ui.menu,name:pbx_base.menu_pbx_configuration
+msgstr "Konfiguration"
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_device_template__config_template
+msgstr "Konfigurationsmall"
+
+#. module: pbx_base
+#: model:ir.model,name:pbx_base.model_res_partner
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_call__partner_id
+msgstr "Kontakt"
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_custom_destination__context
+msgstr "Kontext"
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_outbound_route_trunk__continue_
+msgstr "Fortsätt"
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_call__create_uid
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_custom_destination__create_uid
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_device_template__create_uid
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_extension__create_uid
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_inbound_route__create_uid
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_outbound_route__create_uid
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_outbound_route_trunk__create_uid
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_sub_extension__create_uid
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_trunk__create_uid
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_voicemail_destination__create_uid
+msgstr "Skapad av"
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_call__create_date
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_custom_destination__create_date
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_device_template__create_date
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_extension__create_date
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_inbound_route__create_date
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_outbound_route__create_date
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_outbound_route_trunk__create_date
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_sub_extension__create_date
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_trunk__create_date
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_voicemail_destination__create_date
+msgstr "Skapad den"
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_inbound_route__did
+msgstr ""
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_sub_extension__delete_after_days
+msgstr "Radera efter dagar"
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_extension__description
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_inbound_route__description
+msgstr "Beskrivning"
+
+#. module: pbx_base
+#: model:ir.model.fields.selection,name:pbx_base.selection__pbx_device_template__device_type__desktop
+#: model:ir.model.fields.selection,name:pbx_base.selection__pbx_sub_extension__type__desktop
+msgstr ""
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_inbound_route__destination_id
+#: model_terms:ir.ui.view,arch_db:pbx_base.pbx_inbound_route_form_view
+msgstr "Destination"
+
+#. module: pbx_base
+#: model_terms:ir.ui.view,arch_db:pbx_base.pbx_device_template_form
+msgstr "Enhetsmall"
+
+#. module: pbx_base
+#: model:ir.actions.act_window,name:pbx_base.pbx_device_template_action
+#: model:ir.ui.menu,name:pbx_base.menu_pbx_device_template
+#: model_terms:ir.ui.view,arch_db:pbx_base.pbx_device_template_list
+msgstr "Enhetsmallar"
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_device_template__device_type
+msgstr "Enhetstyp"
+
+#. module: pbx_base
+#. odoo-python
+#: code:addons/pbx_base/models/pbx_numbering.py:0
+msgstr "Dialbart nummer måste vara numeriskt: %s"
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_call__direction
+msgstr "Riktning"
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_call__display_name
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_custom_destination__display_name
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_device_template__display_name
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_extension__display_name
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_inbound_route__display_name
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_outbound_route__display_name
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_outbound_route_trunk__display_name
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_sub_extension__display_name
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_trunk__display_name
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_voicemail_destination__display_name
+msgstr "Visningsnamn"
+
+#. module: pbx_base
+#. odoo-python
+#: code:addons/pbx_base/models/pbx_extension.py:0
+msgstr ""
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_call__duration
+msgstr "Varaktighet (s)"
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_outbound_route__emergency_route
+msgstr "Nödrutt"
+
+#. module: pbx_base
+#: model:ir.model.constraint,message:pbx_base.constraint_pbx_device_template_unique_device_type_company
+msgstr "Endast en mall per enhetstyp och företag!"
+
+#. module: pbx_base
+#: model_terms:ir.ui.view,arch_db:pbx_base.pbx_extension_form_view
+msgstr ""
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_sub_extension__device_model
+msgstr ""
+
+#. module: pbx_base
+#: model:ir.model.fields.selection,name:pbx_base.selection__res_config_settings__pbx_tenant_plan__enterprise
+msgstr ""
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_custom_destination__exten
+msgstr "Anknytningsnummer"
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_call__extension_id
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_sub_extension__extension_id
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_voicemail_destination__extension_id
+msgstr "Anknytning"
+
+#. module: pbx_base
+#: model:ir.model.constraint,message:pbx_base.constraint_pbx_extension_extension_company_unique
+msgstr "Anknytningsnumret måste vara unikt inom företaget!"
+
+#. module: pbx_base
+#: model:ir.model.fields,help:pbx_base.field_pbx_custom_destination__exten
+msgstr "Anknytning inom kontexten"
+
+#. module: pbx_base
+#: model:ir.actions.act_window,name:pbx_base.pbx_extension_act_window
+#: model:ir.ui.menu,name:pbx_base.menu_pbx_extensions
+msgstr "Anknytningar"
+
+#. module: pbx_base
+#: model_terms:ir.ui.view,arch_db:pbx_base.pbx_outbound_route_form_view
+msgstr "Failover"
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_outbound_route__failover_destination_id
+msgstr "Failover-destination"
+
+#. module: pbx_base
+#: model:ir.model.fields,help:pbx_base.field_pbx_outbound_route_trunk__sequence
+msgstr ""
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_extension__message_follower_ids
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_inbound_route__message_follower_ids
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_outbound_route__message_follower_ids
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_trunk__message_follower_ids
+msgstr "Följare"
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_extension__message_partner_ids
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_inbound_route__message_partner_ids
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_outbound_route__message_partner_ids
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_trunk__message_partner_ids
+msgstr "Följare (kontakter)"
+
+#. module: pbx_base
+#: model:ir.model.fields,help:pbx_base.field_pbx_extension__activity_type_icon
+#: model:ir.model.fields,help:pbx_base.field_pbx_inbound_route__activity_type_icon
+#: model:ir.model.fields,help:pbx_base.field_pbx_outbound_route__activity_type_icon
+#: model:ir.model.fields,help:pbx_base.field_pbx_trunk__activity_type_icon
+msgstr "Font-awesome-ikon, t.ex. fa-tasks"
+
+#. module: pbx_base
+#: model:ir.model.fields,help:pbx_base.field_pbx_sub_extension__mac_address
+msgstr "\"\"Fysisk enhets MAC — provisioning-nyckel för hårdvarutelefoner. Normaliseras \"\"till gemener utan separatorer (001565a1b2c3)."
+
+#. module: pbx_base
+#: model:ir.model.fields,help:pbx_base.field_res_config_settings__pbx_domain
+msgstr "Företagets SIP-domän på Asterisk-servern (per företag)."
+
+#. module: pbx_base
+#: model:ir.model.fields,help:pbx_base.field_res_company__pbx_domain
+msgstr "Företagets SIP-domän på Asterisk-servern, t.ex. vertel.se"
+
+#. module: pbx_base
+#: model:ir.model.fields,help:pbx_base.field_pbx_sub_extension__sip_config_display
+msgstr "\"\"Genererade SIP-parametrar för enheten: username, lösenord, server, port, \"\"domän, protokoll och STUN."
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_sub_extension__greeting
+msgstr "Hälsning"
+
+#. module: pbx_base
+#: model_terms:ir.ui.view,arch_db:pbx_base.res_config_settings_view_form_pbx
+msgstr "Grundinställningar"
+
+#. module: pbx_base
+#: model_terms:ir.ui.view,arch_db:pbx_base.pbx_call_search_view
+msgstr ""
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_call__pbx_handling
+msgstr ""
+
+#. module: pbx_base
+#: model_terms:ir.ui.view,arch_db:pbx_base.pbx_call_search_view
+msgstr ""
+
+#. module: pbx_base
+#: model_terms:ir.ui.view,arch_db:pbx_base.pbx_call_list_view
+msgstr ""
+
+#. module: pbx_base
+#: model:ir.model.fields.selection,name:pbx_base.selection__pbx_device_template__device_type__hardware
+#: model:ir.model.fields.selection,name:pbx_base.selection__pbx_sub_extension__type__hardware
+msgstr "Hårdvarutelefon"
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_extension__has_message
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_inbound_route__has_message
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_outbound_route__has_message
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_trunk__has_message
+msgstr "Har meddelande"
+
+#. module: pbx_base
+#: model:ir.model.fields,help:pbx_base.field_res_company__pbx_provisioning_token
+msgstr "\"\"Hemlig token för provisioning-endpointen (hårdvarutelefoner). Telefonen \"\"skickar den som lösenord i URL:en: \"\"https://<domän>:<token>@provision.../<MAC>.cfg"
+
+#. module: pbx_base
+#: model:ir.model.fields,help:pbx_base.field_pbx_outbound_route__emergency_route
+msgstr "Högsta prioritet — matchar oavsett rutternas ordning"
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_trunk__host
+#: model_terms:ir.ui.view,arch_db:pbx_base.res_config_settings_view_form_pbx
+msgstr "Värd"
+
+#. module: pbx_base
+#: model:ir.model.fields,help:pbx_base.field_pbx_sub_extension__ring_timeout
+msgstr ""
+
+#. module: pbx_base
+#: model:ir.model.fields,help:pbx_base.field_pbx_call__pbx_handling
+msgstr "Hur samtalet hanterades i växeln (dialplan/AMI)."
+
+#. module: pbx_base
+#. odoo-python
+#: code:addons/pbx_base/models/pbx_sub_extension.py:0
+msgstr "Hårdvaruenhet kräver MAC-adress."
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_call__id
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_custom_destination__id
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_device_template__id
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_extension__id
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_inbound_route__id
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_outbound_route__id
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_outbound_route_trunk__id
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_sub_extension__id
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_trunk__id
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_voicemail_destination__id
+msgstr ""
+
+#. module: pbx_base
+#: model:ir.model.fields.selection,name:pbx_base.selection__pbx_call__pbx_handling__ivr
+msgstr ""
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_extension__activity_exception_icon
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_inbound_route__activity_exception_icon
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_outbound_route__activity_exception_icon
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_trunk__activity_exception_icon
+msgstr "Ikon"
+
+#. module: pbx_base
+#: model:ir.model.fields,help:pbx_base.field_pbx_extension__activity_exception_icon
+#: model:ir.model.fields,help:pbx_base.field_pbx_inbound_route__activity_exception_icon
+#: model:ir.model.fields,help:pbx_base.field_pbx_outbound_route__activity_exception_icon
+#: model:ir.model.fields,help:pbx_base.field_pbx_trunk__activity_exception_icon
+msgstr ""
+
+#. module: pbx_base
+#: model:ir.model.fields,help:pbx_base.field_pbx_extension__message_needaction
+#: model:ir.model.fields,help:pbx_base.field_pbx_inbound_route__message_needaction
+#: model:ir.model.fields,help:pbx_base.field_pbx_outbound_route__message_needaction
+#: model:ir.model.fields,help:pbx_base.field_pbx_trunk__message_needaction
+msgstr "Om markerat kräver nya meddelanden din uppmärksamhet."
+
+#. module: pbx_base
+#: model:ir.model.fields,help:pbx_base.field_pbx_extension__message_has_error
+#: model:ir.model.fields,help:pbx_base.field_pbx_inbound_route__message_has_error
+#: model:ir.model.fields,help:pbx_base.field_pbx_outbound_route__message_has_error
+#: model:ir.model.fields,help:pbx_base.field_pbx_trunk__message_has_error
+msgstr "Om markerat har vissa meddelanden leveransfel."
+
+#. module: pbx_base
+#: model:ir.actions.act_window,name:pbx_base.pbx_inbound_route_act_window
+#: model:ir.ui.menu,name:pbx_base.menu_pbx_inbound_routes
+msgstr "Inkommande rutter"
+
+#. module: pbx_base
+#: model:ir.model.fields.selection,name:pbx_base.selection__pbx_call__direction__incoming
+msgstr "Inkommande"
+
+#. module: pbx_base
+#. odoo-python
+#: code:addons/pbx_base/models/pbx_extension.py:0
+msgstr "Ingen SIP-domän är konfigurerad för företaget."
+
+#. module: pbx_base
+#. odoo-python
+#: code:addons/pbx_base/models/pbx_extension.py:0
+msgstr "Ingen aktiv enhet finns på anknytningen."
+
+#. module: pbx_base
+#: model_terms:ir.ui.view,arch_db:pbx_base.pbx_call_search_view
+msgstr ""
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_extension__message_is_follower
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_inbound_route__message_is_follower
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_outbound_route__message_is_follower
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_trunk__message_is_follower
+msgstr "Är följare"
+
+#. module: pbx_base
+#: model_terms:ir.ui.view,arch_db:pbx_base.pbx_call_list_view
+msgstr ""
+
+#. module: pbx_base
+#: model:ir.model.fields,help:pbx_base.field_res_config_settings__pbx_odoo_url
+msgstr "Kundens Odoo-bas-URL för tillgänglighetskontroll i genererad dialplan."
+
+#. module: pbx_base
+#: model:ir.model.fields,help:pbx_base.field_res_company__pbx_odoo_url
+msgstr "\"\"Kundens Odoo-bas-URL som den genererade dialplanen anropar för \"\"tillgänglighetskontroll (t.ex. https://crm.vertel.se). Tom = använd \"\"web.base.url."
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_sub_extension__label
+msgstr "Etikett"
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_call__write_uid
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_custom_destination__write_uid
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_device_template__write_uid
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_extension__write_uid
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_inbound_route__write_uid
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_outbound_route__write_uid
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_outbound_route_trunk__write_uid
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_sub_extension__write_uid
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_trunk__write_uid
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_voicemail_destination__write_uid
+msgstr "Senast uppdaterad av"
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_call__write_date
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_custom_destination__write_date
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_device_template__write_date
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_extension__write_date
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_inbound_route__write_date
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_outbound_route__write_date
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_outbound_route_trunk__write_date
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_sub_extension__write_date
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_trunk__write_date
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_voicemail_destination__write_date
+msgstr "Senast uppdaterad"
+
+#. module: pbx_base
+#: model:ir.model.fields,help:pbx_base.field_pbx_outbound_route__strip_digits
+msgstr "Inledande siffror att stryka från det uppringda numret"
+
+#. module: pbx_base
+#: model_terms:ir.ui.view,arch_db:pbx_base.res_config_settings_view_form_pbx
+msgstr "Leasavtal (från central förvaltning)"
+
+#. module: pbx_base
+#: model:ir.model.fields,help:pbx_base.field_pbx_inbound_route__sequence
+msgstr "Lägre sekvens matchas först"
+
+#. module: pbx_base
+#: model:ir.model.fields,help:pbx_base.field_pbx_outbound_route__sequence
+msgstr "Lägre sekvens provas först"
+
+#. module: pbx_base
+#: model_terms:ir.ui.view,arch_db:pbx_base.pbx_call_list_view
+msgstr "Längd (s)"
+
+#. module: pbx_base
+#: model:ir.model.fields,help:pbx_base.field_pbx_sub_extension__config_display
+msgstr "Läsbar per-parameter SIP-konfiguration (från enhetstypens mall)."
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_sub_extension__mac_address
+msgstr ""
+
+#. module: pbx_base
+#: model:ir.model.constraint,message:pbx_base.constraint_pbx_sub_extension_sub_ext_mac_unique
+msgstr "MAC-adressen får bara användas av en enhet!"
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_extension__activity_main_partner_id
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_inbound_route__activity_main_partner_id
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_outbound_route__activity_main_partner_id
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_trunk__activity_main_partner_id
+msgstr "Huvudkontakt"
+
+#. module: pbx_base
+#: model_terms:ir.ui.view,arch_db:pbx_base.pbx_inbound_route_form_view
+msgstr "Matchning"
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_sub_extension__max_duration
+msgstr "Max varaktighet"
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_res_config_settings__pbx_tenant_max_extensions
+#: model_terms:ir.ui.view,arch_db:pbx_base.res_config_settings_view_form_pbx
+msgstr "Max anknytningar"
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_sub_extension__max_messages
+msgstr "Max meddelanden"
+
+#. module: pbx_base
+#: model:ir.model.fields,help:pbx_base.field_pbx_sub_extension__max_duration
+msgstr "Max inspelningslängd (sekunder)"
+
+#. module: pbx_base
+#: model:ir.model.fields,help:pbx_base.field_pbx_trunk__channels
+msgstr "Max samtidiga kanaler"
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_extension__message_has_error
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_inbound_route__message_has_error
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_outbound_route__message_has_error
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_trunk__message_has_error
+msgstr "Leveransfel på meddelande"
+
+#. module: pbx_base
+#: model_terms:ir.ui.view,arch_db:pbx_base.res_config_settings_view_form_pbx
+msgstr "Meddelandekö"
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_extension__message_ids
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_inbound_route__message_ids
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_outbound_route__message_ids
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_trunk__message_ids
+msgstr "Meddelanden"
+
+#. module: pbx_base
+#: model_terms:ir.ui.view,arch_db:pbx_base.res_config_settings_view_form_pbx
+msgstr "Min telefon-växel"
+
+#. module: pbx_base
+#: model_terms:ir.ui.view,arch_db:pbx_base.view_users_form_pbx_call
+#: model_terms:ir.ui.view,arch_db:pbx_base.view_users_form_simple_pbx_call
+msgstr ""
+
+#. module: pbx_base
+#: model:ir.model.fields.selection,name:pbx_base.selection__pbx_call__pbx_handling__missed
+msgstr "Missad"
+
+#. module: pbx_base
+#: model:ir.model.fields.selection,name:pbx_base.selection__pbx_device_template__device_type__mobile
+#: model:ir.model.fields.selection,name:pbx_base.selection__pbx_sub_extension__type__mobile
+msgstr "Mobil"
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_extension__my_activity_date_deadline
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_inbound_route__my_activity_date_deadline
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_outbound_route__my_activity_date_deadline
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_trunk__my_activity_date_deadline
+msgstr ""
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_custom_destination__name
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_device_template__name
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_outbound_route__name
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_trunk__name
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_voicemail_destination__name
+msgstr "Namn"
+
+#. module: pbx_base
+#: model_terms:ir.ui.view,arch_db:pbx_base.pbx_call_list_view
+msgstr ""
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_extension__activity_calendar_event_id
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_inbound_route__activity_calendar_event_id
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_outbound_route__activity_calendar_event_id
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_trunk__activity_calendar_event_id
+msgstr ""
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_extension__activity_date_deadline
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_inbound_route__activity_date_deadline
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_outbound_route__activity_date_deadline
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_trunk__activity_date_deadline
+msgstr ""
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_extension__activity_summary
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_inbound_route__activity_summary
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_outbound_route__activity_summary
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_trunk__activity_summary
+msgstr ""
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_extension__activity_type_id
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_inbound_route__activity_type_id
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_outbound_route__activity_type_id
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_trunk__activity_type_id
+msgstr ""
+
+#. module: pbx_base
+#: model:ir.model.fields.selection,name:pbx_base.selection__pbx_outbound_route__time_source__none
+msgstr "Ingen tidsbegränsning"
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_call__phone_number
+msgstr "Nummer"
+
+#. module: pbx_base
+#: model_terms:ir.ui.view,arch_db:pbx_base.pbx_outbound_route_form_view
+msgstr "Nummerhantering"
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_extension__message_needaction_counter
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_inbound_route__message_needaction_counter
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_outbound_route__message_needaction_counter
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_trunk__message_needaction_counter
+msgstr "Antal åtgärder"
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_extension__message_has_error_counter
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_inbound_route__message_has_error_counter
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_outbound_route__message_has_error_counter
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_trunk__message_has_error_counter
+msgstr "Antal fel"
+
+#. module: pbx_base
+#: model:ir.model.fields,help:pbx_base.field_pbx_extension__message_needaction_counter
+#: model:ir.model.fields,help:pbx_base.field_pbx_inbound_route__message_needaction_counter
+#: model:ir.model.fields,help:pbx_base.field_pbx_outbound_route__message_needaction_counter
+#: model:ir.model.fields,help:pbx_base.field_pbx_trunk__message_needaction_counter
+msgstr "Antal meddelanden som kräver åtgärd"
+
+#. module: pbx_base
+#: model:ir.model.fields,help:pbx_base.field_pbx_extension__message_has_error_counter
+#: model:ir.model.fields,help:pbx_base.field_pbx_inbound_route__message_has_error_counter
+#: model:ir.model.fields,help:pbx_base.field_pbx_outbound_route__message_has_error_counter
+#: model:ir.model.fields,help:pbx_base.field_pbx_trunk__message_has_error_counter
+msgstr "Antal meddelanden med leveransfel"
+
+#. module: pbx_base
+#: model:ir.model.fields,help:pbx_base.field_pbx_inbound_route__did
+msgstr "Nummer eller Asterisk-mönster att matcha. Tom = vilket DID som helst"
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_sub_extension__number
+#: model_terms:ir.ui.view,arch_db:pbx_base.pbx_call_list_view
+msgstr ""
+
+#. module: pbx_base
+#. odoo-python
+#: code:addons/pbx_base/models/pbx_numbering.py:0
+msgstr "\"\"Nummer får inte börja med '*' — prefixet är reserverat för feature codes \"\"(*97/*98/*43/*82)."
+
+#. module: pbx_base
+#. odoo-python
+#: code:addons/pbx_base/models/pbx_numbering.py:0
+msgstr "Numret %s är redan upptaget i detta företag (%s)"
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_res_company__pbx_odoo_url
+#: model:ir.model.fields,field_description:pbx_base.field_res_config_settings__pbx_odoo_url
+#: model_terms:ir.ui.view,arch_db:pbx_base.res_config_settings_view_form_pbx
+msgstr "Odoo-URL"
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_extension__user_id
+msgstr "Odoo-användare"
+
+#. module: pbx_base
+#: model:ir.model.fields.selection,name:pbx_base.selection__pbx_device_template__device_type__browser
+#: model:ir.model.fields.selection,name:pbx_base.selection__pbx_sub_extension__type__browser
+msgstr "Odoo VOIP"
+
+#. module: pbx_base
+#. odoo-python
+#: code:addons/pbx_base/models/pbx_extension.py:0
+msgstr ""
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_outbound_route__outbound_callerid
+msgstr "Utgående nummerpresentation"
+
+#. module: pbx_base
+#: model:ir.model,name:pbx_base.model_pbx_outbound_route_trunk
+msgstr "Utgående rutt-trunk (failover-ordning)"
+
+#. module: pbx_base
+#: model:ir.actions.act_window,name:pbx_base.pbx_outbound_route_act_window
+#: model:ir.ui.menu,name:pbx_base.menu_pbx_outbound_routes
+msgstr "Utgående rutter"
+
+#. module: pbx_base
+#: model:ir.model.fields.selection,name:pbx_base.selection__pbx_call__direction__outgoing
+#: model:ir.model.fields.selection,name:pbx_base.selection__pbx_call__pbx_handling__outgoing
+msgstr "Utgående"
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_trunk__callerid
+msgstr "Utgående nummerpresentation"
+
+#. module: pbx_base
+#: model:ir.ui.menu,name:pbx_base.menu_pbx_root
+#: model_terms:ir.ui.view,arch_db:pbx_base.res_config_settings_view_form_pbx
+msgstr ""
+
+#. module: pbx_base
+#: model_terms:ir.ui.view,arch_db:pbx_base.view_company_form_pbx
+msgstr ""
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_res_company__pbx_api_key
+msgstr ""
+
+#. module: pbx_base
+#: model:res.groups,name:pbx_base.group_pbx_admin
+msgstr ""
+
+#. module: pbx_base
+#: model:ir.model,name:pbx_base.model_pbx_call
+msgstr ""
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_res_company__config_dirty
+msgstr ""
+
+#. module: pbx_base
+#: model:ir.model,name:pbx_base.model_pbx_config_dirty_mixin
+msgstr ""
+
+#. module: pbx_base
+#: model:ir.model,name:pbx_base.model_pbx_config_generator
+msgstr ""
+
+#. module: pbx_base
+#: model:ir.model,name:pbx_base.model_pbx_custom_destination
+msgstr ""
+
+#. module: pbx_base
+#: model:ir.model,name:pbx_base.model_pbx_destination_mixin
+msgstr ""
+
+#. module: pbx_base
+#: model:ir.model,name:pbx_base.model_pbx_device_template
+msgstr ""
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_res_users__pbx_extension_id
+msgstr ""
+
+#. module: pbx_base
+#: model:ir.model,name:pbx_base.model_pbx_extension
+msgstr ""
+
+#. module: pbx_base
+#: model:ir.model,name:pbx_base.model_pbx_inbound_route
+msgstr ""
+
+#. module: pbx_base
+#: model:ir.model,name:pbx_base.model_pbx_numbering
+msgstr ""
+
+#. module: pbx_base
+#: model:res.groups,name:pbx_base.group_pbx_office
+msgstr ""
+
+#. module: pbx_base
+#: model:res.groups,name:pbx_base.group_pbx_operator
+msgstr ""
+
+#. module: pbx_base
+#: model:ir.model,name:pbx_base.model_pbx_outbound_route
+msgstr ""
+
+#. module: pbx_base
+#: model:ir.model,name:pbx_base.model_pbx_plugin
+msgstr ""
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_res_company__pbx_provisioning_token
+msgstr ""
+
+#. module: pbx_base
+#: model:ir.model,name:pbx_base.model_pbx_mq_publisher
+msgstr ""
+
+#. module: pbx_base
+#: model:ir.model,name:pbx_base.model_pbx_trunk
+msgstr ""
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_res_company__pbx_server_host
+#: model:ir.model.fields,field_description:pbx_base.field_res_config_settings__pbx_server_host
+#: model_terms:ir.ui.view,arch_db:pbx_base.res_config_settings_view_form_pbx
+msgstr ""
+
+#. module: pbx_base
+#: model:ir.actions.act_window,name:pbx_base.pbx_config_settings_action
+msgstr ""
+
+#. module: pbx_base
+#: model:ir.model,name:pbx_base.model_pbx_sub_extension
+msgstr ""
+
+#. module: pbx_base
+#: model:ir.model,name:pbx_base.model_pbx_voicemail_destination
+msgstr ""
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_res_config_settings__pbx_webhook_token
+#: model_terms:ir.ui.view,arch_db:pbx_base.res_config_settings_view_form_pbx
+msgstr ""
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_outbound_route__password
+msgstr ""
+
+#. module: pbx_base
+#: model:ir.model.fields.selection,name:pbx_base.selection__pbx_extension__ring_strategy__parallel
+msgstr "Parallell"
+
+#. module: pbx_base
+#: model:ir.model.fields,help:pbx_base.field_pbx_device_template__config_template
+msgstr ""
+
+#. module: pbx_base
+#: model_terms:ir.ui.view,arch_db:pbx_base.pbx_device_template_form
+msgstr ""
+
+#. module: pbx_base
+#: model_terms:ir.ui.view,arch_db:pbx_base.res_config_settings_view_form_pbx
+msgstr "Lösenord"
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_outbound_route__pattern
+msgstr "Mönster"
+
+#. module: pbx_base
+#: model:ir.model.fields,help:pbx_base.field_pbx_sub_extension__provisioning_token
+msgstr "\"\"Per-enhet token för softphone-provisioning (desktop/mobile). Auto-genereras;\"\" URL:en är /pbx/provisioning/softphone/<token>.xml"
+
+#. module: pbx_base
+#: model:ir.model.fields,help:pbx_base.field_pbx_sub_extension__config
+msgstr "\"\"Per-parameter SIP-konfiguration populerad från enhetstypens mall \"\"(pbx.device.template) med skarpa data."
+
+#. module: pbx_base
+#: model:ir.model.fields,help:pbx_base.field_pbx_extension__password
+msgstr "\"\"Personligt SIP-lösenord som gäller för alla enheter på anknytningen. Auto-\"\"genereras och skrivs in i den genererade pjsip-konfigurationen."
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_res_config_settings__pbx_tenant_plan
+#: model_terms:ir.ui.view,arch_db:pbx_base.res_config_settings_view_form_pbx
+msgstr "Plan"
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_trunk__port
+#: model_terms:ir.ui.view,arch_db:pbx_base.res_config_settings_view_form_pbx
+msgstr "Port"
+
+#. module: pbx_base
+#: model:ir.model.fields,help:pbx_base.field_pbx_outbound_route__prepend_digits
+msgstr "Prefix som läggs före numret som skickas till trunken"
+
+#. module: pbx_base
+#: model:ir.model.fields.selection,name:pbx_base.selection__res_config_settings__pbx_tenant_plan__premium
+msgstr "Premium"
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_outbound_route__prepend_digits
+msgstr "Prefixsiffror"
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_custom_destination__priority
+msgstr "Prioritet"
+
+#. module: pbx_base
+#: model:ir.model.fields,help:pbx_base.field_pbx_custom_destination__priority
+msgstr "Prioritet inom kontexten"
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_sub_extension__provisioning_token
+msgstr ""
+
+#. module: pbx_base
+#: model:ir.model.constraint,message:pbx_base.constraint_pbx_sub_extension_sub_ext_token_unique
+msgstr "Provisioning-token måste vara unik!"
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_extension__public_number
+msgstr "Publikt nummer"
+
+#. module: pbx_base
+#: model:ir.model.fields.selection,name:pbx_base.selection__pbx_call__pbx_handling__queue
+msgstr "Kö"
+
+#. module: pbx_base
+#: model_terms:ir.ui.view,arch_db:pbx_base.res_config_settings_view_form_pbx
+msgstr ""
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_res_config_settings__pbx_mq_host
+msgstr ""
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_res_config_settings__pbx_mq_password
+msgstr ""
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_res_config_settings__pbx_mq_port
+msgstr ""
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_res_config_settings__pbx_mq_user
+msgstr ""
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_res_config_settings__pbx_mq_vhost
+msgstr ""
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_extension__rating_ids
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_inbound_route__rating_ids
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_outbound_route__rating_ids
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_trunk__rating_ids
+msgstr "Betyg"
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_extension__is_receptionist
+msgstr "Receptionist"
+
+#. module: pbx_base
+#: model:ir.model.fields,help:pbx_base.field_pbx_extension__is_receptionist
+msgstr ""
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_extension__respect_calendar
+msgstr ""
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_extension__respect_schedule
+msgstr ""
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_extension__activity_user_id
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_inbound_route__activity_user_id
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_outbound_route__activity_user_id
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_trunk__activity_user_id
+msgstr "Ansvarig användare"
+
+#. module: pbx_base
+#: model_terms:ir.ui.view,arch_db:pbx_base.pbx_call_list_view
+#: model_terms:ir.ui.view,arch_db:pbx_base.pbx_call_search_view
+msgstr ""
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_extension__ring_strategy
+msgstr "Ringstrategi"
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_sub_extension__ring_timeout
+msgstr "Ringningstid"
+
+#. module: pbx_base
+#: model:ir.model.fields,help:pbx_base.field_pbx_extension__respect_schedule
+msgstr "\"\"Ring bara under personens arbetstid (resource.calendar via HR). Utanför \"\"arbetstid: meddela 'tillbaka {tid}' och gå till röstbrevlåda."
+
+#. module: pbx_base
+#: model:ir.model.fields,help:pbx_base.field_pbx_extension__respect_calendar
+msgstr "\"\"Ring inte när personen är upptagen i kalendern (calendar.event). Upptagen: \"\"meddela 'tillbaka {tid}' och gå till röstbrevlåda."
+
+#. module: pbx_base
+#: model:ir.model.fields.selection,name:pbx_base.selection__pbx_call__pbx_handling__ringing
+msgstr "Ringer"
+
+#. module: pbx_base
+#: model:ir.model.fields,help:pbx_base.field_pbx_sub_extension__sequence
+msgstr "Ringordning (1 = först). Number har ingen koppling till ringordningen."
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_outbound_route_trunk__route_id
+msgstr "Rutt"
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_res_company__pbx_domain
+#: model:ir.model.fields,field_description:pbx_base.field_res_config_settings__pbx_domain
+#: model_terms:ir.ui.view,arch_db:pbx_base.res_config_settings_view_form_pbx
+msgstr "SIP-domän"
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_extension__password
+msgstr "SIP-lösenord"
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_res_company__pbx_sip_port
+#: model:ir.model.fields,field_description:pbx_base.field_res_config_settings__pbx_sip_port
+#: model_terms:ir.ui.view,arch_db:pbx_base.res_config_settings_view_form_pbx
+msgstr "SIP-port"
+
+#. module: pbx_base
+#: model:ir.actions.act_window,name:pbx_base.pbx_trunk_act_window
+#: model:ir.ui.menu,name:pbx_base.menu_pbx_trunks
+msgstr "SIP-trunkar"
+
+#. module: pbx_base
+#: model:ir.model.fields,help:pbx_base.field_pbx_sub_extension__number
+msgstr "\"\"SIP-identitet för enheten (auto-genererat, t.ex. 101 för anknytning 10). Har\"\" ingen koppling till ringordningen — sequence styr i vilken ordning \"\"enheterna ringer."
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_sub_extension__sip_config_display
+msgstr ""
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_sub_extension__config_display
+msgstr ""
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_sub_extension__config
+msgstr ""
+
+#. module: pbx_base
+#: model:ir.model.fields,help:pbx_base.field_res_company__pbx_sip_port
+msgstr "SIP-port för enheter (5061 för WSS/WebRTC, 5060 för UDP/TCP)"
+
+#. module: pbx_base
+#: model:ir.model.fields,help:pbx_base.field_res_config_settings__pbx_sip_port
+msgstr "SIP-port för enheter (per företag)."
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_res_company__pbx_stun_server
+#: model:ir.model.fields,field_description:pbx_base.field_res_config_settings__pbx_stun_server
+#: model_terms:ir.ui.view,arch_db:pbx_base.res_config_settings_view_form_pbx
+msgstr "STUN-server"
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_res_company__pbx_stun_enabled
+#: model:ir.model.fields,field_description:pbx_base.field_res_config_settings__pbx_stun_enabled
+#: model_terms:ir.ui.view,arch_db:pbx_base.res_config_settings_view_form_pbx
+msgstr ""
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_sub_extension__secret
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_trunk__secret
+msgstr ""
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_inbound_route__sequence
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_outbound_route__sequence
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_outbound_route_trunk__sequence
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_sub_extension__sequence
+#: model_terms:ir.ui.view,arch_db:pbx_base.pbx_extension_form_view
+msgstr "Sekvens"
+
+#. module: pbx_base
+#: model:ir.model.fields.selection,name:pbx_base.selection__pbx_extension__ring_strategy__sequential
+msgstr "Sekventiell"
+
+#. module: pbx_base
+#: model:ir.ui.menu,name:pbx_base.menu_pbx_settings
+msgstr "Inställningar"
+
+#. module: pbx_base
+#: model:ir.model.fields,help:pbx_base.field_res_company__pbx_stun_enabled
+#: model:ir.model.fields,help:pbx_base.field_res_config_settings__pbx_stun_enabled
+msgstr "Slå på STUN för enheter bakom NAT (mobil/desktop)."
+
+#. module: pbx_base
+#: model:ir.model.fields.selection,name:pbx_base.selection__res_config_settings__pbx_tenant_plan__standard
+msgstr ""
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_call__start_date
+#: model_terms:ir.ui.view,arch_db:pbx_base.pbx_call_list_view
+msgstr "Start"
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_voip_call__state
+msgstr "Status"
+
+#. module: pbx_base
+#: model:ir.model.fields,help:pbx_base.field_pbx_extension__activity_state
+#: model:ir.model.fields,help:pbx_base.field_pbx_inbound_route__activity_state
+#: model:ir.model.fields,help:pbx_base.field_pbx_outbound_route__activity_state
+#: model:ir.model.fields,help:pbx_base.field_pbx_trunk__activity_state
+msgstr ""
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_call__stop_date
+#: model_terms:ir.ui.view,arch_db:pbx_base.pbx_call_list_view
+msgstr "Stopp"
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_outbound_route__strip_digits
+msgstr "Stryk siffror"
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_extension__sub_extension_ids
+msgstr "Underenheter"
+
+#. module: pbx_base
+#: model:ir.model.constraint,message:pbx_base.constraint_pbx_sub_extension_sub_ext_unique
+msgstr ""
+
+#. module: pbx_base
+#: model:ir.ui.menu,name:pbx_base.menu_pbx_sync
+msgstr "Synka"
+
+#. module: pbx_base
+#: model:ir.actions.server,name:pbx_base.action_pbx_sync
+msgstr "Synka till Asterisk"
+
+#. module: pbx_base
+#: model:ir.model.fields.selection,name:pbx_base.selection__pbx_sub_extension__transport__tcp
+msgstr "TCP"
+
+#. module: pbx_base
+#: model:ir.model.fields,help:pbx_base.field_res_users__pbx_extension_id
+msgstr "Användarens primära PBX-anknytning"
+
+#. module: pbx_base
+#: model:ir.model.fields.selection,name:pbx_base.selection__pbx_outbound_route__time_source__time_condition
+msgstr "Tidsvillkor"
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_outbound_route__time_source
+msgstr "Tidsbegränsning"
+
+#. module: pbx_base
+#: model_terms:ir.ui.view,arch_db:pbx_base.pbx_outbound_route_form_view
+msgstr "Tidsbegränsning"
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_sub_extension__transcribe_enabled
+msgstr "Transkribering aktiverad"
+
+#. module: pbx_base
+#: model:ir.model.fields.selection,name:pbx_base.selection__pbx_call__pbx_handling__transferred
+msgstr "Vidarekopplad"
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_sub_extension__transport
+msgstr "Transport"
+
+#. module: pbx_base
+#: model:ir.model.fields,help:pbx_base.field_res_company__config_dirty
+msgstr "True när konfigurationsändringar väntar på att synkas till Asterisk."
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_outbound_route_trunk__trunk_id
+msgstr "Trunk"
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_outbound_route__trunk_count
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_outbound_route__trunk_ids
+#: model_terms:ir.ui.view,arch_db:pbx_base.pbx_outbound_route_list_view
+msgstr "Trunkar"
+
+#. module: pbx_base
+#: model_terms:ir.ui.view,arch_db:pbx_base.pbx_outbound_route_form_view
+msgstr ""
+
+#. module: pbx_base
+#: model:ir.model.fields,help:pbx_base.field_pbx_outbound_route_trunk__continue_
+msgstr "Prova nästa trunk när denna misslyckas (upptagen/ej tillgänglig)"
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_sub_extension__type
+#: model_terms:ir.ui.view,arch_db:pbx_base.pbx_device_template_search
+msgstr "Typ"
+
+#. module: pbx_base
+#: model:ir.model.fields,help:pbx_base.field_pbx_extension__activity_exception_decoration
+#: model:ir.model.fields,help:pbx_base.field_pbx_inbound_route__activity_exception_decoration
+#: model:ir.model.fields,help:pbx_base.field_pbx_outbound_route__activity_exception_decoration
+#: model:ir.model.fields,help:pbx_base.field_pbx_trunk__activity_exception_decoration
+msgstr "Typ av undantagsaktivitet på posten."
+
+#. module: pbx_base
+#: model:ir.model.fields.selection,name:pbx_base.selection__pbx_sub_extension__transport__udp
+msgstr "UDP"
+
+#. module: pbx_base
+#: model:ir.model.fields,help:pbx_base.field_pbx_outbound_route__calendar_id
+msgstr ""
+
+#. module: pbx_base
+#: model:ir.model,name:pbx_base.model_res_users
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_call__user_id
+#: model_terms:ir.ui.view,arch_db:pbx_base.res_config_settings_view_form_pbx
+msgstr "Användare"
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_sub_extension__username
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_trunk__username
+msgstr "Användarnamn"
+
+#. module: pbx_base
+#: model_terms:ir.ui.view,arch_db:pbx_base.pbx_call_search_view
+msgstr "Utgående"
+
+#. module: pbx_base
+#: model_terms:ir.ui.view,arch_db:pbx_base.res_config_settings_view_form_pbx
+msgstr "Vhost"
+
+#. module: pbx_base
+#: model:ir.model.fields,help:pbx_base.field_pbx_extension__description
+msgstr ""
+
+#. module: pbx_base
+#: model:ir.model.fields,help:pbx_base.field_pbx_extension__callerid_name
+msgstr "\"\"Visas som namn på utgående samtal. Fylls i från användarens namn när en \"\"användare kopplas — kan överskrivas manuellt."
+
+#. module: pbx_base
+#: model:ir.model.fields.selection,name:pbx_base.selection__pbx_call__pbx_handling__voicemail
+#: model:ir.model.fields.selection,name:pbx_base.selection__pbx_device_template__device_type__voicemail
+#: model:ir.model.fields.selection,name:pbx_base.selection__pbx_sub_extension__type__voicemail
+#: model:ir.model.fields.selection,name:pbx_base.selection__voip_call__state__voicemail
+msgstr "Röstbrevlåda"
+
+#. module: pbx_base
+#: model:ir.model,name:pbx_base.model_voip_call
+msgstr ""
+
+#. module: pbx_base
+#: model:ir.model,name:pbx_base.model_voip_pbx
+msgstr ""
+
+#. module: pbx_base
+#: model:ir.model.fields.selection,name:pbx_base.selection__pbx_sub_extension__transport__wss
+msgstr "WebSocket Secure"
+
+#. module: pbx_base
+#: model_terms:ir.ui.view,arch_db:pbx_base.res_config_settings_view_form_pbx
+msgstr ""
+
+#. module: pbx_base
+#: model:ir.model.fields,help:pbx_base.field_pbx_sub_extension__active
+msgstr "Om avmarkerad exkluderas enheten från den genererade dialplanen."
+
+#. module: pbx_base
+#: model_terms:ir.ui.view,arch_db:pbx_base.pbx_outbound_route_form_view
+msgstr "Vart samtalet går när alla trunkar misslyckas"
+
+#. module: pbx_base
+#: model:ir.model.fields,help:pbx_base.field_pbx_outbound_route__failover_destination_id
+msgstr "Vart samtalet går när alla trunkar i rutten misslyckas"
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_outbound_route__calendar_id
+msgstr "Arbetstider"
+
+#. module: pbx_base
+#: model:ir.model.fields.selection,name:pbx_base.selection__pbx_outbound_route__time_source__calendar
+msgstr "Arbetstidskalender"
+
+#. module: pbx_base
+#: model_terms:ir.ui.view,arch_db:pbx_base.pbx_inbound_route_form_view
+msgstr "t.ex. 070-5551234"
+
+#. module: pbx_base
+#: model_terms:ir.ui.view,arch_db:pbx_base.pbx_inbound_route_form_view
+msgstr "t.ex. 08-123456 eller _08[0-9]."
+
+#. module: pbx_base
+#: model:ir.model.fields,help:pbx_base.field_pbx_sub_extension__label
+msgstr "t.ex. Odoo, Yealink, Mobil"
+
+#. module: pbx_base
+#: model:ir.model.fields,help:pbx_base.field_pbx_trunk__name
+msgstr "t.ex. Telia"
+
+#. module: pbx_base
+#: model_terms:ir.ui.view,arch_db:pbx_base.pbx_outbound_route_form_view
+msgstr "t.ex. _0. eller _00."
+
+#. module: pbx_base
+#: model:ir.model.fields,help:pbx_base.field_pbx_sub_extension__device_model
+msgstr "t.ex. T46S — för att välja rätt gemensam provisioning-config."
+
+#. module: pbx_base
+#: model:ir.model.fields,help:pbx_base.field_res_company__pbx_stun_server
+#: model:ir.model.fields,help:pbx_base.field_res_config_settings__pbx_stun_server
+msgstr ""

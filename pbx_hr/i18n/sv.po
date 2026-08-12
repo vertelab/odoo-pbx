@@ -1,0 +1,72 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* pbx_hr
+#
+msgstr ""
+"Project-Id-Version: Odoo Server 18.0-20260701\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-08-12 10:55+0000\n"
+"PO-Revision-Date: 2026-08-12 10:55+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: pbx_hr
+#: model_terms:ir.ui.view,arch_db:pbx_hr.pbx_hr_employee_kanban
+msgstr ""
+
+#. module: pbx_hr
+#: model:ir.model,name:pbx_hr.model_hr_employee
+msgstr "Anställd"
+
+#. module: pbx_hr
+#: model_terms:ir.ui.view,arch_db:pbx_hr.pbx_hr_employee_form
+msgstr "Fördela anknytning"
+
+#. module: pbx_hr
+#: model_terms:ir.ui.view,arch_db:pbx_hr.pbx_hr_employee_form
+msgstr "Fördela nästa lediga anknytning i företagets nummerplan"
+
+#. module: pbx_hr
+#: model_terms:ir.ui.view,arch_db:pbx_hr.pbx_hr_employee_filter
+msgstr ""
+
+#. module: pbx_hr
+#: model_terms:ir.ui.view,arch_db:pbx_hr.pbx_hr_employee_form
+msgstr "Hämta anknytningen från den länkade användaren"
+
+#. module: pbx_hr
+#. odoo-python
+#: code:addons/pbx_hr/models/hr_employee.py:0
+msgstr "\"\"Ingen ledig anknytning i företaget %s — omnumrera organisationen eller utöka\"\" nummerplanen."
+
+#. module: pbx_hr
+#: model:ir.actions.server,name:pbx_hr.pbx_hr_renumber_action
+msgstr ""
+
+#. module: pbx_hr
+#. odoo-python
+#: code:addons/pbx_hr/models/hr_employee.py:0
+msgstr "Omnumreringen gav dubbletter i %s — återställ manuellt."
+
+#. module: pbx_hr
+#: model:ir.model.fields,field_description:pbx_hr.field_hr_employee__pbx_extension_id
+#: model:ir.model.fields,field_description:pbx_hr.field_hr_employee_public__pbx_extension_id
+#: model_terms:ir.ui.view,arch_db:pbx_hr.pbx_hr_employee_form
+msgstr ""
+
+#. module: pbx_hr
+#: model:ir.model,name:pbx_hr.model_hr_employee_public
+msgstr "Publik anställd"
+
+#. module: pbx_hr
+#: model:ir.model.fields,help:pbx_hr.field_hr_employee__pbx_extension_id
+#: model:ir.model.fields,help:pbx_hr.field_hr_employee_public__pbx_extension_id
+msgstr "\"\"Samma anknytning som personen har i PBX/res.users. Auto-fylls från länkad \"\"användare eller fördelas (nästa lediga)."
+
+#. module: pbx_hr
+#: model_terms:ir.ui.view,arch_db:pbx_hr.pbx_hr_employee_form
+msgstr "Synka från användare"

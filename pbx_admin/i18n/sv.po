@@ -1,0 +1,260 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* pbx_admin
+#
+msgstr ""
+"Project-Id-Version: Odoo Server 18.0-20260701\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-08-12 10:55+0000\n"
+"PO-Revision-Date: 2026-08-12 10:55+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: pbx_admin
+#: model:ir.model.fields,help:pbx_admin.field_res_config_settings__zabbix_token
+msgstr "API-token mot Zabbix för övervakning (MSP)."
+
+#. module: pbx_admin
+#: model:ir.model.fields,field_description:pbx_admin.field_pbx_server__active
+#: model:ir.model.fields,field_description:pbx_admin.field_pbx_tenant__active
+msgstr "Aktiv"
+
+#. module: pbx_admin
+#: model_terms:ir.ui.view,arch_db:pbx_admin.pbx_tenant_admin_form_view
+msgstr "Admin-åtgärder"
+
+#. module: pbx_admin
+#: model:ir.model.fields,field_description:pbx_admin.field_pbx_server__ami_port
+msgstr "AMI-port"
+
+#. module: pbx_admin
+#: model:ir.model.fields,field_description:pbx_admin.field_pbx_server__ami_secret
+msgstr "AMI-hemlighet"
+
+#. module: pbx_admin
+#: model:ir.model.fields,field_description:pbx_admin.field_pbx_server__ami_user
+msgstr "AMI-användare"
+
+#. module: pbx_admin
+#: model_terms:ir.ui.view,arch_db:pbx_admin.res_config_settings_view_form_pbx_admin
+msgstr "Fakturerings-API"
+
+#. module: pbx_admin
+#: model:ir.model.fields,field_description:pbx_admin.field_res_config_settings__billing_api_enabled
+msgstr "Fakturerings-API aktiverat"
+
+#. module: pbx_admin
+#: model:ir.model.fields,field_description:pbx_admin.field_res_config_settings__billing_api_token
+msgstr "Fakturerings-API-token"
+
+#. module: pbx_admin
+#: model_terms:ir.ui.view,arch_db:pbx_admin.res_config_settings_view_form_pbx_admin
+msgstr "Central förvaltning (MSP)"
+
+#. module: pbx_admin
+#: model:ir.model.fields,field_description:pbx_admin.field_pbx_server__company_id
+#: model:ir.model.fields,field_description:pbx_admin.field_pbx_tenant__company_id
+msgstr "Företag"
+
+#. module: pbx_admin
+#: model:ir.model.fields,field_description:pbx_admin.field_pbx_tenant__config_dirty
+msgstr ""
+
+#. module: pbx_admin
+#: model:ir.model.fields,field_description:pbx_admin.field_pbx_server__config_path
+msgstr ""
+
+#. module: pbx_admin
+#: model:ir.model,name:pbx_admin.model_res_config_settings
+msgstr "Inställningar"
+
+#. module: pbx_admin
+#: model:ir.model.fields,help:pbx_admin.field_pbx_tenant__config_dirty
+msgstr ""
+
+#. module: pbx_admin
+#: model:ir.model.fields,field_description:pbx_admin.field_pbx_server__create_uid
+#: model:ir.model.fields,field_description:pbx_admin.field_pbx_tenant__create_uid
+msgstr "Skapad av"
+
+#. module: pbx_admin
+#: model:ir.model.fields,field_description:pbx_admin.field_pbx_server__create_date
+#: model:ir.model.fields,field_description:pbx_admin.field_pbx_tenant__create_date
+msgstr "Skapad den"
+
+#. module: pbx_admin
+#: model:ir.model.fields,field_description:pbx_admin.field_res_config_settings__server_id
+msgstr ""
+
+#. module: pbx_admin
+#: model:ir.model.fields,field_description:pbx_admin.field_pbx_server__display_name
+#: model:ir.model.fields,field_description:pbx_admin.field_pbx_tenant__display_name
+msgstr "Visningsnamn"
+
+#. module: pbx_admin
+#: model:ir.model.fields,field_description:pbx_admin.field_pbx_tenant__domain
+msgstr ""
+
+#. module: pbx_admin
+#: model_terms:ir.ui.view,arch_db:pbx_admin.res_config_settings_view_form_pbx_admin
+msgstr "Aktiverad"
+
+#. module: pbx_admin
+#: model:ir.model.fields.selection,name:pbx_admin.selection__pbx_tenant__plan__enterprise
+msgstr ""
+
+#. module: pbx_admin
+#: model_terms:ir.ui.view,arch_db:pbx_admin.pbx_tenant_admin_form_view
+msgstr "Generera konfiguration"
+
+#. module: pbx_admin
+#: model:ir.model.fields,field_description:pbx_admin.field_pbx_server__host
+#: model_terms:ir.ui.view,arch_db:pbx_admin.res_config_settings_view_form_pbx_admin
+msgstr "Värd"
+
+#. module: pbx_admin
+#: model:ir.model.fields,field_description:pbx_admin.field_pbx_server__id
+#: model:ir.model.fields,field_description:pbx_admin.field_pbx_tenant__id
+msgstr ""
+
+#. module: pbx_admin
+#: model:ir.model.fields,field_description:pbx_admin.field_pbx_server__write_uid
+#: model:ir.model.fields,field_description:pbx_admin.field_pbx_tenant__write_uid
+msgstr "Senast uppdaterad av"
+
+#. module: pbx_admin
+#: model:ir.model.fields,field_description:pbx_admin.field_pbx_server__write_date
+#: model:ir.model.fields,field_description:pbx_admin.field_pbx_tenant__write_date
+msgstr "Senast uppdaterad"
+
+#. module: pbx_admin
+#: model:ir.model.fields,field_description:pbx_admin.field_pbx_tenant__max_extensions
+msgstr "Max anknytningar"
+
+#. module: pbx_admin
+#: model:ir.model.fields,field_description:pbx_admin.field_pbx_server__name
+#: model:ir.model.fields,field_description:pbx_admin.field_pbx_tenant__name
+msgstr "Namn"
+
+#. module: pbx_admin
+#: model:ir.model.fields,field_description:pbx_admin.field_pbx_tenant__notes
+#: model_terms:ir.ui.view,arch_db:pbx_admin.pbx_tenant_form_view
+msgstr "Anteckningar"
+
+#. module: pbx_admin
+#: model:ir.model,name:pbx_admin.model_pbx_server
+#: model:ir.model.fields,field_description:pbx_admin.field_pbx_tenant__server_id
+msgstr ""
+
+#. module: pbx_admin
+#: model:ir.actions.act_window,name:pbx_admin.pbx_server_act_window
+msgstr ""
+
+#. module: pbx_admin
+#: model:ir.model,name:pbx_admin.model_pbx_tenant
+msgstr ""
+
+#. module: pbx_admin
+#: model:ir.model.fields,field_description:pbx_admin.field_pbx_tenant__plan
+msgstr "Plan"
+
+#. module: pbx_admin
+#: model_terms:ir.ui.view,arch_db:pbx_admin.res_config_settings_view_form_pbx_admin
+msgstr "Port"
+
+#. module: pbx_admin
+#: model:ir.model.fields.selection,name:pbx_admin.selection__pbx_tenant__plan__premium
+msgstr "Premium"
+
+#. module: pbx_admin
+#: model_terms:ir.ui.view,arch_db:pbx_admin.res_config_settings_view_form_pbx_admin
+msgstr ""
+
+#. module: pbx_admin
+#: model:ir.model.fields,field_description:pbx_admin.field_res_config_settings__rabbitmq_host
+msgstr ""
+
+#. module: pbx_admin
+#: model:ir.model.fields,field_description:pbx_admin.field_res_config_settings__rabbitmq_port
+msgstr ""
+
+#. module: pbx_admin
+#: model:ir.model.fields,field_description:pbx_admin.field_res_config_settings__rabbitmq_secret
+msgstr ""
+
+#. module: pbx_admin
+#: model:ir.model.fields,field_description:pbx_admin.field_res_config_settings__rabbitmq_user
+msgstr ""
+
+#. module: pbx_admin
+#: model_terms:ir.ui.view,arch_db:pbx_admin.pbx_tenant_admin_form_view
+msgstr "Ladda om Asterisk"
+
+#. module: pbx_admin
+#: model:ir.model.constraint,message:pbx_admin.constraint_pbx_tenant_domain_unique
+msgstr ""
+
+#. module: pbx_admin
+#: model:ir.model.fields,help:pbx_admin.field_pbx_tenant__domain
+msgstr ""
+
+#. module: pbx_admin
+#: model_terms:ir.ui.view,arch_db:pbx_admin.res_config_settings_view_form_pbx_admin
+msgstr ""
+
+#. module: pbx_admin
+#: model_terms:ir.ui.view,arch_db:pbx_admin.res_config_settings_view_form_pbx_admin
+msgstr "Server"
+
+#. module: pbx_admin
+#: model:ir.ui.menu,name:pbx_admin.menu_pbx_servers
+msgstr "Servrar"
+
+#. module: pbx_admin
+#: model:ir.model.fields,field_description:pbx_admin.field_pbx_server__spool_path
+msgstr "Spool-sökväg"
+
+#. module: pbx_admin
+#: model:ir.model.fields.selection,name:pbx_admin.selection__pbx_tenant__plan__standard
+msgstr ""
+
+#. module: pbx_admin
+#: model_terms:ir.ui.view,arch_db:pbx_admin.res_config_settings_view_form_pbx_admin
+msgstr ""
+
+#. module: pbx_admin
+#: model:ir.actions.act_window,name:pbx_admin.pbx_tenant_act_window
+#: model:ir.ui.menu,name:pbx_admin.menu_pbx_tenants
+msgstr ""
+
+#. module: pbx_admin
+#: model_terms:ir.ui.view,arch_db:pbx_admin.res_config_settings_view_form_pbx_admin
+msgstr "Token"
+
+#. module: pbx_admin
+#: model_terms:ir.ui.view,arch_db:pbx_admin.res_config_settings_view_form_pbx_admin
+msgstr "URL"
+
+#. module: pbx_admin
+#: model_terms:ir.ui.view,arch_db:pbx_admin.res_config_settings_view_form_pbx_admin
+msgstr "Användare"
+
+#. module: pbx_admin
+#: model_terms:ir.ui.view,arch_db:pbx_admin.res_config_settings_view_form_pbx_admin
+msgstr "Zabbix (serverövervakning)"
+
+#. module: pbx_admin
+#: model:ir.model.fields,field_description:pbx_admin.field_res_config_settings__zabbix_token
+msgstr ""
+
+#. module: pbx_admin
+#: model:ir.model.fields,field_description:pbx_admin.field_res_config_settings__zabbix_url
+msgstr ""
+
+#. module: pbx_admin
+#: model:ir.model.fields,help:pbx_admin.field_res_config_settings__zabbix_url
+msgstr "Zabbix-server för övervakning av Asterisk-servern (MSP)."

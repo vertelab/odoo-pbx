@@ -1,0 +1,39 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* pbx_crm
+#
+msgstr ""
+"Project-Id-Version: Odoo Server 18.0-20260701\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-08-12 10:55+0000\n"
+"PO-Revision-Date: 2026-08-12 10:55+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: pbx_crm
+#: model:ir.model.fields,field_description:pbx_crm.field_res_config_settings__pbx_crm_auto_create_lead
+msgstr "Skapa lead automatiskt för okända nummer"
+
+#. module: pbx_crm
+#: model:ir.model.fields,field_description:pbx_crm.field_res_config_settings__pbx_crm_auto_popup
+msgstr "Popup-lead vid inkommande samtal"
+
+#. module: pbx_crm
+#: model:ir.model,name:pbx_crm.model_res_config_settings
+msgstr "Inställningar"
+
+#. module: pbx_crm
+#: model:ir.model.fields,field_description:pbx_crm.field_res_config_settings__pbx_crm_log_calls
+msgstr "Logga alla samtal i CRM"
+
+#. module: pbx_crm
+#: model:ir.model,name:pbx_crm.model_pbx_crm
+msgstr "PBX CRM-integration"
+
+#. module: pbx_crm
+#: model_terms:ir.ui.view,arch_db:pbx_crm.pbx_crm_settings_view
+msgstr "PBX CRM: Auto-popup-lead vid inkommande samtal"
