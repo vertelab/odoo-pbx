@@ -6,7 +6,7 @@
             <form>
                 <sheet>
                     <group>
-                        <field name="tenant_id"/>
+                        <field name="company_id" groups="base.group_multi_company"/>
                         <field name="name"/>
                         <field name="extension"/>
                         <field name="pin" password="True"/>
@@ -24,7 +24,7 @@
         <field name="model">pbx.conference</field>
         <field name="arch" type="xml">
             <list>
-                <field name="tenant_id"/>
+                <field name="company_id" groups="base.group_multi_company"/>
                 <field name="name"/>
                 <field name="extension"/>
                 <field name="max_participants"/>
@@ -42,7 +42,7 @@
     <menuitem
         id="menu_pbx_conferences"
         name="Conferences"
-        parent="pbx_base.menu_pbx_root"
+        parent="pbx_base.menu_pbx_applications"
         action="pbx_conference_act_window"
         sequence="65"
     />

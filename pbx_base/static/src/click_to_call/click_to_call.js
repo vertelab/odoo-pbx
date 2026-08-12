@@ -42,7 +42,7 @@ export class PbxCallField extends Component {
     get value() {
         return this.props.record.data[this.props.name] || "";
     }
-    onChange(ev) {
+    onInput(ev) {
         this.props.record.update({ [this.props.name]: ev.target.value });
     }
 }

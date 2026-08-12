@@ -6,7 +6,7 @@
             <form>
                 <sheet>
                     <group>
-                        <field name="tenant_id"/>
+                        <field name="company_id" groups="base.group_multi_company"/>
                         <field name="name"/>
                         <field name="timezone"/>
                     </group>
@@ -34,7 +34,7 @@
         <field name="model">pbx.time_condition</field>
         <field name="arch" type="xml">
             <list>
-                <field name="tenant_id"/>
+                <field name="company_id" groups="base.group_multi_company"/>
                 <field name="name"/>
                 <field name="days_of_week"/>
                 <field name="start_time" widget="float_time"/>
@@ -53,7 +53,7 @@
     <menuitem
         id="menu_pbx_time_conditions"
         name="Time Conditions"
-        parent="pbx_base.menu_pbx_root"
+        parent="pbx_base.menu_pbx_applications"
         action="pbx_time_condition_act_window"
         sequence="55"
     />

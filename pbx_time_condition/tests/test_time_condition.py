@@ -16,16 +16,12 @@ class TestPbxTimeCondition(TransactionCase):
         cls.server = cls.env["pbx.server"].create(
             {"name": "Test", "host": "127.0.0.1", "config_path": "/tmp/pbx-test"}
         )
-        cls.tenant = cls.env["pbx.tenant"].create(
-            {"name": "Test AB", "domain": "test.se", "server_id": cls.server.id}
-        )
-        cls.vm_dest = cls.env["pbx.voicemail.destination"].create(
             {
-                "tenant_id": cls.tenant.id,
+                "company_id": cls.env.company.id,
                 "extension_id": cls.env["pbx.extension"]
                 .create(
                     {
-                        "tenant_id": cls.tenant.id,
+                        "company_id": cls.env.company.id,
                         "public_number": "10",
                         "sub_extension_ids": [
                             (0, 0, {"number": "101", "type": "browser"}),
@@ -37,14 +33,14 @@ class TestPbxTimeCondition(TransactionCase):
             }
         )
         cls.custom_dest = cls.env["pbx.custom.destination"].create(
-            {"tenant_id": cls.tenant.id, "name": "Blackhole", "context": "app-blackhole"}
+            {"company_id": cls.env.company.id, "name": "Blackhole", "context": "app-blackhole"}
         )
 
     def test_holidays_render_as_no_match_days(self):
         """holidays_calendar_id leaves render as no-match days."""
         tc = self.env["pbx.time_condition"].create(
             {
-                "tenant_id": self.tenant.id,
+                "company_id": self.env.company.id,
                 "name": "Kontorstid",
                 "start_time": 8.0,
                 "end_time": 17.0,
@@ -82,7 +78,7 @@ class TestPbxTimeCondition(TransactionCase):
     def test_target_triple(self):
         tc = self.env["pbx.time_condition"].create(
             {
-                "tenant_id": self.tenant.id,
+                "company_id": self.env.company.id,
                 "name": "Office Hours",
                 "destination_match_id": "%s,%d"
                 % (self.vm_dest._name, self.vm_dest.id),

@@ -18,8 +18,8 @@
             <input
                 type="text"
                 class="form-control"
-                t-model="value"
-                t-on-change="onChange"
+                t-att-value="value"
+                t-on-input="onInput"
             />
             <span class="input-group-append">
                 <PbxCallButton number="value"/>
