@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Lista över alla samtal -->
+    <record model="ir.ui.view" id="pbx_call_list_view">
+        <field name="model">pbx.call</field>
+        <field name="arch" type="xml">
+            <list string="Calls">
+                <field name="direction" string="Riktning"/>
+                <field name="partner_id" string="Kontakt"/>
+                <field name="phone_number" string="Nummer"/>
+                <field name="callerid_name" string="Namn"/>
+                <field name="user_id" string="Användare"/>
+                <field name="extension_id" string="Anknytning"/>
+                <field name="pbx_handling" string="Hanterat av PBX"/>
+                <field name="start_date" string="Start"/>
+                <field name="stop_date" string="Stop"/>
+                <field name="duration" string="Längd (s)"/>
+            </list>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="pbx_call_form_view">
+        <field name="model">pbx.call</field>
+        <field name="arch" type="xml">
+            <form string="Call">
+                <sheet>
+                    <group>
+                        <field name="direction"/>
+                        <field name="partner_id"/>
+                        <field name="phone_number"/>
+                        <field name="callerid_name"/>
+                    </group>
+                    <group>
+                        <field name="user_id"/>
+                        <field name="extension_id"/>
+                        <field name="pbx_handling"/>
+                        <field name="start_date"/>
+                        <field name="stop_date"/>
+                        <field name="duration"/>
+                    </group>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="pbx_call_search_view">
+        <field name="model">pbx.call</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="phone_number"/>
+                <field name="partner_id"/>
+                <field name="user_id"/>
+                <filter name="incoming" string="Inkommande"
+                        domain="[('direction','=','incoming')]"/>
+                <filter name="outgoing" string="Utgående"
+                        domain="[('direction','=','outgoing')]"/>
+                <group expand="0" string="Gruppera">
+                    <filter name="group_direction" string="Riktning"
+                            context="{'group_by':'direction'}"/>
+                    <filter name="group_handling" string="Hanterat"
+                            context="{'group_by':'pbx_handling'}"/>
+                    <filter name="group_user" string="Användare"
+                            context="{'group_by':'user_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action: alla samtal -->
+    <record model="ir.actions.act_window" id="pbx_call_act_window">
+        <field name="name">Call History</field>
+        <field name="res_model">pbx.call</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="pbx_call_search_view"/>
+    </record>
+
+    <!-- Smartknapp: samtal på res.partner -->
+    <record model="ir.ui.view" id="view_partner_form_pbx_call">
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="action_pbx_call_partner" type="object"
+                        class="oe_stat_button" icon="fa-phone">
+                    <field name="pbx_call_count" widget="statinfo" string="Calls"/>
+                </button>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Smartknapp: Mina samtal på användarformuläret (full) -->
+    <record model="ir.ui.view" id="view_users_form_pbx_call">
+        <field name="model">res.users</field>
+        <field name="inherit_id" ref="base.view_users_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="action_pbx_call_user" type="object"
+                        class="oe_stat_button" icon="fa-phone">
+                    <field name="pbx_call_count" widget="statinfo" string="Mina samtal"/>
+                </button>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Smartknapp: Mina samtal på den enkla profilvyn (Min profil) -->
+    <record model="ir.ui.view" id="view_users_form_simple_pbx_call">
+        <field name="model">res.users</field>
+        <field name="inherit_id" ref="base.view_users_form_simple_modif"/>
+        <field name="arch" type="xml">
+            <xpath expr="//h1" position="after">
+                <div class="oe_button_box" name="pbx_button_box">
+                    <button name="action_pbx_call_user" type="object"
+                            class="oe_stat_button" icon="fa-phone">
+                        <field name="pbx_call_count" widget="statinfo" string="Mina samtal"/>
+                    </button>
+                </div>
+            </xpath>
+        </field>
+    </record>
+</odoo>

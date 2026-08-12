@@ -4,7 +4,7 @@
 import logging
 from datetime import timedelta
 
-from odoo import fields, models
+from odoo import api, fields, models
 
 _logger = logging.getLogger(__name__)
 
@@ -215,14 +215,14 @@ class PbxConfigGenerator(models.AbstractModel):
                 % (ext.public_number, domain, ext.public_number)
             )
 
-            # Build busy gates (DEVICE_STATE check per active sub)
+            # Build busy gates (DEVICE_STATE check per active sub).
+            # Alltid: om användaren pratar i någon av sina telefoner → voicemail.
             busy_gates = ""
-            if ext.skip_if_busy:
-                for sub in active_subs:
-                    busy_gates += (
-                        'same => n,GotoIf($["${{DEVICE_STATE(PJSIP/{domain}-{number})}}"'
-                        ' = "INUSE"]?busy)\n'
-                    ).format(domain=domain, number=sub.number)
+            for sub in active_subs:
+                busy_gates += (
+                    'same => n,GotoIf($["${{DEVICE_STATE(PJSIP/{domain}-{number})}}"'
+                    ' = "INUSE"]?busy)\n'
+                ).format(domain=domain, number=sub.number)
 
             # Build dial lines
             dial_lines = ""
@@ -654,6 +654,7 @@ class PbxConfigGenerator(models.AbstractModel):
         _logger.warning("MQ not configured — config not deployed for %s", domain)
         return False
 
+    @api.model
     def get_sync_state(self):
         """Current sync state for the user's company (used by the systray)."""
         company = self.env.company
@@ -662,18 +663,27 @@ class PbxConfigGenerator(models.AbstractModel):
             "domain": company.pbx_domain or "",
         }
 
+    @api.model
     def sync_current_company(self):
         """Deploy config for the current user's company to Asterisk.
 
-        Returns a dict with ok/message for the UI notification. Marks the
-        company clean on success.
+        Only PBX Office/Admin may trigger a sync. Returns a dict with
+        ok/message for the UI notification; marks the company clean on success.
         """
+        if not (
+            self.env.user.has_group("pbx_base.group_pbx_office")
+            or self.env.user.has_group("pbx_base.group_pbx_admin")
+        ):
+            return {
+                "ok": False,
+                "message": "Endast PBX Office/Admin kan synka konfigurationen.",
+            }
         company = self.env.company
         domain = company.pbx_domain
         if not domain:
             return {
                 "ok": False,
-                "message": "Ingen SIP-domän satt för företaget (Settings → PBX).",
+                "message": "Konfigurationsfel: ingen SIP-domän satt för företaget (Settings → PBX).",
             }
         ok = self.write_config(domain, company)
         if ok:
@@ -684,6 +694,6 @@ class PbxConfigGenerator(models.AbstractModel):
             }
         return {
             "ok": False,
-            "message": "Konfigurationen kunde inte skickas (%s) — kontrollera RabbitMQ-inställningarna."
+            "message": "Konfigurationsfel: kunde inte skickas för %s — kontrollera RabbitMQ-inställningarna (Settings → PBX)."
             % domain,
         }

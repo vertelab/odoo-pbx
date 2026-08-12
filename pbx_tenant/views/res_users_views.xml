@@ -26,7 +26,6 @@
                     <div class="text-muted" invisible="pbx_extension_id">Ingen PBX-anknytning kopplad till användaren.</div>
                     <field name="pbx_extension_id" invisible="1"/>
                     <field name="pbx_ring_strategy"/>
-                    <field name="pbx_skip_if_busy"/>
                     <field name="pbx_respect_schedule"/>
                     <field name="pbx_respect_calendar"/>
                 </group>
@@ -61,7 +60,6 @@
                     <div class="text-muted" invisible="pbx_extension_id">Ingen PBX-anknytning kopplad till användaren.</div>
                     <field name="pbx_extension_id" invisible="1"/>
                     <field name="pbx_ring_strategy"/>
-                    <field name="pbx_skip_if_busy"/>
                     <field name="pbx_respect_schedule"/>
                     <field name="pbx_respect_calendar"/>
                 </group>

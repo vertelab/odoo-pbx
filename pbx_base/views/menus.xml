@@ -74,6 +74,14 @@ action = {
     />
 
     <menuitem
+        id="menu_pbx_call_history"
+        name="Call History"
+        parent="menu_pbx_applications"
+        action="pbx_call_act_window"
+        sequence="5"
+    />
+
+    <menuitem
         id="menu_pbx_trunks"
         name="SIP Trunks"
         parent="menu_pbx_configuration"

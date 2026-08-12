@@ -1,17 +1,11 @@
 # Copyright 2026 Vertel AB
-# License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
+# License AGPL-3.0 or later (https://vertel.se).
 
 from odoo import api, fields, models
 
 
-class ResUsers(models.Model):
-    _inherit = "res.users"
-
-    pbx_extension_id = fields.Many2one(
-        "pbx.extension",
-        string="PBX Extension",
-        help="The user's primary PBX extension",
-    )
+class ResPartner(models.Model):
+    _inherit = "res.partner"
 
     pbx_call_count = fields.Integer(
         string="Calls", compute="_compute_pbx_call_count"
@@ -20,15 +14,15 @@ class ResUsers(models.Model):
     def _compute_pbx_call_count(self):
         for rec in self:
             rec.pbx_call_count = self.env["pbx.call"].search_count(
-                [("user_id", "=", rec.id)]
+                [("partner_id", "=", rec.id)]
             )
 
-    def action_pbx_call_user(self):
+    def action_pbx_call_partner(self):
         self.ensure_one()
         return {
             "type": "ir.actions.act_window",
-            "name": "Mina samtal",
+            "name": "Calls",
             "res_model": "pbx.call",
             "view_mode": "list,form",
-            "domain": [("user_id", "=", self.id)],
+            "domain": [("partner_id", "=", self.id)],
         }

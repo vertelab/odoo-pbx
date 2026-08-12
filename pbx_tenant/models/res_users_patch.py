@@ -12,10 +12,6 @@ class ResUsers(models.Model):
         related="pbx_extension_id.ring_strategy",
         readonly=False,
     )
-    pbx_skip_if_busy = fields.Boolean(
-        related="pbx_extension_id.skip_if_busy",
-        readonly=False,
-    )
     pbx_respect_schedule = fields.Boolean(
         related="pbx_extension_id.respect_schedule",
         readonly=False,

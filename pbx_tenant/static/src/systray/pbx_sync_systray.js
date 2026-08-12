@@ -12,6 +12,10 @@ export class PbxSyncSystray extends Component {
     setup() {
         this.orm = useService("orm");
         this.notification = useService("notification");
+        this.user = useService("user");
+        this.canSync =
+            this.user.hasGroup("pbx_base.group_pbx_office") ||
+            this.user.hasGroup("pbx_base.group_pbx_admin");
         this.state = useState({
             dirty: false,
             domain: "",

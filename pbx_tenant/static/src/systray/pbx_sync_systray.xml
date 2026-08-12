@@ -3,6 +3,7 @@
     <t t-name="pbx_tenant.PbxSyncSystray">
         <div class="o_pbx_sync_systray" t-att-title="state.dirty ? 'PBX: ändringar väntar på synk' : 'PBX: konfiguration i synk'">
             <button
+                t-if="canSync"
                 type="button"
                 class="btn btn-link o_pbx_sync_btn"
                 t-attf-class="o_pbx_sync_btn {{state.dirty ? 'o_pbx_sync_dirty' : ''}}"
@@ -12,6 +13,7 @@
                 <i t-attf-class="fa {{state.dirty ? 'fa-cloud-upload' : 'fa-cloud'}}"/>
                 <span t-if="state.dirty" class="o_pbx_sync_badge" title="Ändringar väntar"/>
             </button>
+            <i t-else="" t-attf-class="fa fa-cloud o_pbx_sync_btn" t-att-title="state.dirty ? 'PBX: ändringar väntar (kräver PBX Office/Admin för synk)' : 'PBX: konfiguration i synk'"/>
         </div>
     </t>
 </templates>

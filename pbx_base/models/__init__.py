@@ -1,5 +1,6 @@
 from . import pbx_destination_mixin
 from . import pbx_config_dirty_mixin
+from . import pbx_call
 from . import pbx_voicemail_destination
 from . import pbx_custom_destination
 from . import pbx_extension
@@ -14,4 +15,5 @@ from . import res_config_settings
 from . import voip_pbx_patch
 from . import voip_call_patch
 from . import res_users_patch
+from . import pbx_partner_patch
 from . import res_company

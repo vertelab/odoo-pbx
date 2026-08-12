@@ -121,11 +121,6 @@ class PbxExtension(models.Model):
         [("sequential", "Sequential"), ("parallel", "Parallel")],
         default="sequential",
     )
-    skip_if_busy = fields.Boolean(
-        default=True,
-        help="If any active device is already INUSE, skip ringing entirely "
-             "and send the call directly to voicemail.",
-    )
     respect_schedule = fields.Boolean(
         default=True,
         string="Respektera schema",

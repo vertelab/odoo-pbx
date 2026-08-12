@@ -13,7 +13,6 @@
                         <field name="description"/>
                         <field name="is_receptionist"/>
                         <field name="ring_strategy"/>
-                        <field name="skip_if_busy"/>
                         <field name="respect_schedule"/>
                         <field name="respect_calendar"/>
                     </group>
@@ -47,7 +46,6 @@
                 <field name="description"/>
                 <field name="is_receptionist"/>
                 <field name="ring_strategy"/>
-                <field name="skip_if_busy"/>
             </list>
         </field>
     </record>

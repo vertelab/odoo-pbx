@@ -1,6 +1,6 @@
 {
     "name": "PBX Base",
-    "version": "18.0.1.12.0",
+    "version": "18.0.1.14.0",
     "summary": "Core PBX abstraction for multi-tenant Asterisk management",
     "category": "Productivity/VOIP",
     "author": "Vertel AB",
@@ -16,6 +16,7 @@
         "views/pbx_outbound_route_views.xml",
         "views/res_company_views.xml",
         "views/res_config_settings_views.xml",
+        "views/pbx_call_views.xml",
         "views/menus.xml",
     ],
     "installable": True,
