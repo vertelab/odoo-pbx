@@ -43,6 +43,7 @@
             <field name="number">111</field>
             <field name="label">Yealink</field>
             <field name="type">hardware</field>
+            <field name="mac_address">00:1B:66:11:22:33</field>
             <field name="sequence">1</field>
         </record>
 
