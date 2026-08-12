@@ -2,6 +2,7 @@
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 
 import logging
+import re
 from datetime import timedelta
 
 from odoo import api, fields, models
@@ -113,7 +114,7 @@ same => n,Hangup()
 # busy in the calendar): "personen är tillbaka HH:MM" via SayUnixTime, then
 # voicemail. OC_AVAIL is set by the availability gate: "ok:<ts>" | "busy:<ts>".
 AVAILABILITY_ANNOUNCEMENT_TEMPLATE = """\
-same => n(unavailable),NoOp(Person unavailable — next ${CUT(OC_AVAIL,:,2)})
+same => n(unavailable),NoOp(Person unavailable — next ${{CUT(OC_AVAIL,:,2)}})
 same => n,GotoIf($["${{CUT(OC_AVAIL,:,2)}}" = "0"]?unavail_noannounce)
 same => n,SayUnixTime(${{CUT(OC_AVAIL,:,2)}},,%H:%M)
 same => n(unavail_noannounce),Voicemail({public_number}@{domain},u)
@@ -150,7 +151,7 @@ class PbxConfigGenerator(models.AbstractModel):
     def generate_pjsip(self, domain, company):
         """Generate pjsip.conf for the instance's own domain."""
         extensions = self.env["pbx.extension"].search(
-            [("company_id", "=", company), ("active", "=", True)]
+            [("company_id", "=", self._company_id(company)), ("active", "=", True)]
         )
         ext_blocks = []
         for ext in extensions:
@@ -169,7 +170,7 @@ class PbxConfigGenerator(models.AbstractModel):
                 )
 
         trunks = self.env["pbx.trunk"].search(
-            [("company_id", "=", company), ("active", "=", True)]
+            [("company_id", "=", self._company_id(company)), ("active", "=", True)]
         )
         trunk_blocks = []
         for trunk in trunks:
@@ -194,11 +195,32 @@ class PbxConfigGenerator(models.AbstractModel):
     # ------------------------------------------------------------------
     # extensions.conf
     # ------------------------------------------------------------------
+    @staticmethod
+    def _company_id(company):
+        """Return the res.company id whether a recordset or int is passed."""
+        return company.id if isinstance(company, models.Model) else company
+
+    @staticmethod
+    def _slug(name):
+        """URL-safe slug of a trunk name for use in object names."""
+        slug = re.sub(r"[^a-zA-Z0-9_-]", "", name or "").lower()
+        return slug or "trunk"
+
+    @staticmethod
+    def _format_time(hour_float):
+        """resource.calendar hour (8.0, 17.5) → '08:00' / '17:30' for GotoIfTime."""
+        h = int(hour_float)
+        m = int(round((hour_float - h) * 60))
+        if m == 60:
+            h += 1
+            m = 0
+        return "%02d:%02d" % (h, m)
+
     def generate_extensions(self, domain, company):
         """Generate the instance dialplan: internal dialing, ring groups,
         voicemail contexts, inbound routes and outbound routes."""
         extensions = self.env["pbx.extension"].search(
-            [("company_id", "=", company), ("active", "=", True)]
+            [("company_id", "=", self._company_id(company)), ("active", "=", True)]
         )
         internal_entries = []
         ext_contexts = []
@@ -288,7 +310,7 @@ class PbxConfigGenerator(models.AbstractModel):
         # Outbound entry from the internal context (0 + number -> outbound)
         outbound_entry = ""
         if self.env["pbx.outbound_route"].search_count(
-            [("company_id", "=", company), ("active", "=", True)]
+            [("company_id", "=", self._company_id(company)), ("active", "=", True)]
         ):
             outbound_entry = "exten => _0.,1,Goto(%s-outbound,s,1)\n" % domain
 
@@ -316,7 +338,7 @@ class PbxConfigGenerator(models.AbstractModel):
         plays ss-noservice when no catch-all route exists.
         """
         routes = self.env["pbx.inbound_route"].search(
-            [("company_id", "=", company), ("active", "=", True)],
+            [("company_id", "=", self._company_id(company)), ("active", "=", True)],
             order="sequence, id",
         )
         if not routes:
@@ -406,7 +428,7 @@ class PbxConfigGenerator(models.AbstractModel):
         failover and a shared failover context when everything fails.
         """
         routes = self.env["pbx.outbound_route"].search(
-            [("company_id", "=", company), ("active", "=", True)],
+            [("company_id", "=", self._company_id(company)), ("active", "=", True)],
             order="sequence, id",
         )
         if not routes:
@@ -557,7 +579,7 @@ class PbxConfigGenerator(models.AbstractModel):
     def generate_voicemail(self, domain, company):
         """Generate voicemail.conf for the instance."""
         extensions = self.env["pbx.extension"].search(
-            [("company_id", "=", company), ("active", "=", True)]
+            [("company_id", "=", self._company_id(company)), ("active", "=", True)]
         )
         mailboxes = []
         for ext in extensions:

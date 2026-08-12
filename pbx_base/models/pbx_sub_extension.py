@@ -85,7 +85,7 @@ class PbxSubExtension(models.Model):
                 vals["mac_address"] = self._normalize_mac(vals["mac_address"])
             if vals.get("type") in ("desktop", "mobile"):
                 vals.setdefault("provisioning_token", secrets.token_hex(16))
-            if not vals.get("number") and vals.get("extension_id"):
+            if vals.get("extension_id"):
                 ext_id = vals["extension_id"]
                 if ext_id not in used:
                     used[ext_id] = set(
@@ -93,9 +93,14 @@ class PbxSubExtension(models.Model):
                         .search([("extension_id", "=", ext_id)])
                         .mapped("number")
                     )
-                number = self._next_free_number(ext_id, used[ext_id])
-                used[ext_id].add(number)
-                vals["number"] = number
+                if vals.get("number"):
+                    # Explicita nummer i samma batch räknas med, annars
+                    # kolliderar genererade nummer med dem vid flush.
+                    used[ext_id].add(vals["number"])
+                else:
+                    number = self._next_free_number(ext_id, used[ext_id])
+                    used[ext_id].add(number)
+                    vals["number"] = number
         recs = super().create(vals_list)
         for rec in recs:
             rec._validate_provisioning_fields()

@@ -18,21 +18,21 @@ class TestPbxRouting(TransactionCase):
         cls.ext10 = cls.env["pbx.extension"].create(
             {
                 "company_id": cls.env.company.id,
-                "public_number": "10",
+                "public_number": "8010",
                 "callerid_name": "Reception",
                 "sub_extension_ids": [
-                    (0, 0, {"number": "101", "type": "browser", "priority": 1}),
-                    (0, 0, {"number": "199", "type": "voicemail", "priority": 99}),
+                    (0, 0, {"number": "80101", "type": "browser", "sequence": 1}),
+                    (0, 0, {"number": "80199", "type": "voicemail", "sequence": 99}),
                 ],
             }
         )
         cls.ext11 = cls.env["pbx.extension"].create(
             {
                 "company_id": cls.env.company.id,
-                "public_number": "11",
+                "public_number": "8011",
                 "callerid_name": "Anna",
                 "sub_extension_ids": [
-                    (0, 0, {"number": "111", "type": "hardware", "priority": 1}),
+                    (0, 0, {"number": "80111", "type": "hardware", "sequence": 1, "mac_address": "00:1B:66:DD:EE:FF"}),
                 ],
             }
         )
@@ -50,20 +50,20 @@ class TestPbxRouting(TransactionCase):
     def test_extension_dialplan_target(self):
         self.assertEqual(
             self.ext10.get_dialplan_target(),
-            ("test.se-ext-10", "s", "1"),
+            ("test.se-ext-8010", "s", "1"),
         )
 
     def test_voicemail_destination_target(self):
         self.assertEqual(
             self.voicemail_dest.get_dialplan_target(),
-            ("test.se-vm-10", "s", "1"),
+            ("test.se-vm-8010", "s", "1"),
         )
 
     def test_render_destination(self):
         ref = "%s,%d" % (self.voicemail_dest._name, self.voicemail_dest.id)
         self.assertEqual(
             self.env["pbx.destination.mixin"]._render_destination(ref),
-            "Goto(test.se-vm-10,s,1)",
+            "Goto(test.se-vm-8010,s,1)",
         )
         self.assertEqual(
             self.env["pbx.destination.mixin"]._render_destination(False),
@@ -91,7 +91,7 @@ class TestPbxRouting(TransactionCase):
         self.assertIn("username = user1", pjsip)
         self.assertIn("password = secret1", pjsip)
         # extensions are still generated
-        self.assertIn("[test.se-101]", pjsip)
+        self.assertIn("[test.se-80101]", pjsip)
 
     # ------------------------------------------------------------------
     # Inbound routes
@@ -120,7 +120,7 @@ class TestPbxRouting(TransactionCase):
             dialplan.index("exten => s,1,NoOp(Inbound:"),
         )
         # DID route renders its destination
-        self.assertIn("Goto(test.se-vm-10,s,1)", dialplan)
+        self.assertIn("Goto(test.se-vm-8010,s,1)", dialplan)
 
     def test_inbound_did_cid(self):
         self._inbound(did="08-123456", cid="070-5551234")
@@ -207,7 +207,7 @@ class TestPbxRouting(TransactionCase):
         )
         dialplan = self.generator.generate_extensions("test.se", self.env.company.id)
         self.assertIn("[test.se-outbound-failover]", dialplan)
-        self.assertIn("Goto(test.se-vm-10,s,1)", dialplan)
+        self.assertIn("Goto(test.se-vm-8010,s,1)", dialplan)
 
     def test_outbound_time_calendar(self):
         """resource.calendar attendance + leave gate the route."""
@@ -254,12 +254,12 @@ class TestPbxRouting(TransactionCase):
     def test_internal_dialing_and_app_contexts(self):
         dialplan = self.generator.generate_extensions("test.se", self.env.company.id)
         # extension reachable internally -> ring-group app context
-        self.assertIn("exten => 10,1,Goto(test.se-ext-10,s,1)", dialplan)
-        self.assertIn("[test.se-ext-10]", dialplan)
-        self.assertIn("Dial(SIP/test.se-101,30)", dialplan)
+        self.assertIn("exten => 8010,1,Goto(test.se-ext-8010,s,1)", dialplan)
+        self.assertIn("[test.se-ext-8010]", dialplan)
+        self.assertIn("Dial(PJSIP/test.se-80101,10)", dialplan)
         # voicemail app context exists because ext 10 has a voicemail sub
-        self.assertIn("[test.se-vm-10]", dialplan)
-        self.assertIn("Voicemail(10@test.se,u)", dialplan)
+        self.assertIn("[test.se-vm-8010]", dialplan)
+        self.assertIn("Voicemail(8010@test.se,u)", dialplan)
 
     def test_destination_custom(self):
         ref = "%s,%d" % (self.custom_dest._name, self.custom_dest.id)
