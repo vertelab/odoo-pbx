@@ -9,6 +9,7 @@ Type=simple
 User=pbx
 Group=pbx
 SupplementaryGroups=asterisk
+WorkingDirectory=/opt/odoo-pbx
 ExecStart=/opt/odoo-pbx/venv/bin/python -m pbx_ami_daemon.daemon --config /etc/pbx-ami-daemon/config.yaml
 Restart=always
 RestartSec=5
