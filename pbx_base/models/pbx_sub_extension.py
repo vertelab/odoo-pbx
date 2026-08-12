@@ -71,28 +71,42 @@ class PbxSubExtension(models.Model):
 
         Konvention: {extension.public_number}{index} → anknytning 10 får enheter
         101, 102, 103…  Minsta lediga nummer väljs så att raderingar/prio-byten
-        aldrig orsakar kollisioner eller omnumrering.
+        aldrig orsakar kollisioner eller omnumrering. Nummer som genereras i
+        samma batch räknas med (annars kolliderar flera rader på samma nummer).
         """
+        used = {}
         for vals in vals_list:
             if not vals.get("number") and vals.get("extension_id"):
-                vals["number"] = self._next_free_number(vals["extension_id"])
+                ext_id = vals["extension_id"]
+                if ext_id not in used:
+                    used[ext_id] = set(
+                        self.env["pbx.sub_extension"]
+                        .search([("extension_id", "=", ext_id)])
+                        .mapped("number")
+                    )
+                number = self._next_free_number(ext_id, used[ext_id])
+                used[ext_id].add(number)
+                vals["number"] = number
         return super().create(vals_list)
 
     @api.model
-    def _next_free_number(self, extension_id):
+    def _next_free_number(self, extension_id, used=None):
         ext = self.env["pbx.extension"].browse(extension_id)
         prefix = "".join(ch for ch in str(ext.public_number or "") if ch.isdigit())
         if not prefix:
             prefix = "0"
-        existing = set(
-            self.env["pbx.sub_extension"]
-            .search([("extension_id", "=", extension_id)])
-            .mapped("number")
-        )
+        if used is None:
+            used = set(
+                self.env["pbx.sub_extension"]
+                .search([("extension_id", "=", extension_id)])
+                .mapped("number")
+            )
+        else:
+            used = set(used)
         i = 1
         while True:
             candidate = "%s%d" % (prefix, i)
-            if candidate not in existing:
+            if candidate not in used:
                 return candidate
             i += 1
 
