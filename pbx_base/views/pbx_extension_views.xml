@@ -16,8 +16,8 @@
                         <field name="respect_schedule"/>
                         <field name="respect_calendar"/>
                     </group>
-                    <group string="Enheter">
-                        <field name="sub_extension_ids" mode="list">
+                    <group name="devices_group">
+                        <field name="sub_extension_ids" mode="list" nolabel="1">
                             <list editable="bottom">
                                 <field name="sequence" string="Sequence" widget="handle"/>
                                 <field name="type"/>

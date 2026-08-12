@@ -3,7 +3,8 @@
 
 from datetime import timedelta
 
-from odoo import fields, models
+from odoo import _, fields, models
+from odoo.exceptions import UserError
 
 from odoo.addons.pbx_base.models.pbx_destination_mixin import destination_models
 
@@ -14,6 +15,10 @@ class PbxTimeCondition(models.Model):
     _description = "PBX Time Condition"
 
     name = fields.Char(required=True, help="e.g. Office Hours")
+    extension = fields.Char(
+        string="Extension",
+        help="Internt nummer i applikationsserien (7xx). Föreslås av 'Nästa lediga'.",
+    )
     timezone = fields.Char(default="Europe/Stockholm")
     days_of_week = fields.Char(
         default="mon-fri",
@@ -43,6 +48,29 @@ class PbxTimeCondition(models.Model):
     company_id = fields.Many2one(
         "res.company", default=lambda self: self.env.company, required=True
     )
+
+    def action_next_free_extension(self):
+        """Föreslå nästa lediga nummer i tidvillkorets serie (7xx)."""
+        self.ensure_one()
+        number = self.env["pbx.numbering"]._next_free_service_number(
+            self.company_id, "time_condition"
+        )
+        if not number:
+            raise UserError(_("Inga lediga nummer i tidvillkorsserien."))
+        self.extension = number
+        return self._notify_suggested(number)
+
+    def _notify_suggested(self, number):
+        return {
+            "type": "ir.actions.client",
+            "tag": "display_notification",
+            "params": {
+                "title": _("Nästa lediga"),
+                "message": _("Föreslår %s") % number,
+                "type": "success",
+                "sticky": False,
+            },
+        }
 
     def get_dialplan_target(self):
         self.ensure_one()

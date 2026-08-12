@@ -1,7 +1,8 @@
 # Copyright 2026 Vertel AB
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 
-from odoo import api, fields, models
+from odoo import _, api, fields, models
+from odoo.exceptions import UserError
 
 
 class PbxConference(models.Model):
@@ -55,6 +56,26 @@ class PbxConference(models.Model):
                 % (conf.extension, domain, self._slug(conf.name))
             )
         return "\n".join(lines)
+
+    def action_next_free_extension(self):
+        """Föreslå nästa lediga nummer i konferensserien (6xx)."""
+        self.ensure_one()
+        number = self.env["pbx.numbering"]._next_free_service_number(
+            self.company_id, "conference"
+        )
+        if not number:
+            raise UserError(_("Inga lediga nummer i konferensserien."))
+        self.extension = number
+        return {
+            "type": "ir.actions.client",
+            "tag": "display_notification",
+            "params": {
+                "title": _("Nästa lediga"),
+                "message": _("Föreslår %s") % number,
+                "type": "success",
+                "sticky": False,
+            },
+        }
 
     def get_dialplan_target(self):
         self.ensure_one()

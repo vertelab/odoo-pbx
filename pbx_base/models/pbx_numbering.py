@@ -32,6 +32,8 @@ class PbxNumbering(models.AbstractModel):
         "queue": 4,
         "ivr": 5,
         "conference": 6,
+        "time_condition": 7,
+        "recording": 8,
     }
 
     # Dialbara modeller: (modellnamn, fält med numret).
@@ -40,6 +42,8 @@ class PbxNumbering(models.AbstractModel):
         ("pbx.queue", "extension"),
         ("pbx.ivr", "extension"),
         ("pbx.conference", "extension"),
+        ("pbx.time_condition", "extension"),
+        ("pbx.recording.policy", "extension"),
     ]
 
     @api.model

@@ -1,7 +1,8 @@
 # Copyright 2026 Vertel AB
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 
-from odoo import fields, models
+from odoo import _, fields, models
+from odoo.exceptions import UserError
 
 
 class PbxRecordingPolicy(models.Model):
@@ -14,6 +15,10 @@ class PbxRecordingPolicy(models.Model):
         required=True,
         default="company",
     )
+    extension = fields.Char(
+        string="Extension",
+        help="Internt nummer i inspelningsserien (8xx). Föreslås av 'Nästa lediga'.",
+    )
     extension_id = fields.Many2one("pbx.extension", string="Extension")
     mode = fields.Selection(
         [("always", "Always"), ("never", "Never"), ("on_demand", "On Demand")],
@@ -24,6 +29,26 @@ class PbxRecordingPolicy(models.Model):
     company_id = fields.Many2one(
         "res.company", default=lambda self: self.env.company, required=True
     )
+
+    def action_next_free_extension(self):
+        """Föreslå nästa lediga nummer i inspelningsserien (8xx)."""
+        self.ensure_one()
+        number = self.env["pbx.numbering"]._next_free_service_number(
+            self.company_id, "recording"
+        )
+        if not number:
+            raise UserError(_("Inga lediga nummer i inspelningsserien."))
+        self.extension = number
+        return {
+            "type": "ir.actions.client",
+            "tag": "display_notification",
+            "params": {
+                "title": _("Nästa lediga"),
+                "message": _("Föreslår %s") % number,
+                "type": "success",
+                "sticky": False,
+            },
+        }
 
     def get_config_snippets(self, domain, company):
         policies = self.search([("company_id", "=", company.id), ("active", "=", True)])

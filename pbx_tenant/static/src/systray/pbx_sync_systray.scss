@@ -10,8 +10,11 @@
 }
 
 .o_pbx_sync_systray .o_pbx_sync_btn.o_pbx_sync_dirty {
-    color: #d9534f;
-    animation: o_pbx_sync_pulse 2s ease-in-out infinite;
+    color: #fff;
+    background: #d9534f;
+    border-radius: 4px;
+    animation: o_pbx_sync_pulse 1.5s ease-in-out infinite;
+    box-shadow: 0 0 0 rgba(217, 83, 79, 0.4);
 }
 
 .o_pbx_sync_systray .o_pbx_sync_badge {
