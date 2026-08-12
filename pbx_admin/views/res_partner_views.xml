@@ -5,7 +5,7 @@
         <field name="name">res.partner.tenant.kanban</field>
         <field name="model">res.partner</field>
         <field name="arch" type="xml">
-            <kanban class="o_kanban_mobile" default_group_by="none">
+            <kanban class="o_kanban_mobile">
                 <field name="name"/>
                 <field name="domain"/>
                 <field name="server_id"/>
@@ -85,7 +85,7 @@
         <field name="res_model">res.partner</field>
         <field name="view_mode">kanban,form</field>
         <field name="domain">[('is_pbx_tenant', '=', True)]</field>
-        <field name="context">{'default_is_pbx_tenant': True, 'search_default_group_by': []}</field>
+        <field name="context">{'default_is_pbx_tenant': True}</field>
         <field name="view_ids" eval="[(5, 0, 0), (0, 0, {'view_mode': 'kanban', 'view_id': ref('pbx_tenant_kanban')}), (0, 0, {'view_mode': 'form', 'view_id': ref('pbx_tenant_form')})]"/>
     </record>
 </odoo>
