@@ -46,6 +46,21 @@ class ResCompany(models.Model):
         string="STUN Server",
         help="t.ex. stun.vertel.se:3478",
     )
+    pbx_provisioning_token = fields.Char(
+        string="PBX Provisioning-token",
+        groups="pbx_base.group_pbx_admin,base.group_system",
+        help="Hemlig token för provisioning-endpointen (hårdvarutelefoner). "
+             "Telefonen skickar den som lösenord i URL:en: "
+             "https://<domän>:<token>@provision.../<MAC>.cfg",
+    )
+
+    def _ensure_pbx_provisioning_token(self):
+        """Generera provisioning-token om den saknas (idempotent)."""
+        import secrets
+
+        for rec in self:
+            if not rec.pbx_provisioning_token:
+                rec.pbx_provisioning_token = secrets.token_urlsafe(24)
     config_dirty = fields.Boolean(
         string="PBX Config Dirty",
         default=False,

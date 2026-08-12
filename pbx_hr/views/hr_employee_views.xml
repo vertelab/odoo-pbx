@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Form: PBX-anknytning + knappar efter work_phone (Contact Information) -->
+    <record id="pbx_hr_employee_form" model="ir.ui.view">
+        <field name="name">hr.employee.form.pbx</field>
+        <field name="model">hr.employee</field>
+        <field name="inherit_id" ref="hr.view_employee_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='work_phone']" position="after">
+                <field name="pbx_extension_id" placeholder="PBX-anknytning"
+                       domain="[('company_id', 'in', [company_id, False])]"/>
+                <button name="action_assign_extension" type="object"
+                        string="Fördela anknytning" class="btn-link" icon="fa-phone"
+                        help="Fördela nästa lediga anknytning i företagets nummerplan"/>
+                <button name="action_sync_from_user" type="object"
+                        string="Synka från användare" class="btn-link" icon="fa-refresh"
+                        help="Hämta anknytningen från den länkade användaren"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Kanban: badge med anknytning på kortet -->
+    <record id="pbx_hr_employee_kanban" model="ir.ui.view">
+        <field name="name">hr.employee.kanban.pbx</field>
+        <field name="model">hr.employee</field>
+        <field name="inherit_id" ref="hr.hr_kanban_view_employees"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='job_title']" position="after">
+                <div t-if="record.pbx_extension_id.raw_value" class="o_text_overflow">
+                    <i class="fa fa-fw me-2 fa-phone text-primary" title="PBX-anknytning"/>
+                    <field name="pbx_extension_id"/>
+                </div>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Hierarki (org chart): visa anknytningen på kortet.
+         hr.employee.public är en SQL-view-modell — fältet deklareras i
+         models/hr_employee.py (related via employee_id). -->
+    <record id="pbx_hr_employee_hierarchy" model="ir.ui.view">
+        <field name="name">hr.employee.public.hierarchy.pbx</field>
+        <field name="model">hr.employee.public</field>
+        <field name="inherit_id" ref="hr_org_chart.hr_employee_public_hierarchy_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='job_id']" position="after">
+                <field name="pbx_extension_id"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- List: kolumn med anknytning -->
+    <record id="pbx_hr_employee_tree" model="ir.ui.view">
+        <field name="name">hr.employee.list.pbx</field>
+        <field name="model">hr.employee</field>
+        <field name="inherit_id" ref="hr.view_employee_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='work_phone']" position="after">
+                <field name="pbx_extension_id" optional="show"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Sök: filter 'Har anknytning' -->
+    <record id="pbx_hr_employee_filter" model="ir.ui.view">
+        <field name="name">hr.employee.search.pbx</field>
+        <field name="model">hr.employee</field>
+        <field name="inherit_id" ref="hr.view_employee_filter"/>
+        <field name="arch" type="xml">
+            <xpath expr="//filter[@name='my_department']" position="after">
+                <filter name="pbx_has_extension" string="Har anknytning"
+                        domain="[('pbx_extension_id', '!=', False)]"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Server action: Numrera om organisation (kugghjulet på hr.employee) -->
+    <record id="pbx_hr_renumber_action" model="ir.actions.server">
+        <field name="name">Numrera om organisation (PBX)</field>
+        <field name="model_id" ref="hr.model_hr_employee"/>
+        <field name="binding_model_id" ref="hr.model_hr_employee"/>
+        <field name="state">code</field>
+        <field name="code">records.action_renumber_organization()</field>
+    </record>
+
+</odoo>

@@ -1,10 +1,12 @@
 # Copyright 2026 Vertel AB
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 
+import re
 import secrets
 import string
 
-from odoo import api, fields, models
+from odoo import _, api, fields, models
+from odoo.exceptions import ValidationError
 
 
 def _generate_sip_secret(length=16):
@@ -73,9 +75,16 @@ class PbxSubExtension(models.Model):
         101, 102, 103…  Minsta lediga nummer väljs så att raderingar/prio-byten
         aldrig orsakar kollisioner eller omnumrering. Nummer som genereras i
         samma batch räknas med (annars kolliderar flera rader på samma nummer).
+
+        För provisioning: `mac_address` normaliseras för hardware-typ och
+        `provisioning_token` auto-genereras för desktop/mobile-typ.
         """
         used = {}
         for vals in vals_list:
+            if vals.get("type") == "hardware" and vals.get("mac_address"):
+                vals["mac_address"] = self._normalize_mac(vals["mac_address"])
+            if vals.get("type") in ("desktop", "mobile"):
+                vals.setdefault("provisioning_token", secrets.token_hex(16))
             if not vals.get("number") and vals.get("extension_id"):
                 ext_id = vals["extension_id"]
                 if ext_id not in used:
@@ -87,7 +96,36 @@ class PbxSubExtension(models.Model):
                 number = self._next_free_number(ext_id, used[ext_id])
                 used[ext_id].add(number)
                 vals["number"] = number
-        return super().create(vals_list)
+        recs = super().create(vals_list)
+        for rec in recs:
+            rec._validate_provisioning_fields()
+        return recs
+
+    def write(self, vals):
+        if vals.get("mac_address"):
+            vals["mac_address"] = self._normalize_mac(vals["mac_address"])
+        if vals.get("type") in ("desktop", "mobile"):
+            # Rotera bara om token saknas (skapa sköter generering).
+            for rec in self:
+                if not rec.provisioning_token:
+                    vals.setdefault("provisioning_token", secrets.token_hex(16))
+        res = super().write(vals)
+        for rec in self:
+            rec._validate_provisioning_fields()
+        return res
+
+    def _validate_provisioning_fields(self):
+        """Hardware kräver mac_address; övriga typer får inte ha MAC."""
+        for rec in self:
+            if rec.type == "hardware" and not rec.mac_address:
+                raise ValidationError(
+                    _("Hårdvaruenhet kräver MAC-adress.")
+                )
+
+    @staticmethod
+    def _normalize_mac(mac):
+        """'00:15:65:A1:B2:C3' / '00-15-65-A1-B2-C3' → '001565a1b2c3'."""
+        return re.sub(r"[^0-9a-fA-F]", "", mac or "").lower()
 
     @api.model
     def _next_free_number(self, extension_id, used=None):
@@ -133,10 +171,38 @@ class PbxSubExtension(models.Model):
     delete_after_days = fields.Integer(default=30)
     transcribe_enabled = fields.Boolean(default=False)
 
+    # Provisioning (pbx-provisioning): hardware keyed by MAC, softphones by token
+    mac_address = fields.Char(
+        string="MAC-adress",
+        help="Fysisk enhets MAC — provisioning-nyckel för hårdvarutelefoner. "
+             "Normaliseras till gemener utan separatorer (001565a1b2c3).",
+    )
+    device_model = fields.Char(
+        string="Enhetsmodell",
+        help="t.ex. T46S — för att välja rätt gemensam provisioning-config.",
+    )
+    provisioning_token = fields.Char(
+        string="Provisioning-token",
+        copy=False,
+        groups="pbx_base.group_pbx_admin",
+        help="Per-enhet token för softphone-provisioning (desktop/mobile). "
+             "Auto-genereras; URL:en är /pbx/provisioning/softphone/<token>.xml",
+    )
+
     _sql_constraints = [
         (
             "sub_ext_unique",
             "unique(extension_id, number)",
             "Sub-extension number must be unique per extension!",
+        ),
+        (
+            "sub_ext_mac_unique",
+            "unique(mac_address)",
+            "MAC-adressen får bara användas av en enhet!",
+        ),
+        (
+            "sub_ext_token_unique",
+            "unique(provisioning_token)",
+            "Provisioning-token måste vara unik!",
         ),
     ]

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Visa provisioning-URL + QR i enhetslistan (extension-formuläret) -->
+    <record id="pbx_provisioning_sub_extension_list" model="ir.ui.view">
+        <field name="name">pbx.extension.form.provisioning</field>
+        <field name="model">pbx.extension</field>
+        <field name="inherit_id" ref="pbx_base.pbx_extension_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='sub_extension_ids']//field[@name='provisioning_token']" position="after">
+                <field name="provisioning_url" readonly="1" optional="hide"/>
+                <field name="provisioning_qr" widget="image" readonly="1" optional="hide"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

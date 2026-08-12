@@ -278,6 +278,13 @@ class PbxConfigGenerator(models.AbstractModel):
             if snippet:
                 internal_entries.append(snippet)
 
+        # Feature codes + operator-0 (pbx-numbering) i den interna kontexten
+        feature_entries = self.env["pbx.numbering"]._feature_code_entries(
+            domain, company
+        )
+        if feature_entries:
+            internal_entries.append(feature_entries)
+
         # Outbound entry from the internal context (0 + number -> outbound)
         outbound_entry = ""
         if self.env["pbx.outbound_route"].search_count(

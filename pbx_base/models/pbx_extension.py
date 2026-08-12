@@ -33,8 +33,14 @@ class PbxExtension(models.Model):
     def create(self, vals_list):
         """Generera delat SIP-lösenord, skapa implicit Odoo VOIP-enhet, synka
         user-länken (pbx_extension_id) och voip_oca-inställningarna."""
+        skip_check = self.env.context.get("pbx_skip_number_check")
         for vals in vals_list:
             vals.setdefault("password", _generate_sip_secret())
+            if not skip_check and vals.get("company_id") and vals.get("public_number"):
+                company = self.env["res.company"].browse(vals["company_id"])
+                self.env["pbx.numbering"]._check_dialable_number(
+                    company, vals["public_number"]
+                )
         extensions = super().create(vals_list)
         for ext in extensions:
             if not ext.sub_extension_ids.filtered(lambda s: s.type == "browser"):
@@ -55,6 +61,19 @@ class PbxExtension(models.Model):
         if vals.get("user_id"):
             for ext in self:
                 old_links[ext.id] = ext.user_id
+        if not self.env.context.get("pbx_skip_number_check") and (
+            vals.get("public_number") or vals.get("company_id")
+        ):
+            for ext in self:
+                company = (
+                    self.env["res.company"].browse(vals["company_id"])
+                    if vals.get("company_id")
+                    else ext.company_id
+                )
+                number = vals.get("public_number", ext.public_number)
+                self.env["pbx.numbering"]._check_dialable_number(
+                    company, number, exclude=ext
+                )
         res = super().write(vals)
         for ext in self:
             if ext.id in old_links:

@@ -1,7 +1,7 @@
 # Copyright 2026 Vertel AB
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 
-from odoo import fields, models
+from odoo import api, fields, models
 
 from odoo.addons.pbx_base.models.pbx_destination_mixin import DESTINATION_MODELS
 
@@ -32,6 +32,30 @@ class PbxIvr(models.Model):
         "pbx.time_condition", string="Time Condition",
         help="First routing step: check time before IVR"
     )
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        for vals in vals_list:
+            if vals.get("company_id") and vals.get("extension"):
+                company = self.env["res.company"].browse(vals["company_id"])
+                self.env["pbx.numbering"]._check_dialable_number(
+                    company, vals["extension"]
+                )
+        return super().create(vals_list)
+
+    def write(self, vals):
+        if vals.get("extension") or vals.get("company_id"):
+            for rec in self:
+                company = (
+                    self.env["res.company"].browse(vals["company_id"])
+                    if vals.get("company_id")
+                    else rec.company_id
+                )
+                number = vals.get("extension", rec.extension)
+                self.env["pbx.numbering"]._check_dialable_number(
+                    company, number, exclude=rec
+                )
+        return super().write(vals)
 
     def get_config_snippets(self, domain, company):
         ivrs = self.search([("company_id", "=", company), ("active", "=", True)])

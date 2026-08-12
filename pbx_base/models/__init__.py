@@ -1,5 +1,6 @@
 from . import pbx_destination_mixin
 from . import pbx_config_dirty_mixin
+from . import pbx_numbering
 from . import pbx_call
 from . import pbx_voicemail_destination
 from . import pbx_custom_destination

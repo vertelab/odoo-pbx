@@ -16,7 +16,7 @@
                         <field name="respect_schedule"/>
                         <field name="respect_calendar"/>
                     </group>
-                    <group string="Sub-Extensions">
+                    <group string="Enheter">
                         <field name="sub_extension_ids" mode="list">
                             <list editable="bottom">
                                 <field name="sequence" string="Sequence" widget="handle"/>
@@ -25,6 +25,9 @@
                                 <field name="number" readonly="1"/>
                                 <field name="ring_timeout"/>
                                 <field name="transport"/>
+                                <field name="mac_address" optional="show"/>
+                                <field name="device_model" optional="hide"/>
+                                <field name="provisioning_token" readonly="1" optional="hide"/>
                                 <field name="sip_config_display" readonly="1" optional="hide"/>
                                 <field name="active"/>
                             </list>

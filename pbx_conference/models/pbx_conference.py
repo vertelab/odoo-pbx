@@ -1,7 +1,7 @@
 # Copyright 2026 Vertel AB
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 
-from odoo import fields, models
+from odoo import api, fields, models
 
 
 class PbxConference(models.Model):
@@ -18,6 +18,40 @@ class PbxConference(models.Model):
     record = fields.Boolean(default=False, help="Record conference?")
     active = fields.Boolean(default=True)
     company_id = fields.Many2one(related="tenant_id.company_id", store=True)
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        for vals in vals_list:
+            if vals.get("extension"):
+                company = self._company_from_vals(vals)
+                if company:
+                    self.env["pbx.numbering"]._check_dialable_number(
+                        company, vals["extension"]
+                    )
+        return super().create(vals_list)
+
+    def write(self, vals):
+        if vals.get("extension") or vals.get("tenant_id"):
+            for rec in self:
+                tenant = (
+                    self.env["pbx.tenant"].browse(vals["tenant_id"])
+                    if vals.get("tenant_id")
+                    else rec.tenant_id
+                )
+                company = tenant.company_id if tenant else rec.company_id
+                number = vals.get("extension", rec.extension)
+                self.env["pbx.numbering"]._check_dialable_number(
+                    company, number, exclude=rec
+                )
+        return super().write(vals)
+
+    def _company_from_vals(self, vals):
+        """Company från tenant_id i vals (pbx.tenant lever i pbx_admin)."""
+        tenant_id = vals.get("tenant_id")
+        if tenant_id and "pbx.tenant" in self.env:
+            tenant = self.env["pbx.tenant"].browse(tenant_id)
+            return tenant.company_id
+        return False
 
     def get_internal_dialplan(self, tenant):
         """Make conference rooms reachable by their internal extension number."""
