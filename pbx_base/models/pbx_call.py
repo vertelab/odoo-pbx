@@ -16,6 +16,7 @@ class PbxCall(models.Model):
     """
 
     _name = "pbx.call"
+    _inherit = ["mail.thread", "mail.activity.mixin"]
     _description = "PBX Call (phone transaction)"
     _order = "start_date desc, id desc"
 
