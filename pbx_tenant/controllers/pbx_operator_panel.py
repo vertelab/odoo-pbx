@@ -41,8 +41,6 @@ class PbxOperatorPanel(http.Controller):
     @http.route("/pbx/operator_panel/grid", type="json", auth="user", methods=["POST"])
     def operator_panel_grid(self, **kwargs):
         domain = self._pbx_domain()
-        if not domain:
-            return {"extensions": [], "queues": [], "ivrs": [], "is_receptionist": False}
         company = self._pbx_company()
 
         is_receptionist = self._is_receptionist()
