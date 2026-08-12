@@ -1,6 +1,6 @@
 {
     "name": "PBX Time Condition",
-    "version": "18.0.1.4.0",
+    "version": "18.0.1.5.0",
     "summary": "Time-based call routing for Asterisk",
     "category": "Productivity/VOIP",
     "author": "Vertel AB",

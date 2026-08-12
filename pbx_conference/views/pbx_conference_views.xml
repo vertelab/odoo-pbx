@@ -8,7 +8,11 @@
                     <group>
                         <field name="company_id" groups="base.group_multi_company"/>
                         <field name="name"/>
-                        <field name="extension"/>
+                        <div class="d-flex align-items-center">
+                            <field name="extension"/>
+                            <button name="action_next_free_extension" type="object"
+                                    string="Nästa lediga" icon="fa-magic" class="btn-link ms-1"/>
+                        </div>
                         <field name="pin" password="True"/>
                         <field name="admin_pin" password="True"/>
                         <field name="max_participants"/>

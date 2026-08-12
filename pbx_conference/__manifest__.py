@@ -1,6 +1,6 @@
 {
     "name": "PBX Conference",
-    "version": "18.0.1.4.0",
+    "version": "18.0.1.5.0",
     "summary": "Conference room management for Asterisk",
     "category": "Productivity/VOIP",
     "author": "Vertel AB",
