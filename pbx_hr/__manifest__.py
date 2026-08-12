@@ -1,6 +1,6 @@
 {
     "name": "PBX HR Bridge",
-    "version": "18.0.1.3.0",
+    "version": "18.0.1.4.0",
     "summary": "PBX↔HR-brygga — anknytning på hr.employee (ange/fördela, hierarkisk numrering, omnumrering)",
     "category": "Productivity/VOIP",
     "author": "Vertel AB",

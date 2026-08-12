@@ -2,11 +2,12 @@
 # This file contains the translation of the following modules:
 # 	* pbx_crm
 #
+msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 18.0-20260701\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-12 10:55+0000\n"
-"PO-Revision-Date: 2026-08-12 10:55+0000\n"
+"POT-Creation-Date: 2026-08-12 11:00+0000\n"
+"PO-Revision-Date: 2026-08-12 11:00+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -16,24 +17,30 @@ msgstr ""
 
 #. module: pbx_crm
 #: model:ir.model.fields,field_description:pbx_crm.field_res_config_settings__pbx_crm_auto_create_lead
+msgid "Auto-create lead for unknown numbers"
 msgstr "Skapa lead automatiskt för okända nummer"
 
 #. module: pbx_crm
 #: model:ir.model.fields,field_description:pbx_crm.field_res_config_settings__pbx_crm_auto_popup
+msgid "Auto-popup lead on incoming call"
 msgstr "Popup-lead vid inkommande samtal"
 
 #. module: pbx_crm
 #: model:ir.model,name:pbx_crm.model_res_config_settings
+msgid "Config Settings"
 msgstr "Inställningar"
 
 #. module: pbx_crm
 #: model:ir.model.fields,field_description:pbx_crm.field_res_config_settings__pbx_crm_log_calls
+msgid "Log all calls in CRM"
 msgstr "Logga alla samtal i CRM"
 
 #. module: pbx_crm
 #: model:ir.model,name:pbx_crm.model_pbx_crm
+msgid "PBX CRM Integration"
 msgstr "PBX CRM-integration"
 
 #. module: pbx_crm
 #: model_terms:ir.ui.view,arch_db:pbx_crm.pbx_crm_settings_view
+msgid "PBX CRM: Auto-popup lead on incoming call"
 msgstr "PBX CRM: Auto-popup-lead vid inkommande samtal"

@@ -2,11 +2,12 @@
 # This file contains the translation of the following modules:
 # 	* pbx_admin
 #
+msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 18.0-20260701\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-12 10:55+0000\n"
-"PO-Revision-Date: 2026-08-12 10:55+0000\n"
+"POT-Creation-Date: 2026-08-12 11:00+0000\n"
+"PO-Revision-Date: 2026-08-12 11:00+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -16,245 +17,303 @@ msgstr ""
 
 #. module: pbx_admin
 #: model:ir.model.fields,help:pbx_admin.field_res_config_settings__zabbix_token
+msgid "API-token mot Zabbix för övervakning (MSP)."
 msgstr "API-token mot Zabbix för övervakning (MSP)."
 
 #. module: pbx_admin
 #: model:ir.model.fields,field_description:pbx_admin.field_pbx_server__active
 #: model:ir.model.fields,field_description:pbx_admin.field_pbx_tenant__active
+msgid "Active"
 msgstr "Aktiv"
 
 #. module: pbx_admin
 #: model_terms:ir.ui.view,arch_db:pbx_admin.pbx_tenant_admin_form_view
+msgid "Admin Actions"
 msgstr "Admin-åtgärder"
 
 #. module: pbx_admin
 #: model:ir.model.fields,field_description:pbx_admin.field_pbx_server__ami_port
+msgid "Ami Port"
 msgstr "AMI-port"
 
 #. module: pbx_admin
 #: model:ir.model.fields,field_description:pbx_admin.field_pbx_server__ami_secret
+msgid "Ami Secret"
 msgstr "AMI-hemlighet"
 
 #. module: pbx_admin
 #: model:ir.model.fields,field_description:pbx_admin.field_pbx_server__ami_user
+msgid "Ami User"
 msgstr "AMI-användare"
 
 #. module: pbx_admin
 #: model_terms:ir.ui.view,arch_db:pbx_admin.res_config_settings_view_form_pbx_admin
+msgid "Billing API"
 msgstr "Fakturerings-API"
 
 #. module: pbx_admin
 #: model:ir.model.fields,field_description:pbx_admin.field_res_config_settings__billing_api_enabled
+msgid "Billing API Enabled"
 msgstr "Fakturerings-API aktiverat"
 
 #. module: pbx_admin
 #: model:ir.model.fields,field_description:pbx_admin.field_res_config_settings__billing_api_token
+msgid "Billing API Token"
 msgstr "Fakturerings-API-token"
 
 #. module: pbx_admin
 #: model_terms:ir.ui.view,arch_db:pbx_admin.res_config_settings_view_form_pbx_admin
+msgid "Central förvaltning (MSP)"
 msgstr "Central förvaltning (MSP)"
 
 #. module: pbx_admin
 #: model:ir.model.fields,field_description:pbx_admin.field_pbx_server__company_id
 #: model:ir.model.fields,field_description:pbx_admin.field_pbx_tenant__company_id
+msgid "Company"
 msgstr "Företag"
 
 #. module: pbx_admin
 #: model:ir.model.fields,field_description:pbx_admin.field_pbx_tenant__config_dirty
+msgid "Config Dirty"
 msgstr ""
 
 #. module: pbx_admin
 #: model:ir.model.fields,field_description:pbx_admin.field_pbx_server__config_path
+msgid "Config Path"
 msgstr ""
 
 #. module: pbx_admin
 #: model:ir.model,name:pbx_admin.model_res_config_settings
+msgid "Config Settings"
 msgstr "Inställningar"
 
 #. module: pbx_admin
 #: model:ir.model.fields,help:pbx_admin.field_pbx_tenant__config_dirty
+msgid "Config needs regeneration"
 msgstr ""
 
 #. module: pbx_admin
 #: model:ir.model.fields,field_description:pbx_admin.field_pbx_server__create_uid
 #: model:ir.model.fields,field_description:pbx_admin.field_pbx_tenant__create_uid
+msgid "Created by"
 msgstr "Skapad av"
 
 #. module: pbx_admin
 #: model:ir.model.fields,field_description:pbx_admin.field_pbx_server__create_date
 #: model:ir.model.fields,field_description:pbx_admin.field_pbx_tenant__create_date
+msgid "Created on"
 msgstr "Skapad den"
 
 #. module: pbx_admin
 #: model:ir.model.fields,field_description:pbx_admin.field_res_config_settings__server_id
+msgid "Default Asterisk Server"
 msgstr ""
 
 #. module: pbx_admin
 #: model:ir.model.fields,field_description:pbx_admin.field_pbx_server__display_name
 #: model:ir.model.fields,field_description:pbx_admin.field_pbx_tenant__display_name
+msgid "Display Name"
 msgstr "Visningsnamn"
 
 #. module: pbx_admin
 #: model:ir.model.fields,field_description:pbx_admin.field_pbx_tenant__domain
+msgid "Domain"
 msgstr ""
 
 #. module: pbx_admin
 #: model_terms:ir.ui.view,arch_db:pbx_admin.res_config_settings_view_form_pbx_admin
+msgid "Enabled"
 msgstr "Aktiverad"
 
 #. module: pbx_admin
 #: model:ir.model.fields.selection,name:pbx_admin.selection__pbx_tenant__plan__enterprise
+msgid "Enterprise"
 msgstr ""
 
 #. module: pbx_admin
 #: model_terms:ir.ui.view,arch_db:pbx_admin.pbx_tenant_admin_form_view
+msgid "Generate Config"
 msgstr "Generera konfiguration"
 
 #. module: pbx_admin
 #: model:ir.model.fields,field_description:pbx_admin.field_pbx_server__host
 #: model_terms:ir.ui.view,arch_db:pbx_admin.res_config_settings_view_form_pbx_admin
+msgid "Host"
 msgstr "Värd"
 
 #. module: pbx_admin
 #: model:ir.model.fields,field_description:pbx_admin.field_pbx_server__id
 #: model:ir.model.fields,field_description:pbx_admin.field_pbx_tenant__id
+msgid "ID"
 msgstr ""
 
 #. module: pbx_admin
 #: model:ir.model.fields,field_description:pbx_admin.field_pbx_server__write_uid
 #: model:ir.model.fields,field_description:pbx_admin.field_pbx_tenant__write_uid
+msgid "Last Updated by"
 msgstr "Senast uppdaterad av"
 
 #. module: pbx_admin
 #: model:ir.model.fields,field_description:pbx_admin.field_pbx_server__write_date
 #: model:ir.model.fields,field_description:pbx_admin.field_pbx_tenant__write_date
+msgid "Last Updated on"
 msgstr "Senast uppdaterad"
 
 #. module: pbx_admin
 #: model:ir.model.fields,field_description:pbx_admin.field_pbx_tenant__max_extensions
+msgid "Max Extensions"
 msgstr "Max anknytningar"
 
 #. module: pbx_admin
 #: model:ir.model.fields,field_description:pbx_admin.field_pbx_server__name
 #: model:ir.model.fields,field_description:pbx_admin.field_pbx_tenant__name
+msgid "Name"
 msgstr "Namn"
 
 #. module: pbx_admin
 #: model:ir.model.fields,field_description:pbx_admin.field_pbx_tenant__notes
 #: model_terms:ir.ui.view,arch_db:pbx_admin.pbx_tenant_form_view
+msgid "Notes"
 msgstr "Anteckningar"
 
 #. module: pbx_admin
 #: model:ir.model,name:pbx_admin.model_pbx_server
 #: model:ir.model.fields,field_description:pbx_admin.field_pbx_tenant__server_id
+msgid "PBX Server"
 msgstr ""
 
 #. module: pbx_admin
 #: model:ir.actions.act_window,name:pbx_admin.pbx_server_act_window
+msgid "PBX Servers"
 msgstr ""
 
 #. module: pbx_admin
 #: model:ir.model,name:pbx_admin.model_pbx_tenant
+msgid "PBX Tenant"
 msgstr ""
 
 #. module: pbx_admin
 #: model:ir.model.fields,field_description:pbx_admin.field_pbx_tenant__plan
+msgid "Plan"
 msgstr "Plan"
 
 #. module: pbx_admin
 #: model_terms:ir.ui.view,arch_db:pbx_admin.res_config_settings_view_form_pbx_admin
+msgid "Port"
 msgstr "Port"
 
 #. module: pbx_admin
 #: model:ir.model.fields.selection,name:pbx_admin.selection__pbx_tenant__plan__premium
+msgid "Premium"
 msgstr "Premium"
 
 #. module: pbx_admin
 #: model_terms:ir.ui.view,arch_db:pbx_admin.res_config_settings_view_form_pbx_admin
+msgid "RabbitMQ (central transport)"
 msgstr ""
 
 #. module: pbx_admin
 #: model:ir.model.fields,field_description:pbx_admin.field_res_config_settings__rabbitmq_host
+msgid "RabbitMQ Host (central)"
 msgstr ""
 
 #. module: pbx_admin
 #: model:ir.model.fields,field_description:pbx_admin.field_res_config_settings__rabbitmq_port
+msgid "RabbitMQ Port (central)"
 msgstr ""
 
 #. module: pbx_admin
 #: model:ir.model.fields,field_description:pbx_admin.field_res_config_settings__rabbitmq_secret
+msgid "RabbitMQ Secret (central)"
 msgstr ""
 
 #. module: pbx_admin
 #: model:ir.model.fields,field_description:pbx_admin.field_res_config_settings__rabbitmq_user
+msgid "RabbitMQ User (central)"
 msgstr ""
 
 #. module: pbx_admin
 #: model_terms:ir.ui.view,arch_db:pbx_admin.pbx_tenant_admin_form_view
+msgid "Reload Asterisk"
 msgstr "Ladda om Asterisk"
 
 #. module: pbx_admin
 #: model:ir.model.constraint,message:pbx_admin.constraint_pbx_tenant_domain_unique
+msgid "SIP domain must be unique!"
 msgstr ""
 
 #. module: pbx_admin
 #: model:ir.model.fields,help:pbx_admin.field_pbx_tenant__domain
+msgid "SIP domain, e.g. vertel.se"
 msgstr ""
 
 #. module: pbx_admin
 #: model_terms:ir.ui.view,arch_db:pbx_admin.res_config_settings_view_form_pbx_admin
+msgid "Secret"
 msgstr ""
 
 #. module: pbx_admin
 #: model_terms:ir.ui.view,arch_db:pbx_admin.res_config_settings_view_form_pbx_admin
+msgid "Server"
 msgstr "Server"
 
 #. module: pbx_admin
 #: model:ir.ui.menu,name:pbx_admin.menu_pbx_servers
+msgid "Servers"
 msgstr "Servrar"
 
 #. module: pbx_admin
 #: model:ir.model.fields,field_description:pbx_admin.field_pbx_server__spool_path
+msgid "Spool Path"
 msgstr "Spool-sökväg"
 
 #. module: pbx_admin
 #: model:ir.model.fields.selection,name:pbx_admin.selection__pbx_tenant__plan__standard
+msgid "Standard"
 msgstr ""
 
 #. module: pbx_admin
 #: model_terms:ir.ui.view,arch_db:pbx_admin.res_config_settings_view_form_pbx_admin
+msgid "Standard Asterisk Server"
 msgstr ""
 
 #. module: pbx_admin
 #: model:ir.actions.act_window,name:pbx_admin.pbx_tenant_act_window
 #: model:ir.ui.menu,name:pbx_admin.menu_pbx_tenants
+msgid "Tenants"
 msgstr ""
 
 #. module: pbx_admin
 #: model_terms:ir.ui.view,arch_db:pbx_admin.res_config_settings_view_form_pbx_admin
+msgid "Token"
 msgstr "Token"
 
 #. module: pbx_admin
 #: model_terms:ir.ui.view,arch_db:pbx_admin.res_config_settings_view_form_pbx_admin
+msgid "URL"
 msgstr "URL"
 
 #. module: pbx_admin
 #: model_terms:ir.ui.view,arch_db:pbx_admin.res_config_settings_view_form_pbx_admin
+msgid "User"
 msgstr "Användare"
 
 #. module: pbx_admin
 #: model_terms:ir.ui.view,arch_db:pbx_admin.res_config_settings_view_form_pbx_admin
+msgid "Zabbix (serverövervakning)"
 msgstr "Zabbix (serverövervakning)"
 
 #. module: pbx_admin
 #: model:ir.model.fields,field_description:pbx_admin.field_res_config_settings__zabbix_token
+msgid "Zabbix Token"
 msgstr ""
 
 #. module: pbx_admin
 #: model:ir.model.fields,field_description:pbx_admin.field_res_config_settings__zabbix_url
+msgid "Zabbix URL"
 msgstr ""
 
 #. module: pbx_admin
 #: model:ir.model.fields,help:pbx_admin.field_res_config_settings__zabbix_url
+msgid "Zabbix-server för övervakning av Asterisk-servern (MSP)."
 msgstr "Zabbix-server för övervakning av Asterisk-servern (MSP)."
