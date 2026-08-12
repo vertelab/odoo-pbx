@@ -39,6 +39,7 @@ import { standardFieldProps } from "@web/views/fields/standard_field_props";
 export class PbxCallField extends Component {
     static template = "pbx_base.PbxCallField";
     static props = { ...standardFieldProps };
+    static components = { PbxCallButton };
     get value() {
         return this.props.record.data[this.props.name] || "";
     }
