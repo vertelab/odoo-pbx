@@ -12,23 +12,42 @@ export class PbxSyncSystray extends Component {
     setup() {
         this.orm = useService("orm");
         this.notification = useService("notification");
-        this.user = useService("user");
-        this.canSync =
-            this.user.hasGroup("pbx_base.group_pbx_office") ||
-            this.user.hasGroup("pbx_base.group_pbx_admin");
         this.state = useState({
             dirty: false,
             domain: "",
             syncing: false,
         });
+        this.canSync = false;
         this._pollTimer = null;
-        onWillStart(() => this._refresh());
+        onWillStart(async () => {
+            this.canSync = await this._canSync();
+            await this._refresh();
+        });
         onWillUnmount(() => {
             if (this._pollTimer) {
                 clearTimeout(this._pollTimer);
             }
         });
         this._schedulePoll();
+    }
+
+    async _canSync() {
+        // "user"-tjänsten är inte tillgänglig i systray-miljön → fråga via RPC.
+        try {
+            const hasOffice = await this.orm.call(
+                "res.users",
+                "has_group",
+                ["pbx_base.group_pbx_office"]
+            );
+            const hasAdmin = await this.orm.call(
+                "res.users",
+                "has_group",
+                ["pbx_base.group_pbx_admin"]
+            );
+            return hasOffice || hasAdmin;
+        } catch (err) {
+            return false;
+        }
     }
 
     _schedulePoll() {
