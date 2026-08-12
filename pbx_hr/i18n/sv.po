@@ -2,6 +2,15 @@
 # This file contains the translation of the following modules:
 # 	* pbx_hr
 #
+#. module: pbx_hr
+msgid ""
+msgstr ""
+
+#. module: pbx_hr
+msgid ""
+msgstr ""
+
+#. module: pbx_hr
 msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 18.0-20260701\n"
@@ -46,12 +55,6 @@ msgid "Hämta anknytningen från den länkade användaren"
 msgstr "Hämta anknytningen från den länkade användaren"
 
 #. module: pbx_hr
-#. odoo-python
-#: code:addons/pbx_hr/models/hr_employee.py:0
-msgid ""
-msgstr "\"\"Ingen ledig anknytning i företaget %s — omnumrera organisationen eller utöka\"\" nummerplanen."
-
-#. module: pbx_hr
 #: model:ir.actions.server,name:pbx_hr.pbx_hr_renumber_action
 msgid "Numrera om organisation (PBX)"
 msgstr ""
@@ -73,12 +76,6 @@ msgstr ""
 #: model:ir.model,name:pbx_hr.model_hr_employee_public
 msgid "Public Employee"
 msgstr "Publik anställd"
-
-#. module: pbx_hr
-#: model:ir.model.fields,help:pbx_hr.field_hr_employee__pbx_extension_id
-#: model:ir.model.fields,help:pbx_hr.field_hr_employee_public__pbx_extension_id
-msgid ""
-msgstr "\"\"Samma anknytning som personen har i PBX/res.users. Auto-fylls från länkad \"\"användare eller fördelas (nästa lediga)."
 
 #. module: pbx_hr
 #: model_terms:ir.ui.view,arch_db:pbx_hr.pbx_hr_employee_form

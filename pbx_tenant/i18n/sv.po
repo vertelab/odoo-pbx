@@ -2,6 +2,19 @@
 # This file contains the translation of the following modules:
 # 	* pbx_tenant
 #
+#. module: pbx_tenant
+msgid ""
+msgstr ""
+"\"\"Ring bara under personens arbetstid (resource.calendar via HR). Utanför "
+"\"\"arbetstid: meddela 'tillbaka {tid}' och gå till röstbrevlåda.\n"
+
+#. module: pbx_tenant
+msgid ""
+msgstr ""
+"\"\"Ring inte när personen är upptagen i kalendern (calendar.event). "
+"Upptagen: \"\"meddela 'tillbaka {tid}' och gå till röstbrevlåda.\n"
+
+#. module: pbx_tenant
 msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 18.0-20260701\n"
@@ -203,16 +216,6 @@ msgstr ""
 #: model:ir.model.fields,field_description:pbx_tenant.field_res_users__pbx_ring_strategy
 msgid "Ring Strategy"
 msgstr "Ringstrategi"
-
-#. module: pbx_tenant
-#: model:ir.model.fields,help:pbx_tenant.field_res_users__pbx_respect_schedule
-msgid ""
-msgstr "\"\"Ring bara under personens arbetstid (resource.calendar via HR). Utanför \"\"arbetstid: meddela 'tillbaka {tid}' och gå till röstbrevlåda."
-
-#. module: pbx_tenant
-#: model:ir.model.fields,help:pbx_tenant.field_res_users__pbx_respect_calendar
-msgid ""
-msgstr "\"\"Ring inte när personen är upptagen i kalendern (calendar.event). Upptagen: \"\"meddela 'tillbaka {tid}' och gå till röstbrevlåda."
 
 #. module: pbx_tenant
 #. odoo-javascript

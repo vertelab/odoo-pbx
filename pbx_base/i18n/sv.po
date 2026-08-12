@@ -2,6 +2,15 @@
 # This file contains the translation of the following modules:
 # 	* pbx_base
 #
+#. module: pbx_base
+msgid ""
+msgstr ""
+
+#. module: pbx_base
+msgid ""
+msgstr ""
+
+#. module: pbx_base
 msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 18.0-20260701\n"
@@ -124,7 +133,9 @@ msgstr "Arkiverad"
 #. module: pbx_base
 #: model:ir.model.fields,help:pbx_base.field_pbx_outbound_route__pattern
 msgid "Asterisk dial pattern, e.g. _0. (national) or _00. (international)"
-msgstr "Asterisk-uppringningsmönster, t.ex. _0. (nationellt) eller _00. (internationellt)"
+msgstr ""
+"Asterisk-uppringningsmönster, t.ex. _0. (nationellt) eller _00. "
+"(internationellt)"
 
 #. module: pbx_base
 #: model:ir.model.fields,help:pbx_base.field_pbx_custom_destination__context
@@ -458,7 +469,9 @@ msgstr "Font-awesome-ikon, t.ex. fa-tasks"
 #. module: pbx_base
 #: model:ir.model.fields,help:pbx_base.field_pbx_sub_extension__mac_address
 msgid ""
-msgstr "\"\"Fysisk enhets MAC — provisioning-nyckel för hårdvarutelefoner. Normaliseras \"\"till gemener utan separatorer (001565a1b2c3)."
+msgstr ""
+"\"\"Fysisk enhets MAC — provisioning-nyckel för hårdvarutelefoner. "
+"Normaliseras \"\"till gemener utan separatorer (001565a1b2c3)."
 
 #. module: pbx_base
 #: model:ir.model.fields,help:pbx_base.field_res_config_settings__pbx_domain
@@ -473,7 +486,9 @@ msgstr "Företagets SIP-domän på Asterisk-servern, t.ex. vertel.se"
 #. module: pbx_base
 #: model:ir.model.fields,help:pbx_base.field_pbx_sub_extension__sip_config_display
 msgid ""
-msgstr "\"\"Genererade SIP-parametrar för enheten: username, lösenord, server, port, \"\"domän, protokoll och STUN."
+msgstr ""
+"\"\"Genererade SIP-parametrar för enheten: username, lösenord, server, port,"
+" \"\"domän, protokoll och STUN."
 
 #. module: pbx_base
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_sub_extension__greeting
@@ -522,7 +537,10 @@ msgstr "Har meddelande"
 #. module: pbx_base
 #: model:ir.model.fields,help:pbx_base.field_res_company__pbx_provisioning_token
 msgid ""
-msgstr "\"\"Hemlig token för provisioning-endpointen (hårdvarutelefoner). Telefonen \"\"skickar den som lösenord i URL:en: \"\"https://<domän>:<token>@provision.../<MAC>.cfg"
+msgstr ""
+"\"\"Hemlig token för provisioning-endpointen (hårdvarutelefoner). Telefonen "
+"\"\"skickar den som lösenord i URL:en: "
+"\"\"https://<domän>:<token>@provision.../<MAC>.cfg"
 
 #. module: pbx_base
 #: model:ir.model.fields,help:pbx_base.field_pbx_outbound_route__emergency_route
@@ -646,12 +664,16 @@ msgstr ""
 #. module: pbx_base
 #: model:ir.model.fields,help:pbx_base.field_res_config_settings__pbx_odoo_url
 msgid "Kundens Odoo-bas-URL för tillgänglighetskontroll i genererad dialplan."
-msgstr "Kundens Odoo-bas-URL för tillgänglighetskontroll i genererad dialplan."
+msgstr ""
+"Kundens Odoo-bas-URL för tillgänglighetskontroll i genererad dialplan."
 
 #. module: pbx_base
 #: model:ir.model.fields,help:pbx_base.field_res_company__pbx_odoo_url
 msgid ""
-msgstr "\"\"Kundens Odoo-bas-URL som den genererade dialplanen anropar för \"\"tillgänglighetskontroll (t.ex. https://crm.vertel.se). Tom = använd \"\"web.base.url."
+msgstr ""
+"\"\"Kundens Odoo-bas-URL som den genererade dialplanen anropar för "
+"\"\"tillgänglighetskontroll (t.ex. https://crm.vertel.se). Tom = använd "
+"\"\"web.base.url."
 
 #. module: pbx_base
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_sub_extension__label
@@ -924,7 +946,9 @@ msgstr ""
 #. odoo-python
 #: code:addons/pbx_base/models/pbx_numbering.py:0
 msgid ""
-msgstr "\"\"Nummer får inte börja med '*' — prefixet är reserverat för feature codes \"\"(*97/*98/*43/*82)."
+msgstr ""
+"\"\"Nummer får inte börja med '*' — prefixet är reserverat för feature codes"
+" \"\"(*97/*98/*43/*82)."
 
 #. module: pbx_base
 #. odoo-python
@@ -1155,17 +1179,23 @@ msgstr "Mönster"
 #. module: pbx_base
 #: model:ir.model.fields,help:pbx_base.field_pbx_sub_extension__provisioning_token
 msgid ""
-msgstr "\"\"Per-enhet token för softphone-provisioning (desktop/mobile). Auto-genereras;\"\" URL:en är /pbx/provisioning/softphone/<token>.xml"
+msgstr ""
+"\"\"Per-enhet token för softphone-provisioning (desktop/mobile). Auto-"
+"genereras;\"\" URL:en är /pbx/provisioning/softphone/<token>.xml"
 
 #. module: pbx_base
 #: model:ir.model.fields,help:pbx_base.field_pbx_sub_extension__config
 msgid ""
-msgstr "\"\"Per-parameter SIP-konfiguration populerad från enhetstypens mall \"\"(pbx.device.template) med skarpa data."
+msgstr ""
+"\"\"Per-parameter SIP-konfiguration populerad från enhetstypens mall "
+"\"\"(pbx.device.template) med skarpa data."
 
 #. module: pbx_base
 #: model:ir.model.fields,help:pbx_base.field_pbx_extension__password
 msgid ""
-msgstr "\"\"Personligt SIP-lösenord som gäller för alla enheter på anknytningen. Auto-\"\"genereras och skrivs in i den genererade pjsip-konfigurationen."
+msgstr ""
+"\"\"Personligt SIP-lösenord som gäller för alla enheter på anknytningen. "
+"Auto-\"\"genereras och skrivs in i den genererade pjsip-konfigurationen."
 
 #. module: pbx_base
 #: model:ir.model.fields,field_description:pbx_base.field_res_config_settings__pbx_tenant_plan
@@ -1309,12 +1339,16 @@ msgstr "Ringningstid"
 #. module: pbx_base
 #: model:ir.model.fields,help:pbx_base.field_pbx_extension__respect_schedule
 msgid ""
-msgstr "\"\"Ring bara under personens arbetstid (resource.calendar via HR). Utanför \"\"arbetstid: meddela 'tillbaka {tid}' och gå till röstbrevlåda."
+msgstr ""
+"\"\"Ring bara under personens arbetstid (resource.calendar via HR). Utanför "
+"\"\"arbetstid: meddela 'tillbaka {tid}' och gå till röstbrevlåda."
 
 #. module: pbx_base
 #: model:ir.model.fields,help:pbx_base.field_pbx_extension__respect_calendar
 msgid ""
-msgstr "\"\"Ring inte när personen är upptagen i kalendern (calendar.event). Upptagen: \"\"meddela 'tillbaka {tid}' och gå till röstbrevlåda."
+msgstr ""
+"\"\"Ring inte när personen är upptagen i kalendern (calendar.event). "
+"Upptagen: \"\"meddela 'tillbaka {tid}' och gå till röstbrevlåda."
 
 #. module: pbx_base
 #: model:ir.model.fields.selection,name:pbx_base.selection__pbx_call__pbx_handling__ringing
@@ -1324,7 +1358,8 @@ msgstr "Ringer"
 #. module: pbx_base
 #: model:ir.model.fields,help:pbx_base.field_pbx_sub_extension__sequence
 msgid "Ringordning (1 = först). Number har ingen koppling till ringordningen."
-msgstr "Ringordning (1 = först). Number har ingen koppling till ringordningen."
+msgstr ""
+"Ringordning (1 = först). Number har ingen koppling till ringordningen."
 
 #. module: pbx_base
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_outbound_route_trunk__route_id
@@ -1359,7 +1394,10 @@ msgstr "SIP-trunkar"
 #. module: pbx_base
 #: model:ir.model.fields,help:pbx_base.field_pbx_sub_extension__number
 msgid ""
-msgstr "\"\"SIP-identitet för enheten (auto-genererat, t.ex. 101 för anknytning 10). Har\"\" ingen koppling till ringordningen — sequence styr i vilken ordning \"\"enheterna ringer."
+msgstr ""
+"\"\"SIP-identitet för enheten (auto-genererat, t.ex. 101 för anknytning 10)."
+" Har\"\" ingen koppling till ringordningen — sequence styr i vilken ordning "
+"\"\"enheterna ringer."
 
 #. module: pbx_base
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_sub_extension__sip_config_display
@@ -1573,11 +1611,6 @@ msgid "UDP"
 msgstr "UDP"
 
 #. module: pbx_base
-#: model:ir.model.fields,help:pbx_base.field_pbx_outbound_route__calendar_id
-msgid ""
-msgstr ""
-
-#. module: pbx_base
 #: model:ir.model,name:pbx_base.model_res_users
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_call__user_id
 #: model_terms:ir.ui.view,arch_db:pbx_base.res_config_settings_view_form_pbx
@@ -1604,11 +1637,6 @@ msgstr "Vhost"
 #: model:ir.model.fields,help:pbx_base.field_pbx_extension__description
 msgid "Visas i Operator Panel-panelen, t.ex. 'Reception', 'Anna – Support'"
 msgstr ""
-
-#. module: pbx_base
-#: model:ir.model.fields,help:pbx_base.field_pbx_extension__callerid_name
-msgid ""
-msgstr "\"\"Visas som namn på utgående samtal. Fylls i från användarens namn när en \"\"användare kopplas — kan överskrivas manuellt."
 
 #. module: pbx_base
 #: model:ir.model.fields.selection,name:pbx_base.selection__pbx_call__pbx_handling__voicemail
