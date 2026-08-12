@@ -123,8 +123,16 @@ class AMIConnection:
             self._writer = None
             self._reader = None
 
-    async def send_action(self, action: str, **params) -> dict:
-        """Send an AMI action and return the parsed response."""
+    async def send_action(self, action: str, wait_response: bool = True, **params) -> dict:
+        """Send an AMI action and return the parsed response.
+
+        ``wait_response=False`` sends fire-and-forget (write only) — used by
+        the config consumer for reloads, because ``read_events`` keeps a
+        pending ``readline()`` on the same stream and a concurrent read would
+        raise "readuntil() called while another coroutine is already waiting
+        for incoming data". Responses to fire-and-forget actions are consumed
+        by the event loop and dropped silently (no ``Event`` header).
+        """
         if not self._writer:
             raise ConnectionError("Not connected")
 
@@ -135,6 +143,9 @@ class AMIConnection:
 
         self._writer.write(msg.encode())
         await self._writer.drain()
+
+        if not wait_response:
+            return {}
 
         # Read response
         response = await asyncio.wait_for(self._reader.readuntil(b"\r\n\r\n"), 10)
@@ -402,7 +413,7 @@ class ConfigConsumer:
             if body.get("reload", True):
                 for cmd in ("pjsip reload", "dialplan reload", "voicemail reload"):
                     try:
-                        await self.ami.send_action("Command", Command=cmd)
+                        await self.ami.send_action("Command", Command=cmd, wait_response=False)
                     except Exception as e:
                         logger.error("Reload %s failed: %s", cmd, e)
 
