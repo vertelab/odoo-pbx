@@ -10,11 +10,10 @@ class PbxRecordingPolicy(models.Model):
     _description = "PBX Recording Policy"
 
     scope = fields.Selection(
-        [("company", "Company"), ("queue", "Queue"), ("extension", "Extension")],
+        [("company", "Company"), ("extension", "Extension")],
         required=True,
         default="company",
     )
-    queue_id = fields.Many2one("pbx.queue", string="Queue")
     extension_id = fields.Many2one("pbx.extension", string="Extension")
     mode = fields.Selection(
         [("always", "Always"), ("never", "Never"), ("on_demand", "On Demand")],

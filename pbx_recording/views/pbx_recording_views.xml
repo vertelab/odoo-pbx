@@ -8,7 +8,6 @@
                     <group>
                         <field name="company_id" groups="base.group_multi_company"/>
                         <field name="scope"/>
-                        <field name="queue_id"  required="scope == 'queue'" invisible="scope != 'queue'"/>
                         <field name="extension_id"  required="scope == 'extension'" invisible="scope != 'extension'"/>
                         <field name="mode"/>
                         <field name="active"/>

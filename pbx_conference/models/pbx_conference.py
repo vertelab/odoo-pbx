@@ -6,7 +6,7 @@ from odoo import api, fields, models
 
 class PbxConference(models.Model):
     _name = "pbx.conference"
-    _inherit = ["pbx.plugin", "pbx.destination.mixin"]
+    _inherit = ["pbx.plugin", "pbx.destination.mixin", "mail.thread", "mail.activity.mixin"]
     _description = "PBX Conference Room"
 
     name = fields.Char(required=True, help="e.g. Ledningsmöte")

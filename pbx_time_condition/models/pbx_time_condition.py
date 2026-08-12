@@ -10,7 +10,7 @@ from odoo.addons.pbx_base.models.pbx_destination_mixin import destination_models
 
 class PbxTimeCondition(models.Model):
     _name = "pbx.time_condition"
-    _inherit = ["pbx.plugin", "pbx.destination.mixin"]
+    _inherit = ["pbx.plugin", "pbx.destination.mixin", "mail.thread", "mail.activity.mixin"]
     _description = "PBX Time Condition"
 
     name = fields.Char(required=True, help="e.g. Office Hours")

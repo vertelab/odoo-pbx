@@ -4,6 +4,11 @@
         <field name="model">pbx.time_condition</field>
         <field name="arch" type="xml">
             <form>
+                <header>
+                    <button name="toggle_active" type="object"
+                            attrs="{'invisible': [('active', '=', True)]}"
+                            class="oe_stat_button" icon="fa-archive"/>
+                </header>
                 <sheet>
                     <group>
                         <field name="company_id" groups="base.group_multi_company"/>
@@ -26,6 +31,9 @@
                         <field name="active"/>
                     </group>
                 </sheet>
+                <div class="oe_chatter">
+                    <chatter/>
+                </div>
             </form>
         </field>
     </record>
