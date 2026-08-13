@@ -3,6 +3,7 @@
 
 import json
 import logging
+import re
 
 from odoo import _, api, fields, models
 from odoo.exceptions import UserError
@@ -130,6 +131,28 @@ class ResPartner(models.Model):
                 "webhook_token": ICP.get_param("pbx.webhook.token", ""),
                 "db_name": ICP.get_param("pbx_admin.salt_db_name", "odoo"),
             }
+        }
+
+    def action_derive_domain_from_website(self):
+        """Härled SIP-domänen från partnerns webbplats (strip https/www/path).
+
+        Exempel: https://www.kund.se → kund.se. Bara ett förslag — användaren
+        kan justera innan spara. SIP-domänen ska vara stabil och explicit,
+        inte automatiskt följa webbplatsen vid ändringar.
+        """
+        self.ensure_one()
+        website = (self.website or "").strip().lower()
+        if not website:
+            raise UserError(_("Partnern har ingen webbplats angiven."))
+        domain = re.sub(r"^https?://", "", website)
+        domain = re.sub(r"^www\.", "", domain)
+        domain = domain.split("/")[0].split(":")[0]
+        if not domain:
+            raise UserError(_("Kunde inte härleda en domän från webbplatsen."))
+        self.domain = domain
+        return {
+            "type": "ir.actions.client",
+            "tag": "reload",
         }
 
     def action_open_partner(self):

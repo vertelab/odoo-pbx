@@ -1,6 +1,6 @@
 {
     "name": "PBX Admin",
-    "version": "18.0.1.2.0",
+    "version": "18.0.1.3.0",
     "summary": "Central MSP panel for multi-tenant PBX management",
     "category": "Productivity/VOIP",
     "author": "Vertel AB",

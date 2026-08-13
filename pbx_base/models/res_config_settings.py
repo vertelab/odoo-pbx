@@ -1,11 +1,50 @@
 # Copyright 2026 Vertel AB
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 
+import logging
+import secrets
+
 from odoo import fields, models, api
+from odoo.tools import config as odoo_config
+
+_logger = logging.getLogger(__name__)
+
+# Nycklar som pbx_admin (Salt) kan provisionera via odoo.conf [options].
+# När någon av dem finns i odoo.conf är inställningarna "managed" (read-only i
+# formuläret) — admin sker centralt på ledningssystemet, inte per minion.
+PBX_ODOO_CONF_KEYS = (
+    "pbx_domain",
+    "pbx_server_host",
+    "pbx_api_key",
+    "pbx_odoo_url",
+    "pbx_sip_port",
+    "pbx_stun_enabled",
+    "pbx_stun_server",
+    "pbx_mq_host",
+    "pbx_mq_port",
+    "pbx_mq_user",
+    "pbx_mq_password",
+    "pbx_mq_vhost",
+    "pbx_webhook_token",
+)
 
 
 class ResConfigSettings(models.TransientModel):
     _inherit = "res.config.settings"
+
+    # ── Central admin-styrning (odoo.conf) ────────────────────────
+    pbx_config_managed = fields.Boolean(
+        string="PBX konfigureras centralt",
+        compute="_compute_pbx_config_managed",
+        help="True när pbx_admin/Salt har provisionerat inställningarna via "
+        "odoo.conf — fälten blir read-only eftersom admin sker centralt.",
+    )
+
+    @api.depends_context("company")
+    def _compute_pbx_config_managed(self):
+        managed = any(odoo_config.get(key) for key in PBX_ODOO_CONF_KEYS)
+        for rec in self:
+            rec.pbx_config_managed = managed
 
     # ── Grundinställningar (per företag — multicompany) ──
     pbx_domain = fields.Char(
@@ -80,5 +119,47 @@ class ResConfigSettings(models.TransientModel):
         string="PBX Webhook Token",
         config_parameter="pbx.webhook.token",
         groups="base.group_system",
-        help="Bearer-token som pbx_ami_daemon använder mot /pbx/webhook",
+        readonly=True,
+        help="Bearer-token som pbx_ami_daemon använder mot /pbx/webhook. "
+        "Genereras automatiskt om ingen finns (fristående användning), "
+        "eller provisioneras av pbx_admin via odoo.conf.",
     )
+
+    # ── Webhook-token: auto-generering (fristående) ────────────────
+    @api.model
+    def _ensure_webhook_token(self):
+        """Generera en webhook-token om ingen finns (idempotent).
+
+        Fristående användning: modulen ska fungera utan Salt/pbx_admin.
+        Anropas från get_values så att token skapas när formuläret öppnas
+        om den saknas helt.
+        """
+        ICP = self.env["ir.config_parameter"].sudo()
+        token = ICP.get_param("pbx.webhook.token", "")
+        if not token:
+            token = secrets.token_urlsafe(32)
+            ICP.set_param("pbx.webhook.token", token)
+            _logger.info("PBX webhook-token genererad (saknades)")
+        return token
+
+    def get_values(self):
+        res = super().get_values()
+        self._ensure_webhook_token()
+        res["pbx_webhook_token"] = self.env[
+            "ir.config_parameter"
+        ].sudo().get_param("pbx.webhook.token", "")
+        return res
+
+    def action_generate_webhook_token(self):
+        """Generera en ny webhook-token (knapp i settings-formuläret)."""
+        self.ensure_one()
+        token = secrets.token_urlsafe(32)
+        self.env["ir.config_parameter"].sudo().set_param(
+            "pbx.webhook.token", token
+        )
+        self.pbx_webhook_token = token
+        _logger.info("PBX webhook-token genererad på nytt (manuellt)")
+        return {
+            "type": "ir.actions.client",
+            "tag": "reload",
+        }

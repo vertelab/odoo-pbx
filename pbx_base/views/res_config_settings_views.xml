@@ -14,79 +14,94 @@
         <field name="arch" type="xml">
             <xpath expr="//form" position="inside">
                 <app data-string="PBX" string="PBX" name="pbx">
+                    <field name="pbx_config_managed" invisible="1"/>
+
                     <block title="Grundinställningar">
-                        <setting string="Min telefon-växel">
-                            <div class="content-group">
-                                <div class="row mt16">
-                                    <label string="SIP Domain" for="pbx_domain" class="col-lg-3 o_light_label"/>
-                                    <field name="pbx_domain" class="col-lg-3"/>
-                                </div>
-                                <div class="row mt16">
-                                    <label string="PBX Server" for="pbx_server_host" class="col-lg-3 o_light_label"/>
-                                    <field name="pbx_server_host" class="col-lg-3"/>
-                                </div>
-                                <div class="row mt16">
-                                    <label string="API Key" for="pbx_api_key" class="col-lg-3 o_light_label"/>
-                                    <field name="pbx_api_key" class="col-lg-3"/>
-                                </div>
-                                <div class="row mt16">
-                                    <label string="Odoo URL" for="pbx_odoo_url" class="col-lg-3 o_light_label"/>
-                                    <field name="pbx_odoo_url" class="col-lg-3"/>
-                                </div>
-                                <div class="row mt16">
-                                    <label string="SIP Port" for="pbx_sip_port" class="col-lg-3 o_light_label"/>
-                                    <field name="pbx_sip_port" class="col-lg-3"/>
-                                </div>
-                                <div class="row mt16">
-                                    <label string="STUN aktiverad" for="pbx_stun_enabled" class="col-lg-3 o_light_label"/>
-                                    <field name="pbx_stun_enabled" class="col-lg-3"/>
-                                </div>
-                                <div class="row mt16" invisible="not pbx_stun_enabled">
-                                    <label string="STUN Server" for="pbx_stun_server" class="col-lg-3 o_light_label"/>
-                                    <field name="pbx_stun_server" class="col-lg-3"/>
-                                </div>
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <setting string="Min telefon-växel">
+                                    <div class="content-group">
+                                        <div class="row mt16">
+                                            <label string="SIP Domain" for="pbx_domain" class="col-lg-6 o_light_label"/>
+                                            <field name="pbx_domain" class="col-lg-6" readonly="pbx_config_managed"/>
+                                        </div>
+                                        <div class="row mt16">
+                                            <label string="PBX Server" for="pbx_server_host" class="col-lg-6 o_light_label"/>
+                                            <field name="pbx_server_host" class="col-lg-6" readonly="pbx_config_managed"/>
+                                        </div>
+                                        <div class="row mt16">
+                                            <label string="SIP Port" for="pbx_sip_port" class="col-lg-6 o_light_label"/>
+                                            <field name="pbx_sip_port" class="col-lg-6" readonly="pbx_config_managed"/>
+                                        </div>
+                                        <div class="row mt16">
+                                            <label string="Odoo URL" for="pbx_odoo_url" class="col-lg-6 o_light_label"/>
+                                            <field name="pbx_odoo_url" class="col-lg-6" readonly="pbx_config_managed"/>
+                                        </div>
+                                    </div>
+                                </setting>
                             </div>
-                        </setting>
-                        <setting string="Leasavtal (från central förvaltning)">
-                            <div class="content-group">
+                            <div class="col-lg-6">
+                                <setting string="Säkerhet">
+                                    <div class="content-group">
+                                        <div class="row mt16">
+                                            <label string="API Key" for="pbx_api_key" class="col-lg-6 o_light_label"/>
+                                            <field name="pbx_api_key" class="col-lg-6" password="True" readonly="pbx_config_managed"/>
+                                        </div>
+                                        <div class="row mt16">
+                                            <label string="STUN aktiverad" for="pbx_stun_enabled" class="col-lg-6 o_light_label"/>
+                                            <field name="pbx_stun_enabled" class="col-lg-6" readonly="pbx_config_managed"/>
+                                        </div>
+                                        <div class="row mt16" invisible="not pbx_stun_enabled">
+                                            <label string="STUN Server" for="pbx_stun_server" class="col-lg-6 o_light_label"/>
+                                            <field name="pbx_stun_server" class="col-lg-6" readonly="pbx_config_managed"/>
+                                        </div>
+                                    </div>
+                                </setting>
                             </div>
-                        </setting>
-                    </block>
-                    <block title="RabbitMQ (actions + config-transport)">
-                        <setting string="Message broker">
-                            <div class="content-group">
-                                <div class="row mt16">
-                                    <label string="Host" for="pbx_mq_host" class="col-lg-3 o_light_label"/>
-                                    <field name="pbx_mq_host" class="col-lg-3"/>
-                                </div>
-                                <div class="row mt16">
-                                    <label string="Port" for="pbx_mq_port" class="col-lg-3 o_light_label"/>
-                                    <field name="pbx_mq_port" class="col-lg-3"/>
-                                </div>
-                                <div class="row mt16">
-                                    <label string="User" for="pbx_mq_user" class="col-lg-3 o_light_label"/>
-                                    <field name="pbx_mq_user" class="col-lg-3"/>
-                                </div>
-                                <div class="row mt16">
-                                    <label string="Password" for="pbx_mq_password" class="col-lg-3 o_light_label"/>
-                                    <field name="pbx_mq_password" class="col-lg-3"/>
-                                </div>
-                                <div class="row mt16">
-                                    <label string="Vhost" for="pbx_mq_vhost" class="col-lg-3 o_light_label"/>
-                                    <field name="pbx_mq_vhost" class="col-lg-3"/>
-                                </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <setting string="Meddelandekö (RabbitMQ)">
+                                    <div class="content-group">
+                                        <div class="row mt16">
+                                            <label string="Host" for="pbx_mq_host" class="col-lg-6 o_light_label"/>
+                                            <field name="pbx_mq_host" class="col-lg-6" readonly="pbx_config_managed"/>
+                                        </div>
+                                        <div class="row mt16">
+                                            <label string="Port" for="pbx_mq_port" class="col-lg-6 o_light_label"/>
+                                            <field name="pbx_mq_port" class="col-lg-6" readonly="pbx_config_managed"/>
+                                        </div>
+                                        <div class="row mt16">
+                                            <label string="User" for="pbx_mq_user" class="col-lg-6 o_light_label"/>
+                                            <field name="pbx_mq_user" class="col-lg-6" readonly="pbx_config_managed"/>
+                                        </div>
+                                        <div class="row mt16">
+                                            <label string="Password" for="pbx_mq_password" class="col-lg-6 o_light_label"/>
+                                            <field name="pbx_mq_password" class="col-lg-6" password="True" readonly="pbx_config_managed"/>
+                                        </div>
+                                        <div class="row mt16">
+                                            <label string="Vhost" for="pbx_mq_vhost" class="col-lg-6 o_light_label"/>
+                                            <field name="pbx_mq_vhost" class="col-lg-6" readonly="pbx_config_managed"/>
+                                        </div>
+                                    </div>
+                                </setting>
                             </div>
-                        </setting>
-                    </block>
-                    <block title="Webhook (daemon → Odoo)">
-                        <setting string="PBX Webhook Token">
-                            <div class="content-group">
-                                <div class="row mt16">
-                                    <label string="Bearer-token" for="pbx_webhook_token" class="col-lg-3 o_light_label"/>
-                                    <field name="pbx_webhook_token" class="col-lg-6"/>
-                                </div>
+                            <div class="col-lg-6">
+                                <setting string="Webhook (daemon → Odoo)">
+                                    <div class="content-group">
+                                        <div class="row mt16">
+                                            <label string="PBX Webhook Token" for="pbx_webhook_token" class="col-lg-6 o_light_label"/>
+                                            <field name="pbx_webhook_token" class="col-lg-6" readonly="1"/>
+                                        </div>
+                                        <div class="row mt16">
+                                            <button name="action_generate_webhook_token" type="object"
+                                                    string="Generera ny token" icon="fa-refresh" class="btn-link"/>
+                                        </div>
+                                    </div>
+                                </setting>
                             </div>
-                        </setting>
+                        </div>
                     </block>
                 </app>
             </xpath>

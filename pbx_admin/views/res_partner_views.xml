@@ -77,6 +77,9 @@
                     <group string="PBX">
                         <group>
                             <field name="domain"/>
+                            <button name="action_derive_domain_from_website" type="object"
+                                    string="Härled från webbplats" icon="fa-globe"
+                                    class="btn-link" help="Fyll SIP-domänen från partnerns webbplats (https://www.kund.se → kund.se)"/>
                             <field name="server_id"/>
                             <field name="minion_id"/>
                         </group>
