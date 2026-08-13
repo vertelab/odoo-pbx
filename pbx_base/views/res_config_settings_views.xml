@@ -33,10 +33,6 @@
                                             <label string="SIP Port" for="pbx_sip_port" class="col-lg-6 o_light_label"/>
                                             <field name="pbx_sip_port" class="col-lg-6" readonly="pbx_config_managed"/>
                                         </div>
-                                        <div class="row mt16">
-                                            <label string="Odoo URL" for="pbx_odoo_url" class="col-lg-6 o_light_label"/>
-                                            <field name="pbx_odoo_url" class="col-lg-6" readonly="pbx_config_managed"/>
-                                        </div>
                                     </div>
                                 </setting>
                             </div>
@@ -65,10 +61,6 @@
                                 <setting string="Meddelandekö (RabbitMQ)">
                                     <div class="content-group">
                                         <div class="row mt16">
-                                            <label string="Host" for="pbx_mq_host" class="col-lg-6 o_light_label"/>
-                                            <field name="pbx_mq_host" class="col-lg-6" readonly="pbx_config_managed"/>
-                                        </div>
-                                        <div class="row mt16">
                                             <label string="Port" for="pbx_mq_port" class="col-lg-6 o_light_label"/>
                                             <field name="pbx_mq_port" class="col-lg-6" readonly="pbx_config_managed"/>
                                         </div>
@@ -80,9 +72,8 @@
                                             <label string="Password" for="pbx_mq_password" class="col-lg-6 o_light_label"/>
                                             <field name="pbx_mq_password" class="col-lg-6" password="True" readonly="pbx_config_managed"/>
                                         </div>
-                                        <div class="row mt16">
-                                            <label string="Vhost" for="pbx_mq_vhost" class="col-lg-6 o_light_label"/>
-                                            <field name="pbx_mq_vhost" class="col-lg-6" readonly="pbx_config_managed"/>
+                                        <div class="text-muted mt8">
+                                            RabbitMQ körs på PBX-servern och använder SIP-domänen som vhost — inga extra adresser behövs.
                                         </div>
                                     </div>
                                 </setting>
@@ -90,6 +81,15 @@
                             <div class="col-lg-6">
                                 <setting string="Webhook (daemon → Odoo)">
                                     <div class="content-group">
+                                        <div class="row mt16">
+                                            <label string="Endpoint" for="pbx_webhook_url" class="col-lg-6 o_light_label"/>
+                                            <field name="pbx_webhook_url" class="col-lg-6" readonly="1"/>
+                                        </div>
+                                        <div class="row mt16">
+                                            <label string="Odoo URL" for="pbx_odoo_url" class="col-lg-6 o_light_label"/>
+                                            <field name="pbx_odoo_url" class="col-lg-6" readonly="pbx_config_managed"
+                                                   help="Publikt nåbar Odoo-bas-URL som Asterisk-dialplanen anropar för tillgänglighetskontroll (/pbx/availability). Tom = web.base.url."/>
+                                        </div>
                                         <div class="row mt16">
                                             <label string="PBX Webhook Token" for="pbx_webhook_token" class="col-lg-6 o_light_label"/>
                                             <field name="pbx_webhook_token" class="col-lg-6" readonly="1"/>

@@ -114,12 +114,15 @@ class ResPartner(models.Model):
         self.ensure_one()
         server = self.server_id
         ICP = self.env["ir.config_parameter"].sudo()
+        # RabbitMQ körs på PBX-servern och använder SIP-domänen som vhost —
+        # host/vhost härleds (om inte centralt provisionerade i odoo.conf).
         mq = {
-            "host": ICP.get_param("pbx.mq.host", ""),
+            "host": ICP.get_param("pbx.mq.host", "")
+            or (server.host if server else ""),
             "port": ICP.get_param("pbx.mq.port", "5672"),
             "user": ICP.get_param("pbx.mq.user", "pbx"),
             "password": ICP.get_param("pbx.mq.password", ""),
-            "vhost": ICP.get_param("pbx.mq.vhost", "pbx"),
+            "vhost": ICP.get_param("pbx.mq.vhost", "") or (self.domain or "pbx"),
         }
         company = self.company_id
         return {

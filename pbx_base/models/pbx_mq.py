@@ -21,11 +21,11 @@ class PbxMqPublisher(models.AbstractModel):
     workers (no persistent consumer threads inside the Odoo process).
 
     Config via ir.config_parameter:
-      pbx.mq.host     (default localhost)
+      pbx.mq.host     (default: företagets pbx_server_host, fallback localhost)
       pbx.mq.port     (default 5672)
       pbx.mq.user     (default pbx)
       pbx.mq.password
-      pbx.mq.vhost    (default pbx)
+      pbx.mq.vhost    (default: företagets pbx_domain, fallback pbx)
     """
 
     _name = "pbx.mq.publisher"
@@ -35,12 +35,22 @@ class PbxMqPublisher(models.AbstractModel):
 
     def _get_config(self):
         ICP = self.env["ir.config_parameter"].sudo()
+        company = self.env.company
+        # Host härleds från företagets PBX-server (RabbitMQ körs på samma
+        # maskin som Asterisk i standarduppsättningen). Vhost härleds från
+        # SIP-domänen (tenant == domän == topic).
+        mq_host = ICP.get_param("pbx.mq.host", "")
+        if not mq_host:
+            mq_host = company.pbx_server_host or "localhost"
+        mq_vhost = ICP.get_param("pbx.mq.vhost", "")
+        if not mq_vhost:
+            mq_vhost = company.pbx_domain or "pbx"
         return {
-            "host": ICP.get_param("pbx.mq.host", "localhost"),
+            "host": mq_host,
             "port": int(ICP.get_param("pbx.mq.port", "5672")),
             "user": ICP.get_param("pbx.mq.user", "pbx"),
             "password": ICP.get_param("pbx.mq.password", "pbx"),
-            "vhost": ICP.get_param("pbx.mq.vhost", "pbx"),
+            "vhost": mq_vhost,
         }
 
     def publish(self, routing_key, payload):

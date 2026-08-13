@@ -87,15 +87,13 @@ class ResConfigSettings(models.TransientModel):
         string="STUN Server",
         related="company_id.pbx_stun_server",
         readonly=False,
-        help="t.ex. stun.vertel.se:3478",
+        help="STUN-server för enheter bakom NAT, format host:port — "
+        "t.ex. stun.vertel.se:3478 (provisioneras av pbx_admin via odoo.conf).",
     )
 
     # ── RabbitMQ + webhook ──
-    pbx_mq_host = fields.Char(
-        string="RabbitMQ Host",
-        config_parameter="pbx.mq.host",
-        default="localhost",
-    )
+    # Host och Vhost härleds från PBX-servern respektive SIP-domänen
+    # (tas bort ur formuläret — se pbx_mq.publisher._get_config).
     pbx_mq_port = fields.Integer(
         string="RabbitMQ Port",
         config_parameter="pbx.mq.port",
@@ -124,6 +122,22 @@ class ResConfigSettings(models.TransientModel):
         "Genereras automatiskt om ingen finns (fristående användning), "
         "eller provisioneras av pbx_admin via odoo.conf.",
     )
+    pbx_webhook_url = fields.Char(
+        string="PBX Webhook URL",
+        compute="_compute_pbx_webhook_url",
+        readonly=True,
+        help="Fullständig endpoint som pbx_ami_daemon POSTar till "
+        "(baseras på Odoo-URL eller web.base.url).",
+    )
+
+    @api.depends_context("company")
+    def _compute_pbx_webhook_url(self):
+        base = (
+            self.company_id.pbx_odoo_url
+            or self.env["ir.config_parameter"].sudo().get_param("web.base.url", "")
+        )
+        for rec in self:
+            rec.pbx_webhook_url = "%s/pbx/webhook" % (base or "").rstrip("/")
 
     # ── Webhook-token: auto-generering (fristående) ────────────────
     @api.model
