@@ -20,6 +20,7 @@ PBX_ODOO_CONF_KEYS = (
     "pbx_sip_port",
     "pbx_stun_enabled",
     "pbx_stun_server",
+    "pbx_turn_server",
     "pbx_mq_host",
     "pbx_mq_port",
     "pbx_mq_user",
@@ -89,6 +90,14 @@ class ResConfigSettings(models.TransientModel):
         readonly=False,
         help="STUN-server för enheter bakom NAT, format host:port — "
         "t.ex. stun.vertel.se:3478 (provisioneras av pbx_admin via odoo.conf).",
+    )
+    pbx_turn_server = fields.Char(
+        string="TURN Server",
+        config_parameter="pbx.turn.server",
+        readonly=False,
+        help="TURN-server för media-relay bakom symmetrisk NAT (t.ex. mobilnät). "
+        "Format host:port — t.ex. turn.vertel.se:3478. "
+        "Provisioneras av pbx_admin via odoo.conf.",
     )
 
     # ── RabbitMQ + webhook ──

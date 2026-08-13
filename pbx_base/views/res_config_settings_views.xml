@@ -51,6 +51,10 @@
                                             <label string="STUN Server" for="pbx_stun_server" class="col-lg-6 o_light_label"/>
                                             <field name="pbx_stun_server" class="col-lg-6" readonly="pbx_config_managed"/>
                                         </div>
+                                        <div class="row mt16">
+                                            <label string="TURN Server" for="pbx_turn_server" class="col-lg-6 o_light_label"/>
+                                            <field name="pbx_turn_server" class="col-lg-6" readonly="pbx_config_managed"/>
+                                        </div>
                                     </div>
                                 </setting>
                             </div>

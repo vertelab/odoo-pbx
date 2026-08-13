@@ -15,6 +15,18 @@
                             </div>
                         </div>
                     </setting>
+                    <setting string="NAT-traversal (STUN/TURN)">
+                        <div class="content-group">
+                            <div class="row mt16">
+                                <label string="TURN Server" for="pbx_turn_server" class="col-lg-3 o_light_label"/>
+                                <field name="pbx_turn_server" class="col-lg-3"/>
+                            </div>
+                            <div class="row mt16">
+                                <label string="STUN Server" for="pbx_stun_server" class="col-lg-3 o_light_label"/>
+                                <field name="pbx_stun_server" class="col-lg-3"/>
+                            </div>
+                        </div>
+                    </setting>
                     <setting string="RabbitMQ (central transport)">
                         <div class="content-group">
                             <div class="row mt16">

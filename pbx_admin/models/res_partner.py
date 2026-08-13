@@ -114,24 +114,29 @@ class ResPartner(models.Model):
         self.ensure_one()
         server = self.server_id
         ICP = self.env["ir.config_parameter"].sudo()
+        company = self.company_id
+        api_key = company.pbx_api_key or ""
         # RabbitMQ körs på PBX-servern och använder SIP-domänen som vhost —
         # host/vhost härleds (om inte centralt provisionerade i odoo.conf).
+        # Användare = SIP-domän, lösenord = API-nyckel (en hemlighet per domän,
+        # permission scoped till instansens domänset på RabbitMQ-sidan).
         mq = {
             "host": ICP.get_param("pbx.mq.host", "")
             or (server.host if server else ""),
             "port": ICP.get_param("pbx.mq.port", "5672"),
-            "user": ICP.get_param("pbx.mq.user", "pbx"),
-            "password": ICP.get_param("pbx.mq.password", ""),
+            "user": ICP.get_param("pbx.mq.user", "") or (self.domain or "pbx"),
+            "password": ICP.get_param("pbx.mq.password", "") or api_key,
             "vhost": ICP.get_param("pbx.mq.vhost", "") or (self.domain or "pbx"),
         }
-        company = self.company_id
         return {
             "pbx": {
                 "domain": self.domain or "",
                 "server_host": (server.host if server else "") or "",
-                "api_key": company.pbx_api_key or "",
+                "api_key": api_key,
                 "mq": mq,
                 "webhook_token": ICP.get_param("pbx.webhook.token", ""),
+                "turn_server": ICP.get_param("pbx.turn.server", ""),
+                "stun_server": ICP.get_param("pbx.stun.server", ""),
                 "db_name": ICP.get_param("pbx_admin.salt_db_name", "odoo"),
             }
         }

@@ -15,6 +15,18 @@ class ResConfigSettings(models.TransientModel):
         string="Default Asterisk Server",
         config_parameter="pbx_admin.default_server_id",
     )
+    pbx_turn_server = fields.Char(
+        string="TURN Server (central)",
+        config_parameter="pbx.turn.server",
+        help="Coturn-adress för TURN-relay, t.ex. turn.vertel.se:3478. "
+        "Deployas till kundminioner via Salt (odoo.conf + pillar).",
+    )
+    pbx_stun_server = fields.Char(
+        string="STUN Server (central)",
+        config_parameter="pbx.stun.server",
+        help="Coturn-adress för STUN, t.ex. stun.vertel.se:3478. "
+        "Deployas till kundminioner via Salt (odoo.conf + pillar).",
+    )
     rabbitmq_host = fields.Char(
         string="RabbitMQ Host (central)",
         config_parameter="pbx_admin.rabbitmq_host",

@@ -20,6 +20,8 @@ class PbxDeviceTemplate(models.Model):
           "sip_domain":   {"label": "Domän", "source": "company", "field": "pbx_domain", "order": 5},
           "stun":         {"label": "STUN", "source": "company", "field": "pbx_stun_server",
                            "only_if": "pbx_stun_enabled", "order": 6},
+          "turn":         {"label": "TURN", "source": "config", "field": "pbx.turn.server",
+                           "order": 7},
           "guide":        {"label": "Konfigurationsguide", "source": "static", "value": "…", "order": 99}
         }
     """
@@ -48,7 +50,7 @@ class PbxDeviceTemplate(models.Model):
         string="Configuration Template",
         help=(
             "Parameterdefinitioner per enhetstyp: "
-            '{"nyckel": {"label": …, "source": device|extension|company|user|static, '
+            '{"nyckel": {"label": …, "source": device|extension|company|config|user|static, '
             '"field"/"value": …, "only_if": …, "order": …}}'
         ),
     )

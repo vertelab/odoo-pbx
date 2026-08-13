@@ -219,6 +219,7 @@ class PbxSubExtension(models.Model):
             "company": company,
             "user": ext.user_id,
         }
+        ICP = self.env["ir.config_parameter"].sudo()
         for key, spec in sorted(
             (config_template or {}).items(),
             key=lambda kv: (kv[1] or {}).get("order", 99),
@@ -231,6 +232,9 @@ class PbxSubExtension(models.Model):
                 continue
             if source == "static":
                 value = spec.get("value", "")
+            elif source == "config":
+                # Global config (t.ex. TURN/STUN provisionerade av pbx_admin)
+                value = ICP.get_param(spec.get("field", ""), "")
             else:
                 record = sources.get(source)
                 if record is None:
