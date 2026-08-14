@@ -71,7 +71,7 @@
         "sip_server": {"label": "SIP-server", "source": "company", "field": "pbx_server_host", "order": 3},
         "sip_port": {"label": "Port", "source": "company", "field": "pbx_sip_port", "order": 4},
         "sip_domain": {"label": "Domän", "source": "company", "field": "pbx_domain", "order": 5},
-        "stun": {"label": "STUN", "source": "company", "field": "pbx_stun_server", "only_if": "pbx_stun_enabled", "order": 6},
+        "turn": {"label": "TURN", "source": "config", "field": "pbx.turn.server", "only_if": "pbx_turn_enabled", "order": 6},
         "guide": {"label": "Guide", "source": "static", "value": "Använd Odoo:s inbyggda softphone under VOIP-fliken.", "order": 99}
     }</field>
 </record>
@@ -97,7 +97,7 @@
         "sip_server": {"label": "SIP-server", "source": "company", "field": "pbx_server_host", "order": 3},
         "sip_port": {"label": "Port", "source": "company", "field": "pbx_sip_port", "order": 4},
         "sip_domain": {"label": "Domän", "source": "company", "field": "pbx_domain", "order": 5},
-        "stun": {"label": "STUN", "source": "company", "field": "pbx_stun_server", "only_if": "pbx_stun_enabled", "order": 6},
+        "turn": {"label": "TURN", "source": "config", "field": "pbx.turn.server", "only_if": "pbx_turn_enabled", "order": 6},
         "token": {"label": "Provisioneringstoken", "source": "device", "field": "provisioning_token", "order": 7}
     }</field>
 </record>

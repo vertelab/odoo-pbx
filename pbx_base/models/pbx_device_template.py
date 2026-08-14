@@ -18,10 +18,8 @@ class PbxDeviceTemplate(models.Model):
           "sip_server":   {"label": "SIP-server", "source": "company", "field": "pbx_server_host", "order": 3},
           "sip_port":     {"label": "Port", "source": "company", "field": "pbx_sip_port", "order": 4},
           "sip_domain":   {"label": "Domän", "source": "company", "field": "pbx_domain", "order": 5},
-          "stun":         {"label": "STUN", "source": "company", "field": "pbx_stun_server",
-                           "only_if": "pbx_stun_enabled", "order": 6},
           "turn":         {"label": "TURN", "source": "config", "field": "pbx.turn.server",
-                           "order": 7},
+                           "only_if": "pbx_turn_enabled", "order": 7},
           "guide":        {"label": "Konfigurationsguide", "source": "static", "value": "…", "order": 99}
         }
     """

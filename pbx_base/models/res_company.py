@@ -37,14 +37,11 @@ class ResCompany(models.Model):
         default="5061",
         help="SIP-port för enheter (5061 för WSS/WebRTC, 5060 för UDP/TCP)",
     )
-    pbx_stun_enabled = fields.Boolean(
-        string="STUN aktiverad",
+    pbx_turn_enabled = fields.Boolean(
+        string="TURN aktiverad",
         default=False,
-        help="Slå på STUN för enheter bakom NAT (mobil/desktop).",
-    )
-    pbx_stun_server = fields.Char(
-        string="STUN Server",
-        help="t.ex. stun.vertel.se:3478",
+        help="Slå på TURN för enheter bakom NAT (coturn gör både STUN-discovery "
+        "och TURN-media-relay på samma adress).",
     )
     pbx_provisioning_token = fields.Char(
         string="PBX Provisioning-token",

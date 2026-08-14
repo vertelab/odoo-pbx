@@ -14,8 +14,8 @@ class TestDeviceTemplates(TransactionCase):
         cls.env.company.pbx_domain = "test.se"
         cls.env.company.pbx_server_host = "pbx.example.com"
         cls.env.company.pbx_sip_port = "5061"
-        cls.env.company.pbx_stun_enabled = True
-        cls.env.company.pbx_stun_server = "stun.example.com"
+        cls.env.company.pbx_turn_enabled = True
+        cls.env["ir.config_parameter"].set_param("pbx.turn.server", "turn.example.com")
         cls.user = cls.env.ref("base.user_demo")
 
     def _make_template(self, device_type="mobile", **overrides):
@@ -28,8 +28,8 @@ class TestDeviceTemplates(TransactionCase):
                 "sip_server": {"label": "SIP-server", "source": "company", "field": "pbx_server_host", "order": 3},
                 "sip_port": {"label": "Port", "source": "company", "field": "pbx_sip_port", "order": 4},
                 "sip_domain": {"label": "Domän", "source": "company", "field": "pbx_domain", "order": 5},
-                "stun": {"label": "STUN", "source": "company", "field": "pbx_stun_server",
-                         "only_if": "pbx_stun_enabled", "order": 6},
+                "turn": {"label": "TURN", "source": "config", "field": "pbx.turn.server",
+                         "only_if": "pbx_turn_enabled", "order": 6},
                 "guide": {"label": "Guide", "source": "static", "value": "Steg 1", "order": 99},
             },
         }
@@ -60,11 +60,11 @@ class TestDeviceTemplates(TransactionCase):
         self.assertEqual(cfg["sip_domain"]["value"], "test.se")
         self.assertEqual(cfg["guide"]["value"], "Steg 1")
 
-    def test_only_if_hides_stun(self):
+    def test_only_if_hides_turn(self):
         self._make_template("mobile")
-        self.env.company.pbx_stun_enabled = False
+        self.env.company.pbx_turn_enabled = False
         sub = self._make_sub("mobile")
-        self.assertNotIn("stun", sub.config)
+        self.assertNotIn("turn", sub.config)
 
     def test_no_template_falls_back(self):
         # ingen mall för voicemail → config False

@@ -168,8 +168,10 @@ class PbxSubExtension(models.Model):
             domain = company.pbx_domain or "—"
             port = company.pbx_sip_port or (5061 if rec.transport == "wss" else 5060)
             stun = ""
-            if company.pbx_stun_enabled and company.pbx_stun_server:
-                stun = " | STUN: %s" % company.pbx_stun_server
+            if company.pbx_turn_enabled:
+                turn = self.env["ir.config_parameter"].sudo().get_param("pbx.turn.server", "")
+                if turn:
+                    stun = " | TURN: %s" % turn
             shared = rec.extension_id.password or rec.secret
             rec.sip_config_display = (
                 "Användare: %s | Lösenord: %s | Server: %s:%s | Domän: %s | "

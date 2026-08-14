@@ -15,15 +15,11 @@
                             </div>
                         </div>
                     </setting>
-                    <setting string="NAT-traversal (STUN/TURN)">
+                    <setting string="NAT-traversal (TURN)">
                         <div class="content-group">
                             <div class="row mt16">
                                 <label string="TURN Server" for="pbx_turn_server" class="col-lg-3 o_light_label"/>
                                 <field name="pbx_turn_server" class="col-lg-3"/>
-                            </div>
-                            <div class="row mt16">
-                                <label string="STUN Server" for="pbx_stun_server" class="col-lg-3 o_light_label"/>
-                                <field name="pbx_stun_server" class="col-lg-3"/>
                             </div>
                         </div>
                     </setting>
@@ -36,14 +32,6 @@
                             <div class="row mt16">
                                 <label string="Port" for="rabbitmq_port" class="col-lg-3 o_light_label"/>
                                 <field name="rabbitmq_port" class="col-lg-3"/>
-                            </div>
-                            <div class="row mt16">
-                                <label string="User" for="rabbitmq_user" class="col-lg-3 o_light_label"/>
-                                <field name="rabbitmq_user" class="col-lg-3"/>
-                            </div>
-                            <div class="row mt16">
-                                <label string="Secret" for="rabbitmq_secret" class="col-lg-3 o_light_label"/>
-                                <field name="rabbitmq_secret" class="col-lg-3"/>
                             </div>
                         </div>
                     </setting>

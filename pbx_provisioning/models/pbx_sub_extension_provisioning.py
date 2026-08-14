@@ -114,10 +114,12 @@ class PbxSubExtensionProvisioning(models.Model):
             "account.1.sip_server.1.port = %s" % port,
             "account.1.sip_server.1.transport_type = %d" % self._yealink_transport_type(),
         ]
-        if company.pbx_stun_enabled and company.pbx_stun_server:
-            lines.append("account.1.nat.nat_traversal = 1")
-            lines.append("account.1.stun_server.active = 1")
-            lines.append("account.1.stun_server.address = %s" % company.pbx_stun_server)
+        if company.pbx_turn_enabled:
+            turn = self.env["ir.config_parameter"].sudo().get_param("pbx.turn.server", "")
+            if turn:
+                lines.append("account.1.nat.nat_traversal = 1")
+                lines.append("account.1.stun_server.active = 1")
+                lines.append("account.1.stun_server.address = %s" % turn)
         return "\n".join(lines) + "\n"
 
     def _linphone_transport(self):
@@ -131,12 +133,14 @@ class PbxSubExtensionProvisioning(models.Model):
         server = company.pbx_server_host or "localhost"
         transport = self._linphone_transport()
         stun = ""
-        if company.pbx_stun_enabled and company.pbx_stun_server:
-            stun = (
-                '  <section name="misc">\n'
-                '    <entry name="stun_server">%s</entry>\n'
-                "  </section>\n" % company.pbx_stun_server
-            )
+        if company.pbx_turn_enabled:
+            turn = self.env["ir.config_parameter"].sudo().get_param("pbx.turn.server", "")
+            if turn:
+                stun = (
+                    '  <section name="misc">\n'
+                    '    <entry name="stun_server">%s</entry>\n'
+                    "  </section>\n" % turn
+                )
         return (
             '<?xml version="1.0" encoding="UTF-8"?>\n'
             "<config>\n"

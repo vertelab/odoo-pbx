@@ -136,7 +136,6 @@ class ResPartner(models.Model):
                 "mq": mq,
                 "webhook_token": ICP.get_param("pbx.webhook.token", ""),
                 "turn_server": ICP.get_param("pbx.turn.server", ""),
-                "stun_server": ICP.get_param("pbx.stun.server", ""),
                 "db_name": ICP.get_param("pbx_admin.salt_db_name", "odoo"),
             }
         }

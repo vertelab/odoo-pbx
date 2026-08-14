@@ -18,8 +18,7 @@ PBX_ODOO_CONF_KEYS = (
     "pbx_api_key",
     "pbx_odoo_url",
     "pbx_sip_port",
-    "pbx_stun_enabled",
-    "pbx_stun_server",
+    "pbx_turn_enabled",
     "pbx_turn_server",
     "pbx_mq_host",
     "pbx_mq_port",
@@ -79,24 +78,17 @@ class ResConfigSettings(models.TransientModel):
         readonly=False,
         help="SIP-port för enheter (per företag).",
     )
-    pbx_stun_enabled = fields.Boolean(
-        string="STUN aktiverad",
-        related="company_id.pbx_stun_enabled",
+    pbx_turn_enabled = fields.Boolean(
+        string="TURN aktiverad",
+        related="company_id.pbx_turn_enabled",
         readonly=False,
-    )
-    pbx_stun_server = fields.Char(
-        string="STUN Server",
-        related="company_id.pbx_stun_server",
-        readonly=False,
-        help="STUN-server för enheter bakom NAT, format host:port — "
-        "t.ex. stun.vertel.se:3478 (provisioneras av pbx_admin via odoo.conf).",
+        help="TURN för enheter bakom NAT (coturn gör både STUN+TURN på samma adress).",
     )
     pbx_turn_server = fields.Char(
         string="TURN Server",
         config_parameter="pbx.turn.server",
         readonly=False,
-        help="TURN-server för media-relay bakom symmetrisk NAT (t.ex. mobilnät). "
-        "Format host:port — t.ex. turn.vertel.se:3478. "
+        help="Coturn-adress för STUN+TURN — t.ex. turn.vertel.se:3478. "
         "Provisioneras av pbx_admin via odoo.conf.",
     )
 

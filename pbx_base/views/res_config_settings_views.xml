@@ -45,14 +45,10 @@
                                             <field name="pbx_api_key" class="col-lg-6" password="True" readonly="pbx_config_managed"/>
                                         </div>
                                         <div class="row mt16">
-                                            <label string="STUN aktiverad" for="pbx_stun_enabled" class="col-lg-6 o_light_label"/>
-                                            <field name="pbx_stun_enabled" class="col-lg-6" readonly="pbx_config_managed"/>
+                                            <label string="TURN aktiverad" for="pbx_turn_enabled" class="col-lg-6 o_light_label"/>
+                                            <field name="pbx_turn_enabled" class="col-lg-6" readonly="pbx_config_managed"/>
                                         </div>
-                                        <div class="row mt16" invisible="not pbx_stun_enabled">
-                                            <label string="STUN Server" for="pbx_stun_server" class="col-lg-6 o_light_label"/>
-                                            <field name="pbx_stun_server" class="col-lg-6" readonly="pbx_config_managed"/>
-                                        </div>
-                                        <div class="row mt16">
+                                        <div class="row mt16" invisible="not pbx_turn_enabled">
                                             <label string="TURN Server" for="pbx_turn_server" class="col-lg-6 o_light_label"/>
                                             <field name="pbx_turn_server" class="col-lg-6" readonly="pbx_config_managed"/>
                                         </div>
@@ -69,17 +65,6 @@
                                             <label string="Port" for="pbx_mq_port" class="col-lg-6 o_light_label"/>
                                             <field name="pbx_mq_port" class="col-lg-6" readonly="pbx_config_managed"/>
                                         </div>
-                                        <div class="row mt16">
-                                            <label string="User" for="pbx_mq_user" class="col-lg-6 o_light_label"/>
-                                            <field name="pbx_mq_user" class="col-lg-6" readonly="pbx_config_managed"/>
-                                        </div>
-                                        <div class="row mt16">
-                                            <label string="Password" for="pbx_mq_password" class="col-lg-6 o_light_label"/>
-                                            <field name="pbx_mq_password" class="col-lg-6" password="True" readonly="pbx_config_managed"/>
-                                        </div>
-                                        <div class="text-muted mt8">
-                                            RabbitMQ körs på PBX-servern och använder SIP-domänen som vhost — inga extra adresser behövs.
-                                        </div>
                                     </div>
                                 </setting>
                             </div>
@@ -89,11 +74,6 @@
                                         <div class="row mt16">
                                             <label string="Endpoint" for="pbx_webhook_url" class="col-lg-6 o_light_label"/>
                                             <field name="pbx_webhook_url" class="col-lg-6" readonly="1"/>
-                                        </div>
-                                        <div class="row mt16">
-                                            <label string="Odoo URL" for="pbx_odoo_url" class="col-lg-6 o_light_label"/>
-                                            <field name="pbx_odoo_url" class="col-lg-6" readonly="pbx_config_managed"
-                                                   help="Publikt nåbar Odoo-bas-URL som Asterisk-dialplanen anropar för tillgänglighetskontroll (/pbx/availability). Tom = web.base.url."/>
                                         </div>
                                         <div class="row mt16">
                                             <label string="PBX Webhook Token" for="pbx_webhook_token" class="col-lg-6 o_light_label"/>
