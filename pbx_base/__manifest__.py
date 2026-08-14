@@ -1,6 +1,6 @@
 {
     "name": "PBX Base",
-    "version": "18.0.1.30.0",
+    "version": "18.0.1.31.0",
     "summary": "Core PBX abstraction for multi-tenant Asterisk management",
     "category": "Productivity/VOIP",
     "author": "Vertel AB",
@@ -18,6 +18,7 @@
         "security/pbx_security.xml",
         "security/ir.model.access.csv",
         "views/pbx_extension_views.xml",
+        "views/pbx_sub_extension_views.xml",
         "views/pbx_trunk_views.xml",
         "views/pbx_inbound_route_views.xml",
         "views/pbx_outbound_route_views.xml",

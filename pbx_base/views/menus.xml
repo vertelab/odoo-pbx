@@ -74,6 +74,15 @@ action = {
     />
 
     <menuitem
+        id="menu_pbx_devices"
+        name="Devices"
+        parent="menu_pbx_configuration"
+        action="pbx_sub_extension_act_window"
+        sequence="35"
+        groups="pbx_base.group_pbx_admin,pbx_base.group_pbx_office"
+    />
+
+    <menuitem
         id="menu_pbx_call_history"
         name="Call History"
         parent="menu_pbx_applications"

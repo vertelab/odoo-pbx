@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ============================================================
+         pbx.sub_extension — Device administration views
+         Kanban + list + form + search, menu: PBX → Configuration →
+         Devices. Provisioning-fält (provisioning_url/qr) läggs till
+         av pbx_provisioning via inherit (fälten finns inte här).
+         ============================================================ -->
+
+    <!-- Kanban -->
+    <record id="pbx_sub_extension_kanban" model="ir.ui.view">
+        <field name="name">pbx.sub_extension.kanban</field>
+        <field name="model">pbx.sub_extension</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="type" group_create="false" class="o_kanban_mobile">
+                <field name="type"/>
+                <field name="label"/>
+                <field name="number"/>
+                <field name="active"/>
+                <field name="mac_address"/>
+                <field name="device_model"/>
+                <field name="transport"/>
+                <field name="provisioning_token"/>
+                <field name="extension_id"/>
+                <t t-name="kanban-card">
+                    <t t-set="type_class" t-value="{
+                        'browser': 'text-bg-primary',
+                        'desktop': 'text-bg-success',
+                        'hardware': 'text-bg-warning',
+                        'mobile': 'text-bg-info',
+                        'voicemail': 'text-bg-secondary',
+                    }.get(record.type.raw_value, 'text-bg-secondary')"/>
+                    <div class="oe_kanban_card">
+                        <div class="oe_kanban_ribbon" t-if="!record.active.value">Archived</div>
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <strong>
+                                    <field name="label"/>
+                                    <span t-if="record.number.raw_value" class="text-muted ms-1">(<field name="number"/>)</span>
+                                </strong>
+                                <div class="text-muted">
+                                    <field name="extension_id"/>
+                                </div>
+                            </div>
+                            <span t-attf-class="badge #{type_class}"><field name="type"/></span>
+                        </div>
+                        <div class="mt-2 small">
+                            <t t-if="record.type.raw_value == 'hardware'">
+                                <div>
+                                    <i class="fa fa-hashtag me-1" title="MAC"/>
+                                    <field name="mac_address"/>
+                                    <span t-if="record.device_model.raw_value" class="text-muted">
+                                        (<field name="device_model"/>)
+                                    </span>
+                                </div>
+                            </t>
+                            <div>
+                                <i class="fa fa-random me-1" title="Transport"/>
+                                <field name="transport"/>
+                            </div>
+                            <div t-if="record.provisioning_token.raw_value" class="text-success">
+                                <i class="fa fa-cog me-1" title="Provisionerbar"/>
+                                Provisionerbar
+                            </div>
+                            <div t-else="" class="text-danger">
+                                <i class="fa fa-exclamation-triangle me-1" title="Saknar provisionering"/>
+                                Ej provisionerad
+                            </div>
+                        </div>
+                    </div>
+                </t>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- List -->
+    <record id="pbx_sub_extension_list" model="ir.ui.view">
+        <field name="name">pbx.sub_extension.list</field>
+        <field name="model">pbx.sub_extension</field>
+        <field name="arch" type="xml">
+            <list string="Devices" editable="bottom">
+                <field name="label"/>
+                <field name="number"/>
+                <field name="type"/>
+                <field name="extension_id"/>
+                <field name="mac_address" optional="show"/>
+                <field name="device_model" optional="hide"/>
+                <field name="transport" optional="show"/>
+                <field name="sequence" string="Ringordning"/>
+                <field name="active" optional="show"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Form -->
+    <record id="pbx_sub_extension_form" model="ir.ui.view">
+        <field name="name">pbx.sub_extension.form</field>
+        <field name="model">pbx.sub_extension</field>
+        <field name="arch" type="xml">
+            <form string="Device">
+                <sheet>
+                    <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger" invisible="active"/>
+                    <group string="General">
+                        <group>
+                            <field name="label"/>
+                            <field name="number" readonly="1"/>
+                            <field name="type"/>
+                            <field name="extension_id"/>
+                            <field name="active"/>
+                        </group>
+                        <group>
+                            <field name="sequence" string="Ringordning"/>
+                            <field name="ring_timeout"/>
+                            <field name="transport"/>
+                            <field name="username" readonly="1"/>
+                            <field name="mac_address" invisible="type != 'hardware'"/>
+                            <field name="device_model" invisible="type != 'hardware'"/>
+                        </group>
+                    </group>
+                    <group string="SIP-konfiguration" name="sip_config_group" colspan="2">
+                        <field name="config_display" readonly="1" nolabel="1"/>
+                    </group>
+                    <group string="Voicemail" name="voicemail_group" invisible="type != 'voicemail'" colspan="2">
+                        <group>
+                            <field name="greeting"/>
+                            <field name="max_duration"/>
+                        </group>
+                        <group>
+                            <field name="max_messages"/>
+                            <field name="delete_after_days"/>
+                            <field name="transcribe_enabled"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Search -->
+    <record id="pbx_sub_extension_search" model="ir.ui.view">
+        <field name="name">pbx.sub_extension.search</field>
+        <field name="model">pbx.sub_extension</field>
+        <field name="arch" type="xml">
+            <search string="Devices">
+                <field name="label"/>
+                <field name="number"/>
+                <field name="mac_address"/>
+                <field name="extension_id"/>
+                <filter string="Aktiva" name="state_active" domain="[('active', '=', True)]"/>
+                <filter string="Arkiverade" name="state_archived" domain="[('active', '=', False)]"/>
+                <separator/>
+                <filter string="Odoo VOIP" name="type_browser" domain="[('type', '=', 'browser')]"/>
+                <filter string="Desktop" name="type_desktop" domain="[('type', '=', 'desktop')]"/>
+                <filter string="Hårdvara" name="type_hardware" domain="[('type', '=', 'hardware')]"/>
+                <filter string="Mobil" name="type_mobile" domain="[('type', '=', 'mobile')]"/>
+                <filter string="Röstbrevlåda" name="type_voicemail" domain="[('type', '=', 'voicemail')]"/>
+                <separator/>
+                <filter string="Behöver provisioneras" name="needs_provisioning" domain="[('type', 'in', ['desktop', 'mobile']), ('provisioning_token', '=', False)]"/>
+                <filter string="Hårdvara utan MAC" name="hardware_no_mac" domain="[('type', '=', 'hardware'), ('mac_address', '=', False)]"/>
+                <separator/>
+                <filter string="Min enheter" name="my_devices" domain="[('extension_id.user_id', '=', uid)]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Typ" name="group_type" context="{'group_by': 'type'}"/>
+                    <filter string="Anknytning" name="group_extension" context="{'group_by': 'extension_id'}"/>
+                    <filter string="Aktiv/Inaktiv" name="group_active" context="{'group_by': 'active'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action: PBX → Configuration → Devices (meny i menus.xml) -->
+    <record id="pbx_sub_extension_act_window" model="ir.actions.act_window">
+        <field name="name">Devices</field>
+        <field name="res_model">pbx.sub_extension</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="search_view_id" ref="pbx_sub_extension_search"/>
+    </record>
+</odoo>

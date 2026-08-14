@@ -44,7 +44,29 @@
             <field name="label">Yealink</field>
             <field name="type">hardware</field>
             <field name="mac_address">00:1B:66:11:22:33</field>
+            <field name="device_model">T46S</field>
             <field name="sequence">1</field>
+        </record>
+        <record id="demo_sub_anna_2" model="pbx.sub_extension">
+            <field name="extension_id" ref="demo_ext_anna"/>
+            <field name="number">112</field>
+            <field name="label">Mobil</field>
+            <field name="type">mobile</field>
+            <field name="sequence">2</field>
+        </record>
+        <record id="demo_sub_bjorn_1" model="pbx.sub_extension">
+            <field name="extension_id" ref="demo_ext_bjorn"/>
+            <field name="number">121</field>
+            <field name="label">Desktop</field>
+            <field name="type">desktop</field>
+            <field name="sequence">1</field>
+        </record>
+        <record id="demo_sub_bjorn_2" model="pbx.sub_extension">
+            <field name="extension_id" ref="demo_ext_bjorn"/>
+            <field name="number">122</field>
+            <field name="label">Röstbrevlåda</field>
+            <field name="type">voicemail</field>
+            <field name="sequence">2</field>
         </record>
 
         <!-- Admin får receptionist-anknytningen (Operator Panel visar allt) + PBX-grupper -->

@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    <!-- Provisioning-stöd i enhetsvyerna (pbx_provisioning).
+         Endast när modulen är installerad. -->
+
     <!-- Visa provisioning-URL + QR i enhetslistan (extension-formuläret) -->
     <record id="pbx_provisioning_sub_extension_list" model="ir.ui.view">
         <field name="name">pbx.extension.form.provisioning</field>
@@ -9,6 +12,37 @@
             <xpath expr="//field[@name='sub_extension_ids']//field[@name='provisioning_token']" position="after">
                 <field name="provisioning_url" readonly="1" optional="hide"/>
                 <field name="provisioning_qr" widget="image" readonly="1" optional="hide"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Devices-form (pbx-device-views): Provisioning-sektion -->
+    <record id="pbx_provisioning_sub_extension_form" model="ir.ui.view">
+        <field name="name">pbx.sub_extension.form.provisioning</field>
+        <field name="model">pbx.sub_extension</field>
+        <field name="inherit_id" ref="pbx_base.pbx_sub_extension_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//group[@name='sip_config_group']" position="before">
+                <group string="Provisioning" name="provisioning_group" colspan="2">
+                    <group>
+                        <field name="provisioning_url" readonly="1"/>
+                    </group>
+                    <group>
+                        <field name="provisioning_qr" widget="image" readonly="1"/>
+                    </group>
+                </group>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Devices-search (pbx-device-views): "Provisionerad"-filter -->
+    <record id="pbx_provisioning_sub_extension_search" model="ir.ui.view">
+        <field name="name">pbx.sub_extension.search.provisioning</field>
+        <field name="model">pbx.sub_extension</field>
+        <field name="inherit_id" ref="pbx_base.pbx_sub_extension_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//filter[@name='needs_provisioning']" position="after">
+                <filter string="Provisionerad" name="provisioned" domain="['|', ('type', '=', 'hardware'), ('provisioning_token', '!=', False)]"/>
             </xpath>
         </field>
     </record>
