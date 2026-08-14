@@ -17,3 +17,9 @@ access_pbx_call_admin,pbx.call.admin,model_pbx_call,pbx_base.group_pbx_admin,1,1
 access_pbx_device_template_admin,access_pbx_device_template_admin,model_pbx_device_template,base.group_system,1,1,1,1
 access_pbx_device_template_office,access_pbx_device_template_office,model_pbx_device_template,pbx_base.group_pbx_office,1,1,1,1
 access_pbx_device_template_user,access_pbx_device_template_user,model_pbx_device_template,pbx_base.group_pbx_operator,1,0,0,0
+access_pbx_codec_admin,access_pbx_codec_admin,model_pbx_codec,pbx_base.group_pbx_admin,1,1,1,1
+access_pbx_codec_office,access_pbx_codec_office,model_pbx_codec,pbx_base.group_pbx_office,1,0,0,0
+access_pbx_codec_user,access_pbx_codec_user,model_pbx_codec,pbx_base.group_pbx_operator,1,0,0,0
+access_pbx_codec_line_admin,access_pbx_codec_line_admin,model_pbx_codec_line,pbx_base.group_pbx_admin,1,1,1,1
+access_pbx_codec_line_office,access_pbx_codec_line_office,model_pbx_codec_line,pbx_base.group_pbx_office,1,1,1,1
+access_pbx_codec_line_user,access_pbx_codec_line_user,model_pbx_codec_line,pbx_base.group_pbx_operator,1,1,0,0

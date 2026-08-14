@@ -7,6 +7,7 @@ from . import pbx_custom_destination
 from . import pbx_extension
 from . import pbx_sub_extension
 from . import pbx_device_template
+from . import pbx_codec
 from . import pbx_trunk
 from . import pbx_plugin
 from . import pbx_inbound_route

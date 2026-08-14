@@ -6,3 +6,4 @@ from . import test_follow_me
 from . import test_click_to_call
 from . import test_device_templates
 from . import test_availability
+from . import test_codecs

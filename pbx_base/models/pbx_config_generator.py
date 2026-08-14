@@ -17,7 +17,6 @@ PJSIP_TEMPLATE = """\
 type = endpoint
 context = {domain}-internal
 disallow = all
-allow = ulaw,alaw,g722,opus
 direct_media = no
 
 [{domain}-aor](!)
@@ -43,12 +42,13 @@ auth_type = userpass
 """
 
 EXTENSION_TEMPLATE = """\
-[{domain}-{number}]
+[{domain}-{number}]({domain}-endpoint)
 type = endpoint
 context = {domain}-internal
 auth = {domain}-{number}-auth
 aors = {domain}-{number}
 callerid = "{callerid_name}" <{public_number}@{domain}>
+{codec_allows}
 
 [{domain}-{number}-auth]({domain}-auth)
 password = {secret}
@@ -60,7 +60,7 @@ TRUNK_TEMPLATE = """\
 type = endpoint
 context = {domain}-from-trunk
 disallow = all
-allow = ulaw,alaw
+{codec_allows}
 outbound_auth = {domain}-trunk-{slug}-auth
 aors = {domain}-trunk-{slug}
 callerid = "{callerid}"
@@ -148,6 +148,25 @@ class PbxConfigGenerator(models.AbstractModel):
     # ------------------------------------------------------------------
     # pjsip
     # ------------------------------------------------------------------
+    def _codec_allows(self, company, sub=None):
+        """Codec allow-rader för en endpoint.
+
+        Enhetens codec-rader (sequence-ordning) → annars global default
+        (active + supported, priority-ordning). Browser (Odoo VOIP) kräver
+        alltid opus (WebRTC).
+        """
+        names = []
+        if sub and sub.codec_ids:
+            names = sub.codec_ids.sorted("sequence").mapped("codec_id.name")
+            if sub.type == "browser" and "opus" not in names:
+                names = ["opus"] + names
+        else:
+            codecs = self.env["pbx.codec"].search(
+                [("active", "=", True), ("supported", "=", True)]
+            )
+            names = codecs.sorted("priority").mapped("name")
+        return "\n".join("allow = %s" % name for name in names)
+
     def generate_pjsip(self, domain, company):
         """Generate pjsip.conf for the instance's own domain."""
         extensions = self.env["pbx.extension"].search(
@@ -166,6 +185,7 @@ class PbxConfigGenerator(models.AbstractModel):
                         callerid_name=ext.callerid_name or ext.user_id.name or "",
                         username=sub.username,
                         secret=ext.password or sub.secret,
+                        codec_allows=self._codec_allows(company, sub),
                     )
                 )
 
@@ -183,6 +203,7 @@ class PbxConfigGenerator(models.AbstractModel):
                     host=trunk.host,
                     port=trunk.port or 5060,
                     callerid=trunk.callerid or "",
+                    codec_allows=self._codec_allows(company),
                 )
             )
 

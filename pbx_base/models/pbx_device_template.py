@@ -44,6 +44,13 @@ class PbxDeviceTemplate(models.Model):
         "res.company", default=lambda self: self.env.company, required=True
     )
     active = fields.Boolean(default=True)
+    codec_ids = fields.One2many(
+        "pbx.codec.line",
+        "template_id",
+        string="Codecs (default)",
+        help="Default codec-selektion för enheter av denna mall. Ordningen "
+             "(sequence) är codec-preferensen. Lämnas tom → global default.",
+    )
     config_template = fields.Json(
         string="Configuration Template",
         help=(

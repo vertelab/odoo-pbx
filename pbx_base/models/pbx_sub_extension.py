@@ -282,6 +282,13 @@ class PbxSubExtension(models.Model):
         help="Fysisk enhets MAC — provisioning-nyckel för hårdvarutelefoner. "
              "Normaliseras till gemener utan separatorer (001565a1b2c3).",
     )
+    codec_ids = fields.One2many(
+        "pbx.codec.line",
+        "sub_extension_id",
+        string="Codecs",
+        help="Den gällande codec-listan för enheten (ordnad — sequence är "
+             "preferensen). Lämnas tom → mallens default / global default.",
+    )
     device_model = fields.Char(
         string="Enhetsmodell",
         help="t.ex. T46S — för att välja rätt gemensam provisioning-config.",

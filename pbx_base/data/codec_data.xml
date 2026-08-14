@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Codec-katalog (pbx-codecs). Default-seed med fria codecs:
+         g722 → ulaw → alaw → opus. G.729 INTE i seed (licensierad modul
+         i Asterisk). Video (h264/vp8) finns men är avstängd tills video
+         används. "Vad som finns" justeras mot Salt-pushad
+         pbx.codecs.available (se pbx_codec._sync_from_available). -->
+    <data noupdate="1">
+        <record id="codec_g722" model="pbx.codec">
+            <field name="name">g722</field>
+            <field name="kind">audio</field>
+            <field name="priority">10</field>
+            <field name="description">Bredbandstelefoni / HD-ljud (64 kbps)</field>
+        </record>
+        <record id="codec_ulaw" model="pbx.codec">
+            <field name="name">ulaw</field>
+            <field name="kind">audio</field>
+            <field name="priority">20</field>
+            <field name="description">G.711u (PCMU) — standard bärartone</field>
+        </record>
+        <record id="codec_alaw" model="pbx.codec">
+            <field name="name">alaw</field>
+            <field name="kind">audio</field>
+            <field name="priority">30</field>
+            <field name="description">G.711a (PCMA) — standard bärartone</field>
+        </record>
+        <record id="codec_opus" model="pbx.codec">
+            <field name="name">opus</field>
+            <field name="kind">audio</field>
+            <field name="priority">40</field>
+            <field name="description">Opus — högkvalitativ, WebRTC-standard (Odoo VOIP)</field>
+        </record>
+        <record id="codec_h264" model="pbx.codec">
+            <field name="name">h264</field>
+            <field name="kind">video</field>
+            <field name="priority">50</field>
+            <field name="active">False</field>
+            <field name="description">H.264-video (WebRTC)</field>
+        </record>
+        <record id="codec_vp8" model="pbx.codec">
+            <field name="name">vp8</field>
+            <field name="kind">video</field>
+            <field name="priority">60</field>
+            <field name="active">False</field>
+            <field name="description">VP8-video (WebRTC)</field>
+        </record>
+    </data>
+</odoo>

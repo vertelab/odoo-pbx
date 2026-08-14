@@ -118,6 +118,14 @@
                     <group string="SIP-konfiguration" name="sip_config_group" colspan="2">
                         <field name="config_display" readonly="1" nolabel="1"/>
                     </group>
+                    <group string="Codecs" name="codec_group" colspan="2">
+                        <field name="codec_ids" nolabel="1">
+                            <list editable="bottom">
+                                <field name="sequence" string="Ordning" widget="handle"/>
+                                <field name="codec_id"/>
+                            </list>
+                        </field>
+                    </group>
                     <group string="Voicemail" name="voicemail_group" invisible="type != 'voicemail'" colspan="2">
                         <group>
                             <field name="greeting"/>

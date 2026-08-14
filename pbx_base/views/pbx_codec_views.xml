@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Codec-katalog: list + form. Meny: PBX → Configuration → Codecs.
+         Katalogen administreras centralt (admin); office/operator läser. -->
+
+    <record id="pbx_codec_list" model="ir.ui.view">
+        <field name="name">pbx.codec.list</field>
+        <field name="model">pbx.codec</field>
+        <field name="arch" type="xml">
+            <list string="Codecs" editable="bottom">
+                <field name="name"/>
+                <field name="kind"/>
+                <field name="priority"/>
+                <field name="supported"/>
+                <field name="active"/>
+                <field name="description" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="pbx_codec_form" model="ir.ui.view">
+        <field name="name">pbx.codec.form</field>
+        <field name="model">pbx.codec</field>
+        <field name="arch" type="xml">
+            <form string="Codec">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="kind"/>
+                            <field name="priority"/>
+                        </group>
+                        <group>
+                            <field name="supported"/>
+                            <field name="active"/>
+                            <field name="description"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="pbx_codec_search" model="ir.ui.view">
+        <field name="name">pbx.codec.search</field>
+        <field name="model">pbx.codec</field>
+        <field name="arch" type="xml">
+            <search string="Codecs">
+                <field name="name"/>
+                <filter string="Aktiva" name="active" domain="[('active', '=', True)]"/>
+                <filter string="Supported" name="supported" domain="[('supported', '=', True)]"/>
+                <filter string="Video" name="kind_video" domain="[('kind', '=', 'video')]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Kind" name="group_kind" context="{'group_by': 'kind'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="pbx_codec_act_window" model="ir.actions.act_window">
+        <field name="name">Codecs</field>
+        <field name="res_model">pbx.codec</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="pbx_codec_search"/>
+    </record>
+
+    <!-- Sync codecs: bygg/uppdatera katalogen från pbx.codecs.available
+         (Salt-pushad). Tills daemon-läsningen finns: pillar/manuell utdata. -->
+    <record id="action_pbx_codec_sync" model="ir.actions.server">
+        <field name="name">Sync Codecs</field>
+        <field name="model_id" ref="model_pbx_codec"/>
+        <field name="state">code</field>
+        <field name="code">
+result = env['pbx.codec']._sync_from_available()
+action = {
+    'type': 'ir.actions.client',
+    'tag': 'display_notification',
+    'params': {
+        'title': 'Codecs',
+        'message': 'Katalogen uppdaterad från pbx.codecs.available' if result else 'Ingen pbx.codecs.available satt — seed-default gäller',
+        'type': 'success' if result else 'warning',
+        'sticky': False,
+    },
+}
+        </field>
+    </record>
+
+    <menuitem
+        id="menu_pbx_codecs"
+        name="Codecs"
+        parent="menu_pbx_configuration"
+        action="pbx_codec_act_window"
+        sequence="45"
+        groups="pbx_base.group_pbx_admin,pbx_base.group_pbx_office"
+    />
+    <menuitem
+        id="menu_pbx_codec_sync"
+        name="Sync Codecs"
+        parent="menu_pbx_configuration"
+        action="action_pbx_codec_sync"
+        sequence="46"
+        groups="pbx_base.group_pbx_admin"
+    />
+</odoo>
