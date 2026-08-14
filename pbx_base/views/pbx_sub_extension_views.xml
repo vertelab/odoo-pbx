@@ -22,7 +22,7 @@
                 <field name="transport"/>
                 <field name="provisioning_token"/>
                 <field name="extension_id"/>
-                <t t-name="kanban-card">
+                <t t-name="card">
                     <t t-set="type_class" t-value="{
                         'browser': 'text-bg-primary',
                         'desktop': 'text-bg-success',
