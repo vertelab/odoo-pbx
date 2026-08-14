@@ -23,13 +23,11 @@
                 <field name="provisioning_token"/>
                 <field name="extension_id"/>
                 <t t-name="card">
-                    <t t-set="type_class" t-value="{
-                        'browser': 'text-bg-primary',
-                        'desktop': 'text-bg-success',
-                        'hardware': 'text-bg-warning',
-                        'mobile': 'text-bg-info',
-                        'voicemail': 'text-bg-secondary',
-                    }.get(record.type.raw_value, 'text-bg-secondary')"/>
+                    <t t-set="type_class" t-value="'text-bg-secondary'"/>
+                    <t t-set="type_class" t-value="'text-bg-primary'" t-if="record.type.raw_value == 'browser'"/>
+                    <t t-set="type_class" t-value="'text-bg-success'" t-elif="record.type.raw_value == 'desktop'"/>
+                    <t t-set="type_class" t-value="'text-bg-warning'" t-elif="record.type.raw_value == 'hardware'"/>
+                    <t t-set="type_class" t-value="'text-bg-info'" t-elif="record.type.raw_value == 'mobile'"/>
                     <div class="oe_kanban_card">
                         <div class="oe_kanban_ribbon" t-if="!record.active.value">Archived</div>
                         <div class="d-flex justify-content-between align-items-start">
