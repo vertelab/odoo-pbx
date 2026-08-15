@@ -16,21 +16,23 @@
         </field>
     </record>
 
-    <!-- Devices-form (pbx-device-views): Provisioning-sektion -->
+    <!-- Devices-form (pbx-device-views + odoo-view-ombyggnad): Provisioning-sida -->
     <record id="pbx_provisioning_sub_extension_form" model="ir.ui.view">
         <field name="name">pbx.sub_extension.form.provisioning</field>
         <field name="model">pbx.sub_extension</field>
         <field name="inherit_id" ref="pbx_base.pbx_sub_extension_form"/>
         <field name="arch" type="xml">
-            <xpath expr="//group[@name='sip_config_group']" position="before">
-                <group string="Provisioning" name="provisioning_group" colspan="2">
+            <xpath expr="//page[@name='codecs_page']" position="before">
+                <page string="Provisioning" name="provisioning_page">
                     <group>
-                        <field name="provisioning_url" readonly="1"/>
+                        <group>
+                            <field name="provisioning_url" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="provisioning_qr" widget="image" readonly="1"/>
+                        </group>
                     </group>
-                    <group>
-                        <field name="provisioning_qr" widget="image" readonly="1"/>
-                    </group>
-                </group>
+                </page>
             </xpath>
         </field>
     </record>

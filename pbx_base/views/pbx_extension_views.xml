@@ -3,36 +3,54 @@
     <record model="ir.ui.view" id="pbx_extension_form_view">
         <field name="model">pbx.extension</field>
         <field name="arch" type="xml">
-            <form>
+            <form string="Extension">
                 <sheet>
                     <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger" invisible="active"/>
-                    <group>
-                        <field name="public_number"/>
-                        <field name="user_id"/>
-                        <field name="callerid_name"/>
-                        <field name="description"/>
-                        <field name="is_receptionist"/>
-                        <field name="ring_strategy"/>
-                        <field name="respect_schedule"/>
-                        <field name="respect_calendar"/>
-                    </group>
-                    <group name="devices_group">
-                        <field name="sub_extension_ids" mode="list" nolabel="1">
-                            <list editable="bottom">
-                                <field name="sequence" string="Sequence" widget="handle"/>
-                                <field name="type"/>
-                                <field name="label"/>
-                                <field name="number" readonly="1"/>
-                                <field name="ring_timeout"/>
-                                <field name="transport"/>
-                                <field name="mac_address" optional="show"/>
-                                <field name="device_model" optional="hide"/>
-                                <field name="provisioning_token" readonly="1" optional="hide"/>
-                                <field name="sip_config_display" readonly="1" optional="hide"/>
-                                <field name="active"/>
-                            </list>
-                        </field>
-                    </group>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="public_number" widget="text" options="{'line_breaks': False}"
+                                   placeholder="Anknytningsnummer…"/>
+                        </h1>
+                        <h2>
+                            <field name="callerid_name" placeholder="Namn…"/>
+                        </h2>
+                    </div>
+                    <notebook>
+                        <page string="Description" name="description">
+                            <group>
+                                <group>
+                                    <field name="user_id" widget="many2one_avatar_user"/>
+                                    <field name="callerid_name"/>
+                                    <field name="description" help="Visas i Operator Panel (fallback: callerid-namn → användarnamn → nummer)."/>
+                                </group>
+                                <group>
+                                    <field name="password" readonly="1"
+                                           help="Delat SIP-lösenord för alla enheter. Rotation via kugghjuls-ikon (Design A)."/>
+                                    <field name="ring_strategy"/>
+                                    <field name="respect_schedule"/>
+                                    <field name="respect_calendar"/>
+                                    <field name="active"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Enheter" name="devices">
+                            <field name="sub_extension_ids" string="" nolabel="1" mode="list">
+                                <list editable="bottom">
+                                    <field name="sequence" string="Sequence" widget="handle"/>
+                                    <field name="type"/>
+                                    <field name="label"/>
+                                    <field name="number" readonly="1"/>
+                                    <field name="ring_timeout"/>
+                                    <field name="transport"/>
+                                    <field name="mac_address" optional="show"/>
+                                    <field name="device_model" optional="hide"/>
+                                    <field name="provisioning_token" readonly="1" optional="hide"/>
+                                    <field name="sip_config_display" readonly="1" optional="hide"/>
+                                    <field name="active" optional="show"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
                 </sheet>
                 <chatter/>
             </form>
@@ -47,7 +65,6 @@
                 <field name="user_id"/>
                 <field name="callerid_name"/>
                 <field name="description"/>
-                <field name="is_receptionist"/>
                 <field name="ring_strategy"/>
             </list>
         </field>

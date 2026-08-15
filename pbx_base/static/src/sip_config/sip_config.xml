@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<templates xml:space="preserve">
+    <t t-name="pbx_base.PbxSipConfigTable" owl="1">
+        <div class="pbx-sip-config-table">
+            <table class="table table-sm table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th class="w-40">Parameter</th>
+                        <th>Värde</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <t t-foreach="rows" t-as="row" t-key="row.key">
+                        <tr>
+                            <td class="fw-semibold"><t t-esc="row.label"/></td>
+                            <td>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span t-if="row.secret" class="font-monospace text-muted">••••••••</span>
+                                    <span t-else="" t-esc="row.value" class="font-monospace text-break"/>
+                                    <button class="btn btn-sm btn-link p-0 ms-2" t-on-click="() => onCopy(row.value)"
+                                            t-if="row.value" title="Kopiera">
+                                        <i class="fa fa-copy text-muted"/>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        <t t-if="row.help"><tr class="pbx-sip-config-help"><td colspan="2" class="text-muted small pt-0"><t t-esc="row.help"/></td></tr></t>
+                    </t>
+                    <t t-if="!rows.length">
+                        <tr><td colspan="2" class="text-muted text-center py-3">Ingen SIP-konfiguration (mall saknas eller empty).</td></tr>
+                    </t>
+                </tbody>
+            </table>
+        </div>
+    </t>
+</templates>
