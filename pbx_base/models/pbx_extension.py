@@ -2,7 +2,7 @@
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 
 from odoo import _, api, fields, models
-from odoo.exceptions import UserError
+from odoo.exceptions import AccessError, UserError
 
 from .pbx_sub_extension import _generate_sip_secret
 
@@ -38,7 +38,7 @@ class PbxExtension(models.Model):
         user-länken (pbx_extension_id) och voip_oca-inställningarna."""
         skip_check = self.env.context.get("pbx_skip_number_check")
         for vals in vals_list:
-            vals.setdefault("password", _generate_sip_secret())
+            vals.setdefault("password", self._generate_sip_password())
             if not skip_check and vals.get("company_id") and vals.get("public_number"):
                 company = self.env["res.company"].browse(vals["company_id"])
                 self.env["pbx.numbering"]._check_dialable_number(
@@ -96,6 +96,32 @@ class PbxExtension(models.Model):
             for ext in self:
                 ext._sync_voip()
         return res
+
+    def _generate_sip_password(self):
+        """Generera SIP-lösenord med konfigurerad längd (pbx.sip_password_length)."""
+        length = int(
+            self.env["ir.config_parameter"].sudo().get_param(
+                "pbx.sip_password_length", "10"
+            )
+        )
+        return _generate_sip_secret(length)
+
+    def action_generate_new_password(self):
+        """Generera nytt delat SIP-lösenord (gäller alla enheter).
+
+        Ägarkoll: egen anknytning (user_id) eller PBX Office/Admin. Dirty-
+        flaggning + voip_oca-sync sker automatiskt via write-hook.
+        """
+        for ext in self:
+            if ext.user_id.id != self.env.user.id and not (
+                self.env.user.has_group("pbx_base.group_pbx_office")
+                or self.env.user.has_group("pbx_base.group_pbx_admin")
+                or self.env.user.has_group("base.group_system")
+            ):
+                raise AccessError(_("Du kan bara rotera lösenordet på din egen anknytning."))
+        self.write({"password": self._generate_sip_password()})
+        self.message_post(body=_("SIP-lösenord roterat"))
+        return True
 
     def _sync_user_link(self):
         """Säkerställ att user.pbx_extension_id pekar på denna extension."""

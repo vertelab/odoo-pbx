@@ -15,12 +15,21 @@
                             <td class="fw-semibold"><t t-esc="row.label"/></td>
                             <td>
                                 <div class="d-flex justify-content-between align-items-center">
-                                    <span t-if="row.secret" class="font-monospace text-muted">••••••••</span>
+                                    <t t-if="row.secret">
+                                        <span t-if="!isRevealed(row.key)" class="font-monospace text-muted">••••••••</span>
+                                        <span t-else="" t-esc="row.value" class="font-monospace text-break"/>
+                                    </t>
                                     <span t-else="" t-esc="row.value" class="font-monospace text-break"/>
-                                    <button class="btn btn-sm btn-link p-0 ms-2" t-on-click="() => onCopy(row.value)"
-                                            t-if="row.value" title="Kopiera">
-                                        <i class="fa fa-copy text-muted"/>
-                                    </button>
+                                    <span class="ms-2">
+                                        <button class="btn btn-sm btn-link p-0 me-1" t-on-click="() => toggleReveal(row.key)"
+                                                t-if="row.secret" t-att-title="isRevealed(row.key) ? 'Dölj' : 'Visa'">
+                                            <i t-att-class="isRevealed(row.key) ? 'fa fa-eye-slash text-muted' : 'fa fa-eye text-muted'"/>
+                                        </button>
+                                        <button class="btn btn-sm btn-link p-0" t-on-click="() => onCopy(row.value)"
+                                                t-if="row.value" title="Kopiera">
+                                            <i class="fa fa-copy text-muted"/>
+                                        </button>
+                                    </span>
                                 </div>
                             </td>
                         </tr>

@@ -10,7 +10,7 @@ from odoo import _, api, fields, models
 from odoo.exceptions import ValidationError
 
 
-def _generate_sip_secret(length=16):
+def _generate_sip_secret(length=10):
     alphabet = string.ascii_letters + string.digits
     return "".join(secrets.choice(alphabet) for _ in range(length))
 
@@ -112,7 +112,22 @@ class PbxSubExtension(models.Model):
         recs = super().create(vals_list)
         for rec in recs:
             rec._validate_provisioning_fields()
+        recs._ensure_default_codecs()
         return recs
+
+    def _ensure_default_codecs(self):
+        """Alla enheter får default-codec-listan (active + supported, i
+        priority-ordning) om ingen egen selektion satts."""
+        codecs = self.env["pbx.codec"].search(
+            [("active", "=", True), ("supported", "=", True)]
+        ).sorted("priority")
+        for rec in self:
+            if rec.codec_ids:
+                continue
+            rec.codec_ids = [
+                (0, 0, {"sequence": idx * 10, "codec_id": codec.id})
+                for idx, codec in enumerate(codecs, start=1)
+            ]
 
     def write(self, vals):
         if vals.get("mac_address"):

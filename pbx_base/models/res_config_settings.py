@@ -114,6 +114,13 @@ class ResConfigSettings(models.TransientModel):
         config_parameter="pbx.mq.vhost",
         default="pbx",
     )
+    pbx_sip_password_length = fields.Integer(
+        string="SIP-lösenordslängd",
+        config_parameter="pbx.sip_password_length",
+        default=10,
+        help="Längd på genererade SIP-lösenord (extension.password).",
+    )
+
     pbx_webhook_token = fields.Char(
         string="PBX Webhook Token",
         config_parameter="pbx.webhook.token",

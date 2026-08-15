@@ -78,6 +78,35 @@ class PbxCodec(models.Model):
                 )
         return True
 
+    def action_sync_codecs(self):
+        """Sync-knapp (katalogen): bygg/uppdatera från pbx.codecs.available."""
+        ok = self._sync_from_available()
+        return {
+            "type": "ir.actions.client",
+            "tag": "display_notification",
+            "params": {
+                "title": "Codecs",
+                "message": "Katalogen uppdaterad från pbx.codecs.available"
+                if ok
+                else "Ingen pbx.codecs.available satt — seed-default gäller",
+                "type": "success" if ok else "warning",
+            },
+        }
+
+    def action_set_default_all_devices(self):
+        """Sätt default-codec-listan på alla enheter utan egen selektion."""
+        devices = self.env["pbx.sub_extension"].search([])
+        devices._ensure_default_codecs()
+        return {
+            "type": "ir.actions.client",
+            "tag": "display_notification",
+            "params": {
+                "title": "Codecs",
+                "message": "Default-codecs applicerade på %d enheter" % len(devices),
+                "type": "success",
+            },
+        }
+
 
 class PbxCodecLine(models.Model):
     """Ordrad codec-selektion (rad).

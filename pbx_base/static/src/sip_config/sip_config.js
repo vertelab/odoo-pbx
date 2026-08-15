@@ -1,5 +1,5 @@
 /** @odoo-module */
-import { Component } from "@odoo/owl";
+import { Component, useState } from "@odoo/owl";
 import { registry } from "@web/core/registry";
 import { standardFieldProps } from "@web/views/fields/standard_field_props";
 
@@ -9,6 +9,7 @@ export class PbxSipConfigTable extends Component {
 
     setup() {
         this.notification = this.env.services.notification;
+        this.state = useState({ revealed: {} });
     }
 
     get rows() {
@@ -20,6 +21,14 @@ export class PbxSipConfigTable extends Component {
             help: spec.help || "",
             secret: /password|secret/i.test(key),
         }));
+    }
+
+    isRevealed(rowKey) {
+        return Boolean(this.state.revealed[rowKey]);
+    }
+
+    toggleReveal(rowKey) {
+        this.state.revealed[rowKey] = !this.state.revealed[rowKey];
     }
 
     async onCopy(value) {

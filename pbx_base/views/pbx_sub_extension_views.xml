@@ -127,7 +127,7 @@
                             <field name="transcribe_enabled"/>
                         </group>
                     </group>
-                    <notebook>
+                    <notebook invisible="type == 'voicemail'">
                         <page string="SIP-konfiguration" name="sip_config_page">
                             <field name="config" widget="pbx_sip_config_table" nolabel="1"/>
                         </page>

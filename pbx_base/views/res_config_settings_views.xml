@@ -78,6 +78,8 @@
                                         <div class="row mt16">
                                             <label string="PBX Webhook Token" for="pbx_webhook_token" class="col-lg-6 o_light_label"/>
                                             <field name="pbx_webhook_token" class="col-lg-6" readonly="1"/>
+                                            <label string="SIP-lösenordslängd" for="pbx_sip_password_length" class="col-lg-6 o_light_label"/>
+                                            <field name="pbx_sip_password_length" class="col-lg-6"/>
                                         </div>
                                         <div class="row mt16">
                                             <button name="action_generate_webhook_token" type="object"

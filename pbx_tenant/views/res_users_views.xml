@@ -22,25 +22,29 @@
                 <attribute name="invisible">1</attribute>
             </xpath>
             <xpath expr="//page[@name='voip']" position="inside">
-                <group string="Follow-me" name="follow_me" colspan="2">
-                    <div class="text-muted" invisible="pbx_extension_id">Ingen PBX-anknytning kopplad till användaren.</div>
-                    <field name="pbx_extension_id" invisible="1"/>
-                    <field name="pbx_ring_strategy"/>
-                    <field name="pbx_respect_schedule"/>
-                    <field name="pbx_respect_calendar"/>
-                </group>
-                <group string="Enheter" name="follow_me_devices" colspan="2">
-                    <field name="pbx_sub_extension_ids" string="" mode="list">
-                        <list editable="bottom">
-                            <field name="sequence" string="Sequence" widget="handle"/>
-                            <field name="type"/>
-                            <field name="label"/>
-                            <field name="ring_timeout"/>
-                            <field name="config_display" readonly="1"/>
-                            <field name="active"/>
-                        </list>
-                    </field>
-                </group>
+                <notebook>
+                    <page string="Inställningar" name="pbx_settings">
+                        <group name="follow_me" colspan="2">
+                            <div class="text-muted" invisible="pbx_extension_id">Ingen PBX-anknytning kopplad till användaren.</div>
+                            <field name="pbx_extension_id" invisible="1"/>
+                            <field name="pbx_ring_strategy"/>
+                            <field name="pbx_respect_schedule"/>
+                            <field name="pbx_respect_calendar"/>
+                        </group>
+                    </page>
+                    <page string="Enheter" name="pbx_devices">
+                        <field name="pbx_sub_extension_ids" string="" nolabel="1" mode="list">
+                            <list editable="bottom">
+                                <field name="sequence" string="Sequence" widget="handle"/>
+                                <field name="type"/>
+                                <field name="label"/>
+                                <field name="ring_timeout"/>
+                                <field name="config_display" readonly="1"/>
+                                <field name="active"/>
+                            </list>
+                        </field>
+                    </page>
+                </notebook>
             </xpath>
         </field>
     </record>
@@ -56,25 +60,29 @@
                 <attribute name="invisible">1</attribute>
             </xpath>
             <xpath expr="//page[@name='voip']" position="inside">
-                <group string="Follow-me" name="follow_me" colspan="2">
-                    <div class="text-muted" invisible="pbx_extension_id">Ingen PBX-anknytning kopplad till användaren.</div>
-                    <field name="pbx_extension_id" invisible="1"/>
-                    <field name="pbx_ring_strategy"/>
-                    <field name="pbx_respect_schedule"/>
-                    <field name="pbx_respect_calendar"/>
-                </group>
-                <group string="Enheter" name="follow_me_devices" colspan="2">
-                    <field name="pbx_sub_extension_ids" string="" mode="list">
-                        <list editable="bottom">
-                            <field name="sequence" string="Sequence" widget="handle"/>
-                            <field name="type"/>
-                            <field name="label"/>
-                            <field name="ring_timeout"/>
-                            <field name="config_display" readonly="1"/>
-                            <field name="active"/>
-                        </list>
-                    </field>
-                </group>
+                <notebook>
+                    <page string="Inställningar" name="pbx_settings">
+                        <group name="follow_me" colspan="2">
+                            <div class="text-muted" invisible="pbx_extension_id">Ingen PBX-anknytning kopplad till användaren.</div>
+                            <field name="pbx_extension_id" invisible="1"/>
+                            <field name="pbx_ring_strategy"/>
+                            <field name="pbx_respect_schedule"/>
+                            <field name="pbx_respect_calendar"/>
+                        </group>
+                    </page>
+                    <page string="Enheter" name="pbx_devices">
+                        <field name="pbx_sub_extension_ids" string="" nolabel="1" mode="list">
+                            <list editable="bottom">
+                                <field name="sequence" string="Sequence" widget="handle"/>
+                                <field name="type"/>
+                                <field name="label"/>
+                                <field name="ring_timeout"/>
+                                <field name="config_display" readonly="1"/>
+                                <field name="active"/>
+                            </list>
+                        </field>
+                    </page>
+                </notebook>
             </xpath>
         </field>
     </record>
