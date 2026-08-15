@@ -41,7 +41,8 @@ class PbxDeviceTemplate(models.Model):
         string="Device Type",
     )
     company_id = fields.Many2one(
-        "res.company", default=lambda self: self.env.company, required=True
+        "res.company", default=lambda self: self.env.company,
+        help="Företag (tom = global mall).",
     )
     active = fields.Boolean(default=True)
     codec_ids = fields.One2many(

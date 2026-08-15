@@ -1,6 +1,7 @@
 # Copyright 2026 Vertel AB
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 
+import json
 import re
 import secrets
 import string
@@ -191,15 +192,20 @@ class PbxSubExtension(models.Model):
         "extension_id.company_id",
     )
     def _compute_config(self):
-        """Resolverad SIP-konfiguration från enhetstypens mall."""
+        """Resolverad SIP-konfiguration från enhetstypens mall.
+
+        Företagsspecifik mall vinner över global (company_id=False) — samma
+        precedens som account.analytic.distribution.model.
+        """
         for rec in self:
             template = self.env["pbx.device.template"].search(
                 [
                     ("device_type", "=", rec.type),
-                    ("company_id", "=", rec.extension_id.company_id.id),
+                    ("company_id", "in", [rec.extension_id.company_id.id, False]),
                     ("active", "=", True),
                 ],
                 limit=1,
+                order="company_id DESC NULLS LAST",
             )
             if not template or not template.config_template:
                 rec.config = False
@@ -212,6 +218,12 @@ class PbxSubExtension(models.Model):
         Returns {"<param_key>": {"label": …, "value": <skarpt värde>, "help": …}}
         """
         self.ensure_one()
+        if isinstance(config_template, str):
+            # XML-data kan leverera Json-fältet som sträng — parsa defensivt.
+            try:
+                config_template = json.loads(config_template or "{}")
+            except (ValueError, TypeError):
+                config_template = {}
         resolved = {}
         ext = self.extension_id
         company = ext.company_id

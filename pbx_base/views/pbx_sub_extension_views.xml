@@ -98,18 +98,20 @@
             <form string="Device">
                 <sheet>
                     <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger" invisible="active"/>
-                    <group string="General">
+                    <div class="d-flex align-items-baseline gap-3 mb-3">
+                        <h2 class="mb-0"><field name="number" readonly="1"/></h2>
+                        <field name="label" placeholder="Enhetsetikett…"/>
+                    </div>
+                    <group>
                         <group>
-                            <field name="label"/>
-                            <field name="number" readonly="1"/>
                             <field name="type"/>
                             <field name="extension_id"/>
-                        </group>
-                        <group>
                             <field name="sequence" string="Ringordning"/>
                             <field name="ring_timeout"/>
                             <field name="transport"/>
                             <field name="username" readonly="1"/>
+                        </group>
+                        <group>
                             <field name="mac_address" invisible="type != 'hardware'"/>
                             <field name="device_model" invisible="type != 'hardware'"/>
                         </group>
@@ -133,7 +135,8 @@
                             <field name="codec_ids" nolabel="1">
                                 <list editable="bottom">
                                     <field name="sequence" string="Ordning" widget="handle"/>
-                                    <field name="codec_id"/>
+                                    <field name="codec_id" string="Namn"/>
+                                    <field name="codec_description" string="Beskrivning"/>
                                 </list>
                             </field>
                         </page>

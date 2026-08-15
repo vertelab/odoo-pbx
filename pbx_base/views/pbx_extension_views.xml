@@ -11,28 +11,22 @@
                             <field name="public_number" widget="text" options="{'line_breaks': False}"
                                    placeholder="Anknytningsnummer…"/>
                         </h1>
-                        <h2>
-                            <field name="callerid_name" placeholder="Namn…"/>
-                        </h2>
                     </div>
+                    <group>
+                        <group>
+                            <field name="user_id" string="Odoo-användare" widget="many2one_avatar_user"/>
+                            <field name="callerid_name" string="Namn på nummerpresentation"/>
+                            <field name="description" help="Visas i Operator Panel (fallback: callerid-namn → användarnamn → nummer)."/>
+                            <field name="password" string="SIP-lösenord" readonly="1"
+                                   help="Delat SIP-lösenord för alla enheter. Rotation via kugghjuls-ikon (Design A)."/>
+                        </group>
+                        <group>
+                            <field name="ring_strategy"/>
+                            <field name="respect_schedule"/>
+                            <field name="respect_calendar"/>
+                        </group>
+                    </group>
                     <notebook>
-                        <page string="Description" name="description">
-                            <group>
-                                <group>
-                                    <field name="user_id" widget="many2one_avatar_user"/>
-                                    <field name="callerid_name"/>
-                                    <field name="description" help="Visas i Operator Panel (fallback: callerid-namn → användarnamn → nummer)."/>
-                                </group>
-                                <group>
-                                    <field name="password" readonly="1"
-                                           help="Delat SIP-lösenord för alla enheter. Rotation via kugghjuls-ikon (Design A)."/>
-                                    <field name="ring_strategy"/>
-                                    <field name="respect_schedule"/>
-                                    <field name="respect_calendar"/>
-                                    <field name="active"/>
-                                </group>
-                            </group>
-                        </page>
                         <page string="Enheter" name="devices">
                             <field name="sub_extension_ids" string="" nolabel="1" mode="list">
                                 <list editable="bottom">

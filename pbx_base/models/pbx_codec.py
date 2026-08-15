@@ -95,6 +95,7 @@ class PbxCodecLine(models.Model):
     sequence = fields.Integer(default=10)
     codec_id = fields.Many2one("pbx.codec", required=True, ondelete="cascade")
     codec_name = fields.Char(related="codec_id.name", string="Codec")
+    codec_description = fields.Char(related="codec_id.description", string="Beskrivning")
     template_id = fields.Many2one(
         "pbx.device.template",
         string="Template",
