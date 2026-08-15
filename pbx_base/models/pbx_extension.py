@@ -17,9 +17,16 @@ class PbxExtension(models.Model):
     public_number = fields.Char(required=True, default=lambda self: self._default_public_number())
 
     def _default_public_number(self):
-        """Förslag: nästa lediga anknytningsnummer (pbx.numbering)."""
+        """Förslag: nästa lediga anknytningsnummer (pbx.numbering).
+
+        include_existing=False → bara nästa OANVÄNDA nummer (inte återbruk av
+        befintliga fria anknytningar) — annars krockar default med
+        unique-public_number vid skapelse.
+        """
         try:
-            _, number = self.env["pbx.numbering"]._next_free_extension_number(self.env.company)
+            _, number = self.env["pbx.numbering"]._next_free_extension_number(
+                self.env.company, include_existing=False
+            )
             return number or False
         except Exception:
             return False

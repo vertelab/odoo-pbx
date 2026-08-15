@@ -7,9 +7,10 @@
         <field name="name">pbx.codec.list</field>
         <field name="model">pbx.codec</field>
         <field name="arch" type="xml">
+            <!-- Sync + Deploy devices renderas som header-knappar (mellan
+                 kugghjulet och sökrutan) via JS-assets
+                 codec_list_header_buttons.{js,xml} — inte som per-rad-knappar. -->
             <list string="Codecs" editable="bottom">
-                <button name="action_sync_codecs" type="object" string="Sync" icon="fa-refresh"/>
-                <button name="action_set_default_all_devices" type="object" string="Sätt default" icon="fa-check"/>
                 <field name="priority" string="Ordning" widget="handle"/>
                 <field name="name"/>
                 <field name="description"/>

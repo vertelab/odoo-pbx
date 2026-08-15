@@ -3,14 +3,14 @@
     <t t-name="pbx_base.PbxSipConfigTable" owl="1">
         <div class="pbx-sip-config-table">
             <div class="d-flex align-items-center mb-1">
-                <button class="btn btn-sm btn-link p-0 me-2" t-on-click="() => { state.show = !state.show; }"
-                        :title="state.show ? 'Dölj SIP-konfiguration' : 'Visa SIP-konfiguration'">
-                    <i t-att-class="state.show ? 'fa fa-gear fa-fw text-muted' : 'fa fa-gear fa-fw'"
+                <button class="btn btn-sm btn-link p-0 me-2" t-on-click="() => this.toggleTable()"
+                        t-att-title="this.state.show ? 'Dölj SIP-konfiguration' : 'Visa SIP-konfiguration'">
+                    <i t-att-class="this.state.show ? 'fa fa-gear fa-fw text-muted' : 'fa fa-gear fa-fw'"
                        style="font-size: 1.1rem;"/>
                 </button>
                 <span class="text-muted small">SIP-konfiguration</span>
             </div>
-            <table t-if="state.show" class="table table-sm table-hover mb-0">
+            <table t-if="this.state.show" class="table table-sm table-hover mb-0">
                 <thead>
                     <tr>
                         <th class="w-40">Parameter</th>
@@ -24,16 +24,16 @@
                             <td>
                                 <div class="d-flex justify-content-between align-items-center">
                                     <t t-if="row.secret">
-                                        <span t-if="!isRevealed(row.key)" class="font-monospace text-muted">••••••••</span>
+                                        <span t-if="!this.isRevealed(row.key)" class="font-monospace text-muted">••••••••</span>
                                         <span t-else="" t-esc="row.value" class="font-monospace text-break"/>
                                     </t>
                                     <span t-else="" t-esc="row.value" class="font-monospace text-break"/>
                                     <span class="ms-2">
-                                        <button class="btn btn-sm btn-link p-0 me-1" t-on-click="() => toggleReveal(row.key)"
-                                                t-if="row.secret" t-att-title="isRevealed(row.key) ? 'Dölj' : 'Visa'">
-                                            <i t-att-class="isRevealed(row.key) ? 'fa fa-eye-slash text-muted' : 'fa fa-eye text-muted'"/>
+                                        <button class="btn btn-sm btn-link p-0 me-1" t-on-click="() => this.toggleReveal(row.key)"
+                                                t-if="row.secret" t-att-title="this.isRevealed(row.key) ? 'Dölj' : 'Visa'">
+                                            <i t-att-class="this.isRevealed(row.key) ? 'fa fa-eye-slash text-muted' : 'fa fa-eye text-muted'"/>
                                         </button>
-                                        <button class="btn btn-sm btn-link p-0" t-on-click="() => onCopy(row.value)"
+                                        <button class="btn btn-sm btn-link p-0" t-on-click="() => this.onCopy(row.value)"
                                                 t-if="row.value" title="Kopiera">
                                             <i class="fa fa-copy text-muted"/>
                                         </button>

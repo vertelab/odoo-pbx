@@ -18,7 +18,8 @@
                             <field name="callerid_name" string="Namn på nummerpresentation"/>
                             <field name="description" help="Visas i Operator Panel (fallback: callerid-namn → användarnamn → nummer)."/>
                             <div class="d-flex align-items-center">
-                                <field name="password" string="SIP-lösenord" readonly="1"
+                                <label for="password" string="SIP-lösenord" class="col-form-label me-2"/>
+                                <field name="password" readonly="1"
                                        help="Delat SIP-lösenord för alla enheter. Generera nytt via ikonen."/>
                                 <button name="action_generate_new_password" type="object"
                                         icon="fa-refresh" title="Generera nytt lösenord"

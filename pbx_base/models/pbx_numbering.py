@@ -105,32 +105,36 @@ class PbxNumbering(models.AbstractModel):
         return False
 
     @api.model
-    def _next_free_extension_number(self, company):
+    def _next_free_extension_number(self, company, include_existing=True):
         """Lägsta lediga extension-nummer i företagets schema.
 
         Används av pbx_hr (auto-tilldelning vid skapande + "Fördela
         anknytning"). Returnerar (existing_extension|False, number).
+
+        include_existing=False → hoppa över befintliga fria anknytningar
+        (för "skapa ny"-default: bara nästa oanvända nummer).
         """
         if "pbx.extension" not in self.env:
             return False, False
         w = self._get_extension_width(company)
-        # 1) Befintlig fri extension (utan användare): lägsta numeriska nummer.
-        free = self.env["pbx.extension"].search(
-            [("company_id", "=", company.id), ("user_id", "=", False)],
-            order="public_number asc",
-        )
-        # Exkludera extensioner som redan tilldelats en anställd via
-        # hr.employee.pbx_extension_id (anställd utan inloggning har ingen
-        # user_id på extensionen, men är ändå upptagen).
-        if "hr.employee" in self.env and free:
-            used_by_emp = self.env["hr.employee"].search(
-                [("pbx_extension_id", "in", free.ids)]
-            ).mapped("pbx_extension_id")
-            free = free - used_by_emp
-        for ext in free:
-            num = str(ext.public_number or "")
-            if num.isdigit():
-                return ext, ext.public_number
+        if include_existing:
+            # 1) Befintlig fri extension (utan användare): lägsta numeriska nummer.
+            free = self.env["pbx.extension"].search(
+                [("company_id", "=", company.id), ("user_id", "=", False)],
+                order="public_number asc",
+            )
+            # Exkludera extensioner som redan tilldelats en anställd via
+            # hr.employee.pbx_extension_id (anställd utan inloggning har ingen
+            # user_id på extensionen, men är ändå upptagen).
+            if "hr.employee" in self.env and free:
+                used_by_emp = self.env["hr.employee"].search(
+                    [("pbx_extension_id", "in", free.ids)]
+                ).mapped("pbx_extension_id")
+                free = free - used_by_emp
+            for ext in free:
+                num = str(ext.public_number or "")
+                if num.isdigit():
+                    return ext, ext.public_number
         # 2) Ingen fri → nästa nummer som inte är upptaget av NÅGOT dialbart
         #    objekt (extension, kö, IVR, konferens) i företaget.
         used = self._used_dialable_numbers(company)

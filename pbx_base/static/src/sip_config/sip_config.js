@@ -27,6 +27,10 @@ export class PbxSipConfigTable extends Component {
         return Boolean(this.state.revealed[rowKey]);
     }
 
+    toggleTable() {
+        this.state.show = !this.state.show;
+    }
+
     toggleReveal(rowKey) {
         this.state.revealed[rowKey] = !this.state.revealed[rowKey];
     }

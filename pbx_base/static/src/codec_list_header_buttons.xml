@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<templates xml:space="preserve">
+    <!--
+        Header-knappar för pbx.codec-katalogen: "Sync" + "Deploy devices".
+        Injiceras i sloten control-panel-additional-actions (där kugghjulet
+        sitter) → knapparna hamnar mellan kugghjulet och sökrutan i list-vyn.
+        Endast för modellen pbx.codec (props.resModel-check); alla andra
+        list-vyer påverkas inte.
+    -->
+    <t t-inherit="web.ListView" t-inherit-mode="extension">
+        <xpath expr="//t[@t-set-slot='control-panel-additional-actions']" position="inside">
+            <t t-if="props.resModel === 'pbx.codec'">
+                <button class="btn btn-secondary ms-1 o_codec_header_btn" type="button"
+                        title="Bygg/uppdatera katalogen från pbx.codecs.available (Salt-pushad)"
+                        t-on-click="onClickCodecSync">
+                    <i class="fa fa-refresh me-1"/>Sync
+                </button>
+                <button class="btn btn-secondary ms-1 o_codec_header_btn" type="button"
+                        title="Applicera default-codec-listan på alla enheter utan egen selektion"
+                        t-on-click="onClickCodecDeployDevices">
+                    <i class="fa fa-cloud-upload me-1"/>Deploy devices
+                </button>
+            </t>
+        </xpath>
+    </t>
+</templates>

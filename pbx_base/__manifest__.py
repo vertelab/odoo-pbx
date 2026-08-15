@@ -1,6 +1,6 @@
 {
     "name": "PBX Base",
-    "version": "18.0.1.37.0",
+    "version": "18.0.1.39.0",
     "summary": "Core PBX abstraction for multi-tenant Asterisk management",
     "category": "Productivity/VOIP",
     "author": "Vertel AB",
@@ -10,6 +10,8 @@
         "web.assets_backend": [
             "pbx_base/static/src/click_to_call/click_to_call.js",
             "pbx_base/static/src/click_to_call/click_to_call.xml",
+            "pbx_base/static/src/codec_list_header_buttons.js",
+            "pbx_base/static/src/codec_list_header_buttons.xml",
             "pbx_base/static/src/sip_config/sip_config.js",
             "pbx_base/static/src/sip_config/sip_config.xml",
         ],

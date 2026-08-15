@@ -79,6 +79,7 @@ class PbxCodec(models.Model):
                 )
         return True
 
+    @api.model
     def action_sync_codecs(self):
         """Sync-knapp (katalogen): bygg/uppdatera från pbx.codecs.available."""
         ok = self._sync_from_available()
@@ -94,8 +95,10 @@ class PbxCodec(models.Model):
             },
         }
 
-    def action_set_default_all_devices(self):
-        """Sätt default-codec-listan på alla enheter utan egen selektion."""
+    @api.model
+    def action_deploy_devices(self):
+        """Deploy-knapp (katalogen): applicera default-codec-listan på alla
+        enheter utan egen selektion (selektioner bevaras)."""
         devices = self.env["pbx.sub_extension"].search([])
         devices._ensure_default_codecs()
         return {
