@@ -11,7 +11,7 @@
                         <field name="host"/>
                         <field name="port"/>
                         <field name="username"/>
-                        <field name="secret" string="Lösenord"/>
+                        <field name="secret" string="Lösenord" widget="password"/>
                         <field name="channels"/>
                         <field name="callerid"/>
                     </group>
