@@ -706,27 +706,31 @@ class PbxConfigGenerator(models.AbstractModel):
 
     @api.model
     def get_sync_state(self):
-        """Current sync state for the user's company (used by the systray)."""
+        """Current sync state for the user's company (used by the systray).
+
+        can_sync = self-service för alla interna användare (base.group_user + 
+        superuser). Att anropa res.users.has_group via RPC fungerar inte
+        (has_group är @api.readonly och call_kw tolkar strängen som ids) —
+        därför beräknas can_sync här server-side.
+        """
         company = self.env.company
         return {
             "dirty": bool(company.config_dirty),
             "domain": company.pbx_domain or "",
+            "can_sync": self.env.user._is_internal(),
         }
 
     @api.model
     def sync_current_company(self):
         """Deploy config for the current user's company to Asterisk.
 
-        Only PBX Office/Admin may trigger a sync. Returns a dict with
-        ok/message for the UI notification; marks the company clean on success.
+        Only internal users (self-service) may trigger a sync. Returns a dict
+        with ok/message for the UI notification; marks the company clean on success.
         """
-        if not (
-            self.env.user.has_group("pbx_base.group_pbx_office")
-            or self.env.user.has_group("pbx_base.group_pbx_admin")
-        ):
+        if not self.env.user._is_internal():
             return {
                 "ok": False,
-                "message": "Endast PBX Office/Admin kan synka konfigurationen.",
+                "message": "Endast interna användare kan synka konfigurationen.",
             }
         company = self.env.company
         domain = company.pbx_domain

@@ -23,7 +23,7 @@
     <!-- Configuration: settings + domain-local entities (admin only) -->
     <menuitem
         id="menu_pbx_configuration"
-        name="Configuration"
+        name="Konfiguration"
         parent="menu_pbx_root"
         sequence="30"
         groups="pbx_base.group_pbx_admin"
@@ -31,38 +31,10 @@
 
     <menuitem
         id="menu_pbx_settings"
-        name="Settings"
+        name="Inställningar"
         parent="menu_pbx_configuration"
         action="pbx_config_settings_action"
         sequence="10"
-    />
-
-    <!-- Sync: skicka konfigurationen till Asterisk (via MQ → pbx_ami_daemon) -->
-    <record id="action_pbx_sync" model="ir.actions.server">
-        <field name="name">Sync to Asterisk</field>
-        <field name="model_id" ref="model_pbx_config_generator"/>
-        <field name="state">code</field>
-        <field name="code">
-result = env['pbx.config.generator'].sync_current_company()
-action = {
-    'type': 'ir.actions.client',
-    'tag': 'display_notification',
-    'params': {
-        'title': 'PBX Sync',
-        'message': result.get('message', ''),
-        'type': 'success' if result.get('ok') else 'danger',
-        'sticky': True,
-    },
-}
-        </field>
-    </record>
-    <menuitem
-        id="menu_pbx_sync"
-        name="Sync"
-        parent="menu_pbx_configuration"
-        action="action_pbx_sync"
-        sequence="5"
-        groups="pbx_base.group_pbx_admin"
     />
 
     <menuitem
@@ -78,7 +50,7 @@ action = {
         name="Devices"
         parent="menu_pbx_configuration"
         action="pbx_sub_extension_act_window"
-        sequence="35"
+        sequence="30"
         groups="pbx_base.group_pbx_admin,pbx_base.group_pbx_office"
     />
 
@@ -92,25 +64,25 @@ action = {
 
     <menuitem
         id="menu_pbx_trunks"
-        name="SIP Trunks"
+        name="SIP-trunkar"
         parent="menu_pbx_configuration"
         action="pbx_trunk_act_window"
-        sequence="30"
-    />
-
-    <menuitem
-        id="menu_pbx_inbound_routes"
-        name="Inbound Routes"
-        parent="menu_pbx_configuration"
-        action="pbx_inbound_route_act_window"
         sequence="40"
     />
 
     <menuitem
+        id="menu_pbx_inbound_routes"
+        name="Inkommande rutter"
+        parent="menu_pbx_configuration"
+        action="pbx_inbound_route_act_window"
+        sequence="50"
+    />
+
+    <menuitem
         id="menu_pbx_outbound_routes"
-        name="Outbound Routes"
+        name="Utgående rutter"
         parent="menu_pbx_configuration"
         action="pbx_outbound_route_act_window"
-        sequence="50"
+        sequence="60"
     />
 </odoo>

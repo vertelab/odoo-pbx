@@ -67,10 +67,10 @@
         </field>
     </record>
 
-    <!-- Meny: PBX → Configuration → Device Templates -->
+    <!-- Meny: PBX → Konfiguration → Enhetsmallar -->
     <menuitem
         id="menu_pbx_device_template"
-        name="Device Templates"
+        name="Enhetsmallar"
         parent="menu_pbx_configuration"
         action="pbx_device_template_action"
         sequence="20"

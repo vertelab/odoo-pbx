@@ -92,15 +92,7 @@ action = {
         name="Codecs"
         parent="menu_pbx_configuration"
         action="pbx_codec_act_window"
-        sequence="45"
+        sequence="35"
         groups="pbx_base.group_pbx_admin,pbx_base.group_pbx_office"
-    />
-    <menuitem
-        id="menu_pbx_codec_sync"
-        name="Sync Codecs"
-        parent="menu_pbx_configuration"
-        action="action_pbx_codec_sync"
-        sequence="46"
-        groups="pbx_base.group_pbx_admin"
     />
 </odoo>

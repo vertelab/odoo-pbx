@@ -20,7 +20,6 @@ export class PbxSyncSystray extends Component {
         this.canSync = false;
         this._pollTimer = null;
         onWillStart(async () => {
-            this.canSync = await this._canSync();
             await this._refresh();
         });
         onWillUnmount(() => {
@@ -29,25 +28,6 @@ export class PbxSyncSystray extends Component {
             }
         });
         this._schedulePoll();
-    }
-
-    async _canSync() {
-        // "user"-tjänsten är inte tillgänglig i systray-miljön → fråga via RPC.
-        try {
-            const hasOffice = await this.orm.call(
-                "res.users",
-                "has_group",
-                ["pbx_base.group_pbx_office"]
-            );
-            const hasAdmin = await this.orm.call(
-                "res.users",
-                "has_group",
-                ["pbx_base.group_pbx_admin"]
-            );
-            return hasOffice || hasAdmin;
-        } catch (err) {
-            return false;
-        }
     }
 
     _schedulePoll() {
@@ -68,6 +48,7 @@ export class PbxSyncSystray extends Component {
             );
             this.state.dirty = Boolean(state.dirty);
             this.state.domain = state.domain || "";
+            this.canSync = Boolean(state.can_sync);
         } catch (err) {
             // tyst — ingen PBX-konfig än
         }
