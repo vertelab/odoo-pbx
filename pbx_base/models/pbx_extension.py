@@ -14,7 +14,15 @@ class PbxExtension(models.Model):
     _inherit = ["pbx.destination.mixin", "mail.thread", "mail.activity.mixin", "pbx.config.dirty.mixin"]
     _description = "PBX Extension (public number)"
 
-    public_number = fields.Char(required=True)
+    public_number = fields.Char(required=True, default=lambda self: self._default_public_number())
+
+    def _default_public_number(self):
+        """Förslag: nästa lediga anknytningsnummer (pbx.numbering)."""
+        try:
+            _, number = self.env["pbx.numbering"]._next_free_extension_number(self.env.company)
+            return number or False
+        except Exception:
+            return False
     user_id = fields.Many2one("res.users", string="Odoo User")
     password = fields.Char(
         string="SIP Password",

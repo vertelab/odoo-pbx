@@ -16,6 +16,7 @@ class PbxCodec(models.Model):
     _name = "pbx.codec"
     _description = "PBX Codec"
     _order = "priority, name"
+    _inherit = ["pbx.config.dirty.mixin"]
 
     name = fields.Char(required=True, help="pjsip-namn, t.ex. g722, ulaw, alaw, opus")
     kind = fields.Selection(
@@ -120,6 +121,7 @@ class PbxCodecLine(models.Model):
     _name = "pbx.codec.line"
     _description = "PBX Codec Selection Line"
     _order = "sequence, id"
+    _inherit = ["pbx.config.dirty.mixin"]
 
     sequence = fields.Integer(default=10)
     codec_id = fields.Many2one("pbx.codec", required=True, ondelete="cascade")

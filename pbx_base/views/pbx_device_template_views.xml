@@ -8,6 +8,7 @@
             <list string="Device Templates" editable="bottom">
                 <field name="name"/>
                 <field name="device_type"/>
+                <field name="transport"/>
                 <field name="company_id" optional="hide"/>
                 <field name="active" optional="show"/>
             </list>
@@ -24,6 +25,7 @@
                         <group>
                             <field name="name"/>
                             <field name="device_type"/>
+                            <field name="transport"/>
                             <field name="company_id" groups="base.group_multi_company"/>
                             <field name="active"/>
                         </group>

@@ -106,6 +106,7 @@
                         <group>
                             <field name="type"/>
                             <field name="extension_id"/>
+                            <field name="template_id" string="Enhetsmall"/>
                             <field name="sequence" string="Ringordning"/>
                             <field name="ring_timeout"/>
                             <field name="transport"/>

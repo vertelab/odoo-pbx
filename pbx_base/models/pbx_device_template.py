@@ -1,7 +1,7 @@
 # Copyright 2026 Vertel AB
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 
-from odoo import fields, models
+from odoo import api, fields, models
 
 
 class PbxDeviceTemplate(models.Model):
@@ -27,6 +27,7 @@ class PbxDeviceTemplate(models.Model):
     _name = "pbx.device.template"
     _description = "PBX Device Template"
     _order = "device_type, name"
+    _inherit = ["pbx.config.dirty.mixin"]
 
     name = fields.Char(required=True)
     device_type = fields.Selection(
@@ -45,6 +46,12 @@ class PbxDeviceTemplate(models.Model):
         help="Företag (tom = global mall).",
     )
     active = fields.Boolean(default=True)
+    transport = fields.Selection(
+        [("wss", "WebSocket Secure"), ("udp", "UDP"), ("tcp", "TCP")],
+        string="Transport (default)",
+        help="Default SIP-transport för enheter med denna mall. Enheten kan "
+             "överskrida.",
+    )
     codec_ids = fields.One2many(
         "pbx.codec.line",
         "template_id",

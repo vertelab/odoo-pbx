@@ -2,7 +2,15 @@
 <templates xml:space="preserve">
     <t t-name="pbx_base.PbxSipConfigTable" owl="1">
         <div class="pbx-sip-config-table">
-            <table class="table table-sm table-hover mb-0">
+            <div class="d-flex align-items-center mb-1">
+                <button class="btn btn-sm btn-link p-0 me-2" t-on-click="() => { state.show = !state.show; }"
+                        :title="state.show ? 'Dölj SIP-konfiguration' : 'Visa SIP-konfiguration'">
+                    <i t-att-class="state.show ? 'fa fa-gear fa-fw text-muted' : 'fa fa-gear fa-fw'"
+                       style="font-size: 1.1rem;"/>
+                </button>
+                <span class="text-muted small">SIP-konfiguration</span>
+            </div>
+            <table t-if="state.show" class="table table-sm table-hover mb-0">
                 <thead>
                     <tr>
                         <th class="w-40">Parameter</th>

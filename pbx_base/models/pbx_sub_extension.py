@@ -54,7 +54,10 @@ class PbxSubExtension(models.Model):
         [("wss", "WebSocket Secure"), ("udp", "UDP"), ("tcp", "TCP")],
         default="wss",
     )
-    username = fields.Char(default=lambda self: _generate_sip_secret(8))
+    username = fields.Char(
+        readonly=True,
+        help="SIP-användarnamn (auto-genereras som u+nummer).",
+    )
     secret = fields.Char(default=lambda self: _generate_sip_secret())
     active = fields.Boolean(
         default=True,
@@ -109,6 +112,15 @@ class PbxSubExtension(models.Model):
                     number = self._next_free_number(ext_id, used[ext_id])
                     used[ext_id].add(number)
                     vals["number"] = number
+                if vals.get("number"):
+                    vals.setdefault(
+                        "username",
+                        "u%s" % re.sub(r"\D", "", vals["number"]),
+                    )
+            if vals.get("template_id") and not vals.get("transport"):
+                tpl = self.env["pbx.device.template"].browse(vals["template_id"])
+                if tpl.transport:
+                    vals["transport"] = tpl.transport
         recs = super().create(vals_list)
         for rec in recs:
             rec._validate_provisioning_fields()
@@ -201,6 +213,7 @@ class PbxSubExtension(models.Model):
         "transport",
         "mac_address",
         "provisioning_token",
+        "template_id",
         "extension_id.password",
         "extension_id.public_number",
         "extension_id.user_id",
@@ -209,19 +222,21 @@ class PbxSubExtension(models.Model):
     def _compute_config(self):
         """Resolverad SIP-konfiguration från enhetstypens mall.
 
-        Företagsspecifik mall vinner över global (company_id=False) — samma
-        precedens som account.analytic.distribution.model.
+        Mall-prioritet: explicit template_id → företagsspecifik per typ →
+        global per typ (company_id=False).
         """
         for rec in self:
-            template = self.env["pbx.device.template"].search(
-                [
-                    ("device_type", "=", rec.type),
-                    ("company_id", "in", [rec.extension_id.company_id.id, False]),
-                    ("active", "=", True),
-                ],
-                limit=1,
-                order="company_id DESC NULLS LAST",
-            )
+            template = rec.template_id
+            if not template:
+                template = self.env["pbx.device.template"].search(
+                    [
+                        ("device_type", "=", rec.type),
+                        ("company_id", "in", [rec.extension_id.company_id.id, False]),
+                        ("active", "=", True),
+                    ],
+                    limit=1,
+                    order="company_id DESC NULLS LAST",
+                )
             if not template or not template.config_template:
                 rec.config = False
                 continue
@@ -316,6 +331,20 @@ class PbxSubExtension(models.Model):
         help="Den gällande codec-listan för enheten (ordnad — sequence är "
              "preferensen). Lämnas tom → mallens default / global default.",
     )
+    template_id = fields.Many2one(
+        "pbx.device.template",
+        string="Enhetsmall",
+        help="Enhetsmall som styr SIP-konfigurationen. Välj mall → "
+             "konfigurationen anpassas till enheten.",
+    )
+
+    @api.onchange("template_id")
+    def _onchange_template_id(self):
+        """Vid mallval: föreslå transport (och default-codecs) från mallen."""
+        if not self.template_id:
+            return
+        if self.template_id.transport:
+            self.transport = self.template_id.transport
     device_model = fields.Char(
         string="Enhetsmodell",
         help="t.ex. T46S — för att välja rätt gemensam provisioning-config.",

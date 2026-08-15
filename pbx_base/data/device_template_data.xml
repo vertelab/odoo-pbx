@@ -8,6 +8,7 @@
         <record id="default_template_browser" model="pbx.device.template">
             <field name="name">Odoo VOIP (webb)</field>
             <field name="device_type">browser</field>
+            <field name="transport">wss</field>
             <field name="company_id" eval="False"/>
             <field name="config_template">{
                 "sip_username": {"label": "Användarnamn", "source": "device", "field": "username", "order": 1},
@@ -22,6 +23,7 @@
         <record id="default_template_hardware" model="pbx.device.template">
             <field name="name">Yealink T46S</field>
             <field name="device_type">hardware</field>
+            <field name="transport">udp</field>
             <field name="company_id" eval="False"/>
             <field name="config_template">{
                 "sip_username": {"label": "Användarnamn", "source": "device", "field": "username", "order": 1},
@@ -36,6 +38,7 @@
         <record id="default_template_mobile" model="pbx.device.template">
             <field name="name">Mobil (sipdroid/Zoiper)</field>
             <field name="device_type">mobile</field>
+            <field name="transport">udp</field>
             <field name="company_id" eval="False"/>
             <field name="config_template">{
                 "sip_username": {"label": "Privat användarid", "source": "device", "field": "username", "order": 1},
@@ -45,6 +48,92 @@
                 "sip_domain": {"label": "Domän", "source": "company", "field": "pbx_domain", "order": 5},
                 "turn": {"label": "TURN", "source": "config", "field": "pbx.turn.server", "only_if": "pbx_turn_enabled", "order": 6},
                 "token": {"label": "Provisioneringstoken", "source": "device", "field": "provisioning_token", "order": 7}
+            }</field>
+        </record>
+            <record id="default_template_hardware_grandstream" model="pbx.device.template">
+            <field name="name">Grandstream GXP-serien</field>
+            <field name="device_type">hardware</field>
+            <field name="transport">udp</field>
+            <field name="company_id" eval="False"/>
+            <field name="config_template">{
+                "sip_username": {"label": "SIP User ID", "source": "device", "field": "username", "order": 1},
+                "sip_password": {"label": "Authenticate Password", "source": "device", "field": "secret", "order": 2},
+                "sip_server": {"label": "SIP Server", "source": "company", "field": "pbx_server_host", "order": 3},
+                "sip_port": {"label": "SIP Port", "source": "company", "field": "pbx_sip_port", "order": 4},
+                "sip_domain": {"label": "SIP Domain", "source": "company", "field": "pbx_domain", "order": 5},
+                "mac": {"label": "MAC-adress", "source": "device", "field": "mac_address", "order": 6},
+                "guide": {"label": "Guide", "source": "static", "value": "Grandstream: web-UI (IP) → Account 1 → SIP Server/SIP User ID/Authenticate Password.", "order": 99}
+            }</field>
+        </record>
+        <record id="default_template_hardware_snom" model="pbx.device.template">
+            <field name="name">Snom D7xx</field>
+            <field name="device_type">hardware</field>
+            <field name="transport">udp</field>
+            <field name="company_id" eval="False"/>
+            <field name="config_template">{
+                "sip_username": {"label": "Användarnamn", "source": "device", "field": "username", "order": 1},
+                "sip_password": {"label": "Lösenord", "source": "device", "field": "secret", "order": 2},
+                "sip_server": {"label": "Registrar", "source": "company", "field": "pbx_server_host", "order": 3},
+                "sip_port": {"label": "Port", "source": "company", "field": "pbx_sip_port", "order": 4},
+                "sip_domain": {"label": "Domän (Realm)", "source": "company", "field": "pbx_domain", "order": 5},
+                "mac": {"label": "MAC-adress", "source": "device", "field": "mac_address", "order": 6},
+                "guide": {"label": "Guide", "source": "static", "value": "Snom: web-UI → Identity 1 → Registrar/Användarnamn/Lösenord/Realm.", "order": 99}
+            }</field>
+        </record>
+        <record id="default_template_desktop_linphone" model="pbx.device.template">
+            <field name="name">Linphone (Windows/Mac/Linux)</field>
+            <field name="device_type">desktop</field>
+            <field name="transport">udp</field>
+            <field name="company_id" eval="False"/>
+            <field name="config_template">{
+                "sip_username": {"label": "Username", "source": "device", "field": "username", "order": 1},
+                "sip_password": {"label": "Password", "source": "device", "field": "secret", "order": 2},
+                "sip_server": {"label": "SIP-server", "source": "company", "field": "pbx_server_host", "order": 3},
+                "sip_domain": {"label": "Domän", "source": "company", "field": "pbx_domain", "order": 4},
+                "turn": {"label": "STUN/TURN", "source": "config", "field": "pbx.turn.server", "only_if": "pbx_turn_enabled", "order": 5},
+                "guide": {"label": "Guide", "source": "static", "value": "Linphone: Inställningar → SIP-konto → Ange server, username, password. Eller klistra in provisioning-URL.", "order": 99}
+            }</field>
+        </record>
+        <record id="default_template_desktop_zoiper" model="pbx.device.template">
+            <field name="name">Zoiper Desktop</field>
+            <field name="device_type">desktop</field>
+            <field name="transport">udp</field>
+            <field name="company_id" eval="False"/>
+            <field name="config_template">{
+                "sip_username": {"label": "Username", "source": "device", "field": "username", "order": 1},
+                "sip_password": {"label": "Password", "source": "device", "field": "secret", "order": 2},
+                "sip_server": {"label": "Host", "source": "company", "field": "pbx_server_host", "order": 3},
+                "sip_port": {"label": "Port", "source": "company", "field": "pbx_sip_port", "order": 4},
+                "sip_domain": {"label": "Domain", "source": "company", "field": "pbx_domain", "order": 5},
+                "guide": {"label": "Guide", "source": "static", "value": "Zoiper: Lägg till SIP-konto → Ange Host, Username, Password, Domain.", "order": 99}
+            }</field>
+        </record>
+        <record id="default_template_mobile_fdroid" model="pbx.device.template">
+            <field name="name">Linphone Android (F-Droid)</field>
+            <field name="device_type">mobile</field>
+            <field name="transport">udp</field>
+            <field name="company_id" eval="False"/>
+            <field name="config_template">{
+                "sip_username": {"label": "Username", "source": "device", "field": "username", "order": 1},
+                "sip_password": {"label": "Password", "source": "device", "field": "secret", "order": 2},
+                "sip_server": {"label": "SIP-server", "source": "company", "field": "pbx_server_host", "order": 3},
+                "sip_domain": {"label": "Domän", "source": "company", "field": "pbx_domain", "order": 4},
+                "turn": {"label": "STUN/TURN", "source": "config", "field": "pbx.turn.server", "only_if": "pbx_turn_enabled", "order": 5},
+                "guide": {"label": "Guide", "source": "static", "value": "Linphone Android: Konto → Remote provisioning → klistra in provisioning-URL (skanna QR).", "order": 99}
+            }</field>
+        </record>
+        <record id="default_template_mobile_ios" model="pbx.device.template">
+            <field name="name">Linphone iOS</field>
+            <field name="device_type">mobile</field>
+            <field name="transport">udp</field>
+            <field name="company_id" eval="False"/>
+            <field name="config_template">{
+                "sip_username": {"label": "Username", "source": "device", "field": "username", "order": 1},
+                "sip_password": {"label": "Password", "source": "device", "field": "secret", "order": 2},
+                "sip_server": {"label": "SIP-server", "source": "company", "field": "pbx_server_host", "order": 3},
+                "sip_domain": {"label": "Domän", "source": "company", "field": "pbx_domain", "order": 4},
+                "turn": {"label": "STUN/TURN", "source": "config", "field": "pbx.turn.server", "only_if": "pbx_turn_enabled", "order": 5},
+                "guide": {"label": "Guide", "source": "static", "value": "Linphone iOS: Inställningar → Remote provisioning URL → klistra in URL:en.", "order": 99}
             }</field>
         </record>
     </data>

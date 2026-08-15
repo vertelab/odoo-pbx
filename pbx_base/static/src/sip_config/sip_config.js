@@ -9,7 +9,7 @@ export class PbxSipConfigTable extends Component {
 
     setup() {
         this.notification = this.env.services.notification;
-        this.state = useState({ revealed: {} });
+        this.state = useState({ revealed: {}, show: false });
     }
 
     get rows() {
