@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- PBX Receptionist tools (pbx-ai-call-assistant, D2) -->
+
+    <record id="tool_pbx_call_get" model="ai.tool">
+        <field name="name">pbx_call_get</field>
+        <field name="description">Hämta aktuell samtalskontext (nummer, riktning, varaktighet, anknytning, transcript). Returnerar JSON.</field>
+        <field name="parameters">{"type": "object", "properties": {"call_id": {"type": "integer", "description": "ID för pbx.call"}}, "required": ["call_id"]}</field>
+        <field name="risk_level">read_only</field>
+        <field name="code"><![CDATA[
+async def execute(call_id):
+    """Hämta samtalskontext."""
+    return env['ai.coworker'].pbx_call_get(int(call_id))
+]]></field>
+    </record>
+
+    <record id="tool_pbx_ticket_create" model="ai.tool">
+        <field name="name">pbx_ticket_create</field>
+        <field name="description">Skapa en helpdesk-ticket från ett samtal (felanmälan) via pbx_helpdesk. Skrivåtgärd — går genom godkännandegaten.</field>
+        <field name="parameters">{"type": "object", "properties": {"call_id": {"type": "integer", "description": "ID för pbx.call"}, "caller_number": {"type": "string", "description": "ringande nummer"}, "caller_name": {"type": "string", "description": "namn (från kundens svar)"}, "transcript": {"type": "string", "description": "sammanfattning/transcript av ärendet"}}, "required": ["call_id", "caller_number"]}</field>
+        <field name="risk_level">write</field>
+        <field name="code"><![CDATA[
+async def execute(call_id, caller_number, caller_name='', transcript=''):
+    """Skapa helpdesk-ticket."""
+    return env['ai.coworker'].pbx_ticket_create(
+        int(call_id), str(caller_number), str(caller_name), str(transcript))
+]]></field>
+    </record>
+
+    <record id="tool_pbx_lead_create" model="ai.tool">
+        <field name="name">pbx_lead_create</field>
+        <field name="description">Skapa en CRM-lead från ett samtal (intresseanmälan) via pbx_crm. Skrivåtgärd — går genom godkännandegaten.</field>
+        <field name="parameters">{"type": "object", "properties": {"call_id": {"type": "integer", "description": "ID för pbx.call"}, "caller_number": {"type": "string", "description": "ringande nummer"}, "caller_name": {"type": "string", "description": "namn"}}, "required": ["call_id", "caller_number"]}</field>
+        <field name="risk_level">write</field>
+        <field name="code"><![CDATA[
+async def execute(call_id, caller_number, caller_name=''):
+    """Skapa CRM-lead."""
+    return env['ai.coworker'].pbx_lead_create(
+        int(call_id), str(caller_number), str(caller_name))
+]]></field>
+    </record>
+
+    <record id="tool_pbx_transfer_queue" model="ai.tool">
+        <field name="name">pbx_transfer_queue</field>
+        <field name="description">Vidarekoppla samtalet till en kö (pbx.queue). Returnerar destination för AMI/ARI Redirect.</field>
+        <field name="parameters">{"type": "object", "properties": {"call_id": {"type": "integer", "description": "ID för pbx.call"}, "queue_id": {"type": "integer", "description": "ID för pbx.queue"}}, "required": ["call_id", "queue_id"]}</field>
+        <field name="risk_level">write</field>
+        <field name="code"><![CDATA[
+async def execute(call_id, queue_id):
+    """Vidarekoppla till kö."""
+    return env['ai.coworker'].pbx_transfer_queue(int(call_id), int(queue_id))
+]]></field>
+    </record>
+
+    <record id="tool_pbx_transfer_extension" model="ai.tool">
+        <field name="name">pbx_transfer_extension</field>
+        <field name="description">Vidarekoppla samtalet till en anknytning (pbx.extension). Returnerar destination för AMI/ARI Redirect.</field>
+        <field name="parameters">{"type": "object", "properties": {"call_id": {"type": "integer", "description": "ID för pbx.call"}, "extension_id": {"type": "integer", "description": "ID för pbx.extension"}}, "required": ["call_id", "extension_id"]}</field>
+        <field name="risk_level">write</field>
+        <field name="code"><![CDATA[
+async def execute(call_id, extension_id):
+    """Vidarekoppla till anknytning."""
+    return env['ai.coworker'].pbx_transfer_extension(int(call_id), int(extension_id))
+]]></field>
+    </record>
+</odoo>

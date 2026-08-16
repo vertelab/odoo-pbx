@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- pbx.call — transcript-fält (pbx-ai-call-assistant, D1) -->
+    <record id="view_pbx_call_list_ai" model="ir.ui.view">
+        <field name="name">pbx.call.list.ai</field>
+        <field name="model">pbx.call</field>
+        <field name="inherit_id" ref="pbx_base.pbx_call_list_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//list" position="inside">
+                <field name="transcript_attachment_id" optional="hide"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_pbx_call_form_ai" model="ir.ui.view">
+        <field name="name">pbx.call.form.ai</field>
+        <field name="model">pbx.call</field>
+        <field name="inherit_id" ref="pbx_base.pbx_call_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet" position="inside">
+                <group name="ai_transcript" string="AI-transkription">
+                    <field name="transcript_attachment_id"/>
+                    <field name="transcript_text" readonly="1" nolabel="1"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+</odoo>

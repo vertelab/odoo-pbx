@@ -556,6 +556,39 @@ async def amain(config_path: str):
     # Health check
     health_server = await start_health_server(health_port)
 
+    # ── ARI (nivå 2 — smart receptionist) ──
+    # Startar ARI-klienten parallellt med AMI (om aktiverad i config).
+    ari_task = None
+    cfg_ari = config.get("ari", {})
+    if cfg_ari.get("enabled", False):
+        try:
+            from .ari import ARIClient, Receptionist
+
+            api_key = cfg_ari.get("api_key", "")
+            if not api_key:
+                ari_user = cfg_ari.get("user", "receptionist")
+                ari_secret = cfg_ari.get("secret", "")
+                api_key = f"{ari_user}:{ari_secret}"
+            client = ARIClient(
+                base_url=cfg_ari.get("base_url", "http://localhost:8088"),
+                ws_url=cfg_ari.get("ws_url", "ws://localhost:8089"),
+                app=cfg_ari.get("app", "receptionist"),
+                api_key=api_key,
+            )
+            receptionist = Receptionist(
+                client=client,
+                odoo_url=cfg_ari.get("odoo_url", ""),
+                webhook_token=cfg_ari.get("webhook_token", ""),
+                coworker_id=int(cfg_ari.get("coworker_id", 0) or 0),
+            )
+            client.on_stasis_start = receptionist.on_stasis_start
+            client.on_dtmf = receptionist.on_dtmf
+            client.on_stasis_end = receptionist.on_stasis_end
+            ari_task = asyncio.create_task(client.run())
+            logger.info("ARI enabled — Stasis app=%s", cfg_ari.get("app"))
+        except Exception as e:
+            logger.error("ARI init failed: %s", e)
+
     # Main loop: connect AMI, run event consumer, reconnect on failure
     while True:
         try:
@@ -569,6 +602,9 @@ async def amain(config_path: str):
             await asyncio.sleep(reconnect_interval)
         except asyncio.CancelledError:
             break
+
+    if ari_task:
+        ari_task.cancel()
 
     health_server.close()
 

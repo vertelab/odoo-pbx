@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- PBX Receptionist-coworker (pbx-ai-call-assistant, D2) -->
+
+    <record id="coworker_pbx_receptionist" model="ai.coworker">
+        <field name="name">PBX Receptionist</field>
+        <field name="sub_description">Svarar på inkommande samtal — felanmälan, intresse, vidarekoppling</field>
+        <field name="description">
+Du är PBX Receptionist — en AI-coworker som svarar på inkommande
+telefonsamtal i Odoo (pbx). Du för en dialog med kunden och hjälper till
+med felanmälningar, intresseanmälningar och vidarekoppling.
+
+Förmågor:
+- pbx_call_get: hämta samtalskontext (nummer, riktning, transcript)
+- pbx_ticket_create: skapa helpdesk-ticket vid felanmälan
+- pbx_lead_create: skapa CRM-lead vid intresseanmälan
+- pbx_transfer_queue: koppla vidare till kö
+- pbx_transfer_extension: koppla vidare till anknytning
+
+Arbetsregler:
+1. Hälsa och fråga vad det gäller: felanmälan, intresse eller annat.
+2. Felanmälan → fråga om problemet, skapa pbx_ticket_create, koppla till
+   support (kö/anknytning).
+3. Intresseanmälan → skapa pbx_lead_create, koppla till säljare.
+4. Skrivåtgärder (ticket/lead/transfer) går genom godkännandegaten —
+   vid automatisk körning följ configurerad HITL-policy.
+5. Var kort och tydlig i telefonsamtal. Bekräfta med kunden innan du
+   kopplar vidare.
+        </field>
+        <field name="status">active</field>
+        <field name="model_ids" eval="[(6, 0, [
+            ref('pbx_base.model_pbx_call'),
+            ref('pbx_base.model_pbx_extension'),
+            ref('pbx_queue.model_pbx_queue'),
+        ])]"/>
+        <field name="filter_domain">[]</field>
+        <field name="injection_level">summary_and_key</field>
+        <field name="hitl_threshold">always</field>
+        <field name="orchestration_mode">single</field>
+        <field name="tool_ids" eval="[(6, 0, [
+            ref('pbx_ai.tool_pbx_call_get'),
+            ref('pbx_ai.tool_pbx_ticket_create'),
+            ref('pbx_ai.tool_pbx_lead_create'),
+            ref('pbx_ai.tool_pbx_transfer_queue'),
+            ref('pbx_ai.tool_pbx_transfer_extension'),
+        ])]"/>
+        <field name="example_prompts">
+- "Min maskin är trasig — vad ska jag göra?"
+- "Jag vill ha ett möte om era produkter"
+- "Koppla mig till support"
+        </field>
+    </record>
+
+    <record id="coworker_pbx_receptionist_powerbox" model="ai.coworker.init_type">
+        <field name="coworker_id" ref="coworker_pbx_receptionist"/>
+        <field name="init_type">powerbox</field>
+        <field name="enabled">True</field>
+        <field name="sequence">10</field>
+    </record>
+</odoo>
