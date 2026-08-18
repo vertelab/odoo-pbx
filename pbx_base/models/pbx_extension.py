@@ -1,12 +1,15 @@
 # Copyright 2026 Vertel AB
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 
+import logging
+import re
+
 from odoo import _, api, fields, models
 from odoo.exceptions import AccessError, UserError
 
 from .pbx_sub_extension import _generate_sip_secret
 
-import re
+_logger = logging.getLogger(__name__)
 
 
 class PbxExtension(models.Model):
@@ -139,13 +142,31 @@ class PbxExtension(models.Model):
         return True
 
     def _sync_user_link(self):
-        """Säkerställ att user.pbx_extension_id pekar på denna extension."""
+        """Säkerställ att user.pbx_extension_id pekar på denna extension.
+
+        Lägger även användaren i group_pbx_operator (självbetjäning: ser sin
+        egen anknytning/enheter/samtal) om hen inte redan har office/admin
+        (vilka implicerar operator). Office/Admin tilldelas fortfarande
+        manuellt — endast grundnivån är automatisk.
+        """
         self.ensure_one()
         user = self.user_id
         if not user:
             return
         if user.pbx_extension_id != self:
             user.pbx_extension_id = self.id
+        if user.has_group("pbx_base.group_pbx_office") or user.has_group(
+            "pbx_base.group_pbx_admin"
+        ):
+            return
+        operator = self.env.ref("pbx_base.group_pbx_operator")
+        if not user.has_group("pbx_base.group_pbx_operator"):
+            user.write({"groups_id": [(4, operator.id)]})
+            _logger.info(
+                "Auto-assigned PBX Operator to user %s (extension %s)",
+                user.login,
+                self.public_number,
+            )
 
     def _sync_voip(self):
         """Synka voip_oca-inställningarna på den kopplade användaren.
