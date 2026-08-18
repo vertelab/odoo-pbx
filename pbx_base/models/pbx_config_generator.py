@@ -40,6 +40,7 @@ EXTENSION_TEMPLATE = """\
 type = endpoint
 context = {domain}-internal
 transport = transport-{transport}
+{webrtc_options}
 auth = {domain}-{number}-auth
 aors = {username}
 callerid = "{callerid_name}" <{public_number}@{domain}>
@@ -52,6 +53,19 @@ username = {username}
 [{username}]({domain}-aor)
 type = aor
 """
+
+# WebRTC/DTLS-optioner för wss-endpoints (verifierat mot Asterisk 20.6):
+# media_encryption = dtls (inte dtls_srtp — ogiltigt i 20.6), ice_support,
+# use_avpf (krävs för RTP/SAVPF-offer), rtcp_mux (krävs av Chrome/Edge),
+# dtls_cert/private_key + dtls_verify = no.
+WEBRTC_OPTIONS_TEMPLATE = """\
+media_encryption = dtls
+ice_support = yes
+use_avpf = yes
+rtcp_mux = yes
+dtls_cert_file = {cert_file}
+dtls_private_key = {private_key}
+dtls_verify = no"""
 
 TRUNK_TEMPLATE = """\
 [{domain}-trunk-{slug}](!)
@@ -165,6 +179,26 @@ class PbxConfigGenerator(models.AbstractModel):
             names = codecs.sorted("priority").mapped("name")
         return "\n".join("allow = %s" % name for name in names)
 
+    @api.model
+    def _webrtc_options(self):
+        """DTLS/ICE/AVPF-optioner för WebRTC (wss) endpoints.
+
+        DTLS-certifikatens sökvägar kan överridas via ir.config_parameter
+        (pbx.dtls.cert_file / pbx.dtls.private_key) — default matchar
+        salt-deployad Asterisk.
+        """
+        ICP = self.env["ir.config_parameter"].sudo()
+        return WEBRTC_OPTIONS_TEMPLATE.format(
+            cert_file=ICP.get_param(
+                "pbx.dtls.cert_file",
+                "/etc/asterisk/keys/asterisk-sip-cert.pem",
+            ),
+            private_key=ICP.get_param(
+                "pbx.dtls.private_key",
+                "/etc/asterisk/keys/asterisk-sip-key.pem",
+            ),
+        )
+
     def generate_pjsip(self, domain, company):
         """Generate pjsip.conf for the instance's own domain."""
         extensions = self.env["pbx.extension"].search(
@@ -184,6 +218,9 @@ class PbxConfigGenerator(models.AbstractModel):
                         username=sub.username,
                         secret=ext.password or sub.secret,
                         transport=sub.transport or "udp",
+                        webrtc_options=(
+                            self._webrtc_options() if sub.transport == "wss" else ""
+                        ),
                         codec_allows=self._codec_allows(company, sub),
                     )
                 )
