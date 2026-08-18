@@ -24,20 +24,19 @@ type = aor
 max_contacts = 10
 remove_existing = yes
 
+[{domain}-auth](!)
+type = auth
+auth_type = userpass
+
 ; --- Extensions ---
 {extensions}
 
 ; --- Trunks ---
 {trunks}
-
-; --- Templates ---
-[{domain}-auth](!)
-type = auth
-auth_type = userpass
 """
 
 EXTENSION_TEMPLATE = """\
-[{domain}-{number}]({domain}-endpoint)
+[{username}]({domain}-endpoint)
 type = endpoint
 context = {domain}-internal
 transport = transport-{transport}
@@ -49,6 +48,9 @@ callerid = "{callerid_name}" <{public_number}@{domain}>
 [{domain}-{number}-auth]({domain}-auth)
 password = {secret}
 username = {username}
+
+[{domain}-{number}]({domain}-aor)
+type = aor
 """
 
 TRUNK_TEMPLATE = """\
@@ -260,15 +262,15 @@ class PbxConfigGenerator(models.AbstractModel):
             busy_gates = ""
             for sub in active_subs:
                 busy_gates += (
-                    'same => n,GotoIf($["${{DEVICE_STATE(PJSIP/{domain}-{number})}}"'
+                    'same => n,GotoIf($["${{DEVICE_STATE(PJSIP/{username})}}"'
                     ' = "INUSE"]?busy)\n'
-                ).format(domain=domain, number=sub.number)
+                ).format(username=sub.username)
 
             # Build dial lines
             dial_lines = ""
             if ext.ring_strategy == "parallel":
                 dial_peers = "&".join(
-                    "PJSIP/%s-%s" % (domain, sub.number)
+                    "PJSIP/%s" % sub.username
                     for sub in active_subs.sorted("sequence")
                 )
                 max_timeout = max(sub.ring_timeout or 30 for sub in active_subs)
@@ -278,8 +280,8 @@ class PbxConfigGenerator(models.AbstractModel):
                 for i, sub in enumerate(sorted_subs):
                     to = sub.ring_timeout or 30
                     dial_lines += (
-                        "same => n,Dial(PJSIP/{domain}-{number},{timeout})\n"
-                    ).format(domain=domain, number=sub.number, timeout=to)
+                        "same => n,Dial(PJSIP/{username},{timeout})\n"
+                    ).format(username=sub.username, timeout=to)
                     if i + 1 < len(sorted_subs):
                         dial_lines += (
                             'same => n,GotoIf($["${{DIALSTATUS}}"'

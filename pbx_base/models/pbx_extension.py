@@ -386,7 +386,7 @@ class PbxExtension(models.Model):
         """Ring användarens första aktiva enhet och koppla målnumret.
 
         Publicerar ``pbx.cmd.Action.Originate`` (→ daemonen kör AMI Originate):
-        channel = PJSIP/<domain>-<sub.number> (användarens telefon ringer först),
+        channel = PJSIP/<username> (användarens telefon ringer först),
         exten = <normaliserat nummer>, context = <domain>-outbound.
         """
         self.ensure_one()
@@ -404,7 +404,7 @@ class PbxExtension(models.Model):
         domain = company.pbx_domain
         if not domain:
             raise UserError(_("Ingen SIP-domän är konfigurerad för företaget."))
-        channel = "PJSIP/%s-%s" % (domain, device.number)
+        channel = "PJSIP/%s" % device.username
         ok = self.env["pbx.mq.publisher"].action_originate(
             server=company.pbx_server_host or "asterisk",
             channel=channel,

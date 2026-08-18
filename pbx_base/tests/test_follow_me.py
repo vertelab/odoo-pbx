@@ -64,13 +64,13 @@ class TestFollowMeDeviceControl(TransactionCase):
             ],
         )
         dialplan = self.generator.generate_extensions("test.se", self.env.company)
-        self.assertIn("DEVICE_STATE(PJSIP/test.se-80201)", dialplan)
-        self.assertIn("DEVICE_STATE(PJSIP/test.se-80202)", dialplan)
+        self.assertIn("DEVICE_STATE(PJSIP/u80201)", dialplan)
+        self.assertIn("DEVICE_STATE(PJSIP/u80202)", dialplan)
         # per-device timeouts in sequential ring
-        self.assertIn("Dial(PJSIP/test.se-80201,15)", dialplan)
-        self.assertIn("Dial(PJSIP/test.se-80202,25)", dialplan)
+        self.assertIn("Dial(PJSIP/u80201,15)", dialplan)
+        self.assertIn("Dial(PJSIP/u80202,25)", dialplan)
         # voicemail-type är inte en ringenhet
-        self.assertNotIn("PJSIP/test.se-80299,", dialplan)
+        self.assertNotIn("PJSIP/u80299,", dialplan)
 
     def test_inactive_device_excluded(self):
         ext = self._make_ext(
@@ -82,8 +82,8 @@ class TestFollowMeDeviceControl(TransactionCase):
             ],
         )
         dialplan = self.generator.generate_extensions("test.se", self.env.company)
-        self.assertIn("PJSIP/test.se-80211,15", dialplan)
-        self.assertNotIn("PJSIP/test.se-80212", dialplan)
+        self.assertIn("PJSIP/u80211,15", dialplan)
+        self.assertNotIn("PJSIP/u80212", dialplan)
 
     def test_parallel_max_timeout(self):
         ext = self._make_ext(
@@ -96,7 +96,7 @@ class TestFollowMeDeviceControl(TransactionCase):
         )
         dialplan = self.generator.generate_extensions("test.se", self.env.company)
         # parallel: längsta timeout används
-        self.assertIn("Dial(PJSIP/test.se-80221&PJSIP/test.se-80222,30)", dialplan)
+        self.assertIn("Dial(PJSIP/u80221&PJSIP/u80222,30)", dialplan)
 
     # ------------------------------------------------------------------
     # Security (self-service: egen anknytning)

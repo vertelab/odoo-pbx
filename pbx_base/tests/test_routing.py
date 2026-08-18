@@ -256,7 +256,7 @@ class TestPbxRouting(TransactionCase):
         # extension reachable internally -> ring-group app context
         self.assertIn("exten => 8010,1,Goto(test.se-ext-8010,s,1)", dialplan)
         self.assertIn("[test.se-ext-8010]", dialplan)
-        self.assertIn("Dial(PJSIP/test.se-80101,10)", dialplan)
+        self.assertIn("Dial(PJSIP/u80101,10)", dialplan)
         # voicemail app context exists because ext 10 has a voicemail sub
         self.assertIn("[test.se-vm-8010]", dialplan)
         self.assertIn("Voicemail(8010@test.se,u)", dialplan)

@@ -66,7 +66,7 @@ class TestClickToCall(TransactionCase):
         res = ext.action_click_to_call("0701234567")
         browser = ext.sub_extension_ids.filtered(lambda s: s.type == "browser")
         self.assertEqual(res["device"], browser.number)
-        self.assertTrue(res["channel"].startswith("PJSIP/test.se-"))
+        self.assertTrue(res["channel"].startswith("PJSIP/u"))
         self.assertEqual(res["exten"], "0701234567")
 
     def test_inactive_device_skipped(self):

@@ -47,7 +47,7 @@ class TestPbxCodecs(TransactionCase):
         """Enhet utan codec-rader → global default i priority-ordning."""
         sub = self._make_sub()
         pjsip = self.generator.generate_pjsip("test.se", self.env.company.id)
-        block = "[test.se-%s](test.se-endpoint)" % sub.number
+        block = "[%s](test.se-endpoint)" % sub.username
         self.assertIn(block, pjsip)
         # allow-rader i priority-ordning (g722 → ulaw → alaw → opus)
         idx_g722 = pjsip.index("allow = g722")
@@ -68,7 +68,7 @@ class TestPbxCodecs(TransactionCase):
             }
         )
         pjsip = self.generator.generate_pjsip("test.se", self.env.company.id)
-        block_start = pjsip.index("[test.se-%s]" % sub.number)
+        block_start = pjsip.index("[%s](test.se-endpoint)" % sub.username)
         block_end = pjsip.index("[test.se-%s-auth]" % sub.number)
         block = pjsip[block_start:block_end]
         self.assertLess(block.index("allow = g722"), block.index("allow = ulaw"))
@@ -79,7 +79,7 @@ class TestPbxCodecs(TransactionCase):
         sub = self._make_sub(device_type="browser")
         sub.write({"codec_ids": [(0, 0, {"sequence": 10, "codec_id": alaw.id})]})
         pjsip = self.generator.generate_pjsip("test.se", self.env.company.id)
-        block_start = pjsip.index("[test.se-%s]" % sub.number)
+        block_start = pjsip.index("[%s](test.se-endpoint)" % sub.username)
         block_end = pjsip.index("[test.se-%s-auth]" % sub.number)
         block = pjsip[block_start:block_end]
         self.assertLess(block.index("allow = opus"), block.index("allow = alaw"))
