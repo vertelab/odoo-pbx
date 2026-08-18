@@ -24,11 +24,6 @@ type = aor
 max_contacts = 10
 remove_existing = yes
 
-[{domain}-identify]
-type = identify
-match = {domain}
-endpoint = {domain}-endpoint
-
 ; --- Extensions ---
 {extensions}
 
