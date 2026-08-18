@@ -42,6 +42,47 @@ docker compose up -d
 
 See `~/plan/odoo-pbx/openspec/` for full design docs and specs.
 
+## Config deploy (pbx-freepbx-core)
+
+Odoo genererar Asterisk-konfig och publicerar den via RabbitMQ
+(`pbx.config.<domän>`); daemonen skriver filerna och bekräftar via
+`pbx.state.Config.<domän>` (MQ) och POST till `/pbx/webhook`.
+
+### Config-typer (meddelandets `files`-lista)
+
+| `config_type` | Målkatalog | Filnamn |
+|---|---|---|
+| `tenant` | `tenants/` | `<domän>-<filnamn>` |
+| `manager` | `manager.d/` | `<domän>.conf` |
+| `ari` | `ari.d/` | `<domän>.conf` |
+
+Äldre format (`files` som dict `{filnamn: innehåll}`) accepteras som
+`tenant`-filer.
+
+### Versionshantering
+
+- Odoo räknar upp `pbx.config.version.<domän>` (ICP) vid varje publish.
+- Daemonen sparar applicerad version i `tenants/.state.json`; meddelanden
+  med `version <=` applicerad ignoreras (ack `skipped`).
+- Ack-status: `applied` | `error` | `skipped`.
+
+### Sync-state i Odoo (systray/Sync)
+
+- **Skickat** (`sent`): publicerat, väntar på bekräftelse — `config_dirty`
+  kvarstår.
+- **Applicerat** (`applied`): daemonen bekräftade aktuell version via
+  webhook → `config_dirty` nollställs.
+- **Fel** (`error`): daemonen rapporterade fel (meddelandet sparas på
+  `res.company.pbx_config_sync_error`).
+
+### Softphone WebSocket (ws_server)
+
+`voip.pbx.ws_server` härleds automatiskt från `res.company.pbx_server_host`
++ `pbx_sip_ws_port` (default 8089) med schema från browser-sub-extensionens
+transport, t.ex. `wss://<host>:8089/ws`. Explicit override:
+`res.company.pbx_ws_server` (används exakt). Självläkande — skrivs även
+på befintlig voip.pbx vid synk.
+
 ## License
 
 AGPL-3.0

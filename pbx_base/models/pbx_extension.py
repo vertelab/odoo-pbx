@@ -151,7 +151,11 @@ class PbxExtension(models.Model):
         """Synka voip_oca-inställningarna på den kopplade användaren.
 
         - PBX (voip.pbx) hämtas/skapas från företagets Asterisk-konfig
-          (domain + ws_server från res.company.pbx_server_host)
+        - ws_server: explicit `company.pbx_ws_server` vinner; annars härleds
+          `{ws|wss}://<host>:<port>/ws` (schema från browser-sub-extensionens
+          transport, port från `pbx_sip_ws_port`, default 8089). Skrivs även
+          på befintlig voip.pbx (självläkande) så gamla installationer med
+          felaktig adress rättas vid nästa synk.
         - Username från den implicita browser-sub-extensionen (Odoo VOIP)
         - Lösenord = personens delade SIP-lösenord (gäller alla enheter)
         """
@@ -160,19 +164,19 @@ class PbxExtension(models.Model):
             return
         company = self.company_id
         domain = company.pbx_domain or ""
+        browser_sub = self.sub_extension_ids.filtered(lambda s: s.type == "browser")[:1]
         pbx = self.env["voip.pbx"].search([("domain", "=", domain)], limit=1)
         if not pbx:
-            host = company.pbx_server_host or "localhost"
-            ws_server = host if host.startswith(("ws://", "wss://")) else "wss://%s" % host
             pbx = self.env["voip.pbx"].create(
                 {
                     "name": company.pbx_domain or company.name or "PBX",
                     "domain": domain,
-                    "ws_server": ws_server,
                     "mode": "prod",
                 }
             )
-        browser_sub = self.sub_extension_ids.filtered(lambda s: s.type == "browser")[:1]
+        ws_server = self._derive_ws_server(company, browser_sub)
+        if pbx.ws_server != ws_server:
+            pbx.ws_server = ws_server
         self.user_id.write(
             {
                 "voip_pbx_id": pbx.id,
@@ -180,6 +184,25 @@ class PbxExtension(models.Model):
                 "voip_password": self.password or "",
             }
         )
+
+    @staticmethod
+    def _derive_ws_server(company, browser_sub):
+        """Härled WebSocket-URL för Odoo-softphonen (SIP.js).
+
+        Prioritet:
+        1. `company.pbx_ws_server` — explicit override (används exakt).
+        2. Legacy: `pbx_server_host` som redan innehåller ws:// eller wss://.
+        3. Auto: `{ws|wss}://<host>:<port>/ws` — schema från browser-
+           sub-extensionens transport, port från pbx_sip_ws_port (default 8089).
+        """
+        if company.pbx_ws_server:
+            return company.pbx_ws_server.strip()
+        host = company.pbx_server_host or "localhost"
+        if host.startswith(("ws://", "wss://")):
+            return host
+        scheme = "wss" if browser_sub and browser_sub.transport == "wss" else "ws"
+        port = company.pbx_sip_ws_port or 8089
+        return "%s://%s:%s/ws" % (scheme, host, port)
     description = fields.Char(
         string="Description",
         help="Visas i Operator Panel-panelen, t.ex. 'Reception', 'Anna – Support'",

@@ -17,6 +17,24 @@
     box-shadow: 0 0 0 rgba(217, 83, 79, 0.4);
 }
 
+.o_pbx_sync_systray .o_pbx_sync_btn.o_pbx_sync_sent {
+    color: #fff;
+    background: #f0ad4e;
+    border-radius: 4px;
+    animation: o_pbx_sync_pulse 1.5s ease-in-out infinite;
+    box-shadow: 0 0 0 rgba(240, 173, 78, 0.4);
+}
+
+.o_pbx_sync_systray .o_pbx_sync_btn.o_pbx_sync_error {
+    color: #fff;
+    background: #d9534f;
+    border-radius: 4px;
+}
+
+.o_pbx_sync_systray .o_pbx_sync_btn.o_pbx_sync_ok {
+    color: #28a745;
+}
+
 .o_pbx_sync_systray .o_pbx_sync_badge {
     position: absolute;
     top: 2px;
@@ -26,6 +44,10 @@
     border-radius: 50%;
     background: #d9534f;
     border: 1px solid #fff;
+}
+
+.o_pbx_sync_systray .o_pbx_sync_badge.o_pbx_sync_badge_error {
+    background: #d9534f;
 }
 
 @keyframes o_pbx_sync_pulse {

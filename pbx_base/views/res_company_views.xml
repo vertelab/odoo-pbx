@@ -15,7 +15,10 @@
                     </group>
                     <group>
                         <field name="pbx_sip_port"/>
+                        <field name="pbx_sip_ws_port"/>
+                        <field name="pbx_ws_server"/>
                         <field name="pbx_turn_enabled"/>
+                        <field name="pbx_config_sync_state" readonly="1"/>
                     </group>
                 </group>
             </xpath>

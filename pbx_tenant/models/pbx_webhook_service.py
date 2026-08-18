@@ -30,6 +30,14 @@ class PbxWebhookService(models.AbstractModel):
         event_name = event.get("Event", "")
         payload = {"topic": topic, "event": event}
 
+        # 0) Config-ack från daemonen (pbx-freepbx-core) — uppdatera
+        #    företagets sync-state innan övriga händelser (inget bus-flöde).
+        if topic.startswith("pbx.state.Config."):
+            try:
+                self._handle_config_ack(tenant_domain, event)
+            except Exception as e:
+                _logger.warning("Config ack handling failed for %s: %s", tenant_domain, e)
+
         # 1) Real-time broadcast — must never be blocked
         # Odoo 18 bus: _sendone(channel, notification_type, message)
         self.env["bus.bus"]._sendone(
@@ -67,6 +75,45 @@ class PbxWebhookService(models.AbstractModel):
                 self._handle_voicemail(tenant_domain, event)
             except Exception as e:
                 _logger.warning("Voicemail handling failed: %s", e)
+
+    def _handle_config_ack(self, tenant_domain, event):
+        """Uppdatera företagets sync-state från daemonens config-ack.
+
+        Payload (event): {"domain": ..., "version": N, "status":
+        "applied"|"skipped"|"error", "error": "..."}.
+
+        - applied/skipped: om versionen är den (eller nyare än den)
+          publicerade nollställs config_dirty och applied-version sätts.
+        - error: error-text sparas, config_dirty kvarstår.
+        """
+        company = self.env["res.company"].search(
+            [("pbx_domain", "=", tenant_domain)], limit=1
+        )
+        if not company:
+            _logger.warning("Config ack for unknown domain: %s", tenant_domain)
+            return
+        version = int(event.get("version", 0) or 0)
+        status = event.get("status", "")
+        published = company.pbx_config_version or 0
+        if status in ("applied", "skipped"):
+            if version >= published:
+                company.write(
+                    {
+                        "config_dirty": False,
+                        "pbx_config_applied_version": version,
+                        "pbx_config_sync_error": False,
+                    }
+                )
+                _logger.info(
+                    "Config %s v%s confirmed applied for %s",
+                    tenant_domain, version, status,
+                )
+        elif status == "error":
+            company.write({"pbx_config_sync_error": event.get("error") or "Okänt fel"})
+            _logger.error(
+                "Config apply failed for %s v%s: %s",
+                tenant_domain, version, event.get("error"),
+            )
 
     def _handle_voicemail(self, tenant, event):
         mailbox = event.get("Mailbox", "")  # ext@domain

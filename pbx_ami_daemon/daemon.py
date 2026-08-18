@@ -377,68 +377,189 @@ class CommandServer:
 class ConfigConsumer:
     """Applies Asterisk config delivered by Odoo via pbx.config.#.
 
-    Message body:
+    Message body (new format):
         {
           "domain": "vertel.se",
           "version": 42,
-          "files": {"pjsip.conf": "...", "extensions.conf": "..."},
+          "files": [
+            {"name": "pjsip_wizard.conf", "config_type": "tenant",
+             "content": "..."},
+            {"name": "vertel.se.conf", "config_type": "manager",
+             "content": "..."},
+            {"name": "vertel.se.conf", "config_type": "ari",
+             "content": "..."}
+          ],
           "reload": true
         }
 
-    Files are written atomically to {config_path}/{domain}-{filename}
-    and, when reload is requested, Asterisk is reloaded over AMI.
+    Legacy format (dict) is still accepted: ``{"filename": "content"}`` —
+    all files are treated as tenant config.
+
+    Files are routed by ``config_type``:
+      - tenant  → ``{config_path}/tenants/<domain>-<name>``
+      - manager → ``{manager_path}/<name>``  (must be ``<domain>.conf``)
+      - ari     → ``{ari_path}/<name>``      (must be ``<domain>.conf``)
+
+    Versioning: the last applied version per domain is kept in
+    ``{config_path}/.state.json``; messages with version <= applied are
+    ignored (acked as ``skipped``).
     """
 
-    def __init__(self, ami: AMIConnection, config_path: str, publisher=None):
+    CONFIG_TYPES = ("tenant", "manager", "ari")
+
+    def __init__(
+        self, ami, config_path, publisher=None, webhook=None,
+        manager_path=None, ari_path=None,
+    ):
         self.ami = ami
         self.config_path = config_path
+        self.manager_path = manager_path or os.path.join(
+            os.path.dirname(config_path), "manager.d"
+        )
+        self.ari_path = ari_path or os.path.join(
+            os.path.dirname(config_path), "ari.d"
+        )
         self.publisher = publisher
+        self.webhook = webhook
+        self._state_path = os.path.join(config_path, ".state.json")
+        self._state_lock = asyncio.Lock()
+
+    # ── Version state ─────────────────────────────────────────────
+
+    def _load_state(self) -> dict:
+        try:
+            with open(self._state_path) as f:
+                return json.load(f)
+        except (OSError, ValueError):
+            return {}
+
+    async def _save_state(self, domain: str, version: int):
+        async with self._state_lock:
+            state = self._load_state()
+            if int(state.get(domain, {}).get("version", 0) or 0) >= version:
+                return
+            state[domain] = {"version": version}
+            tmp = self._state_path + ".tmp"
+            with open(tmp, "w") as f:
+                json.dump(state, f)
+            os.replace(tmp, self._state_path)
+
+    def _last_applied(self, domain: str) -> int:
+        return int(
+            self._load_state().get(domain, {}).get("version", 0) or 0
+        )
+
+    # ── Parsing & routing ─────────────────────────────────────────
+
+    @staticmethod
+    def _parse_files(files) -> list:
+        """Accept new list format or legacy dict; return list of
+        {"name", "config_type", "content"}."""
+        if isinstance(files, dict):
+            return [
+                {"name": name, "config_type": "tenant", "content": content}
+                for name, content in files.items()
+            ]
+        if isinstance(files, list):
+            return [
+                {
+                    "name": item.get("name", ""),
+                    "config_type": item.get("config_type", "tenant"),
+                    "content": item.get("content", ""),
+                }
+                for item in files
+                if isinstance(item, dict)
+            ]
+        return []
+
+    def _target_for(self, domain: str, item: dict):
+        """Return (abs_path, display) or None if the file must be skipped."""
+        name = os.path.basename(item.get("name", "") or "")
+        config_type = item.get("config_type", "tenant")
+        if not name:
+            return None
+        if config_type not in self.CONFIG_TYPES:
+            logger.warning("Unknown config_type %s for %s — skipped", config_type, name)
+            return None
+        if config_type == "tenant":
+            return os.path.join(self.config_path, f"{domain}-{name}"), name
+        # manager/ari: instansen får bara skriva sin egen fil
+        expected = f"{domain}.conf"
+        if name != expected:
+            logger.warning(
+                "%s file %s does not match instance prefix %s — skipped",
+                config_type, name, expected,
+            )
+            return None
+        base = self.manager_path if config_type == "manager" else self.ari_path
+        return os.path.join(base, name), name
+
+    async def _publish_ack(self, domain, version, status, error="", skipped=False):
+        ack = {"domain": domain, "version": version, "status": status}
+        if error:
+            ack["error"] = error
+        if skipped:
+            ack["skipped"] = True
+        if self.publisher:
+            try:
+                await self.publisher(f"pbx.state.Config.{domain}", ack)
+            except Exception as e:
+                logger.debug("Ack publish failed: %s", e)
+        if self.webhook:
+            try:
+                await self.webhook.publish(
+                    domain, f"pbx.state.Config.{domain}", ack
+                )
+            except Exception as e:
+                logger.debug("Webhook ack failed: %s", e)
 
     async def apply_config(self, message):
         body = json.loads(message.body.decode())
         domain = body.get("domain")
-        version = body.get("version", 0)
+        version = int(body.get("version", 0) or 0)
         files = body.get("files", {})
-        if not domain or not isinstance(files, dict):
+        if not domain or not isinstance(files, (dict, list)):
             logger.warning("Config message missing domain/files")
             return
 
+        # Stale version → ignore (ack skipped)
+        if version and version <= self._last_applied(domain):
+            logger.info(
+                "Ignoring stale config %s v%s (applied v%s)",
+                domain, version, self._last_applied(domain),
+            )
+            await self._publish_ack(domain, version, "skipped", skipped=True)
+            return
+
+        written = []
         try:
             os.makedirs(self.config_path, exist_ok=True)
-            for filename, content in files.items():
-                safe_name = os.path.basename(filename)
-                filepath = os.path.join(self.config_path, f"{domain}-{safe_name}")
+            os.makedirs(self.manager_path, exist_ok=True)
+            os.makedirs(self.ari_path, exist_ok=True)
+            for item in self._parse_files(files):
+                target = self._target_for(domain, item)
+                if not target:
+                    continue
+                filepath, display = target
                 tmp = filepath + ".tmp"
                 with open(tmp, "w") as f:
-                    f.write(content or "")
+                    f.write(item.get("content") or "")
                 os.replace(tmp, filepath)
+                written.append(display)
                 logger.info("Wrote %s (version %s)", filepath, version)
 
-            if body.get("reload", True):
+            if body.get("reload", True) and written:
                 for cmd in ("pjsip reload", "dialplan reload", "voicemail reload"):
                     try:
                         await self.ami.send_action("Command", Command=cmd, wait_response=False)
                     except Exception as e:
                         logger.error("Reload %s failed: %s", cmd, e)
 
-            if self.publisher:
-                try:
-                    await self.publisher(
-                        f"pbx.state.Config.{domain}",
-                        {"domain": domain, "version": version, "status": "applied"},
-                    )
-                except Exception as e:
-                    logger.debug("Ack publish failed: %s", e)
+            await self._save_state(domain, version)
+            await self._publish_ack(domain, version, "applied")
         except Exception as e:
             logger.error("Config apply failed for %s: %s", domain, e)
-            if self.publisher:
-                try:
-                    await self.publisher(
-                        f"pbx.state.Config.{domain}",
-                        {"domain": domain, "version": version, "status": "error", "error": str(e)},
-                    )
-                except Exception:
-                    pass
+            await self._publish_ack(domain, version, "error", error=str(e))
 
 
 # ──────────────────────────────────────────────────────────────────
@@ -535,7 +656,14 @@ async def amain(config_path: str):
         cfg_queue = await channel.declare_queue("pbx-ami-daemon-config", durable=True)
         await cfg_queue.bind(exchange, routing_key="pbx.config.#")
 
-        config_consumer = ConfigConsumer(ami, tenants_config_path, publisher)
+        config_consumer = ConfigConsumer(
+            ami,
+            tenants_config_path,
+            publisher,
+            webhook=webhook,
+            manager_path=cfg_tenants.get("manager_path"),
+            ari_path=cfg_tenants.get("ari_path"),
+        )
 
         async def on_config(message: aio_pika.IncomingMessage):
             async with message.process():

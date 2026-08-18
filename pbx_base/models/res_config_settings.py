@@ -18,6 +18,8 @@ PBX_ODOO_CONF_KEYS = (
     "pbx_api_key",
     "pbx_odoo_url",
     "pbx_sip_port",
+    "pbx_sip_ws_port",
+    "pbx_ws_server",
     "pbx_turn_enabled",
     "pbx_turn_server",
     "pbx_mq_host",
@@ -77,6 +79,19 @@ class ResConfigSettings(models.TransientModel):
         related="company_id.pbx_sip_port",
         readonly=False,
         help="SIP-port för enheter (per företag).",
+    )
+    pbx_sip_ws_port = fields.Integer(
+        string="WebSocket Port",
+        related="company_id.pbx_sip_ws_port",
+        readonly=False,
+        help="Asterisk HTTP/WebSocket-port för Odoo-softphonen (per företag).",
+    )
+    pbx_ws_server = fields.Char(
+        string="WebSocket Server (override)",
+        related="company_id.pbx_ws_server",
+        readonly=False,
+        help="Explicit WebSocket-URL för Odoo-softphonen (per företag). "
+             "Tom = härled automatiskt.",
     )
     pbx_turn_enabled = fields.Boolean(
         string="TURN aktiverad",

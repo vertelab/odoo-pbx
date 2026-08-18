@@ -15,6 +15,10 @@ export class PbxSyncSystray extends Component {
         this.state = useState({
             dirty: false,
             domain: "",
+            syncState: "clean",
+            version: 0,
+            appliedVersion: 0,
+            error: "",
             syncing: false,
         });
         this.canSync = false;
@@ -48,10 +52,54 @@ export class PbxSyncSystray extends Component {
             );
             this.state.dirty = Boolean(state.dirty);
             this.state.domain = state.domain || "";
+            this.state.syncState = state.state || "clean";
+            this.state.version = state.version || 0;
+            this.state.appliedVersion = state.applied_version || 0;
+            this.state.error = state.error || "";
             this.canSync = Boolean(state.can_sync);
         } catch (err) {
             // tyst — ingen PBX-konfig än
         }
+    }
+
+    pbxSyncClass() {
+        if (this.state.syncState === "sent") {
+            return "o_pbx_sync_sent";
+        }
+        if (this.state.syncState === "error") {
+            return "o_pbx_sync_error";
+        }
+        if (this.state.dirty) {
+            return "o_pbx_sync_dirty";
+        }
+        return "o_pbx_sync_ok";
+    }
+
+    pbxSyncIcon() {
+        if (this.state.syncState === "error") {
+            return "fa-exclamation-triangle";
+        }
+        if (this.state.syncState === "sent" || this.state.dirty) {
+            return "fa-cloud-upload";
+        }
+        return "fa-cloud";
+    }
+
+    pbxSyncTitle() {
+        const version =
+            this.state.appliedVersion >= this.state.version
+                ? this.state.version
+                : this.state.version;
+        if (this.state.syncState === "error") {
+            return `PBX: fel vid applicering (v${this.state.version}) — ${this.state.error || "okänt fel"}`;
+        }
+        if (this.state.syncState === "sent") {
+            return `PBX: v${this.state.version} skickat — väntar på bekräftelse`;
+        }
+        if (this.state.dirty) {
+            return "PBX: ändringar väntar på synk";
+        }
+        return `PBX: konfiguration applicerad (v${version})`;
     }
 
     async _sync() {

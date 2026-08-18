@@ -34,6 +34,14 @@
                                             <label string="SIP Port" for="pbx_sip_port" class="col-lg-6 o_light_label"/>
                                             <field name="pbx_sip_port" class="col-lg-6" readonly="pbx_config_managed"/>
                                         </div>
+                                        <div class="row mt16">
+                                            <label string="WebSocket Port" for="pbx_sip_ws_port" class="col-lg-6 o_light_label"/>
+                                            <field name="pbx_sip_ws_port" class="col-lg-6" readonly="pbx_config_managed"/>
+                                        </div>
+                                        <div class="row mt16">
+                                            <label string="WebSocket Server (override)" for="pbx_ws_server" class="col-lg-6 o_light_label"/>
+                                            <field name="pbx_ws_server" class="col-lg-6" readonly="pbx_config_managed"/>
+                                        </div>
                                     </div>
                                 </setting>
                             </div>

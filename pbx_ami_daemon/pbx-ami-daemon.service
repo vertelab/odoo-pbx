@@ -22,7 +22,7 @@ NoNewPrivileges=yes
 ProtectSystem=full
 ProtectHome=yes
 ReadOnlyPaths=/
-ReadWritePaths=/var/log /var/run /etc/asterisk/tenants
+ReadWritePaths=/var/log /var/run /etc/asterisk/tenants /etc/asterisk/manager.d /etc/asterisk/ari.d
 
 [Install]
 WantedBy=multi-user.target

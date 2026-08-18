@@ -22,6 +22,8 @@ webhook:
 
 tenants:
   config_path: /etc/asterisk/tenants/
+  manager_path: /etc/asterisk/manager.d   # AMI-permissions per instans (include: manager.d/*.conf)
+  ari_path: /etc/asterisk/ari.d           # ARI-users per instans (include: ari.d/*.conf)
 
 daemon:
   pid_file: /var/run/pbx-ami-daemon.pid

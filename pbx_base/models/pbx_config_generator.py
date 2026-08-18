@@ -45,6 +45,7 @@ EXTENSION_TEMPLATE = """\
 [{domain}-{number}]({domain}-endpoint)
 type = endpoint
 context = {domain}-internal
+transport = transport-{transport}
 auth = {domain}-{number}-auth
 aors = {domain}-{number}
 callerid = "{callerid_name}" <{public_number}@{domain}>
@@ -185,6 +186,7 @@ class PbxConfigGenerator(models.AbstractModel):
                         callerid_name=ext.callerid_name or ext.user_id.name or "",
                         username=sub.username,
                         secret=ext.password or sub.secret,
+                        transport=sub.transport or "udp",
                         codec_allows=self._codec_allows(company, sub),
                     )
                 )
@@ -695,12 +697,28 @@ class PbxConfigGenerator(models.AbstractModel):
 
         The pbx_ami_daemon consumes `pbx.config.<domain>` and writes the
         files to /etc/asterisk/tenants/ then reloads Asterisk.
+
+        Returns the published version (int) on success, False on failure.
+        Records the version on the company — `config_dirty` stays True
+        until the daemon acks the version as applied (pbx-freepbx-core).
         """
         configs = self.generate_all(domain, company)
         mq = self.env["pbx.mq.publisher"]
-        if mq.publish_config(domain, configs):
-            _logger.info("Deployed config via MQ for domain %s", domain)
-            return True
+        version = mq.publish_config(domain, configs)
+        if version:
+            company_rec = (
+                company
+                if isinstance(company, models.Model)
+                else self.env["res.company"].browse(company)
+            )
+            company_rec.write(
+                {
+                    "pbx_config_version": version,
+                    "pbx_config_sync_error": False,
+                }
+            )
+            _logger.info("Deployed config via MQ for domain %s (version %s)", domain, version)
+            return version
         _logger.warning("MQ not configured — config not deployed for %s", domain)
         return False
 
@@ -712,12 +730,18 @@ class PbxConfigGenerator(models.AbstractModel):
         superuser). Att anropa res.users.has_group via RPC fungerar inte
         (has_group är @api.readonly och call_kw tolkar strängen som ids) —
         därför beräknas can_sync här server-side.
+
+        state: clean | sent | applied | error (res.company.pbx_config_sync_state).
         """
         company = self.env.company
         return {
             "dirty": bool(company.config_dirty),
             "domain": company.pbx_domain or "",
             "can_sync": self.env.user._is_internal(),
+            "state": company.pbx_config_sync_state or "clean",
+            "version": company.pbx_config_version or 0,
+            "applied_version": company.pbx_config_applied_version or 0,
+            "error": company.pbx_config_sync_error or "",
         }
 
     @api.model
@@ -741,10 +765,10 @@ class PbxConfigGenerator(models.AbstractModel):
             }
         ok = self.write_config(domain, company)
         if ok:
-            company.config_dirty = False
             return {
                 "ok": True,
-                "message": "Konfiguration skickad till Asterisk för %s." % domain,
+                "message": "Konfiguration skickad till Asterisk för %s (version %s). "
+                "Väntar på bekräftelse…" % (domain, ok),
             }
         return {
             "ok": False,

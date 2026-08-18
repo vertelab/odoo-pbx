@@ -1,7 +1,7 @@
 # Copyright 2026 Vertel AB
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 
-from odoo import fields, models
+from odoo import api, fields, models
 
 
 class ResCompany(models.Model):
@@ -37,6 +37,65 @@ class ResCompany(models.Model):
         default="5061",
         help="SIP-port för enheter (5061 för WSS/WebRTC, 5060 för UDP/TCP)",
     )
+    pbx_sip_ws_port = fields.Integer(
+        string="WebSocket Port",
+        default=8089,
+        help="Asterisk HTTP/WebSocket-port för Odoo-softphonen (SIP.js). "
+             "Default 8089 (WSS). Används vid härledning av ws_server om "
+             "inget explicit pbx_ws_server anges.",
+    )
+    pbx_ws_server = fields.Char(
+        string="WebSocket Server (override)",
+        help="Explicit WebSocket-URL för Odoo-softphonen, t.ex. "
+             "wss://192.168.11.213:8089/ws. Tom = härled automatiskt från "
+             "pbx_server_host + pbx_sip_ws_port.",
+    )
+    pbx_config_version = fields.Integer(
+        string="PBX Config Version",
+        default=0,
+        help="Senast publicerade config-version (räknas upp vid varje sync).",
+    )
+    pbx_config_applied_version = fields.Integer(
+        string="PBX Config Applied Version",
+        default=0,
+        help="Senast bekräftat applicerade config-version (från daemon-ack).",
+    )
+    pbx_config_sync_error = fields.Text(
+        string="PBX Config Sync Error",
+        help="Senaste felmeddelande från daemon-ack (tom = inget fel).",
+    )
+    pbx_config_sync_state = fields.Selection(
+        [
+            ("clean", "Clean"),
+            ("sent", "Sent"),
+            ("applied", "Applied"),
+            ("error", "Error"),
+        ],
+        string="PBX Config Sync State",
+        compute="_compute_pbx_config_sync_state",
+        help="Synk-status: clean/applied = bekräftat, sent = publicerat utan "
+             "bekräftelse, error = daemon rapporterade fel.",
+    )
+
+    @api.depends(
+        "config_dirty",
+        "pbx_config_version",
+        "pbx_config_applied_version",
+        "pbx_config_sync_error",
+    )
+    def _compute_pbx_config_sync_state(self):
+        for rec in self:
+            if (
+                rec.pbx_config_sync_error
+                and rec.pbx_config_applied_version < rec.pbx_config_version
+            ):
+                rec.pbx_config_sync_state = "error"
+            elif rec.pbx_config_applied_version >= rec.pbx_config_version:
+                rec.pbx_config_sync_state = "applied"
+            elif rec.pbx_config_version or rec.config_dirty:
+                rec.pbx_config_sync_state = "sent"
+            else:
+                rec.pbx_config_sync_state = "clean"
     pbx_turn_enabled = fields.Boolean(
         string="TURN aktiverad",
         default=False,

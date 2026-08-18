@@ -127,7 +127,10 @@ class PbxMqPublisher(models.AbstractModel):
     # ── Config deploy (Odoo-ägd generering → daemon) ────────────
 
     def publish_config(self, domain, configs, version=None, reload=True):
-        """Publish a generated config set for the instance's domain."""
+        """Publish a generated config set for the instance's domain.
+
+        Returns the published version (int) on success, False on failure.
+        """
         if version is None:
             version = int(
                 self.env["ir.config_parameter"]
@@ -137,7 +140,7 @@ class PbxMqPublisher(models.AbstractModel):
             self.env["ir.config_parameter"].sudo().set_param(
                 f"pbx.config.version.{domain}", str(version)
             )
-        return self.publish(
+        ok = self.publish(
             f"pbx.config.{domain}",
             {
                 "domain": domain,
@@ -146,3 +149,4 @@ class PbxMqPublisher(models.AbstractModel):
                 "reload": reload,
             },
         )
+        return version if ok else False
