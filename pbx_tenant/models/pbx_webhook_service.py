@@ -109,7 +109,12 @@ class PbxWebhookService(models.AbstractModel):
                     tenant_domain, version, status,
                 )
         elif status == "error":
-            company.write({"pbx_config_sync_error": event.get("error") or "Okänt fel"})
+            company.write(
+                {
+                    "config_dirty": True,
+                    "pbx_config_sync_error": event.get("error") or "Okänt fel",
+                }
+            )
             _logger.error(
                 "Config apply failed for %s v%s: %s",
                 tenant_domain, version, event.get("error"),
