@@ -41,7 +41,7 @@ type = endpoint
 context = {domain}-internal
 transport = transport-{transport}
 auth = {domain}-{number}-auth
-aors = {domain}-{number}
+aors = {username}
 callerid = "{callerid_name}" <{public_number}@{domain}>
 {codec_allows}
 
@@ -49,7 +49,7 @@ callerid = "{callerid_name}" <{public_number}@{domain}>
 password = {secret}
 username = {username}
 
-[{domain}-{number}]({domain}-aor)
+[{username}]({domain}-aor)
 type = aor
 """
 
