@@ -357,7 +357,11 @@ class CommandServer:
             params["Data"] = f"SIP/{extension},{mode}"
 
         try:
-            response = await self.ami.send_action(action, **params)
+            # Fire-and-forget: read_events() has a pending readline() on the same
+            # stream — a concurrent readuntil() would raise "readuntil() called
+            # while another coroutine is already waiting for incoming data".
+            # Response is consumed by the event loop and dropped (no Event header).
+            response = await self.ami.send_action(action, wait_response=False, **params)
             logger.debug("AMI action %s response: %s", action, response)
             return response
         except Exception as e:
