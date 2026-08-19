@@ -68,13 +68,13 @@ dtls_private_key = {private_key}
 dtls_verify = no"""
 
 TRUNK_TEMPLATE = """\
-[{domain}-trunk-{slug}](!)
+[{domain}-trunk-{slug}]
 type = endpoint
 context = {domain}-from-trunk
 disallow = all
 {codec_allows}
 outbound_auth = {domain}-trunk-{slug}-auth
-aors = {domain}-trunk-{slug}
+aors = {domain}-trunk-{slug}-aor
 callerid = "{callerid}"
 
 [{domain}-trunk-{slug}-auth]
