@@ -15,8 +15,8 @@ class PbxQueue(models.Model):
     extension = fields.Char(
         required=True,
         default=lambda self: self._default_extension(),
-        help="Internt anknytningsnummer för kön. Auto-genereras med ett ledigt "
-             "nummer (fritt från extensioner, andra köer, IVR m.m.) vid ny kö.",
+        help="Internt anknytningsnummer för kön. Auto-genereras i tjänste-"
+             "intervallet (4xx — separat från användarextensionerna) vid ny kö.",
     )
     strategy = fields.Selection(
         [
@@ -74,13 +74,15 @@ class PbxQueue(models.Model):
 
     @api.model
     def _default_extension(self):
-        """Lägsta lediga dialbara nummer för en ny kö."""
+        """Lägsta lediga nummer i köernas tjänsteintervall (4xx)."""
         if "pbx.numbering" not in self.env:
             return ""
-        _, number = self.env["pbx.numbering"]._next_free_extension_number(
-            self.env.company, include_existing=False
+        return (
+            self.env["pbx.numbering"]._next_free_service_number(
+                self.env.company, "queue"
+            )
+            or ""
         )
-        return number or ""
 
     @api.model_create_multi
     def create(self, vals_list):
@@ -88,8 +90,8 @@ class PbxQueue(models.Model):
             if not vals.get("extension"):
                 company_id = vals.get("company_id") or self.env.company.id
                 company = self.env["res.company"].browse(company_id)
-                _, number = self.env["pbx.numbering"]._next_free_extension_number(
-                    company, include_existing=False
+                number = self.env["pbx.numbering"]._next_free_service_number(
+                    company, "queue"
                 )
                 if number:
                     vals["extension"] = number
