@@ -546,11 +546,17 @@ class ConfigConsumer:
                 with open(tmp, "w") as f:
                     f.write(item.get("content") or "")
                 os.replace(tmp, filepath)
-                written.append(display)
+                written.append((display, item.get("config_type", "tenant")))
                 logger.info("Wrote %s (version %s)", filepath, version)
 
             if body.get("reload", True) and written:
-                for cmd in ("pjsip reload", "dialplan reload", "voicemail reload"):
+                reload_cmds = ["pjsip reload", "dialplan reload", "voicemail reload"]
+                types_written = {t for _, t in written}
+                if "manager" in types_written:
+                    reload_cmds.append("manager reload")
+                if "ari" in types_written:
+                    reload_cmds.append("module reload res_ari.so")
+                for cmd in reload_cmds:
                     try:
                         await self.ami.send_action("Command", Command=cmd, wait_response=False)
                     except Exception as e:
