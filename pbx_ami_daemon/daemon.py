@@ -187,15 +187,25 @@ class AMIConnection:
 
 
 def _load_known_domains(config_path: str) -> set:
-    """Kända domäner från tenant-config-filerna (tenants/<domän>-*.conf)."""
+    """Kända domäner från tenant-config-filerna (tenants/<domän>-*.conf).
+
+    Använder suffix-strippning (inte split på bindestreck) eftersom domänen
+    själv kan innehålla bindestreck (t.ex. pbx-test.vertel.se).
+    """
+    suffixes = (
+        "-extensions.conf",
+        "-pjsip_wizard.conf",
+        "-voicemail.conf",
+    )
+    domains = set()
     try:
-        return {
-            name.split("-", 1)[0]
-            for name in os.listdir(config_path)
-            if "-" in name and name.endswith(".conf")
-        }
+        for name in os.listdir(config_path):
+            for suffix in suffixes:
+                if name.endswith(suffix):
+                    domains.add(name[: -len(suffix)])
     except OSError:
-        return set()
+        pass
+    return domains
 
 
 def extract_tenant_from_event(
