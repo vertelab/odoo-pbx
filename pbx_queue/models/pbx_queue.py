@@ -12,7 +12,12 @@ class PbxQueue(models.Model):
     _description = "PBX Call Queue"
 
     name = fields.Char(required=True)
-    extension = fields.Char(required=True, help="Internal extension number for the queue")
+    extension = fields.Char(
+        required=True,
+        default=lambda self: self._default_extension(),
+        help="Internt anknytningsnummer för kön. Auto-genereras med ett ledigt "
+             "nummer (fritt från extensioner, andra köer, IVR m.m.) vid ny kö.",
+    )
     strategy = fields.Selection(
         [
             ("ringall", "Ring All"),
@@ -67,9 +72,27 @@ class PbxQueue(models.Model):
     )
     member_ids = fields.One2many("pbx.queue.member", "queue_id", string="Agents")
 
+    @api.model
+    def _default_extension(self):
+        """Lägsta lediga dialbara nummer för en ny kö."""
+        if "pbx.numbering" not in self.env:
+            return ""
+        _, number = self.env["pbx.numbering"]._next_free_extension_number(
+            self.env.company, include_existing=False
+        )
+        return number or ""
+
     @api.model_create_multi
     def create(self, vals_list):
         for vals in vals_list:
+            if not vals.get("extension"):
+                company_id = vals.get("company_id") or self.env.company.id
+                company = self.env["res.company"].browse(company_id)
+                _, number = self.env["pbx.numbering"]._next_free_extension_number(
+                    company, include_existing=False
+                )
+                if number:
+                    vals["extension"] = number
             if vals.get("company_id") and vals.get("extension"):
                 company = self.env["res.company"].browse(vals["company_id"])
                 self.env["pbx.numbering"]._check_dialable_number(

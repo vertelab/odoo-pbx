@@ -6,31 +6,36 @@
             <form>
                 <sheet>
                     <group>
-                        <field name="company_id"/>
-                        <field name="name"/>
-                        <field name="extension"/>
-                        <field name="strategy"  readonly="is_ring_group == True"/>
-                        <field name="timeout"  readonly="is_ring_group == True"/>
-                        <field name="max_wait_time"  invisible="is_ring_group == True"/>
-                        <field name="overflow_destination_id"  invisible="is_ring_group == True"/>
-                        <field name="join_empty"  invisible="is_ring_group == True"/>
-                        <field name="announce_position"/>
-                        <field name="is_ring_group"/>
-                        <field name="is_manual"/>
-                        <field name="timeout_seconds"  invisible="is_ring_group == True"/>
-                        <field name="timeout_action"  invisible="is_ring_group == True"/>
-                        <field name="manual_target_queue_id"  invisible="is_ring_group == True"/>
-                        <field name="active"/>
+                        <group string="Kö">
+                            <field name="name"/>
+                            <field name="extension"/>
+                            <field name="strategy" readonly="is_ring_group == True"/>
+                            <field name="timeout" readonly="is_ring_group == True"/>
+                            <field name="join_empty" invisible="is_ring_group == True"/>
+                            <field name="announce_position"/>
+                            <field name="is_ring_group"/>
+                            <field name="is_manual"/>
+                            <field name="active"/>
+                        </group>
+                        <group string="Överflöde / Timeout" invisible="is_ring_group == True">
+                            <field name="max_wait_time"/>
+                            <field name="overflow_destination_id"/>
+                            <field name="timeout_seconds"/>
+                            <field name="timeout_action"/>
+                            <field name="manual_target_queue_id"/>
+                        </group>
                     </group>
-                    <group string="Agents">
-                        <field name="member_ids" mode="list">
-                            <list editable="bottom">
-                                <field name="extension_id"/>
-                                <field name="penalty"/>
-                                <field name="paused"/>
-                            </list>
-                        </field>
-                    </group>
+                    <notebook>
+                        <page string="Agenter">
+                            <field name="member_ids" mode="list">
+                                <list editable="bottom">
+                                    <field name="extension_id"/>
+                                    <field name="penalty"/>
+                                    <field name="paused"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
                 </sheet>
             </form>
         </field>
