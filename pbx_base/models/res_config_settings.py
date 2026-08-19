@@ -86,6 +86,14 @@ class ResConfigSettings(models.TransientModel):
         readonly=False,
         help="Asterisk HTTP/WebSocket-port för Odoo-softphonen (per företag).",
     )
+    pbx_external_ip = fields.Char(
+        string="Extern IP (Asterisk)",
+        config_parameter="pbx.external.ip",
+        readonly=False,
+        help="Publik IP för Asterisk-boxen — används som external_media_address "
+             "på trunkar och external_signaling_address (transporten, salt-sidan). "
+             "Tom = ingen external-adress genereras.",
+    )
     pbx_ws_server = fields.Char(
         string="WebSocket Server (override)",
         related="company_id.pbx_ws_server",

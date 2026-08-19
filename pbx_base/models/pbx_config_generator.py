@@ -76,6 +76,7 @@ disallow = all
 outbound_auth = {domain}-trunk-{slug}-auth
 aors = {domain}-trunk-{slug}-aor
 callerid = "{callerid}"
+{external_media}
 
 [{domain}-trunk-{slug}-auth]
 type = auth
@@ -86,6 +87,23 @@ password = {secret}
 [{domain}-trunk-{slug}-aor]
 type = aor
 contact = sip:{host}:{port}
+{registration}
+{identify}"""
+
+# Register-baserad trunk (inkommande utan publik port-forward): Telavox
+# m.fl. når boxen via received:port — AOR:t behöver ingen statisk port.
+REGISTRATION_TEMPLATE = """\
+[{domain}-trunk-{slug}-reg]
+type = registration
+server_uri = sip:{host}:{port}
+client_uri = sip:{username}@{host}
+contact_user = {username}
+"""
+
+IDENTIFY_TEMPLATE = """\
+[{domain}-trunk-{slug}-identify]
+type = identify
+match = {ip}
 """
 
 EXTENSIONS_CONF_TEMPLATE = """\
@@ -234,16 +252,51 @@ class PbxConfigGenerator(models.AbstractModel):
         )
         trunk_blocks = []
         for trunk in trunks:
+            slug = self._slug(trunk.name)
+            external_ip = self.env["ir.config_parameter"].sudo().get_param(
+                "pbx.external.ip", ""
+            )
+            external_media = (
+                "\nexternal_media_address = %s" % external_ip if external_ip else ""
+            )
+            # Registration: register-baserad inkommande (utan statisk port)
+            registration = ""
+            if trunk.username and trunk.host:
+                registration = "\n" + REGISTRATION_TEMPLATE.format(
+                    domain=domain,
+                    slug=slug,
+                    username=trunk.username,
+                    host=trunk.host,
+                    port=trunk.port or 5060,
+                )
+            # Identify: explicit fält vinner; annars DNS-lookup på host
+            # (ingen hårdkodning — IP:n hämtas dynamiskt vid generering)
+            identify = ""
+            identify_ip = (trunk.identify_ip or "").strip()
+            if not identify_ip and trunk.host:
+                try:
+                    import socket
+
+                    identify_ip = socket.gethostbyname(trunk.host)
+                except OSError:
+                    identify_ip = ""
+            if identify_ip:
+                identify = "\n" + IDENTIFY_TEMPLATE.format(
+                    domain=domain, slug=slug, ip=identify_ip
+                )
             trunk_blocks.append(
                 TRUNK_TEMPLATE.format(
                     domain=domain,
-                    slug=self._slug(trunk.name),
+                    slug=slug,
                     username=trunk.username or "",
                     secret=trunk.secret or "",
                     host=trunk.host,
                     port=trunk.port or 5060,
                     callerid=trunk.callerid or "",
                     codec_allows=self._codec_allows(company),
+                    external_media=external_media,
+                    registration=registration,
+                    identify=identify,
                 )
             )
 
@@ -464,6 +517,24 @@ class PbxConfigGenerator(models.AbstractModel):
                 lines.append("exten => _.,1,NoOp(No DID or CID match)")
                 lines.append("same => n,Playback(ss-noservice)")
                 lines.append("same => n,Hangup()")
+
+        # Trunk-kontonamns-alias: vissa providerar (t.ex. Telavox) skickar
+        # inkommande samtal med KONTONAMNET (trunk.username) som uppringd part
+        # istället för DID:et. Trunkar med inbound_destination_id får en egen
+        # exten för kontonamnet → destinationen.
+        for trunk in self.env["pbx.trunk"].search(
+            [("company_id", "=", self._company_id(company)), ("active", "=", True)]
+        ):
+            if not (trunk.username and trunk.inbound_destination_id):
+                continue
+            dest = self.env["pbx.destination.mixin"]._render_destination(
+                trunk.inbound_destination_id
+            )
+            lines.append("exten => %s,1,NoOp(Inbound trunk account: %s)" % (
+                trunk.username, trunk.username,
+            ))
+            lines.append("same => n,Set(__FROM_DID=${EXTEN})")
+            lines.append("same => n,%s" % dest)
 
         return "\n".join(lines)
 

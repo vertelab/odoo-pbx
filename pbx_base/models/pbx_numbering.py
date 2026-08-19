@@ -1,7 +1,7 @@
 # Copyright 2026 Vertel AB
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 
-from odoo import _, api, models
+from odoo import _, api, fields, models
 from odoo.exceptions import ValidationError
 
 
@@ -188,8 +188,9 @@ class PbxNumbering(models.AbstractModel):
         """
         if "pbx.queue" not in self.env:
             return ""
+        company_id = company.id if isinstance(company, models.Model) else company
         queue = self.env["pbx.queue"].search(
-            [("company_id", "=", company.id), ("is_manual", "=", True),
+            [("company_id", "=", company_id), ("is_manual", "=", True),
              ("active", "=", True)],
             limit=1,
         )

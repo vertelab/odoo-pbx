@@ -14,6 +14,8 @@
                         <field name="secret" string="Lösenord" widget="password"/>
                         <field name="channels"/>
                         <field name="callerid"/>
+                        <field name="identify_ip"/>
+                        <field name="inbound_destination_id"/>
                     </group>
                 </sheet>
                 <chatter/>
