@@ -65,6 +65,10 @@ class PbxOperatorPanel(http.Controller):
                 member_queues = member_model.search(
                     [("extension_id", "=", user_ext.id)]
                 ).queue_id
+                if isinstance(queues, list):
+                    # pbx.queue ej i registry (stale worker efter install) —
+                    # visa inga köer för agenten
+                    queues = queues_model
                 queues = queues & member_queues
             extensions = extensions.filtered(lambda e: e.id == user_ext.id)
             ivrs = ivrs_model.search([("id", "=", False)]) if ivrs_model else []
