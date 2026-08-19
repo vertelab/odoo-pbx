@@ -146,7 +146,11 @@ VOICEMAIL_CONF_TEMPLATE = """\
 {mailboxes}
 """
 
-MAILBOX_TEMPLATE = "{public_number} => {pin},{callerid_name},,,attach=yes|maxmsg={max_messages}|maxsecs={max_duration}|delete=yes"
+# Mailbox-options för filbaserad voicemail: INGA attach=yes/delete=yes —
+# delete=yes får notify_new_message att radera meddelandet från INBOX direkt
+# (designat för email/IMAP-setup); utan email försvinner inspelningen.
+# attach=yes har ingen funktion utan email_/imap_konfiguration.
+MAILBOX_TEMPLATE = "{public_number} => {pin},{callerid_name},,,maxmsg={max_messages}|maxsecs={max_duration}"
 
 # GotoIfTime days-of-week map: resource.calendar.attendance.dayofweek is
 # '0'..'6' with 0 = Monday (Odoo resource convention).
