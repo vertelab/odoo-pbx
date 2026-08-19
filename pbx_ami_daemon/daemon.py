@@ -236,12 +236,19 @@ def extract_tenant_from_event(
                 if candidate.startswith(domain):
                     return domain
 
-    # @domain suffix
+    # @domain suffix — med kända domäner accepteras bara exakt match
+    # (Local-kanaler är "Local/01@<context>;<uniqueid>" — får inte tolkas
+    # som domän)
     for candidate in candidates:
         at_match = re.search(r"@(\S+)", candidate)
         if at_match:
             domain = at_match.group(1)
-            if not re.match(r"\d+\.\d+\.\d+\.\d+", domain):
+            if re.match(r"\d+\.\d+\.\d+\.\d+", domain):
+                continue
+            if known_domains:
+                if domain in known_domains:
+                    return domain
+            else:
                 return domain
 
     # Legacy SIP/domain-… prefix
