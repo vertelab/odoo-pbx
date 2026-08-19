@@ -6,6 +6,11 @@ from odoo import api, fields, models
 from odoo.addons.pbx_base.models.pbx_destination_mixin import destination_models
 
 
+def _company_id(company):
+    """Acceptera recordset eller int — plugin-anrop får recordset."""
+    return company.id if isinstance(company, models.Model) else company
+
+
 class PbxQueue(models.Model):
     _name = "pbx.queue"
     _inherit = ["pbx.plugin", "pbx.destination.mixin"]
@@ -117,7 +122,7 @@ class PbxQueue(models.Model):
         return super().write(vals)
 
     def get_config_snippets(self, domain, company):
-        queues = self.search([("company_id", "=", company), ("active", "=", True)])
+        queues = self.search([("company_id", "=", _company_id(company)), ("active", "=", True)])
         if not queues:
             return {}
         return {
@@ -128,7 +133,7 @@ class PbxQueue(models.Model):
     def get_internal_dialplan(self, domain, company):
         """Make queues reachable by their internal extension number."""
         lines = []
-        queues = self.search([("company_id", "=", company), ("active", "=", True)])
+        queues = self.search([("company_id", "=", _company_id(company)), ("active", "=", True)])
         for q in queues:
             lines.append(
                 "exten => %s,1,Goto(%s-queue-%s,s,1)"
