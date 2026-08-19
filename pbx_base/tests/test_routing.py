@@ -91,7 +91,7 @@ class TestPbxRouting(TransactionCase):
         self.assertIn("username = user1", pjsip)
         self.assertIn("password = secret1", pjsip)
         # extensions are still generated
-        self.assertIn("[test.se-80101]", pjsip)
+        self.assertIn("[u80101]", pjsip)
 
     # ------------------------------------------------------------------
     # Inbound routes

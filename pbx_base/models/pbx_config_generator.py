@@ -380,6 +380,11 @@ class PbxConfigGenerator(models.AbstractModel):
                 "exten => _0.,1,Goto(%s-outbound,${EXTEN},1)\n" % domain
                 + "exten => _+.,1,Goto(%s-outbound,${EXTEN},1)\n" % domain
             )
+            # E.164 utan '+' (46725020525) → normalisera till +46… innan ut
+            outbound_entry += (
+                "exten => _46XXXXXXXX.,1,Set(DIAL_NUMBER=+${EXTEN})\n"
+                "same => n,Goto(%s-outbound,${DIAL_NUMBER},1)\n" % domain
+            )
 
         inbound_context = self._generate_inbound_context(domain, company)
         outbound_context = self._generate_outbound_context(domain, company)

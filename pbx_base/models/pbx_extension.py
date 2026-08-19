@@ -420,5 +420,20 @@ class PbxExtension(models.Model):
 
     @staticmethod
     def _normalize_click_number(number):
-        """'+46 (70) 123-456' / '0701-23 45 67' → '+4670123456' / '0701234567'."""
-        return re.sub(r"[\s\(\)\-\.]", "", number or "").strip()
+        """Normalisera till E.164: '+46 (70) 123-456' / '0701-23 45 67' /
+        '46725020525' → '+46725020525'.
+
+        - Ledande '+' → som det är
+        - Svensk E.164 utan '+' (46 + minst 9 siffror) → lägg till '+'
+        - Svenskt nationellt format (0 + minst 8 siffror) → +46 + resten
+        """
+        digits = re.sub(r"[\s\(\)\-\.]", "", number or "").strip()
+        if not digits:
+            return ""
+        if digits.startswith("+"):
+            return digits
+        if digits.startswith("46") and len(digits) >= 11 and digits[1].isdigit():
+            return "+" + digits
+        if digits.startswith("0") and len(digits) >= 9:
+            return "+46" + digits[1:]
+        return digits
