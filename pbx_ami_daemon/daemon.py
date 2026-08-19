@@ -186,32 +186,59 @@ class AMIConnection:
 # ──────────────────────────────────────────────────────────────────
 
 
-def extract_tenant_from_event(event: dict) -> Optional[str]:
+def _load_known_domains(config_path: str) -> set:
+    """Kända domäner från tenant-config-filerna (tenants/<domän>-*.conf)."""
+    try:
+        return {
+            name.split("-", 1)[0]
+            for name in os.listdir(config_path)
+            if "-" in name and name.endswith(".conf")
+        }
+    except OSError:
+        return set()
+
+
+def extract_tenant_from_event(
+    event: dict, known_domains: Optional[set] = None
+) -> Optional[str]:
     """Extract tenant domain from an AMI event.
 
-    Looks at Channel, CallerIDNum, Mailbox fields for @domain patterns.
+    Endpoints/channels är nu PJSIP/u<username>-… (utan domän), så domänen
+    kan inte längre hämtas från kanalnamnet. Prioritet:
+    1. Kända domäner (från tenants/<domän>-*.conf på disk) som prefix på
+       Context/DestinationContext/Channel — Context fält är alltid
+       <domän>-internal/ext/vm/…
+    2. @domän-suffix (CallerIDNum/Mailbox m.m.)
+    3. SIP/domän-prefix (legacy kanalnamn)
     """
     candidates = [
+        event.get("Context", ""),
+        event.get("DestinationContext", ""),
         event.get("Channel", ""),
         event.get("CallerIDNum", ""),
         event.get("Mailbox", ""),
         event.get("DestChannel", ""),
     ]
 
-    for candidate in candidates:
-        # SIP/domain-number or just number@domain
-        # Try SIP/ prefix first
-        sip_match = re.match(r"SIP/([^-]+)-", candidate)
-        if sip_match:
-            return sip_match.group(1)
+    if known_domains:
+        for candidate in candidates:
+            for domain in known_domains:
+                if candidate.startswith(domain):
+                    return domain
 
-        # Try @domain suffix
+    # @domain suffix
+    for candidate in candidates:
         at_match = re.search(r"@(\S+)", candidate)
         if at_match:
             domain = at_match.group(1)
-            # Filter out IP addresses
             if not re.match(r"\d+\.\d+\.\d+\.\d+", domain):
                 return domain
+
+    # Legacy SIP/domain-… prefix
+    for candidate in candidates:
+        sip_match = re.match(r"SIP/([^@-]+)-[0-9]+", candidate)
+        if sip_match:
+            return sip_match.group(1)
 
     return None
 
@@ -285,11 +312,15 @@ class EventConsumer:
         "Cdr",
     }
 
-    def __init__(self, ami: AMIConnection, publisher, state_cache: StateCache, webhook=None):
+    def __init__(
+        self, ami: AMIConnection, publisher, state_cache: StateCache,
+        webhook=None, known_domains: Optional[set] = None,
+    ):
         self.ami = ami
         self.publisher = publisher
         self.state_cache = state_cache
         self.webhook = webhook or WebhookPublisher()
+        self.known_domains = known_domains or set()
 
     async def run(self):
         async for event in self.ami.read_events():
@@ -297,7 +328,7 @@ class EventConsumer:
             if event_name not in self.INTERESTING_EVENTS:
                 continue
 
-            tenant = extract_tenant_from_event(event)
+            tenant = extract_tenant_from_event(event, self.known_domains)
             if not tenant:
                 continue
 
@@ -732,7 +763,10 @@ async def amain(config_path: str):
     while True:
         try:
             await ami.connect()
-            consumer = EventConsumer(ami, publisher, state_cache, webhook)
+            consumer = EventConsumer(
+                ami, publisher, state_cache, webhook,
+                known_domains=_load_known_domains(tenants_config_path),
+            )
             logger.info("Event consumer started (webhook=%s)", webhook.url or "disabled")
             await consumer.run()
         except (ConnectionError, OSError) as e:
