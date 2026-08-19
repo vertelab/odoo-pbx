@@ -368,14 +368,18 @@ class PbxConfigGenerator(models.AbstractModel):
         if feature_entries:
             internal_entries.append(feature_entries)
 
-        # Outbound entry from the internal context (0 + number -> outbound)
-        # Goto till ${EXTEN} (inte s,1) — utåtgående-kontexten har inga
-        # s-extensioner, bara mönster som matchar det uppringda numret.
+        # Outbound entry from the internal context (0 + number, eller +46,
+        # -> outbound). Goto till ${EXTEN} (inte s,1) — utåtgående-kontexten
+        # har inga s-extensioner, bara mönster som matchar det uppringda
+        # numret.
         outbound_entry = ""
         if self.env["pbx.outbound_route"].search_count(
             [("company_id", "=", self._company_id(company)), ("active", "=", True)]
         ):
-            outbound_entry = "exten => _0.,1,Goto(%s-outbound,${EXTEN},1)\n" % domain
+            outbound_entry = (
+                "exten => _0.,1,Goto(%s-outbound,${EXTEN},1)\n" % domain
+                + "exten => _+.,1,Goto(%s-outbound,${EXTEN},1)\n" % domain
+            )
 
         inbound_context = self._generate_inbound_context(domain, company)
         outbound_context = self._generate_outbound_context(domain, company)
