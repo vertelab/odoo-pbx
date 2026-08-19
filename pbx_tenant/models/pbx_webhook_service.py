@@ -149,8 +149,16 @@ class PbxWebhookService(models.AbstractModel):
         )
         extension = sub.extension_id if sub else False
         src = str(event.get("Source", "") or "")
+        # Source är CDR:ns callerid-nummer — för interna ben kan det vara
+        # "01@pbx-test.vertel.se" (eller saniterad variant "01@pbxtestvertelse"
+        # om en äldre callerid deployats). Jämför bara prefixet före @/<.
+        src_number = re.split(r"[@<]", src)[0].strip()
+        if not src_number:
+            # Ingen Source (t.ex. Local-kanal utan callerid) — kan inte
+            # klassificera riktning pålitligt; hoppa.
+            return
         # Utgående: Source = anknytningens eget nummer; annars inkommande
-        outgoing = bool(extension) and src in (
+        outgoing = bool(extension) and src_number in (
             extension.public_number or "",
             username,
         )
