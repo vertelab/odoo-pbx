@@ -3,7 +3,7 @@
 
 from odoo import api, fields, models
 
-from odoo.addons.pbx_base.models.pbx_destination_mixin import DESTINATION_MODELS
+from odoo.addons.pbx_base.models.pbx_destination_mixin import destination_models
 
 
 class PbxQueue(models.Model):
@@ -28,7 +28,7 @@ class PbxQueue(models.Model):
     timeout = fields.Integer(default=60, help="Seconds before trying next agent")
     max_wait_time = fields.Integer(default=300, help="Max wait time before overflow")
     overflow_destination_id = fields.Reference(
-        selection=DESTINATION_MODELS,
+        selection=destination_models,
         string="Overflow Destination",
         help="Destination on overflow (extension, IVR, voicemail)",
     )

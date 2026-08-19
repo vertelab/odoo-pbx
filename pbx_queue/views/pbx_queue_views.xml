@@ -6,7 +6,7 @@
             <form>
                 <sheet>
                     <group>
-                        <field name="tenant_id"/>
+                        <field name="company_id"/>
                         <field name="name"/>
                         <field name="extension"/>
                         <field name="strategy"  readonly="is_ring_group == True"/>
@@ -40,7 +40,7 @@
         <field name="model">pbx.queue</field>
         <field name="arch" type="xml">
             <list>
-                <field name="tenant_id"/>
+                <field name="company_id"/>
                 <field name="name"/>
                 <field name="extension"/>
                 <field name="strategy"/>
