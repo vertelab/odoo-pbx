@@ -2,8 +2,9 @@
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 
 import logging
+import re
 
-from odoo import models
+from odoo import fields, models
 
 _logger = logging.getLogger(__name__)
 
@@ -76,6 +77,13 @@ class PbxWebhookService(models.AbstractModel):
             except Exception as e:
                 _logger.warning("Voicemail handling failed: %s", e)
 
+        # 4) Call history: Cdr-händelser → pbx.call (defensiv)
+        if event_name == "Cdr":
+            try:
+                self._handle_cdr_call(tenant_domain, event)
+            except Exception as e:
+                _logger.warning("Call logging failed for %s: %s", tenant_domain, e)
+
     def _handle_config_ack(self, tenant_domain, event):
         """Uppdatera företagets sync-state från daemonens config-ack.
 
@@ -119,6 +127,60 @@ class PbxWebhookService(models.AbstractModel):
                 "Config apply failed for %s v%s: %s",
                 tenant_domain, version, event.get("error"),
             )
+
+    def _handle_cdr_call(self, tenant_domain, event):
+        """Logga ett samtal i pbx.call från en AMI Cdr-händelse.
+
+        Ett samtal producerar en CDR-post per ben; vi loggar bara den post
+        där den INTERNA enhetens egen kanal (PJSIP/u<username>-…) är Channel
+        — trunk-/övriga ben hoppas, så varje samtal ger en post.
+
+        Riktning: utgående när Source = anknytningens eget nummer (samtalet
+        startade internt), annars inkommande. pbx_handling mappas från
+        Disposition (ANSWERED / NO ANSWER / BUSY / …).
+        """
+        channel = event.get("Channel", "") or ""
+        internal = re.search(r"PJSIP/(u[0-9]+)-", channel)
+        if not internal:
+            return
+        username = internal.group(1)
+        sub = self.env["pbx.sub_extension"].search(
+            [("username", "=", username)], limit=1
+        )
+        extension = sub.extension_id if sub else False
+        src = str(event.get("Source", "") or "")
+        # Utgående: Source = anknytningens eget nummer; annars inkommande
+        outgoing = bool(extension) and src in (
+            extension.public_number or "",
+            username,
+        )
+        number = event.get("Destination" if outgoing else "Source", "") or ""
+        name = event.get("CallerIDName", "") or ""
+        disposition = (event.get("Disposition", "") or "").upper()
+        handling_map = {
+            "ANSWERED": "answered",
+            "NO ANSWER": "missed",
+            "BUSY": "busy",
+            "CONGESTION": "missed",
+            "FAILED": "missed",
+        }
+        handling = handling_map.get(disposition, "missed")
+        company = self.env["res.company"].search(
+            [("pbx_domain", "=", tenant_domain)], limit=1
+        )
+        self.env["pbx.call"].log_call(
+            {
+                "phone_number": str(number),
+                "callerid_name": name,
+                "direction": "outgoing" if outgoing else "incoming",
+                "start_date": event.get("StartTime") or fields.Datetime.now(),
+                "stop_date": event.get("EndTime"),
+                "pbx_handling": handling,
+                "user_id": extension.user_id.id if extension else False,
+                "extension_id": extension.id if extension else False,
+                "company_id": company.id if company else False,
+            }
+        )
 
     def _handle_voicemail(self, tenant, event):
         mailbox = event.get("Mailbox", "")  # ext@domain

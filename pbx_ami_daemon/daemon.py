@@ -282,6 +282,7 @@ class EventConsumer:
         "VoicemailMessage",
         "Newstate",
         "UserEvent",
+        "Cdr",
     }
 
     def __init__(self, ami: AMIConnection, publisher, state_cache: StateCache, webhook=None):
