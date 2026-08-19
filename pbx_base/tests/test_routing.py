@@ -181,7 +181,7 @@ class TestPbxRouting(TransactionCase):
         self.assertIn("Dial(PJSIP/${DIAL_NUMBER}@test.se-trunk-fortnox,60,tT)", dialplan)
         self.assertIn('GotoIf($["${DIALSTATUS}" = "ANSWER"]?', dialplan)
         # internal "0" dialing reaches the outbound context
-        self.assertIn("exten => _0.,1,Goto(test.se-outbound,s,1)", dialplan)
+        self.assertIn("exten => _0.,1,Goto(test.se-outbound,${EXTEN},1)", dialplan)
 
     def test_outbound_strip_prepend(self):
         trunk = self._trunk()
