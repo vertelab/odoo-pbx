@@ -78,6 +78,7 @@ class PbxExtension(models.Model):
                         "extension_id": ext.id,
                         "type": "browser",
                         "label": "Odoo VOIP",
+                        "transport": "wss",  # browser kräver WSS/WebRTC
                         "sequence": 1,
                     }
                 )

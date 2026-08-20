@@ -52,7 +52,10 @@ class PbxSubExtension(models.Model):
     )
     transport = fields.Selection(
         [("wss", "WebSocket Secure"), ("udp", "UDP"), ("tcp", "TCP")],
-        default="wss",
+        default="udp",
+        string="Transport",
+        help="wss för browser/Odoo VOIP (sätts automatiskt); udp/tcp för "
+             "hårdvarutelefoner och övriga enheter.",
     )
     username = fields.Char(
         readonly=True,

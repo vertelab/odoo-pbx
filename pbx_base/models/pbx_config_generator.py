@@ -41,6 +41,7 @@ type = endpoint
 context = {domain}-internal
 transport = transport-{transport}
 {webrtc_options}
+{nat_options}
 auth = {domain}-{number}-auth
 aors = {username}
 callerid = "{callerid_name}" <{public_number}@{domain}>
@@ -241,7 +242,12 @@ class PbxConfigGenerator(models.AbstractModel):
                         secret=ext.password or sub.secret,
                         transport=sub.transport or "udp",
                         webrtc_options=(
-                            self._webrtc_options() if sub.transport == "wss" else ""
+                            self._webrtc_options() if sub.type == "browser" else ""
+                        ),
+                        nat_options=(
+                            ""
+                            if sub.type == "browser"
+                            else "rewrite_contact = yes"
                         ),
                         codec_allows=self._codec_allows(company, sub),
                     )
