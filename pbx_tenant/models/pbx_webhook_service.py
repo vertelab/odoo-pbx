@@ -53,7 +53,10 @@ class PbxWebhookService(models.AbstractModel):
         #    must not break the event flow). Savepoint: ai_agent_core's
         #    partner-watch may fail on some environments; roll back locally.
         caller = event.get("CallerIDNum") or event.get("CallerID1") or ""
-        if event_name in ("Newchannel", "Hangup", "VoicemailMessage", "UserEvent") and caller:
+        if event_name in (
+            "Newchannel", "Hangup", "VoicemailMessage", "MessageWaiting",
+            "UserEvent",
+        ) and caller:
             try:
                 with self.env.cr.savepoint():
                     partner, created = self.env["pbx.partner.resolver"].resolve(
@@ -71,7 +74,8 @@ class PbxWebhookService(models.AbstractModel):
                 _logger.warning("Partner resolution failed for %s: %s", caller, e)
 
         # 3) Voicemail → existing inbox handler (defensive)
-        if event_name == "VoicemailMessage":
+        # Asterisk 20.6 sänder MessageWaiting (MWI), INTE VoicemailMessage
+        if event_name in ("VoicemailMessage", "MessageWaiting"):
             try:
                 self._handle_voicemail(tenant_domain, event)
             except Exception as e:
