@@ -15,8 +15,8 @@
     "data": [
         "security/ir.model.access.csv",
         "data/graph_definitions.xml",
-        "data/pbx_coworkers.xml",
         "data/pbx_tools.xml",
+        "data/pbx_coworkers.xml",
         "views/pbx_call_views.xml",
         "views/pbx_extension_views.xml",
     ],
