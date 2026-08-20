@@ -51,6 +51,7 @@ class PbxCall(models.Model):
             ("queue", "Queue"),
             ("ivr", "IVR"),
             ("missed", "Missed"),
+            ("busy", "Busy"),
             ("transferred", "Transferred"),
             ("outgoing", "Outgoing"),
         ],
