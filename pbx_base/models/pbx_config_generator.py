@@ -383,8 +383,10 @@ class PbxConfigGenerator(models.AbstractModel):
                         "same => n,Dial(PJSIP/{username},{timeout})\n"
                     ).format(username=sub.username, timeout=to)
                     if i + 1 < len(sorted_subs):
+                        # Inte format-ed — enkla klamrar så ${DIALSTATUS} hamnar
+                        # rätt i output (dubbla klamrar skulle bli ${{DIALSTATUS}})
                         dial_lines += (
-                            'same => n,GotoIf($["${{DIALSTATUS}}"'
+                            'same => n,GotoIf($["${DIALSTATUS}"'
                             ' != "NOANSWER"]?done)\n'
                         )
 
