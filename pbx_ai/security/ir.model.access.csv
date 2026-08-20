@@ -1,3 +1,3 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_pbx_ai_user,pbx.ai.user,model_pbx_ai,pbx_base.group_pbx_user,1,0,0,0
+access_pbx_ai_user,pbx.ai.user,model_pbx_ai,pbx_base.group_pbx_operator,1,0,0,0
 access_pbx_ai_manager,pbx.ai.manager,model_pbx_ai,pbx_base.group_pbx_admin,1,1,1,1
