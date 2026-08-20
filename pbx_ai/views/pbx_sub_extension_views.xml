@@ -9,7 +9,7 @@
             <xpath expr="//sheet" position="inside">
                 <group name="ai" string="AI">
                     <field name="transcribe_voicemail"
-                           attrs="{'invisible': [('type', '!=', 'voicemail')]}"/>
+                           invisible="type != 'voicemail'"/>
                 </group>
             </xpath>
         </field>
