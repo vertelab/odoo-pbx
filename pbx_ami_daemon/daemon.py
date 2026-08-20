@@ -832,10 +832,18 @@ async def amain(config_path: str):
                 odoo_url=cfg_ari.get("odoo_url", ""),
                 webhook_token=cfg_ari.get("webhook_token", ""),
                 coworker_id=int(cfg_ari.get("coworker_id", 0) or 0),
+                transcriber_url=cfg_ari.get(
+                    "transcriber_url", "http://localhost:8091"),
+                tts_port=int(cfg_ari.get("tts_port", 8081) or 8081),
+                transfer_context=cfg_ari.get("transfer_context", ""),
+                transfer_exten=cfg_ari.get("transfer_exten", ""),
             )
             client.on_stasis_start = receptionist.on_stasis_start
             client.on_dtmf = receptionist.on_dtmf
             client.on_stasis_end = receptionist.on_stasis_end
+            client.on_recording_finished = receptionist.on_recording_finished
+            client.on_playback_finished = receptionist.on_playback_finished
+            await receptionist.start_audio_server()
             ari_task = asyncio.create_task(client.run())
             logger.info("ARI enabled — Stasis app=%s", cfg_ari.get("app"))
         except Exception as e:
