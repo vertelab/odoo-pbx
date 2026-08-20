@@ -27,6 +27,8 @@ export class PbxSoftphone extends VoipOCASoftphone {
 PbxSoftphone.props = {};
 PbxSoftphone.template = "voip_oca.VoipOCASoftphone";
 
-registry.category("main_components").add("voip_oca.VoipOCASoftphone", {
-    Component: PbxSoftphone,
-});
+registry.category("main_components").add(
+    "voip_oca.VoipOCASoftphone",
+    {Component: PbxSoftphone},
+    {force: true},  // Odoo 18: override av befintlig nyckel kräver force
+);

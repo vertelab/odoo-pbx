@@ -34,4 +34,4 @@ export const pbxVoipOCAService = {
     },
 };
 
-registry.category("services").add("voip_oca", pbxVoipOCAService);
+registry.category("services").add("voip_oca", pbxVoipOCAService, {force: true});
