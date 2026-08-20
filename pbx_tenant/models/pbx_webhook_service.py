@@ -163,6 +163,11 @@ class PbxWebhookService(models.AbstractModel):
             username,
         )
         number = event.get("Destination" if outgoing else "Source", "") or ""
+        number = str(number).strip()
+        # Hoppa över icke-dialbara nummer (t.ex. 's' från originate till
+        # special-exten i operator panel/queue) — inga riktiga samtal
+        if not re.match(r"^\+?[0-9]+$", number):
+            return
         name = event.get("CallerIDName", "") or ""
         disposition = (event.get("Disposition", "") or "").upper()
         handling_map = {
