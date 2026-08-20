@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- pbx.sub_extension — voicemail-transkribering (recording-transcription) -->
+    <record id="view_pbx_sub_extension_form_ai" model="ir.ui.view">
+        <field name="name">pbx.sub_extension.form.ai</field>
+        <field name="model">pbx.sub_extension</field>
+        <field name="inherit_id" ref="pbx_base.pbx_sub_extension_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet" position="inside">
+                <group name="ai" string="AI">
+                    <field name="transcribe_voicemail"
+                           attrs="{'invisible': [('type', '!=', 'voicemail')]}"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+</odoo>

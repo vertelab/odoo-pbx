@@ -1,8 +1,12 @@
 # Copyright 2026 Vertel AB
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 
+import logging
+
 from odoo import _, fields, models
 from odoo.exceptions import UserError
+
+_logger = logging.getLogger(__name__)
 
 
 class PbxRecordingPolicy(models.Model):
@@ -75,14 +79,22 @@ class PbxRecordingPolicy(models.Model):
 
     def handle_recording_event(self, event_data):
         """Process a Recording.New event from RabbitMQ.
-        Uploads .wav to Garage S3 via ir.attachment, links to voip.call.
-        If pbx_ai is installed, triggers transcription."""
+
+        Uploads .wav to Garage S3 via ir.attachment, links to pbx.call
+        (recording_attachment_id). If pbx_ai is installed, triggers
+        transcription (lokal transcriber via MQ-jobb).
+        """
         file_path = event_data.get("file_path", "")
         call_id = event_data.get("call_id", 0)
         if not file_path:
             return
 
-        call = self.env["voip.call"].browse(call_id)
+        # Samtalet är en pbx.call (Vertel) — fallback voip.call (OCA)
+        call = self.env["pbx.call"].browse(call_id)
+        call_model = "pbx.call"
+        if not call.exists():
+            call = self.env["voip.call"].browse(call_id)
+            call_model = "voip.call"
         if not call.exists():
             return
 
@@ -94,9 +106,16 @@ class PbxRecordingPolicy(models.Model):
                 "name": f"Recording_{call.phone_number}_{call.create_date}",
                 "datas": audio_data,
                 "mimetype": "audio/wav",
-                "res_model": "voip.call",
+                "res_model": call_model,
                 "res_id": call.id,
             })
+
+            # Koppla inspelningen explicit till samtalet (recording_attachment_id)
+            if "recording_attachment_id" in call._fields:
+                try:
+                    call.write({"recording_attachment_id": attachment.id})
+                except Exception as e:
+                    _logger.warning("Kunde inte koppla inspelning: %s", e)
 
             # Trigger pbx_ai if available
             if self.env.registry.get("pbx.ai"):

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Aktivitetstyp för röstmeddelanden (systray) -->
+    <record id="activity_type_voicemail" model="mail.activity.type">
+        <field name="name">Röstmeddelande</field>
+        <field name="delay_count">0</field>
+        <field name="delay_unit">days</field>
+        <field name="icon">fa fa-phone</field>
+        <field name="chaining_type">suggest</field>
+        <field name="sequence">10</field>
+    </record>
+</odoo>

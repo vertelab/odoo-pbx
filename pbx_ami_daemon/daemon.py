@@ -789,7 +789,26 @@ async def amain(config_path: str):
             async with message.process():
                 await config_consumer.apply_config(message)
 
-        await cfg_queue.consume(on_config)
+            await cfg_queue.consume(on_config)
+
+            # Result subscriber (pbx-transcriber → Odoo webhook)
+            result_queue = await channel.declare_queue(
+                "pbx-ami-daemon-results", durable=True)
+            await result_queue.bind(exchange, routing_key="pbx.result.#")
+
+            async def on_result(message: aio_pika.IncomingMessage):
+                async with message.process():
+                    try:
+                        body = json.loads(message.body.decode())
+                    except Exception:
+                        logger.warning("Invalid result message body")
+                        return
+                    # tenant ur routing key: pbx.result.<domain>.Transcribe
+                    parts = message.routing_key.split(".")
+                    tenant = ".".join(parts[2:-1]) if len(parts) > 3 else ""
+                    await webhook.publish(tenant, message.routing_key, body)
+
+            await result_queue.consume(on_result)
 
     elif mq_type == "rabbitmq" and not aio_pika:
         logger.error("aio_pika not installed. Install with: pip install aio-pika")

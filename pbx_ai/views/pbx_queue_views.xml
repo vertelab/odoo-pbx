@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- pbx.queue — tri-state recording_mode (recording-transcription) -->
+    <record id="view_pbx_queue_form_ai" model="ir.ui.view">
+        <field name="name">pbx.queue.form.ai</field>
+        <field name="model">pbx.queue</field>
+        <field name="inherit_id" ref="pbx_queue.pbx_queue_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet" position="inside">
+                <group name="ai" string="AI &amp; inspelning">
+                    <field name="recording_mode"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+</odoo>

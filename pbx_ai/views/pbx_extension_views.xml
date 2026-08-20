@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <!-- pbx.extension — transcribe_enabled (pbx-ai-call-assistant, D1) -->
+    <!-- pbx.extension — tri-state recording_mode (recording-transcription) -->
     <record id="view_pbx_extension_form_ai" model="ir.ui.view">
         <field name="name">pbx.extension.form.ai</field>
         <field name="model">pbx.extension</field>
         <field name="inherit_id" ref="pbx_base.pbx_extension_form_view"/>
         <field name="arch" type="xml">
             <xpath expr="//sheet" position="inside">
-                <group name="ai" string="AI">
-                    <field name="transcribe_enabled"/>
+                <group name="ai" string="AI &amp; inspelning">
+                    <field name="recording_mode"/>
+                    <field name="transcribe_enabled" invisible="1"/>
                 </group>
             </xpath>
         </field>
@@ -20,7 +21,7 @@
         <field name="inherit_id" ref="pbx_base.pbx_extension_list_view"/>
         <field name="arch" type="xml">
             <xpath expr="//list" position="inside">
-                <field name="transcribe_enabled" optional="hide"/>
+                <field name="recording_mode" optional="hide"/>
             </xpath>
         </field>
     </record>

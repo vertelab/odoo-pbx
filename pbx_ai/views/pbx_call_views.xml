@@ -1,13 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <!-- pbx.call — transcript-fält (pbx-ai-call-assistant, D1) -->
+    <!-- pbx.call — attachments, token-spårning, STT-metadata (recording-transcription) -->
     <record id="view_pbx_call_list_ai" model="ir.ui.view">
         <field name="name">pbx.call.list.ai</field>
         <field name="model">pbx.call</field>
         <field name="inherit_id" ref="pbx_base.pbx_call_list_view"/>
         <field name="arch" type="xml">
             <xpath expr="//list" position="inside">
+                <field name="recording_attachment_id" optional="hide"/>
                 <field name="transcript_attachment_id" optional="hide"/>
+                <field name="ai_tokens_in" optional="hide"/>
+                <field name="ai_token_cost" optional="hide"/>
             </xpath>
         </field>
     </record>
@@ -18,9 +21,20 @@
         <field name="inherit_id" ref="pbx_base.pbx_call_form_view"/>
         <field name="arch" type="xml">
             <xpath expr="//sheet" position="inside">
-                <group name="ai_transcript" string="AI-transkription">
-                    <field name="transcript_attachment_id"/>
-                    <field name="transcript_text" readonly="1" nolabel="1"/>
+                <group name="ai_recording" string="AI-transkription &amp; tokens">
+                    <group>
+                        <field name="recording_attachment_id" widget="binary"/>
+                        <field name="transcript_attachment_id"/>
+                        <field name="transcript_text" readonly="1" nolabel="1"/>
+                    </group>
+                    <group>
+                        <field name="stt_model" readonly="1"/>
+                        <field name="stt_duration_s" readonly="1"/>
+                        <field name="stt_processing_s" readonly="1"/>
+                        <field name="ai_tokens_in" readonly="1"/>
+                        <field name="ai_tokens_out" readonly="1"/>
+                        <field name="ai_token_cost" readonly="1"/>
+                    </group>
                 </group>
             </xpath>
         </field>
