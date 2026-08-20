@@ -12,10 +12,10 @@ class PbxExtensionAI(models.Model):
 
     recording_mode = fields.Selection(
         [
-            ("", "Ärv (policy/kö)"),
             ("record", "Spela in"),
             ("transcribe", "Transkribera"),
         ],
+        default="",
         string="Inspelning/Transkribering",
         help="'' = ärv global policy/kö, 'record' = tvinga inspelning, "
              "'transcribe' = inspelning + transkribering.",

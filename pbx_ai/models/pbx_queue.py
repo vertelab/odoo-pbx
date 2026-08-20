@@ -12,10 +12,10 @@ class PbxQueueAI(models.Model):
 
     recording_mode = fields.Selection(
         [
-            ("", "Ärv (policy)"),
             ("record", "Spela in"),
             ("transcribe", "Transkribera"),
         ],
+        default="",
         string="Inspelning/Transkribering",
         help="'' = ärv global policy, 'record' = tvinga inspelning, "
              "'transcribe' = inspelning + transkribering. Ärvs av "
