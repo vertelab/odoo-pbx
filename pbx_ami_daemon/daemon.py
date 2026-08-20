@@ -267,13 +267,51 @@ def extract_tenant_from_event(
 
 
 def _read_voicemail_audio(event: dict) -> Optional[str]:
-    """Läs voicemail-inspelningen (msg0001.wav) från spool-katalogen och
-    returnera base64 — Odoo ligger på annan maskin och kan inte läsa filen.
+    """Läs senaste voicemail-inspelningen (INBOX/msg*.wav) som base64.
+
+    Asterisk 20.6 sänder inget VoicemailMessage — bara MessageWaiting (MWI)
+    med Mailbox=02@domän. Spool: /var/spool/asterisk/voicemail/<domän>/<mb>/INBOX/
+    Filer: msg0000.wav, msg0001.wav … (nyaste = högst nummer).
+
+    Berikar dessutom eventet med callerid/duration från msg*.txt (MWI har
+    ingen metadata).
     """
-    spool_dir = event.get("Dir", "") or ""
-    if not spool_dir:
+    mailbox = event.get("Mailbox", "") or ""
+    if "@" in mailbox:
+        mb, domain = mailbox.split("@", 1)
+    else:
+        mb, domain = mailbox, ""
+    inbox = os.path.join("/var/spool/asterisk/voicemail", domain, mb, "INBOX")
+    try:
+        candidates = [
+            f for f in os.listdir(inbox)
+            if f.startswith("msg") and f.endswith(".wav")
+        ]
+    except OSError:
         return None
-    path = os.path.join(spool_dir, "msg0001.wav")
+    if not candidates:
+        return None
+
+    def _num(name):
+        digits = "".join(ch for ch in name if ch.isdigit())
+        return int(digits) if digits else -1
+
+    newest = max(candidates, key=_num)
+    path = os.path.join(inbox, newest)
+
+    # Metadata från msg*.txt (callerid/duration) — MWI-eventet saknar dem
+    txt_path = os.path.join(inbox, newest.replace(".wav", ".txt"))
+    try:
+        with open(txt_path) as f:
+            for line in f:
+                line = line.strip()
+                if line.startswith("callerid="):
+                    event.setdefault("CallerIDNum", line.split("=", 1)[1].strip())
+                elif line.startswith("duration="):
+                    event.setdefault("Duration", line.split("=", 1)[1].strip())
+    except OSError:
+        pass
+
     try:
         with open(path, "rb") as f:
             return base64.b64encode(f.read()).decode()
@@ -341,6 +379,7 @@ class EventConsumer:
         "QueueMemberStatus",
         "PeerStatus",
         "VoicemailMessage",
+        "MessageWaiting",
         "Newstate",
         "UserEvent",
         "Cdr",
@@ -379,10 +418,11 @@ class EventConsumer:
             # Publish to tenant-specific topic
             topic = f"pbx.event.{tenant}.AMI.{event_name}"
             await self.publisher(topic, event)
-            if event_name == "VoicemailMessage":
-                # Bifoga ljudet (base64) — Odoo läser inte spool-filen lokalt
+            if event_name in ("VoicemailMessage", "MessageWaiting"):
+                # Bifoga ljudet (base64) + berika med caller/duration —
+                # Odoo läser inte spool-filen lokalt
                 payload = dict(event)
-                audio = _read_voicemail_audio(event)
+                audio = _read_voicemail_audio(payload)
                 if audio:
                     payload["_audio_base64"] = audio
                 await self.webhook.publish(tenant, topic, payload)
