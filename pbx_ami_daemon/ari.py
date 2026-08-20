@@ -207,6 +207,10 @@ class TTSAudioServer:
         app = aiohttp.web.Application()
         app.router.add_get("/tts/{name}", self._serve)
         app.router.add_get("/health", self._health)
+
+    async def _health(self, request):
+        import aiohttp.web
+        return aiohttp.web.json_response({"status": "ok", "service": "pbx-tts"})
         self._runner = aiohttp.web.AppRunner(app)
         await self._runner.setup()
         site = aiohttp.web.TCPSite(self._runner, "0.0.0.0", self.port)
