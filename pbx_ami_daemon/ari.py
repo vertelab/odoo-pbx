@@ -207,10 +207,6 @@ class TTSAudioServer:
         app = aiohttp.web.Application()
         app.router.add_get("/tts/{name}", self._serve)
         app.router.add_get("/health", self._health)
-
-    async def _health(self, request):
-        import aiohttp.web
-        return aiohttp.web.json_response({"status": "ok", "service": "pbx-tts"})
         self._runner = aiohttp.web.AppRunner(app)
         await self._runner.setup()
         site = aiohttp.web.TCPSite(self._runner, "0.0.0.0", self.port)
@@ -221,6 +217,10 @@ class TTSAudioServer:
     async def stop(self):
         if self._runner:
             await self._runner.cleanup()
+
+    async def _health(self, request):
+        import aiohttp.web
+        return aiohttp.web.json_response({"status": "ok", "service": "pbx-tts"})
 
     def add(self, audio: bytes, suffix: str = ".mp3") -> str:
         """Lagra ljud, returnera URI-delen /tts/<name>."""
