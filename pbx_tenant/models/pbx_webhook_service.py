@@ -168,6 +168,8 @@ class PbxWebhookService(models.AbstractModel):
         )
         number = event.get("Destination" if outgoing else "Source", "") or ""
         number = str(number).strip()
+        # Samma normalisering som Source: "02@pbx-test.vertel.se" → "02"
+        number = re.split(r"[@<]", number)[0].strip()
         # Hoppa över icke-dialbara nummer (t.ex. 's' från originate till
         # special-exten i operator panel/queue) — inga riktiga samtal
         if not re.match(r"^\+?[0-9]+$", number):
