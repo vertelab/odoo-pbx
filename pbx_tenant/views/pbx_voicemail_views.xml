@@ -26,7 +26,15 @@
                         <field name="user_id"/>
                     </group>
                     <group string="Audio">
-                        <field name="audio_attachment_id" widget="binary"/>
+                        <field name="audio_attachment_id" string="Inspelning" readonly="1"/>
+                        <button
+                            name="action_listen"
+                            type="object"
+                            string="Lyssna / Ladda ner"
+                            icon="fa-play"
+                            class="btn-primary"
+                            invisible="not audio_attachment_id"
+                        />
                     </group>
                     <group string="Transcript">
                         <field name="transcript"/>

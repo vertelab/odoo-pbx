@@ -111,6 +111,10 @@ class VoicemailService(models.AbstractModel):
                 "company_id": extension.company_id.id,
             }
         )
+        # Länka attachment till meddelandet (annars kan /web/content/<id>
+        # inte servera ljudet — res_id saknas)
+        if attachment and not attachment.res_id:
+            attachment.write({"res_id": message.id})
 
         # Notify user (defensivt — får inte blockera lagringen; notify_info
         # finns inte på res.users i alla Odoo-versioner)
