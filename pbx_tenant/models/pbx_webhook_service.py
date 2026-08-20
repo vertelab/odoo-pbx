@@ -198,11 +198,14 @@ class PbxWebhookService(models.AbstractModel):
             file_path = f"{spool_dir.rstrip('/')}/msg0001.wav"
         self.env["pbx.voicemail.service"].handle_voicemail_event(
             {
-                "domain": self.env["ir.config_parameter"].get_param("pbx.domain", ""),
+                "domain": tenant,
                 "mailbox": mailbox,
                 "callerid_num": event.get("CallerIDNum", ""),
                 "callerid_name": event.get("CallerIDName", ""),
                 "duration": int(event.get("Duration", 0) or 0),
                 "file_path": file_path,
+                # Daemonen bifogar ljudet (base64) eftersom Odoo ligger på
+                # annan maskin än Asterisk-spoolen
+                "audio_base64": event.get("_audio_base64") or "",
             }
         )

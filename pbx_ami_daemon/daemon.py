@@ -13,6 +13,7 @@ Usage:
 """
 
 import argparse
+import base64
 import asyncio
 import json
 import logging
@@ -265,6 +266,22 @@ def extract_tenant_from_event(
 # ──────────────────────────────────────────────────────────────────
 
 
+def _read_voicemail_audio(event: dict) -> Optional[str]:
+    """Läs voicemail-inspelningen (msg0001.wav) från spool-katalogen och
+    returnera base64 — Odoo ligger på annan maskin och kan inte läsa filen.
+    """
+    spool_dir = event.get("Dir", "") or ""
+    if not spool_dir:
+        return None
+    path = os.path.join(spool_dir, "msg0001.wav")
+    try:
+        with open(path, "rb") as f:
+            return base64.b64encode(f.read()).decode()
+    except OSError as e:
+        logger.warning("Could not read voicemail audio %s: %s", path, e)
+        return None
+
+
 class WebhookPublisher:
     """POSTs events to the tenant Odoo /pbx/webhook endpoint.
 
@@ -362,7 +379,15 @@ class EventConsumer:
             # Publish to tenant-specific topic
             topic = f"pbx.event.{tenant}.AMI.{event_name}"
             await self.publisher(topic, event)
-            await self.webhook.publish(tenant, topic, event)
+            if event_name == "VoicemailMessage":
+                # Bifoga ljudet (base64) — Odoo läser inte spool-filen lokalt
+                payload = dict(event)
+                audio = _read_voicemail_audio(event)
+                if audio:
+                    payload["_audio_base64"] = audio
+                await self.webhook.publish(tenant, topic, payload)
+            else:
+                await self.webhook.publish(tenant, topic, event)
 
 
 # ──────────────────────────────────────────────────────────────────

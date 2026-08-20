@@ -22,7 +22,9 @@ class VoicemailService(models.AbstractModel):
             - callerid_num: caller number
             - callerid_name: caller name
             - duration: recording duration in seconds
-            - file_path: path to .wav file on Asterisk server
+            - file_path: path to .wav file on Asterisk server (samma maskin)
+            - audio_base64: inspelningen som base64 (daemonen läser spoolen
+              åt Odoo när de ligger på olika maskiner)
         """
         domain = event_data.get("domain", "")
         mailbox = event_data.get("mailbox", "")
@@ -30,6 +32,7 @@ class VoicemailService(models.AbstractModel):
         caller_name = event_data.get("callerid_name", "")
         duration = int(event_data.get("duration", 0))
         file_path = event_data.get("file_path", "")
+        audio_base64 = event_data.get("audio_base64", "") or ""
 
         # Find the extension. Instansen administrerar bara sin egen växel
         # (company-scopad via ir.rule) — ingen tenant-post krävs lokalt.
@@ -52,9 +55,22 @@ class VoicemailService(models.AbstractModel):
         if partner:
             caller_name = partner.display_name
 
-        # Create attachment from audio file (if accessible)
+        # Create attachment from audio (base64 från daemonen, eller lokal fil
+        # när Odoo och Asterisk delar maskin)
         attachment = None
-        if file_path:
+        if audio_base64:
+            try:
+                attachment = self.env["ir.attachment"].create(
+                    {
+                        "name": f"Voicemail_{caller_number}_{fields.Datetime.now()}",
+                        "datas": base64.b64encode(base64.b64decode(audio_base64)),
+                        "mimetype": "audio/wav",
+                        "res_model": "pbx.voicemail.message",
+                    }
+                )
+            except Exception as e:
+                _logger.warning("Could not store voicemail audio: %s", e)
+        elif file_path:
             try:
                 with open(file_path, "rb") as f:
                     audio_data = base64.b64encode(f.read())
@@ -90,6 +106,9 @@ class VoicemailService(models.AbstractModel):
                 "duration": duration,
                 "audio_attachment_id": attachment.id if attachment else False,
                 "call_id": call.id,
+                # sudo()-kontext (webhook) har ingen env.company — ta från
+                # anknytningen
+                "company_id": extension.company_id.id,
             }
         )
 
