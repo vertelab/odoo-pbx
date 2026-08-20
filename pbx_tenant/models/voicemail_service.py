@@ -112,11 +112,15 @@ class VoicemailService(models.AbstractModel):
             }
         )
 
-        # Notify user
+        # Notify user (defensivt — får inte blockera lagringen; notify_info
+        # finns inte på res.users i alla Odoo-versioner)
         if extension.user_id:
-            extension.user_id.notify_info(
-                f"New voicemail from {caller_name or caller_number} ({duration}s)"
-            )
+            try:
+                extension.user_id.notify_info(
+                    f"New voicemail from {caller_name or caller_number} ({duration}s)"
+                )
+            except Exception as e:
+                _logger.warning("Voicemail notify failed: %s", e)
 
         # Transcribe if enabled and odoo_ai is available
         voicemail_sub = extension.sub_extension_ids.filtered(
