@@ -9,6 +9,7 @@
     "depends": [
         "pbx_tenant",
         "pbx_crm",
+            "pbx_queue",
         "ai_agent_core",
     ],
     "data": [
