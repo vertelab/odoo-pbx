@@ -9,7 +9,7 @@ from odoo import models
 _logger = logging.getLogger(__name__)
 
 
-class PbxWebhookServiceAI(models.Model):
+class PbxWebhookServiceAI(models.AbstractModel):
     """pbx_ai-hook på webhook-tjänsten.
 
     - Vidarebefordrar pbx.result.* (transcriber-resultat) till pbx.ai.
