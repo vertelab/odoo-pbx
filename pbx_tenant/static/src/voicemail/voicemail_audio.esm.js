@@ -13,6 +13,11 @@ export class VoicemailAudioPlayer extends Component {
         const value = this.props.record.data.audio_attachment_id;
         return Array.isArray(value) ? value[0] : false;
     }
+    get isAudio() {
+        // Spela bara upp när filen verkligen är ljud (mimetype audio/*)
+        const mime = this.props.record.data.audio_mimetype || "";
+        return String(mime).startsWith("audio/");
+    }
     get audioSrc() {
         return this.audioAttachmentId
             ? `/web/content/${this.audioAttachmentId}?download=true`

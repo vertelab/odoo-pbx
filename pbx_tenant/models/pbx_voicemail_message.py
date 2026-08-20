@@ -19,6 +19,10 @@ class PbxVoicemailMessage(models.Model):
     caller_name = fields.Char()
     duration = fields.Integer(help="Duration in seconds")
     audio_attachment_id = fields.Many2one("ir.attachment", string="Audio")
+    audio_mimetype = fields.Char(
+        related="audio_attachment_id.mimetype",
+        string="Audio Type",
+    )
     transcript = fields.Text()
     is_read = fields.Boolean(default=False)
     call_id = fields.Many2one("voip.call", string="Related Call")

@@ -111,10 +111,13 @@ class VoicemailService(models.AbstractModel):
                 "company_id": extension.company_id.id,
             }
         )
-        # Länka attachment till meddelandet (annars kan /web/content/<id>
-        # inte servera ljudet — res_id saknas)
-        if attachment and not attachment.res_id:
-            attachment.write({"res_id": message.id})
+        # Länka attachment till MOTTAGAREN (bilaga på mottagarens partner),
+        # inte till pbx.voicemail.message — så inspelningen syns som bilaga på
+        # den som fick samtalet. audio_attachment_id på meddelandet behålls
+        # för formuläret.
+        if attachment:
+            receiver = extension.user_id.partner_id or extension.company_id.partner_id
+            attachment.write({"res_model": "res.partner", "res_id": receiver.id})
 
         # Notify user (defensivt — får inte blockera lagringen; notify_info
         # finns inte på res.users i alla Odoo-versioner)

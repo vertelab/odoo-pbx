@@ -26,6 +26,7 @@
                         <field name="user_id"/>
                     </group>
                     <group string="Audio">
+                        <field name="audio_mimetype" invisible="1"/>
                         <field name="audio_attachment_id" widget="pbx_voicemail_audio"/>
                         <button
                             name="action_listen"
