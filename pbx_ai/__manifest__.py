@@ -8,7 +8,6 @@
     "license": "AGPL-3",
     "depends": [
         "pbx_tenant",
-        "pbx_helpdesk",
         "pbx_crm",
         "ai_agent_core",
     ],
