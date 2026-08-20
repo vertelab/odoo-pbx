@@ -58,18 +58,25 @@ export class OperatorPanel extends Component {
     }
 
     async init() {
-        const [grid, widgets] = await Promise.all([
-            rpc("/pbx/operator_panel/grid"),
-            rpc("/pbx/operator_panel/widgets"),
-        ]);
-        this.state.domain = grid.domain || "";
-        this.state.isReceptionist = grid.is_receptionist || false;
-        this.state.extensions = grid.extensions || [];
-        this.state.queues = grid.queues || [];
-        this.state.ivrs = grid.ivrs || [];
-        this.state.widgets = widgets.widgets || [];
-        this.state.loading = false;
-        this.subscribe();
+        try {
+            const [grid, widgets] = await Promise.all([
+                rpc("/pbx/operator_panel/grid"),
+                rpc("/pbx/operator_panel/widgets"),
+            ]);
+            this.state.domain = grid.domain || "";
+            this.state.isReceptionist = grid.is_receptionist || false;
+            this.state.extensions = grid.extensions || [];
+            this.state.queues = grid.queues || [];
+            this.state.ivrs = grid.ivrs || [];
+            this.state.widgets = widgets.widgets || [];
+            this.state.loading = false;
+            this.subscribe();
+        } catch (err) {
+            // En misslyckad grid/widgets-hämtning får aldrig bli en
+            // ohanterad promise-rejection (maskerar riktiga fel)
+            console.error("Operator panel init failed", err);
+            this.state.loading = false;
+        }
     }
 
     subscribe() {

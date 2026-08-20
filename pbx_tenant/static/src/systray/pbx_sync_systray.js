@@ -122,6 +122,17 @@ export class PbxSyncSystray extends Component {
                 }
             );
             await this._refresh();
+        } catch (err) {
+            // Aldrig lämna en ohanterad rejection (maskerar riktiga fel i
+            // Odoos formatTraceback)
+            this.notification.add(
+                err && err.message ? err.message : "PBX Sync misslyckades",
+                {
+                    title: "PBX Sync",
+                    type: "danger",
+                    sticky: true,
+                }
+            );
         } finally {
             this.state.syncing = false;
         }
