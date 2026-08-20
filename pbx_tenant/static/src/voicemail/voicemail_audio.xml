@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="pbx_tenant.VoicemailAudioPlayer">
+        <div t-if="audioAttachmentId" class="pbx_voicemail_player">
+            <audio controls="" preload="metadata" style="width: 100%">
+                <source t-att-src="audioSrc" type="audio/wav"/>
+            </audio>
+        </div>
+        <div t-else="" class="text-muted">Ingen inspelning.</div>
+    </t>
+</templates>
