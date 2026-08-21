@@ -49,7 +49,7 @@
     <record id="rule_pbx_extension_own" model="ir.rule">
         <field name="name">PBX Extension: own extension only</field>
         <field name="model_id" ref="model_pbx_extension"/>
-        <field name="groups" eval="[(6, 0, [ref('group_pbx_operator')])]"/>
+        <field name="groups" eval="[(6, 0, [ref('base.group_user')])]"/>
         <field name="domain_force">[('user_id', '=', user.id)]</field>
         <field name="perm_read" eval="True"/>
         <field name="perm_write" eval="True"/>
@@ -60,7 +60,7 @@
     <record id="rule_pbx_sub_extension_own" model="ir.rule">
         <field name="name">PBX Sub-Extension: via own extension</field>
         <field name="model_id" ref="model_pbx_sub_extension"/>
-        <field name="groups" eval="[(6, 0, [ref('group_pbx_operator')])]"/>
+        <field name="groups" eval="[(6, 0, [ref('base.group_user')])]"/>
         <field name="domain_force">[('extension_id.user_id', '=', user.id)]</field>
         <field name="perm_read" eval="True"/>
         <field name="perm_write" eval="True"/>
@@ -82,6 +82,26 @@
     <record id="rule_pbx_sub_extension_all" model="ir.rule">
         <field name="name">PBX Sub-Extension: full access (office/admin)</field>
         <field name="model_id" ref="model_pbx_sub_extension"/>
+        <field name="groups" eval="[(6, 0, [ref('group_pbx_office'), ref('group_pbx_admin')])]"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+    </record>
+
+    <!-- Samtal (pbx.call): interna användare ser sina egna samtal (Mina
+         samtal + voicemail-aktivitet → pbx.call); office/admin ser alla. -->
+    <record id="rule_pbx_call_own" model="ir.rule">
+        <field name="name">PBX Call: own calls only</field>
+        <field name="model_id" ref="model_pbx_call"/>
+        <field name="groups" eval="[(6, 0, [ref('base.group_user')])]"/>
+        <field name="domain_force">[('user_id', '=', user.id)]</field>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <record id="rule_pbx_call_all" model="ir.rule">
+        <field name="name">PBX Call: full access (office/admin)</field>
+        <field name="model_id" ref="model_pbx_call"/>
         <field name="groups" eval="[(6, 0, [ref('group_pbx_office'), ref('group_pbx_admin')])]"/>
         <field name="domain_force">[(1, '=', 1)]</field>
     </record>
