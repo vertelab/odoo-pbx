@@ -346,6 +346,11 @@ class PbxConfigGenerator(models.AbstractModel):
         vm_contexts = []
 
         for ext in extensions:
+            entry = self._get_extension_internal_entry(ext, domain)
+            if entry:
+                # Plugin-tillhandahållen intern entry (t.ex. AI-anknytning → Stasis).
+                internal_entries.append(entry)
+                continue
             active_subs = ext.sub_extension_ids.filtered(
                 lambda s: s.active and s.type != "voicemail"
             )
@@ -819,6 +824,16 @@ class PbxConfigGenerator(models.AbstractModel):
         return (
             "same => n,Voicemail({public_number}@{domain},u)\n").format(
             public_number=ext.public_number, domain=domain)
+
+    def _get_extension_internal_entry(self, ext, domain):
+        """Returnera den interna dialplan-entrin för en anknytning, eller None.
+
+        Default: None → anroparen faller tillbaka på standard-entrin
+        ``Goto(domain-ext-<num>,s,1)`` (ring-gruppen). Plugins kan override:a
+        denna hook för att leverera en egen entry (t.ex. AI-anknytning →
+        Stasis(coworker,<id>)).
+        """
+        return None
 
     def generate_all(self, domain, company):
         """Generate all config files for the instance, incl. plugin snippets."""

@@ -235,21 +235,22 @@ class PbxAI(models.AbstractModel):
         return {}
 
     def get_internal_dialplan(self, domain, company):
-        """Make AI-anknytningar reachable by their public number (Stasis)."""
+        """Make AI-anknytningar reachable by their public number (Stasis).
+
+        Används av tester + ev. direktbruk. Produktionsvägen är
+        ``pbx.config.generator._get_extension_internal_entry`` (override:ad
+        av pbx_ai) som genererar samma entry per anknytning i den interna
+        kontexten.
+        """
         company_id = company.id if isinstance(company, models.Model) else company
-        extensions = self.env["pbx.extension"].search(
-            [("company_id", "=", company_id)]
-        )
+        generator = self.env["pbx.config.generator"]
         lines = []
-        for ext in extensions:
-            if not ext._is_ai_extension():
-                continue
-            coworker = ext._get_ai_coworker()
-            if coworker:
-                lines.append(
-                    "exten => %s,1,Stasis(coworker,%s)"
-                    % (ext.public_number, coworker.id)
-                )
+        for ext in self.env["pbx.extension"].search(
+            [("company_id", "=", company_id)]
+        ):
+            entry = generator._get_extension_internal_entry(ext, domain)
+            if entry:
+                lines.append(entry)
         return "\n".join(lines)
 
     def get_operator_panel_widgets(self):

@@ -1,6 +1,6 @@
 {
     "name": "PBX AI Bridge",
-    "version": "18.0.1.4.0",
+    "version": "18.0.1.5.0",
     "summary": "PBX AI — transcript-dokument, receptionist-coworker, ARI",
     "category": "Productivity/VOIP",
     "author": "Vertel Sverige AB",
