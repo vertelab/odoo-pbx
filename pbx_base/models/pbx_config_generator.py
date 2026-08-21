@@ -134,8 +134,7 @@ same => n,Hangup()
 EXT_CONTEXT_TEMPLATE = """\
 [{domain}-ext-{public_number}]
 exten => s,1,NoOp(Ring group for {public_number})
-{busy_gates}{availability_gates}{dial_lines}same => n,Voicemail({public_number}@{domain},u)
-same => n,Hangup()
+{busy_gates}{availability_gates}{dial_lines}{follow_me_fallback}same => n,Hangup()
 same => n(done),Hangup()
 same => n(busy),Voicemail({public_number}@{domain},b)
 same => n,Hangup()
@@ -396,6 +395,9 @@ class PbxConfigGenerator(models.AbstractModel):
                 domain, ext.public_number, bool(availability_gates)
             )
 
+            # Follow-me-fallback: AI-destination (plugin) eller voicemail.
+            follow_me_fallback = self._follow_me_fallback(ext, domain)
+
             ext_contexts.append(
                 EXT_CONTEXT_TEMPLATE.format(
                     domain=domain,
@@ -403,6 +405,7 @@ class PbxConfigGenerator(models.AbstractModel):
                     busy_gates=busy_gates,
                     availability_gates=availability_gates,
                     dial_lines=dial_lines,
+                    follow_me_fallback=follow_me_fallback,
                     availability_announcement=availability_announcement,
                 )
             )
@@ -800,6 +803,22 @@ class PbxConfigGenerator(models.AbstractModel):
         return AVAILABILITY_ANNOUNCEMENT_TEMPLATE.format(
             domain=domain, public_number=public_number
         )
+
+    def _follow_me_fallback(self, ext, domain):
+        """Dialplan-rad efter att enheterna ringts utan svar.
+
+        Om anknytningen har en AI-follow-me-destination (fält från pbx_ai)
+        dirigeras samtalet till Stasis(coworker,<id>); annars voicemail.
+        """
+        ai_coworker = False
+        if "follow_me_ai_coworker_id" in self.env["pbx.extension"]._fields:
+            ai_coworker = ext.follow_me_ai_coworker_id
+        if ai_coworker and ai_coworker.active and ai_coworker._get_leader_agent():
+            return (
+                "same => n,Stasis(coworker,%s)\n" % ai_coworker.id)
+        return (
+            "same => n,Voicemail({public_number}@{domain},u)\n").format(
+            public_number=ext.public_number, domain=domain)
 
     def generate_all(self, domain, company):
         """Generate all config files for the instance, incl. plugin snippets."""

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ai.coworker — PBX-anknytning (coworker-as-extension, D1) + STT/TTS -->
+    <record id="view_ai_coworker_form_pbx" model="ir.ui.view">
+        <field name="name">ai.coworker.form.pbx</field>
+        <field name="model">ai.coworker</field>
+        <field name="inherit_id" ref="ai_agent_core.ai_coworker_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet" position="inside">
+                <group name="pbx" string="PBX Anknytning" groups="pbx_base.group_pbx_admin">
+                    <group>
+                        <field name="employee_id" readonly="1"/>
+                        <field name="stt_mode"/>
+                    </group>
+                    <group>
+                        <field name="tts_voice"/>
+                        <field name="tts_lang"/>
+                    </group>
+                </group>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- pbx.extension — visa AI-kollegare (read-only) -->
+    <record id="view_pbx_extension_form_ai_coworker" model="ir.ui.view">
+        <field name="name">pbx.extension.form.ai.coworker</field>
+        <field name="model">pbx.extension</field>
+        <field name="inherit_id" ref="pbx_base.pbx_extension_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet" position="inside">
+                <group name="ai_coworker" string="AI-kollegare" groups="pbx_base.group_pbx_admin">
+                    <field name="ai_coworker_id" readonly="1"/>
+                    <field name="follow_me_ai_coworker_id"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+</odoo>
