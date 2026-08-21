@@ -17,7 +17,7 @@ class TestCoworkerExtension(common.TransactionCase):
         cls.agent = cls.env['ai.agent'].create({'name': 'Test-Agent'})
         cls.coworker = cls.env['ai.coworker'].create({
             'name': 'Test-Coworker',
-            'model_name': 'project.task',
+            'model_ids': [(6, 0, [cls.env['ir.model']._get('project.task').id])],
         })
         # Leader-agent-koppling
         cls.env['ai.coworker.agent'].create({
@@ -40,7 +40,7 @@ class TestCoworkerExtension(common.TransactionCase):
         cls.coworker.write({'employee_id': cls.employee.id})
         cls.extension = cls.env['pbx.extension'].create({
             'public_number': '6099',
-            'name': 'Test-AI-ext',
+            'callerid_name': 'Test-AI-ext',
             'user_id': cls.user.id,
         })
 
@@ -75,7 +75,7 @@ class TestCoworkerDialplan(common.TransactionCase):
         cls.agent = cls.env['ai.agent'].create({'name': 'Test-Agent2'})
         cls.coworker = cls.env['ai.coworker'].create({
             'name': 'Test-Coworker2',
-            'model_name': 'project.task',
+            'model_ids': [(6, 0, [cls.env['ir.model']._get('project.task').id])],
         })
         cls.env['ai.coworker.agent'].create({
             'coworker_id': cls.coworker.id,
@@ -96,7 +96,7 @@ class TestCoworkerDialplan(common.TransactionCase):
         cls.coworker.write({'employee_id': cls.employee.id})
         cls.extension = cls.env['pbx.extension'].create({
             'public_number': '6098',
-            'name': 'Test-AI-ext2',
+            'callerid_name': 'Test-AI-ext2',
             'user_id': cls.user.id,
             'follow_me_ai_coworker_id': cls.coworker.id,
         })
@@ -120,7 +120,7 @@ class TestCoworkerDialplan(common.TransactionCase):
         generator = self.env['pbx.config.generator']
         ext = self.env['pbx.extension'].create({
             'public_number': '6097',
-            'name': 'Test-plain',
+            'callerid_name': 'Test-plain',
         })
         fallback = generator._follow_me_fallback(ext, 'testdomain')
         self.assertIn('Voicemail(', fallback)

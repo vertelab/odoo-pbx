@@ -234,6 +234,24 @@ class PbxAI(models.AbstractModel):
     def get_config_snippets(self, tenant):
         return {}
 
+    def get_internal_dialplan(self, domain, company):
+        """Make AI-anknytningar reachable by their public number (Stasis)."""
+        company_id = company.id if isinstance(company, models.Model) else company
+        extensions = self.env["pbx.extension"].search(
+            [("company_id", "=", company_id)]
+        )
+        lines = []
+        for ext in extensions:
+            if not ext._is_ai_extension():
+                continue
+            coworker = ext._get_ai_coworker()
+            if coworker:
+                lines.append(
+                    "exten => %s,1,Stasis(coworker,%s)"
+                    % (ext.public_number, coworker.id)
+                )
+        return "\n".join(lines)
+
     def get_operator_panel_widgets(self):
         return [{"name": "ai_transcript", "component": "PbxAiTranscript", "props": {}}]
 

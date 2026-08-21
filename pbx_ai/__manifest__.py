@@ -1,6 +1,6 @@
 {
     "name": "PBX AI Bridge",
-    "version": "18.0.1.3.0",
+    "version": "18.0.1.4.0",
     "summary": "PBX AI — transcript-dokument, receptionist-coworker, ARI",
     "category": "Productivity/VOIP",
     "author": "Vertel Sverige AB",
@@ -22,6 +22,7 @@
         "views/pbx_extension_views.xml",
         "views/pbx_queue_views.xml",
         "views/pbx_sub_extension_views.xml",
+        "views/pbx_coworker_views.xml",
     ],
     "installable": True,
     "auto_install": False,

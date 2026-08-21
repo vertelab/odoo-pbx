@@ -26,6 +26,22 @@ class PbxExtensionAI(models.Model):
         help="Ersatt av 'Inspelning/Transkribering'. Finns kvar för bakåtkompatibilitet.",
     )
 
+    # ── AI-anknytning (coworker-as-extension) ──────────────────────
+
+    follow_me_ai_coworker_id = fields.Many2one(
+        "ai.coworker",
+        string="Follow-me AI-destination",
+        help="AI-kollegare som tar över samtalet efter att enheterna ringts "
+             "utan svar (Stasis(coworker,<id>)).",
+    )
+    ai_coworker_id = fields.Many2one(
+        "ai.coworker",
+        string="AI-kollegare",
+        compute="_compute_ai_coworker_id",
+        help="Härledd AI-kollegare via användarens personal_coworker_id "
+             "(read-only).",
+    )
+
     def _get_recording_mode(self):
         """Upplösning: anknytning → kö → global policy.
 
@@ -49,3 +65,23 @@ class PbxExtensionAI(models.Model):
         if policy and policy.mode == "always":
             return "record"
         return ""
+
+    def _compute_ai_coworker_id(self):
+        for ext in self:
+            ext.ai_coworker_id = ext._get_ai_coworker().id
+
+    def _get_ai_coworker(self):
+        """Returnera den aktiva AI-kollegaren (personal_coworker_id) eller tom record."""
+        self.ensure_one()
+        coworker = self.user_id.personal_coworker_id if self.user_id else False
+        if coworker and coworker.active:
+            return coworker
+        return self.env["ai.coworker"]
+
+    def _is_ai_extension(self):
+        """True om anknytningen är en AI-anknytning (aktiv coworker med leader-agent)."""
+        self.ensure_one()
+        coworker = self._get_ai_coworker()
+        if not coworker:
+            return False
+        return bool(coworker._get_leader_agent())
