@@ -99,6 +99,7 @@ type = registration
 server_uri = sip:{host}:{port}
 client_uri = sip:{username}@{host}
 contact_user = {username}
+outbound_auth = {domain}-trunk-{slug}-auth
 """
 
 IDENTIFY_TEMPLATE = """\
