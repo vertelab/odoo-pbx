@@ -247,7 +247,11 @@ class PbxConfigGenerator(models.AbstractModel):
                         nat_options=(
                             ""
                             if sub.type == "browser"
-                            else "rewrite_contact = yes"
+                            else (
+                                "rewrite_contact = yes\n"
+                                "force_rport = yes\n"
+                                "rtp_symmetric = yes"
+                            )
                         ),
                         codec_allows=self._codec_allows(company, sub),
                     )
