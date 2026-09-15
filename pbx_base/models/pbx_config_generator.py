@@ -767,10 +767,16 @@ class PbxConfigGenerator(models.AbstractModel):
         )
 
     def _get_plugin_recordsets(self):
-        """Yield one recordset per concrete model implementing pbx.plugin.
+        """Yield one recordset per concrete record implementing pbx.plugin.
 
         pbx.plugin is an AbstractModel with no table — plugins must be
         collected by scanning the registry for models inheriting it.
+
+        Plugins are configured as regular records (recording policies, time
+        conditions, queues, conferences, ...). A plugin model whose table is
+        empty contributes nothing, so empty recordsets are skipped: the base
+        implementation calls ensure_one(), which would raise ValueError on an
+        empty recordset and abort the whole config generation.
         """
         for model_name, model in self.env.registry.items():
             if model._abstract:
@@ -778,8 +784,13 @@ class PbxConfigGenerator(models.AbstractModel):
             inherits = model._inherit or []
             if isinstance(inherits, str):
                 inherits = [inherits]
-            if "pbx.plugin" in inherits:
-                yield self.env[model_name]
+            if "pbx.plugin" not in inherits:
+                continue
+            records = self.env[model_name].search([])
+            if not records:
+                continue
+            for record in records:
+                yield record
 
     # ------------------------------------------------------------------
     # Orchestration
