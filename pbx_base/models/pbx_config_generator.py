@@ -77,7 +77,6 @@ disallow = all
 outbound_auth = {domain}-trunk-{slug}-auth
 aors = {domain}-trunk-{slug}-aor
 callerid = "{callerid}"
-{external_media}
 
 [{domain}-trunk-{slug}-auth]
 type = auth
@@ -106,6 +105,7 @@ IDENTIFY_TEMPLATE = """\
 [{domain}-trunk-{slug}-identify]
 type = identify
 match = {ip}
+endpoint = {domain}-trunk-{slug}
 """
 
 EXTENSIONS_CONF_TEMPLATE = """\
@@ -259,12 +259,12 @@ class PbxConfigGenerator(models.AbstractModel):
         trunk_blocks = []
         for trunk in trunks:
             slug = self._slug(trunk.name)
-            external_ip = self.env["ir.config_parameter"].sudo().get_param(
-                "pbx.external.ip", ""
-            )
-            external_media = (
-                "\nexternal_media_address = %s" % external_ip if external_ip else ""
-            )
+            # OBS: external_media_address/external_signaling_address är
+            # TRANSPORT-optioner i chan_pjsip — de sätts i transport-sektionen
+            # (pjsip.conf, salt-ägd), inte per endpoint. Låg tidigare i
+            # endpoint-sektionen och gjorde att hela endpointen failade:
+            # "Could not find option suitable for category '…-trunk-…'
+            #  named 'external_media_address'" → inga samtal in/ut.
             # Registration: register-baserad inkommande (utan statisk port)
             registration = ""
             if trunk.username and trunk.host:
@@ -300,7 +300,6 @@ class PbxConfigGenerator(models.AbstractModel):
                     port=trunk.port or 5060,
                     callerid=trunk.callerid or "",
                     codec_allows=self._codec_allows(company),
-                    external_media=external_media,
                     registration=registration,
                     identify=identify,
                 )
