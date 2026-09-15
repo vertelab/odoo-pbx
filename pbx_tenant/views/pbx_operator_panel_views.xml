@@ -6,7 +6,7 @@
     </record>
 
     <!-- Operator Panel (internkod Operator Panel = Flash Operator Panel 2).
-         Visas för alla PBX-roller (operator/office/admin) direkt under
+         Shown for all PBX roles (operator/office/admin) directly under
          PBX-huvudmenyn. -->
     <record id="pbx_tenant_operator_panel_menu" model="ir.ui.menu">
         <field name="name">Operator Panel</field>

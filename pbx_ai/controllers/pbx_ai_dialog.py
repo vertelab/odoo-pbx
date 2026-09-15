@@ -14,23 +14,23 @@ RECEPTIONIST_XMLID = "pbx_ai.coworker_pbx_receptionist"
 
 
 class PbxAIDialog(http.Controller):
-    """Dialog-endpoint för samtals-coworker (receptionist + AI-anknytning).
+    """Dialog endpoint for the call coworker (receptionist + AI extension).
 
-    Daemonen (pbx_ami_daemon) POST:ar varje turn (transkript) hit och får
-    tillbaka svars-text + TTS-ljud (base64) som spelas upp via ARI.
+    The daemon (pbx_ami_daemon) POSTs each turn (transcript) here and gets
+    back reply text + TTS audio (base64) that is played via ARI.
 
     Payload (JSON):
         {
-          "tenant": "kund.se",
+          "tenant": "customer.se",
           "channel_id": "1787241019.1",
-          "coworker_id": 0,          # 0 → default receptionist
-          "call_id": 0,              # pbx.call id om känd
+          "coworker_id": 0,          # 0 -> default receptionist
+          "call_id": 0,              # pbx.call id if known
           "caller_number": "0701234567",
           "history": [               # full dialog (user/assistant)
-            "user: Hej!",
-            "assistant: Hej, hur kan jag hjälpa?"
+            "user: Hi!",
+            "assistant: Hi, how can I help?"
           ],
-          "turn": "user: min maskin är trasig"
+          "turn": "user: my machine is broken"
         }
 
     Response:
@@ -51,7 +51,7 @@ class PbxAIDialog(http.Controller):
             if not coworker:
                 return {
                     "status": "ok",
-                    "reply": "Tyvärr är ingen AI-medarbetare konfigurerad just nu.",
+                    "reply": "Unfortunately no AI coworker is configured right now.",
                     "tts_audio_base64": "",
                 }
 
@@ -86,11 +86,11 @@ class PbxAIDialog(http.Controller):
         return rec.sudo() if rec else request.env["ai.coworker"]
 
     def _build_conversation(self, payload):
-        """Bygg konversationstext med samtalskontext."""
+        """Build the conversation text with call context."""
         lines = []
         caller = payload.get("caller_number", "")
         if caller:
-            lines.append(f"Kontext: inkommande samtal från {caller} (PBX).")
+            lines.append(f"Context: incoming call from {caller} (PBX).")
         history = payload.get("history") or []
         turn = payload.get("turn", "")
         if history:
@@ -98,11 +98,11 @@ class PbxAIDialog(http.Controller):
         if turn:
             lines.append(turn)
         if not lines:
-            lines.append("user: (tystnad)")
+            lines.append("user: (silence)")
         return "\n".join(lines)
 
     def _run_coworker(self, coworker, conversation, payload):
-        """Kör coworkern. HITL (AgentLoopPaused) → artigt svar."""
+        """Run the coworker. HITL (AgentLoopPaused) -> polite reply."""
         try:
             res = coworker.run(conversation)
             text = getattr(res, "content", None)
@@ -117,12 +117,12 @@ class PbxAIDialog(http.Controller):
             return "…"
         except Exception as e:
             if "AgentLoopPaused" in type(e).__name__:
-                return "Ett ögonblick, jag kopplar dig vidare."
+                return "One moment, I will transfer you."
             _logger.warning("Coworker run failed: %s", e)
-            return "Ett ögonblick, jag kopplar dig vidare."
+            return "One moment, I will transfer you."
 
     def _tts_audio(self, text, coworker):
-        """Generera tal via ai.provider (is_asr-modell). Returnerar bytes."""
+        """Generate speech via ai.provider (is_asr model). Returns bytes."""
         if not text or text in ("…",):
             return b""
         try:

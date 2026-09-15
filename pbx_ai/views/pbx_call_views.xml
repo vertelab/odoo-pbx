@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <!-- pbx.call — attachments, token-spårning, STT-metadata (recording-transcription) -->
+    <!-- pbx.call — attachments, token tracking, STT metadata (recording transcription) -->
     <record id="view_pbx_call_list_ai" model="ir.ui.view">
         <field name="name">pbx.call.list.ai</field>
         <field name="model">pbx.call</field>

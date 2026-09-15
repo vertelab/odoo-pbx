@@ -11,8 +11,8 @@ _logger = logging.getLogger(__name__)
 
 
 class PbxClickToCall(http.Controller):
-    """Click-to-call: POST /pbx/click_to_call {number} → ring användarens
-    första aktiva enhet och koppla målnumret (via MQ → AMI Originate)."""
+    """Click-to-call: POST /pbx/click_to_call {number} → ring the user's
+    first active device and connect the target number (via MQ → AMI Originate)."""
 
     @http.route("/pbx/click_to_call", type="json", auth="user", methods=["POST"], csrf=False)
     def click_to_call(self, number, **kwargs):

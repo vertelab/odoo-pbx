@@ -72,8 +72,8 @@ export class OperatorPanel extends Component {
             this.state.loading = false;
             this.subscribe();
         } catch (err) {
-            // En misslyckad grid/widgets-hämtning får aldrig bli en
-            // ohanterad promise-rejection (maskerar riktiga fel)
+            // A failed grid/widgets fetch must never become an
+            // unhandled promise rejection (masks real errors)
             console.error("Operator panel init failed", err);
             this.state.loading = false;
         }

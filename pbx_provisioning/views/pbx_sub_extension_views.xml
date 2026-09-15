@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <!-- Provisioning-stöd i enhetsvyerna (pbx_provisioning).
-         Endast när modulen är installerad. -->
+    <!-- Provisioning support in the device views (pbx_provisioning).
+         Only when the module is installed. -->
 
-    <!-- Visa provisioning-URL + QR i enhetslistan (extension-formuläret) -->
+    <!-- Show provisioning URL + QR in the device list (extension form) -->
     <record id="pbx_provisioning_sub_extension_list" model="ir.ui.view">
         <field name="name">pbx.extension.form.provisioning</field>
         <field name="model">pbx.extension</field>
@@ -16,7 +16,7 @@
         </field>
     </record>
 
-    <!-- Devices-form (pbx-device-views + odoo-view-ombyggnad): Provisioning-sida -->
+    <!-- Devices form (pbx-device-views + odoo view rebuild): Provisioning page -->
     <record id="pbx_provisioning_sub_extension_form" model="ir.ui.view">
         <field name="name">pbx.sub_extension.form.provisioning</field>
         <field name="model">pbx.sub_extension</field>

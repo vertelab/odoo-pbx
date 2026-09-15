@@ -8,11 +8,11 @@ from werkzeug.exceptions import NotFound
 
 
 class PbxProvisioningController(http.Controller):
-    """Provisioning-endpoints.
+    """Provisioning endpoints.
 
-    Alla endpoints är auth='public' (telefoner/appar har ingen Odoo-inloggning)
-    och autentiseras av token/MAC själva. Ogiltiga förfrågningar → 404 (ingen
-    information om att ett MAC/token finns).
+    All endpoints are auth='public' (phones/apps have no Odoo login) and are
+    authenticated by token/MAC themselves. Invalid requests -> 404 (no
+    information about whether a MAC/token exists).
     """
 
     def _normalize_mac(self, mac):
@@ -39,8 +39,8 @@ class PbxProvisioningController(http.Controller):
     def hardware_config(self, mac, **kw):
         """Yealink AutoP: /pbx/provisioning/<MAC>.cfg
 
-        Auth: HTTP Basic (URL-credentials) med username=<domän> och
-        password=<företagets provisioning-token>.
+        Auth: HTTP Basic (URL credentials) with username=<domain> and
+        password=<the company's provisioning token>.
         """
         mac = self._normalize_mac(mac)
         auth = request.httprequest.authorization
@@ -77,7 +77,7 @@ class PbxProvisioningController(http.Controller):
     def softphone_config(self, token, **kw):
         """Linphone: /pbx/provisioning/softphone/<token>.xml
 
-        Token = per-enhet (128-bit) — både nyckel och auth.
+        Token = per device (128-bit) — both key and auth.
         """
         token = (token or "").strip()
         if not token:

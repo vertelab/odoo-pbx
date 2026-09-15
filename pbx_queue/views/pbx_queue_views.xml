@@ -6,7 +6,7 @@
             <form>
                 <sheet>
                     <group>
-                        <group string="Kö">
+                        <group string="Queue">
                             <field name="name"/>
                             <field name="extension"/>
                             <field name="strategy" readonly="is_ring_group == True"/>
@@ -17,7 +17,7 @@
                             <field name="is_manual"/>
                             <field name="active"/>
                         </group>
-                        <group string="Överflöde / Timeout" invisible="is_ring_group == True">
+                        <group string="Overflow / Timeout" invisible="is_ring_group == True">
                             <field name="max_wait_time"/>
                             <field name="overflow_destination_id"/>
                             <field name="timeout_seconds"/>
@@ -26,7 +26,7 @@
                         </group>
                     </group>
                     <notebook>
-                        <page string="Agenter">
+                        <page string="Agents">
                             <field name="member_ids" mode="list">
                                 <list editable="bottom">
                                     <field name="extension_id"/>

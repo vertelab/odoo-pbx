@@ -6,13 +6,13 @@ from odoo import fields, models
 
 
 class PbxSubExtensionAI(models.Model):
-    """AI-arv på pbx.sub_extension — voicemail-transkribering per device."""
+    """AI inheritance on pbx.sub_extension — voicemail transcription per device."""
 
     _inherit = "pbx.sub_extension"
 
     transcribe_voicemail = fields.Boolean(
-        string="Transkribera röstmeddelanden",
-        help="Transkribera röstmeddelanden för denna brevlåda (kräver att "
-             "enheten är av typ voicemail). Oberoende av anknytningens "
+        string="Transcribe voicemails",
+        help="Transcribe voicemails for this mailbox (requires the "
+             "device to be of type voicemail). Independent of the extension's "
              "recording_mode.",
     )

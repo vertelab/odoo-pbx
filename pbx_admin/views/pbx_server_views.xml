@@ -7,7 +7,7 @@
                 <header>
                     <button name="reload_asterisk" type="object" string="Reload Asterisk"
                             class="btn-secondary" icon="fa-refresh"
-                            confirm="Ladda om Asterisk (pjsip + dialplan + voicemail)?"/>
+                            confirm="Reload Asterisk (pjsip + dialplan + voicemail)?"/>
                 </header>
                 <sheet>
                     <group>

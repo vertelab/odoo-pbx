@@ -1,8 +1,8 @@
 /** @odoo-module **/
 /*
-    Override av OCA voip_oca-tjänsten: wrappa accept/reject-samtal med
-    try/catch så RPC-fel aldrig blir ohanterade promise-rejections
-    (Odoo 18 formatTraceback kraschar på malformed reasons).
+    Override of the OCA voip_oca service: wrap accept/reject calls in
+    try/catch so RPC errors never become unhandled promise rejections
+    (Odoo 18 formatTraceback crashes on malformed reasons).
 */
 import {voipOCAService} from "@voip_oca/services/voip_oca_service.esm";
 import {registry} from "@web/core/registry";

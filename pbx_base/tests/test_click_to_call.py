@@ -7,7 +7,7 @@ from odoo.tests import TransactionCase, tagged
 
 @tagged("-post_install", "at_install")
 class TestClickToCall(TransactionCase):
-    """Click-to-call: första device, nummernormalisering, felhantering."""
+    """Click-to-call: first device, number normalisation, error handling."""
 
     @classmethod
     def setUpClass(cls):
@@ -47,14 +47,14 @@ class TestClickToCall(TransactionCase):
             ext.action_click_to_call("0701234567")
 
     def test_no_active_device_raises(self):
-        # create() auto-skapar en browser-enhet om ingen finns — gör den inaktiv
+        # create() auto-creates a browser device if none exists — make it inactive
         ext = self._make_ext(number="9031", devices=[("voicemail", 99, True)])
         ext.sub_extension_ids.write({"active": False})
         with self.assertRaises(UserError):
             ext.action_click_to_call("0701234567")
 
     def test_first_active_device_used(self):
-        """Voicemail räknas inte; första aktiva enhet (sequence) används."""
+        """Voicemail is not counted; the first active device (sequence) is used."""
         ext = self._make_ext(
             number="9032",
             devices=[

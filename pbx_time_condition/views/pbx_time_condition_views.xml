@@ -11,7 +11,7 @@
                         <div class="d-flex align-items-center">
                             <field name="extension"/>
                             <button name="action_next_free_extension" type="object"
-                                    string="Nästa lediga" icon="fa-magic" class="btn-link ms-1"/>
+                                    string="Next available" icon="fa-magic" class="btn-link ms-1"/>
                         </div>
                         <field name="timezone"/>
                     </group>
@@ -64,7 +64,7 @@
         sequence="55"
     />
 
-    <!-- Outbound route: Time Condition-fältet (finns bara när pluginen är installerad) -->
+    <!-- Outbound route: the Time Condition field (only present when the plugin is installed) -->
     <record model="ir.ui.view" id="outbound_route_form_time_condition">
         <field name="model">pbx.outbound_route</field>
         <field name="inherit_id" ref="pbx_base.pbx_outbound_route_form_view"/>

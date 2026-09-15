@@ -9,10 +9,10 @@ class PbxConfigGenerator(models.AbstractModel):
     _inherit = "pbx.config.generator"
 
     def _get_extension_internal_entry(self, ext, domain):
-        """AI-anknytning → Stasis(coworker,<id>) i den interna kontexten.
+        """AI extension -> Stasis(coworker,<id>) in the internal context.
 
-        Vid inaktiv/avsaknad coworker faller vi tillbaka på super()
-        (None → normal ring-grupp → voicemail).
+        For an inactive/missing coworker we fall back to super()
+        (None -> normal ring group -> voicemail).
         """
         if ext._is_ai_extension():
             coworker = ext._get_ai_coworker()

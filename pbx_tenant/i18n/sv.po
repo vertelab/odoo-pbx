@@ -2,25 +2,12 @@
 # This file contains the translation of the following modules:
 # 	* pbx_tenant
 #
-#. module: pbx_tenant
 msgid ""
 msgstr ""
-"\"\"Ring bara under personens arbetstid (resource.calendar via HR). Utanför "
-"\"\"arbetstid: meddela 'tillbaka {tid}' och gå till röstbrevlåda.\n"
-
-#. module: pbx_tenant
-msgid ""
-msgstr ""
-"\"\"Ring inte när personen är upptagen i kalendern (calendar.event). "
-"Upptagen: \"\"meddela 'tillbaka {tid}' och gå till röstbrevlåda.\n"
-
-#. module: pbx_tenant
-msgid ""
-msgstr ""
-"Project-Id-Version: Odoo Server 18.0-20260701\n"
+"Project-Id-Version: Odoo Server 18.0-20260801\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-12 10:59+0000\n"
-"PO-Revision-Date: 2026-08-12 10:59+0000\n"
+"POT-Creation-Date: 2026-09-15 09:25+0000\n"
+"PO-Revision-Date: 2026-09-15 09:25+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -32,7 +19,18 @@ msgstr ""
 #: model:ir.model.fields,field_description:pbx_tenant.field_pbx_voicemail_message__audio_attachment_id
 #: model_terms:ir.ui.view,arch_db:pbx_tenant.pbx_voicemail_message_form_view
 msgid "Audio"
-msgstr ""
+msgstr "Ljud"
+
+#. module: pbx_tenant
+#: model:ir.model.fields,field_description:pbx_tenant.field_pbx_voicemail_message__audio_mimetype
+msgid "Audio Type"
+msgstr "Ljudtyp"
+
+#. module: pbx_tenant
+#. odoo-javascript
+#: code:addons/pbx_tenant/static/src/voicemail/voicemail_audio.xml:0
+msgid "Bilaga (icke-ljud)"
+msgstr "Bilaga (icke-ljud)"
 
 #. module: pbx_tenant
 #: model:ir.model.fields,field_description:pbx_tenant.field_pbx_voicemail_message__caller_name
@@ -47,14 +45,14 @@ msgstr "Nummer (nummerpresentation)"
 #. module: pbx_tenant
 #. odoo-javascript
 #: code:addons/pbx_tenant/static/src/operator_panel/operator_panel.xml:0
-msgid "Click-to-call till kö — släpp ett samtal här för transfer"
-msgstr "Click-to-call till kö — släpp ett samtal här för transfer"
+msgid "Click-to-call to queue — drop a call here to transfer"
+msgstr "Klick-till-samtal till kö — släpp ett samtal här för att koppla"
 
 #. module: pbx_tenant
 #. odoo-javascript
 #: code:addons/pbx_tenant/static/src/operator_panel/operator_panel.xml:0
-msgid "Click-to-call — släpp ett samtal här för transfer"
-msgstr "Click-to-call — släpp ett samtal här för transfer"
+msgid "Click-to-call — drop a call here to transfer"
+msgstr "Klick-till-samtal — släpp ett samtal här för att koppla"
 
 #. module: pbx_tenant
 #: model:ir.model.fields,field_description:pbx_tenant.field_pbx_voicemail_message__company_id
@@ -72,9 +70,27 @@ msgid "Created on"
 msgstr "Skapad den"
 
 #. module: pbx_tenant
+#: model_terms:ir.ui.view,arch_db:pbx_tenant.res_users_form_pbx_settings
+#: model_terms:ir.ui.view,arch_db:pbx_tenant.res_users_form_simple_pbx_settings
+msgid "Devices"
+msgstr "Enheter"
+
+#. module: pbx_tenant
 #: model:ir.model.fields,field_description:pbx_tenant.field_pbx_voicemail_message__display_name
 msgid "Display Name"
 msgstr "Visningsnamn"
+
+#. module: pbx_tenant
+#: model:ir.model.fields,help:pbx_tenant.field_res_users__pbx_respect_calendar
+msgid ""
+"Do not ring when the person is busy in the calendar (calendar.event). Busy: "
+"announce 'back {time}' and go to voicemail."
+msgstr "Upptagen: meddela 'tillbaka {time}' och gå till röstbrevlåda."
+
+#. module: pbx_tenant
+#: model_terms:ir.ui.view,arch_db:pbx_tenant.pbx_voicemail_message_form_view
+msgid "Download"
+msgstr "Ladda ner"
 
 #. module: pbx_tenant
 #: model:ir.model.fields,field_description:pbx_tenant.field_pbx_voicemail_message__duration
@@ -87,10 +103,10 @@ msgid "Duration in seconds"
 msgstr "Varaktighet i sekunder"
 
 #. module: pbx_tenant
-#: model_terms:ir.ui.view,arch_db:pbx_tenant.res_users_form_pbx_settings
-#: model_terms:ir.ui.view,arch_db:pbx_tenant.res_users_form_simple_pbx_settings
-msgid "Enheter"
-msgstr ""
+#. odoo-javascript
+#: code:addons/pbx_tenant/static/src/systray/pbx_sync_systray.xml:0
+msgid "Error applying"
+msgstr "Fel vid applicering"
 
 #. module: pbx_tenant
 #: model:ir.model.fields,field_description:pbx_tenant.field_pbx_voicemail_message__extension_id
@@ -98,45 +114,21 @@ msgid "Extension"
 msgstr "Anknytning"
 
 #. module: pbx_tenant
-#: model_terms:ir.ui.view,arch_db:pbx_tenant.res_users_form_pbx_settings
-#: model_terms:ir.ui.view,arch_db:pbx_tenant.res_users_form_simple_pbx_settings
-msgid "Follow-me"
-msgstr ""
-
-#. module: pbx_tenant
 #. odoo-javascript
 #: code:addons/pbx_tenant/static/src/operator_panel/operator_panel.xml:0
 msgid "Hantera"
-msgstr ""
+msgstr "Hantera"
 
 #. module: pbx_tenant
 #: model:ir.model.fields,field_description:pbx_tenant.field_pbx_voicemail_message__id
 msgid "ID"
-msgstr ""
-
-#. module: pbx_tenant
-#. odoo-javascript
-#: code:addons/pbx_tenant/static/src/operator_panel/operator_panel.xml:0
-msgid "Inga inkommande samtal"
-msgstr ""
-
-#. module: pbx_tenant
-#. odoo-javascript
-#: code:addons/pbx_tenant/static/src/operator_panel/operator_panel.xml:0
-msgid "Inga väntande manuella samtal"
-msgstr "Inga väntande manuella samtal"
-
-#. module: pbx_tenant
-#: model_terms:ir.ui.view,arch_db:pbx_tenant.res_users_form_pbx_settings
-#: model_terms:ir.ui.view,arch_db:pbx_tenant.res_users_form_simple_pbx_settings
-msgid "Ingen PBX-anknytning kopplad till användaren."
-msgstr "Ingen PBX-anknytning kopplad till användaren."
+msgstr "ID"
 
 #. module: pbx_tenant
 #. odoo-javascript
 #: code:addons/pbx_tenant/static/src/operator_panel/operator_panel.xml:0
 msgid "Inkommande"
-msgstr ""
+msgstr "Inkommande"
 
 #. module: pbx_tenant
 #: model:ir.model.fields,field_description:pbx_tenant.field_pbx_voicemail_message__is_read
@@ -147,7 +139,7 @@ msgstr "Är läst"
 #. odoo-javascript
 #: code:addons/pbx_tenant/static/src/operator_panel/operator_panel.xml:0
 msgid "Laddar Operator Panel…"
-msgstr ""
+msgstr "Laddar Operator Panel…"
 
 #. module: pbx_tenant
 #: model:ir.model.fields,field_description:pbx_tenant.field_pbx_voicemail_message__write_uid
@@ -163,7 +155,31 @@ msgstr "Senast uppdaterad"
 #. odoo-javascript
 #: code:addons/pbx_tenant/static/src/operator_panel/operator_panel.xml:0
 msgid "Manuell hantering"
-msgstr ""
+msgstr "Manuell hantering"
+
+#. module: pbx_tenant
+#: model_terms:ir.ui.view,arch_db:pbx_tenant.res_users_form_pbx_settings
+#: model_terms:ir.ui.view,arch_db:pbx_tenant.res_users_form_simple_pbx_settings
+msgid "No PBX extension linked to the user."
+msgstr "Ingen PBX-anknytning kopplad till användaren."
+
+#. module: pbx_tenant
+#. odoo-javascript
+#: code:addons/pbx_tenant/static/src/operator_panel/operator_panel.xml:0
+msgid "No incoming calls"
+msgstr "Inga inkommande samtal"
+
+#. module: pbx_tenant
+#. odoo-javascript
+#: code:addons/pbx_tenant/static/src/operator_panel/operator_panel.xml:0
+msgid "No manual calls waiting"
+msgstr "Inga manuella samtal väntar"
+
+#. module: pbx_tenant
+#. odoo-javascript
+#: code:addons/pbx_tenant/static/src/voicemail/voicemail_audio.xml:0
+msgid "No recording."
+msgstr "Ingen inspelning."
 
 #. module: pbx_tenant
 #: model:ir.model.fields,field_description:pbx_tenant.field_pbx_voicemail_message__user_id
@@ -174,28 +190,28 @@ msgstr "Odoo-användare"
 #: model:ir.actions.client,name:pbx_tenant.pbx_tenant_operator_panel_action
 #: model:ir.ui.menu,name:pbx_tenant.pbx_tenant_operator_panel_menu
 msgid "Operator Panel"
-msgstr ""
+msgstr "Operator Panel"
 
 #. module: pbx_tenant
 #. odoo-javascript
 #: code:addons/pbx_tenant/static/src/operator_panel/operator_panel.xml:0
 msgid "Operator Panel —"
-msgstr ""
+msgstr "Operator Panel —"
 
 #. module: pbx_tenant
 #: model_terms:ir.ui.view,arch_db:pbx_tenant.res_users_form_extension
 msgid "PBX Extension"
-msgstr ""
+msgstr "PBX-anknytning"
 
 #. module: pbx_tenant
 #: model:ir.model,name:pbx_tenant.model_pbx_partner_resolver
 msgid "PBX Partner Resolution (lookup + auto-create)"
-msgstr ""
+msgstr "PBX-partnermatchning (uppslag + autoskapande)"
 
 #. module: pbx_tenant
 #: model:ir.model,name:pbx_tenant.model_pbx_webhook_service
 msgid "PBX Webhook Event Service"
-msgstr ""
+msgstr "PBX-händelsetjänst för webhook"
 
 #. module: pbx_tenant
 #: model:ir.model.fields,field_description:pbx_tenant.field_pbx_voicemail_message__call_id
@@ -204,13 +220,13 @@ msgstr "Relaterat samtal"
 
 #. module: pbx_tenant
 #: model:ir.model.fields,field_description:pbx_tenant.field_res_users__pbx_respect_calendar
-msgid "Respektera kalender"
-msgstr ""
+msgid "Respect Calendar"
+msgstr "Respektera kalender"
 
 #. module: pbx_tenant
 #: model:ir.model.fields,field_description:pbx_tenant.field_res_users__pbx_respect_schedule
-msgid "Respektera schema"
-msgstr ""
+msgid "Respect Schedule"
+msgstr "Respektera schema"
 
 #. module: pbx_tenant
 #: model:ir.model.fields,field_description:pbx_tenant.field_res_users__pbx_ring_strategy
@@ -218,16 +234,35 @@ msgid "Ring Strategy"
 msgstr "Ringstrategi"
 
 #. module: pbx_tenant
+#: model:ir.model.fields,help:pbx_tenant.field_res_users__pbx_respect_schedule
+msgid ""
+"Ring only during the person's working hours (resource.calendar via HR). "
+"Outside working hours: announce 'back {time}' and go to voicemail."
+msgstr "Utanför arbetstid: meddela 'tillbaka {time}' och erbjud röstbrevlåda."
+
+#. module: pbx_tenant
 #. odoo-javascript
 #: code:addons/pbx_tenant/static/src/operator_panel/operator_panel.xml:0
 msgid "Ring reception"
-msgstr ""
+msgstr "Ring reception"
+
+#. module: pbx_tenant
+#. odoo-javascript
+#: code:addons/pbx_tenant/static/src/systray/pbx_sync_systray.xml:0
+msgid "Sent — waiting for confirmation"
+msgstr "Skickad — väntar på bekräftelse"
 
 #. module: pbx_tenant
 #: model_terms:ir.ui.view,arch_db:pbx_tenant.res_users_form_pbx_settings
 #: model_terms:ir.ui.view,arch_db:pbx_tenant.res_users_form_simple_pbx_settings
 msgid "Sequence"
 msgstr "Sekvens"
+
+#. module: pbx_tenant
+#: model_terms:ir.ui.view,arch_db:pbx_tenant.res_users_form_pbx_settings
+#: model_terms:ir.ui.view,arch_db:pbx_tenant.res_users_form_simple_pbx_settings
+msgid "Settings"
+msgstr "Inställningar"
 
 #. module: pbx_tenant
 #: model:ir.model.fields,field_description:pbx_tenant.field_res_users__pbx_sub_extension_ids
@@ -253,27 +288,24 @@ msgstr "Röstbrevlådemeddelande"
 #. module: pbx_tenant
 #: model:ir.model,name:pbx_tenant.model_pbx_voicemail_service
 msgid "Voicemail Service — handles incoming voicemail events"
-msgstr ""
+msgstr "Röstbrevlådetjänst — hanterar inkommande röstbrevlådehändelser"
 
 #. module: pbx_tenant
 #: model:ir.actions.act_window,name:pbx_tenant.pbx_voicemail_message_act_window
+#: model:ir.ui.menu,name:pbx_tenant.menu_pbx_voicemails
 msgid "Voicemails"
 msgstr "Röstbrevlådor"
 
 #. module: pbx_tenant
 #. odoo-javascript
 #: code:addons/pbx_tenant/static/src/operator_panel/operator_panel.xml:0
-msgid "manuell"
-msgstr ""
+msgid "manual"
+msgstr "manuell"
 
 #. module: pbx_tenant
 #. odoo-javascript
 #: code:addons/pbx_tenant/static/src/operator_panel/operator_panel.xml:0
-msgid "väntar"
+msgid "waiting"
 msgstr "väntar"
 
-#. module: pbx_tenant
-#. odoo-javascript
-#: code:addons/pbx_tenant/static/src/systray/pbx_sync_systray.xml:0
-msgid "Ändringar väntar"
-msgstr "Ändringar väntar"
+

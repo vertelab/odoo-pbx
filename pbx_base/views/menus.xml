@@ -23,7 +23,7 @@
     <!-- Configuration: settings + domain-local entities (admin only) -->
     <menuitem
         id="menu_pbx_configuration"
-        name="Konfiguration"
+        name="Configuration"
         parent="menu_pbx_root"
         sequence="30"
         groups="pbx_base.group_pbx_admin"
@@ -31,7 +31,7 @@
 
     <menuitem
         id="menu_pbx_settings"
-        name="Inställningar"
+        name="Settings"
         parent="menu_pbx_configuration"
         action="pbx_config_settings_action"
         sequence="10"
@@ -80,7 +80,7 @@
 
     <menuitem
         id="menu_pbx_outbound_routes"
-        name="Utgående rutter"
+        name="Outbound Routes"
         parent="menu_pbx_configuration"
         action="pbx_outbound_route_act_window"
         sequence="60"

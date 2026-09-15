@@ -5,21 +5,21 @@ from odoo import api, fields, models
 
 
 class ResCompany(models.Model):
-    """Asterisk/SIP-inställningar per företag — möjliggör multicompany.
+    """Asterisk/SIP settings per company — enables multicompany.
 
-    Varje företag har sin egen SIP-domän (och kan peka på egen server),
-    medan extensions/trunks/routes redan är company-scopade.
+    Each company has its own SIP domain (and may point at its own server),
+    while extensions/trunks/routes are already company-scoped.
     """
 
     _inherit = "res.company"
 
     pbx_domain = fields.Char(
         string="SIP Domain",
-        help="Företagets SIP-domän på Asterisk-servern, t.ex. vertel.se",
+        help="The company's SIP domain on the Asterisk server, e.g. vertel.se",
     )
     pbx_server_host = fields.Char(
         string="PBX Server",
-        help="Asterisk-serveradress (tom = använd global setting)",
+        help="Asterisk server address (empty = use the global setting)",
     )
     pbx_api_key = fields.Char(
         string="PBX API Key",
@@ -28,41 +28,41 @@ class ResCompany(models.Model):
     )
     pbx_odoo_url = fields.Char(
         string="Odoo URL",
-        help="Kundens Odoo-bas-URL som den genererade dialplanen anropar för "
-             "tillgänglighetskontroll (t.ex. https://crm.vertel.se). "
-             "Tom = använd web.base.url.",
+        help="The customer's Odoo base URL that the generated dialplan calls "
+             "for availability checks (e.g. https://crm.vertel.se). "
+             "Empty = use web.base.url.",
     )
     pbx_sip_port = fields.Char(
         string="SIP Port",
         default="5061",
-        help="SIP-port för enheter (5061 för WSS/WebRTC, 5060 för UDP/TCP)",
+        help="SIP port for devices (5061 for WSS/WebRTC, 5060 for UDP/TCP)",
     )
     pbx_sip_ws_port = fields.Integer(
         string="WebSocket Port",
         default=8089,
-        help="Asterisk HTTP/WebSocket-port för Odoo-softphonen (SIP.js). "
-             "Default 8089 (WSS). Används vid härledning av ws_server om "
-             "inget explicit pbx_ws_server anges.",
+        help="Asterisk HTTP/WebSocket port for the Odoo softphone (SIP.js). "
+             "Default 8089 (WSS). Used when deriving ws_server if "
+             "no explicit pbx_ws_server is specified.",
     )
     pbx_ws_server = fields.Char(
         string="WebSocket Server (override)",
-        help="Explicit WebSocket-URL för Odoo-softphonen, t.ex. "
-             "wss://192.168.11.213:8089/ws. Tom = härled automatiskt från "
+        help="Explicit WebSocket URL for the Odoo softphone, e.g. "
+             "wss://192.168.11.213:8089/ws. Empty = derived automatically from "
              "pbx_server_host + pbx_sip_ws_port.",
     )
     pbx_config_version = fields.Integer(
         string="PBX Config Version",
         default=0,
-        help="Senast publicerade config-version (räknas upp vid varje sync).",
+        help="Last published config version (incremented on every sync).",
     )
     pbx_config_applied_version = fields.Integer(
         string="PBX Config Applied Version",
         default=0,
-        help="Senast bekräftat applicerade config-version (från daemon-ack).",
+        help="Last confirmed applied config version (from the daemon ack).",
     )
     pbx_config_sync_error = fields.Text(
         string="PBX Config Sync Error",
-        help="Senaste felmeddelande från daemon-ack (tom = inget fel).",
+        help="Latest error message from the daemon ack (empty = no error).",
     )
     pbx_config_sync_state = fields.Selection(
         [
@@ -73,8 +73,8 @@ class ResCompany(models.Model):
         ],
         string="PBX Config Sync State",
         compute="_compute_pbx_config_sync_state",
-        help="Synk-status: clean/applied = bekräftat, sent = publicerat utan "
-             "bekräftelse, error = daemon rapporterade fel.",
+        help="Sync status: clean/applied = confirmed, sent = published without "
+             "confirmation, error = the daemon reported an error.",
     )
 
     @api.depends(
@@ -99,19 +99,19 @@ class ResCompany(models.Model):
     pbx_turn_enabled = fields.Boolean(
         string="TURN aktiverad",
         default=False,
-        help="Slå på TURN för enheter bakom NAT (coturn gör både STUN-discovery "
-        "och TURN-media-relay på samma adress).",
+        help="Enable TURN for devices behind NAT (coturn handles both STUN "
+        "discovery and TURN media relay on the same address).",
     )
     pbx_provisioning_token = fields.Char(
         string="PBX Provisioning-token",
         groups="pbx_base.group_pbx_admin,base.group_system",
-        help="Hemlig token för provisioning-endpointen (hårdvarutelefoner). "
-             "Telefonen skickar den som lösenord i URL:en: "
-             "https://<domän>:<token>@provision.../<MAC>.cfg",
+        help="Secret token for the provisioning endpoint (hardware phones). "
+             "The phone sends it as the password in the URL: "
+             "https://<domain>:<token>@provision.../<MAC>.cfg",
     )
 
     def _ensure_pbx_provisioning_token(self):
-        """Generera provisioning-token om den saknas (idempotent)."""
+        """Generate a provisioning token if it is missing (idempotent)."""
         import secrets
 
         for rec in self:
@@ -120,10 +120,10 @@ class ResCompany(models.Model):
     config_dirty = fields.Boolean(
         string="PBX Config Dirty",
         default=False,
-        help="True när konfigurationsändringar väntar på att synkas till Asterisk.",
+        help="True when configuration changes are waiting to be synced to Asterisk.",
     )
 
     def _pbx_mark_dirty(self):
-        """Markera att konfigurationen behöver synkas till Asterisk."""
+        """Mark that the configuration needs to be synced to Asterisk."""
         if not self.config_dirty:
             self.config_dirty = True

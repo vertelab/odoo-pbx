@@ -7,7 +7,7 @@ from odoo.addons.pbx_base.models.pbx_destination_mixin import destination_models
 
 
 def _company_id(company):
-    """Acceptera recordset eller int — plugin-anrop får recordset."""
+    """Accept a recordset or an int — plugin calls pass a recordset."""
     return company.id if isinstance(company, models.Model) else company
 
 
@@ -20,8 +20,8 @@ class PbxQueue(models.Model):
     extension = fields.Char(
         required=True,
         default=lambda self: self._default_extension(),
-        help="Internt anknytningsnummer för kön. Auto-genereras i tjänste-"
-             "intervallet (4xx — separat från användarextensionerna) vid ny kö.",
+        help="Internal extension number for the queue. Auto-generated in the service "
+             "range (4xx — separate from the user extensions) when a new queue is created.",
     )
     strategy = fields.Selection(
         [
@@ -50,12 +50,12 @@ class PbxQueue(models.Model):
     )
     is_manual = fields.Boolean(
         string="Manual/Reception Queue",
-        help="Calls here need manual handling — Operator Panel visar dem med [Hantera]",
+        help="Calls here need manual handling — the Operator Panel shows them with [Handle]",
     )
     timeout_seconds = fields.Integer(
         string="Timeout (s)",
         default=0,
-        help="Caller max wait in queue (0 = använd max_wait_time). Efter timeout → timeout_action",
+        help="Caller max wait in queue (0 = use max_wait_time). After timeout → timeout_action",
     )
     timeout_action = fields.Selection(
         [
@@ -68,7 +68,7 @@ class PbxQueue(models.Model):
     manual_target_queue_id = fields.Many2one(
         "pbx.queue",
         string="Manual Target Queue",
-        help="Reception-kö som timeoutade samtal hamnar i",
+        help="Reception queue that timed-out calls end up in",
     )
     active = fields.Boolean(default=True)
     company_id = fields.Many2one(
@@ -79,7 +79,7 @@ class PbxQueue(models.Model):
 
     @api.model
     def _default_extension(self):
-        """Lägsta lediga nummer i köernas tjänsteintervall (4xx)."""
+        """Lowest free number in the queue service range (4xx)."""
         if "pbx.numbering" not in self.env:
             return ""
         return (
@@ -183,7 +183,7 @@ class PbxQueue(models.Model):
             lines.append(f"strategy = {strategy}")
             lines.append(f"timeout = {timeout}")
             if q.is_manual:
-                lines.append("; Manual/reception queue — kräver manuell hantering i Operator Panel")
+                lines.append("; Manual/reception queue — requires manual handling in the Operator Panel")
             if not q.is_ring_group:
                 max_wait = q.timeout_seconds or q.max_wait_time
                 lines.append(f"max-wait-time = {max_wait}")

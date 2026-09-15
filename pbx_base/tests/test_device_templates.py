@@ -23,14 +23,14 @@ class TestDeviceTemplates(TransactionCase):
             "name": "Test " + device_type,
             "device_type": device_type,
             "config_template": {
-                "sip_username": {"label": "Användarnamn", "source": "device", "field": "username", "order": 1},
-                "sip_password": {"label": "Lösenord", "source": "device", "field": "secret", "order": 2},
-                "sip_server": {"label": "SIP-server", "source": "company", "field": "pbx_server_host", "order": 3},
+                "sip_username": {"label": "Username", "source": "device", "field": "username", "order": 1},
+                "sip_password": {"label": "Password", "source": "device", "field": "secret", "order": 2},
+                "sip_server": {"label": "SIP Server", "source": "company", "field": "pbx_server_host", "order": 3},
                 "sip_port": {"label": "Port", "source": "company", "field": "pbx_sip_port", "order": 4},
-                "sip_domain": {"label": "Domän", "source": "company", "field": "pbx_domain", "order": 5},
+                "sip_domain": {"label": "Domain", "source": "company", "field": "pbx_domain", "order": 5},
                 "turn": {"label": "TURN", "source": "config", "field": "pbx.turn.server",
                          "only_if": "pbx_turn_enabled", "order": 6},
-                "guide": {"label": "Guide", "source": "static", "value": "Steg 1", "order": 99},
+                "guide": {"label": "Guide", "source": "static", "value": "Step 1", "order": 99},
             },
         }
         base.update(overrides)
@@ -53,12 +53,12 @@ class TestDeviceTemplates(TransactionCase):
         self._make_template("mobile")
         sub = self._make_sub("mobile")
         cfg = sub.config
-        self.assertTrue(cfg, "config ska vara ifylld från mallen")
+        self.assertTrue(cfg, "config must be populated from the template")
         self.assertEqual(cfg["sip_username"]["value"], sub.username)
         self.assertEqual(cfg["sip_password"]["value"], sub.secret)
         self.assertEqual(cfg["sip_server"]["value"], "pbx.example.com")
         self.assertEqual(cfg["sip_domain"]["value"], "test.se")
-        self.assertEqual(cfg["guide"]["value"], "Steg 1")
+        self.assertEqual(cfg["guide"]["value"], "Step 1")
 
     def test_only_if_hides_turn(self):
         self._make_template("mobile")
@@ -67,7 +67,7 @@ class TestDeviceTemplates(TransactionCase):
         self.assertNotIn("turn", sub.config)
 
     def test_no_template_falls_back(self):
-        # ingen mall för voicemail → config False
+        # no template for voicemail → config False
         sub = self._make_sub("voicemail", number="80499")
         self.assertFalse(sub.config)
-        self.assertTrue(sub.config_display)  # fallback till sip_config_display
+        self.assertTrue(sub.config_display)  # fallback to sip_config_display

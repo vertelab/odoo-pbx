@@ -14,15 +14,15 @@
                     </div>
                     <group>
                         <group>
-                            <field name="user_id" string="Odoo-användare" widget="many2one_avatar_user"/>
-                            <field name="callerid_name" string="Namn på nummerpresentation"/>
-                            <field name="description" help="Visas i Operator Panel (fallback: callerid-namn → användarnamn → nummer)."/>
+                            <field name="user_id" string="Odoo User" widget="many2one_avatar_user"/>
+                            <field name="callerid_name" string="Caller ID Name"/>
+                            <field name="description" help="Shown in the Operator Panel (fallback: caller ID name → username → number)."/>
                             <div class="d-flex align-items-center">
-                                <label for="password" string="SIP-lösenord" class="col-form-label me-2"/>
+                                <label for="password" string="SIP Password" class="col-form-label me-2"/>
                                 <field name="password" readonly="1"
-                                       help="Delat SIP-lösenord för alla enheter. Generera nytt via ikonen."/>
+                                       help="Shared SIP password for all devices. Generate a new one via the icon."/>
                                 <button name="action_generate_new_password" type="object"
-                                        icon="fa-refresh" title="Generera nytt lösenord"
+                                        icon="fa-refresh" title="Generate a new password"
                                         class="btn btn-link p-0 ms-2"/>
                             </div>
                         </group>
@@ -33,7 +33,7 @@
                         </group>
                     </group>
                     <notebook>
-                        <page string="Enheter" name="devices">
+                        <page string="Devices" name="devices">
                             <field name="sub_extension_ids" string="" nolabel="1" mode="list">
                                 <list editable="bottom">
                                     <field name="sequence" string="Sequence" widget="handle"/>

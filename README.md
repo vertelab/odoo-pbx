@@ -44,44 +44,44 @@ See `~/plan/odoo-pbx/openspec/` for full design docs and specs.
 
 ## Config deploy (pbx-freepbx-core)
 
-Odoo genererar Asterisk-konfig och publicerar den via RabbitMQ
-(`pbx.config.<domän>`); daemonen skriver filerna och bekräftar via
-`pbx.state.Config.<domän>` (MQ) och POST till `/pbx/webhook`.
+Odoo generates the Asterisk configuration and publishes it via RabbitMQ
+(`pbx.config.<domain>`); the daemon writes the files and confirms via
+`pbx.state.Config.<domain>` (MQ) and a POST to `/pbx/webhook`.
 
-### Config-typer (meddelandets `files`-lista)
+### Config types (the message's `files` list)
 
-| `config_type` | Målkatalog | Filnamn |
+| `config_type` | Target directory | Filename |
 |---|---|---|
-| `tenant` | `tenants/` | `<domän>-<filnamn>` |
-| `manager` | `manager.d/` | `<domän>.conf` |
-| `ari` | `ari.d/` | `<domän>.conf` |
+| `tenant` | `tenants/` | `<domain>-<filename>` |
+| `manager` | `manager.d/` | `<domain>.conf` |
+| `ari` | `ari.d/` | `<domain>.conf` |
 
-Äldre format (`files` som dict `{filnamn: innehåll}`) accepteras som
-`tenant`-filer.
+The older format (`files` as a dict `{filename: content}`) is accepted as
+`tenant` files.
 
-### Versionshantering
+### Version handling
 
-- Odoo räknar upp `pbx.config.version.<domän>` (ICP) vid varje publish.
-- Daemonen sparar applicerad version i `tenants/.state.json`; meddelanden
-  med `version <=` applicerad ignoreras (ack `skipped`).
+- Odoo increments `pbx.config.version.<domain>` (ICP) on every publish.
+- The daemon stores the applied version in `tenants/.state.json`; messages
+  with `version <=` the applied version are ignored (ack `skipped`).
 - Ack-status: `applied` | `error` | `skipped`.
 
-### Sync-state i Odoo (systray/Sync)
+### Sync state in Odoo (systray/Sync)
 
-- **Skickat** (`sent`): publicerat, väntar på bekräftelse — `config_dirty`
-  kvarstår.
-- **Applicerat** (`applied`): daemonen bekräftade aktuell version via
-  webhook → `config_dirty` nollställs.
-- **Fel** (`error`): daemonen rapporterade fel (meddelandet sparas på
+- **Sent** (`sent`): published, waiting for confirmation — `config_dirty`
+  remains set.
+- **Applied** (`applied`): the daemon confirmed the current version via
+  webhook → `config_dirty` is cleared.
+- **Error** (`error`): the daemon reported an error (the message is stored on
   `res.company.pbx_config_sync_error`).
 
 ### Softphone WebSocket (ws_server)
 
-`voip.pbx.ws_server` härleds automatiskt från `res.company.pbx_server_host`
-+ `pbx_sip_ws_port` (default 8089) med schema från browser-sub-extensionens
-transport, t.ex. `wss://<host>:8089/ws`. Explicit override:
-`res.company.pbx_ws_server` (används exakt). Självläkande — skrivs även
-på befintlig voip.pbx vid synk.
+`voip.pbx.ws_server` is derived automatically from `res.company.pbx_server_host`
++ `pbx_sip_ws_port` (default 8089) with the scheme from the browser sub-extension's
+transport, e.g. `wss://<host>:8089/ws`. Explicit override:
+`res.company.pbx_ws_server` (used verbatim). Self-healing — also written
+to an existing voip.pbx on sync.
 
 ## License
 

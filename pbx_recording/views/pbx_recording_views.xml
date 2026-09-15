@@ -11,7 +11,7 @@
                         <div class="d-flex align-items-center">
                             <field name="extension"/>
                             <button name="action_next_free_extension" type="object"
-                                    string="Nästa lediga" icon="fa-magic" class="btn-link ms-1"/>
+                                    string="Next available" icon="fa-magic" class="btn-link ms-1"/>
                         </div>
                         <field name="extension_id"  required="scope == 'extension'" invisible="scope != 'extension'"/>
                         <field name="mode"/>

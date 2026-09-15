@@ -21,7 +21,8 @@ class PbxRecordingPolicy(models.Model):
     )
     extension = fields.Char(
         string="Extension",
-        help="Internt nummer i inspelningsserien (8xx). Föreslås av 'Nästa lediga'.",
+        help="Internal number in the recording series (8xx). Suggested by "
+        "'Next available'.",
     )
     extension_id = fields.Many2one("pbx.extension", string="Extension")
     mode = fields.Selection(
@@ -35,20 +36,20 @@ class PbxRecordingPolicy(models.Model):
     )
 
     def action_next_free_extension(self):
-        """Föreslå nästa lediga nummer i inspelningsserien (8xx)."""
+        """Suggest the next available number in the recording series (8xx)."""
         self.ensure_one()
         number = self.env["pbx.numbering"]._next_free_service_number(
             self.company_id, "recording"
         )
         if not number:
-            raise UserError(_("Inga lediga nummer i inspelningsserien."))
+            raise UserError(_("No available numbers in the recording series."))
         self.extension = number
         return {
             "type": "ir.actions.client",
             "tag": "display_notification",
             "params": {
-                "title": _("Nästa lediga"),
-                "message": _("Föreslår %s") % number,
+                "title": _("Next available"),
+                "message": _("Suggesting %s") % number,
                 "type": "success",
                 "sticky": False,
             },
@@ -89,7 +90,7 @@ class PbxRecordingPolicy(models.Model):
         if not file_path:
             return
 
-        # Samtalet är en pbx.call (Vertel) — fallback voip.call (OCA)
+        # The call is a pbx.call (Vertel) — fall back to voip.call (OCA)
         call = self.env["pbx.call"].browse(call_id)
         call_model = "pbx.call"
         if not call.exists():
@@ -110,12 +111,12 @@ class PbxRecordingPolicy(models.Model):
                 "res_id": call.id,
             })
 
-            # Koppla inspelningen explicit till samtalet (recording_attachment_id)
+            # Link the recording explicitly to the call (recording_attachment_id)
             if "recording_attachment_id" in call._fields:
                 try:
                     call.write({"recording_attachment_id": attachment.id})
                 except Exception as e:
-                    _logger.warning("Kunde inte koppla inspelning: %s", e)
+                    _logger.warning("Could not link recording: %s", e)
 
             # Trigger pbx_ai if available
             if self.env.registry.get("pbx.ai"):

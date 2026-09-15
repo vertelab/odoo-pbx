@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <!-- Lista över alla samtal -->
+    <!-- List of all calls -->
     <record model="ir.ui.view" id="pbx_call_list_view">
         <field name="model">pbx.call</field>
         <field name="arch" type="xml">
             <list string="Calls">
                 <field name="direction" string="Riktning"/>
                 <field name="partner_id" string="Kontakt"/>
-                <field name="phone_number" string="Nummer"/>
-                <field name="callerid_name" string="Namn"/>
-                <field name="user_id" string="Användare"/>
+                <field name="phone_number" string="Number"/>
+                <field name="callerid_name" string="Name"/>
+                <field name="user_id" string="User"/>
                 <field name="extension_id" string="Anknytning"/>
                 <field name="pbx_handling" string="Hanterat av PBX"/>
                 <field name="start_date" string="Start"/>
                 <field name="stop_date" string="Stop"/>
-                <field name="duration" string="Längd (s)"/>
+                <field name="duration" string="Duration (s)"/>
             </list>
         </field>
     </record>
@@ -53,14 +53,14 @@
                 <field name="user_id"/>
                 <filter name="incoming" string="Inkommande"
                         domain="[('direction','=','incoming')]"/>
-                <filter name="outgoing" string="Utgående"
+                <filter name="outgoing" string="Outgoing"
                         domain="[('direction','=','outgoing')]"/>
                 <group expand="0" string="Gruppera">
                     <filter name="group_direction" string="Riktning"
                             context="{'group_by':'direction'}"/>
                     <filter name="group_handling" string="Hanterat"
                             context="{'group_by':'pbx_handling'}"/>
-                    <filter name="group_user" string="Användare"
+                    <filter name="group_user" string="User"
                             context="{'group_by':'user_id'}"/>
                 </group>
             </search>
@@ -75,7 +75,7 @@
         <field name="search_view_id" ref="pbx_call_search_view"/>
     </record>
 
-    <!-- Smartknapp: samtal på res.partner -->
+    <!-- Smart button: calls on res.partner -->
     <record model="ir.ui.view" id="view_partner_form_pbx_call">
         <field name="model">res.partner</field>
         <field name="inherit_id" ref="base.view_partner_form"/>
@@ -89,7 +89,7 @@
         </field>
     </record>
 
-    <!-- Smartknapp: Mina samtal på användarformuläret (full) -->
+    <!-- Smart button: My calls on the user form (full) -->
     <record model="ir.ui.view" id="view_users_form_pbx_call">
         <field name="model">res.users</field>
         <field name="inherit_id" ref="base.view_users_form"/>
@@ -97,13 +97,13 @@
             <xpath expr="//div[@name='button_box']" position="inside">
                 <button name="action_pbx_call_user" type="object"
                         class="oe_stat_button" icon="fa-phone">
-                    <field name="pbx_call_count" widget="statinfo" string="Mina samtal"/>
+                    <field name="pbx_call_count" widget="statinfo" string="My Calls"/>
                 </button>
             </xpath>
         </field>
     </record>
 
-    <!-- Smartknapp: Mina samtal på den enkla profilvyn (Min profil) -->
+    <!-- Smart button: My calls on the simple profile view (My Profile) -->
     <record model="ir.ui.view" id="view_users_form_simple_pbx_call">
         <field name="model">res.users</field>
         <field name="inherit_id" ref="base.view_users_form_simple_modif"/>
@@ -112,7 +112,7 @@
                 <div class="oe_button_box" name="pbx_button_box">
                     <button name="action_pbx_call_user" type="object"
                             class="oe_stat_button" icon="fa-phone">
-                        <field name="pbx_call_count" widget="statinfo" string="Mina samtal"/>
+                        <field name="pbx_call_count" widget="statinfo" string="My Calls"/>
                     </button>
                 </div>
             </xpath>

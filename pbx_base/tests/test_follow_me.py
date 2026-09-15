@@ -47,7 +47,7 @@ class TestFollowMeDeviceControl(TransactionCase):
                 (0, 0, {"type": "mobile"}),
             ]
         )
-        # 80201 upptagen → minsta lediga ska bli 80202
+        # 80201 busy → the lowest free one must be 80202
         self.assertEqual(ext.sub_extension_ids[1].number, "80202")
 
     # ------------------------------------------------------------------
@@ -70,7 +70,7 @@ class TestFollowMeDeviceControl(TransactionCase):
         # per-device timeouts in sequential ring
         self.assertIn("Dial(PJSIP/u80201,15)", dialplan)
         self.assertIn("Dial(PJSIP/u80202,25)", dialplan)
-        # voicemail-type är inte en ringenhet
+        # voicemail type is not a ringing device
         self.assertNotIn("PJSIP/u80299,", dialplan)
 
     def test_inactive_device_excluded(self):
@@ -96,16 +96,16 @@ class TestFollowMeDeviceControl(TransactionCase):
             ],
         )
         dialplan = self.generator.generate_extensions("test.se", self.env.company)
-        # parallel: längsta timeout används
+        # parallel: the longest timeout is used
         self.assertIn("Dial(PJSIP/u80221&PJSIP/u80222,30)", dialplan)
 
     # ------------------------------------------------------------------
-    # Security (self-service: egen anknytning + egna samtal för alla interna
-    # användare — utan att göra dem till PBX Operator)
+    # Security (self-service: own extension + own calls for all internal
+    # users — without making them PBX Operators)
     # ------------------------------------------------------------------
 
     def _plain_user(self):
-        """En vanlig intern användare UTAN någon PBX-grupp."""
+        """An ordinary internal user WITHOUT any PBX group."""
         user = self.env.ref("base.user_demo")
         for gid in (
             "pbx_base.group_pbx_operator",
@@ -118,7 +118,7 @@ class TestFollowMeDeviceControl(TransactionCase):
         return user
 
     def test_plain_user_own_extension_rule(self):
-        """Vanlig användare (utan PBX-grupp) ser endast sin egen anknytning."""
+        """An ordinary user (without a PBX group) sees only their own extension."""
         user = self._plain_user()
         ext_own = self._make_ext(public_number="8023")
         ext_own.user_id = user.id
@@ -129,7 +129,7 @@ class TestFollowMeDeviceControl(TransactionCase):
         self.assertNotIn(ext_other, visible)
 
     def test_plain_user_can_write_own_extension(self):
-        """Vanlig användare kan skriva ring_strategy på sin egen anknytning."""
+        """An ordinary user can write ring_strategy on their own extension."""
         user = self._plain_user()
         ext_own = self._make_ext(public_number="8023", ring_strategy="sequential")
         ext_own.user_id = user.id
@@ -137,7 +137,7 @@ class TestFollowMeDeviceControl(TransactionCase):
         self.assertEqual(ext_own.ring_strategy, "parallel")
 
     def test_plain_user_cannot_write_other_extension(self):
-        """Vanlig användare kan inte skriva någon annans anknytning."""
+        """An ordinary user cannot write someone else's extension."""
         user = self._plain_user()
         ext_other = self._make_ext(public_number="8024")
         ext_other.user_id = self.env.ref("base.user_admin").id
@@ -145,7 +145,7 @@ class TestFollowMeDeviceControl(TransactionCase):
             ext_other.with_user(user).write({"ring_strategy": "parallel"})
 
     def test_plain_user_cannot_create_extension(self):
-        """Vanlig användare får inte skapa anknytningar."""
+        """An ordinary user may not create extensions."""
         user = self._plain_user()
         with self.assertRaises(AccessError):
             self.env["pbx.extension"].with_user(user).create(
@@ -153,7 +153,7 @@ class TestFollowMeDeviceControl(TransactionCase):
             )
 
     def test_plain_user_sees_own_sub_extensions_only(self):
-        """Vanlig användare ser bara sina egna enheter (sub_extension)."""
+        """An ordinary user only sees their own devices (sub_extension)."""
         user = self._plain_user()
         ext_own = self._make_ext(
             public_number="8023", sub_extension_ids=[(0, 0, {"type": "browser"})]
@@ -170,7 +170,7 @@ class TestFollowMeDeviceControl(TransactionCase):
         self.assertNotIn(other_sub, visible)
 
     def test_plain_user_own_call_rule(self):
-        """Vanlig användare ser bara sina egna samtal (pbx.call)."""
+        """An ordinary user only sees their own calls (pbx.call)."""
         user = self._plain_user()
         call_own = self.env["pbx.call"].create(
             {"user_id": user.id, "phone_number": "123"}
@@ -183,7 +183,7 @@ class TestFollowMeDeviceControl(TransactionCase):
         self.assertNotIn(call_other, visible)
 
     def test_no_auto_assign_operator(self):
-        """Koppling till anknytning tilldelar INTE group_pbx_operator."""
+        """Linking to an extension does NOT assign group_pbx_operator."""
         user = self._plain_user()
         ext = self._make_ext(public_number="8023")
         ext.user_id = user.id

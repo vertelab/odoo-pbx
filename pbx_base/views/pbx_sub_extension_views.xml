@@ -3,8 +3,8 @@
     <!-- ============================================================
          pbx.sub_extension — Device administration views
          Kanban + list + form + search, menu: PBX → Configuration →
-         Devices. Provisioning-fält (provisioning_url/qr) läggs till
-         av pbx_provisioning via inherit (fälten finns inte här).
+         Devices. Provisioning fields (provisioning_url/qr) are added
+         by pbx_provisioning via inherit (the fields are not here).
          ============================================================ -->
 
     <!-- Kanban -->
@@ -129,14 +129,14 @@
                         </group>
                     </group>
                     <notebook invisible="type == 'voicemail'">
-                        <page string="SIP-konfiguration" name="sip_config_page">
+                        <page string="SIP Configuration" name="sip_config_page">
                             <field name="config" widget="pbx_sip_config_table" nolabel="1"/>
                         </page>
                         <page string="Codecs" name="codecs_page">
                             <field name="codec_ids" nolabel="1">
                                 <list editable="bottom">
-                                    <field name="sequence" string="Ordning" widget="handle"/>
-                                    <field name="codec_id" string="Namn"/>
+                                    <field name="sequence" string="Order" widget="handle"/>
+                                    <field name="codec_id" string="Name"/>
                                     <field name="codec_description" string="Beskrivning"/>
                                 </list>
                             </field>
@@ -162,18 +162,18 @@
                 <separator/>
                 <filter string="Odoo VOIP" name="type_browser" domain="[('type', '=', 'browser')]"/>
                 <filter string="Desktop" name="type_desktop" domain="[('type', '=', 'desktop')]"/>
-                <filter string="Hårdvara" name="type_hardware" domain="[('type', '=', 'hardware')]"/>
+                <filter string="Hardware" name="type_hardware" domain="[('type', '=', 'hardware')]"/>
                 <filter string="Mobil" name="type_mobile" domain="[('type', '=', 'mobile')]"/>
-                <filter string="Röstbrevlåda" name="type_voicemail" domain="[('type', '=', 'voicemail')]"/>
+                <filter string="Voicemail" name="type_voicemail" domain="[('type', '=', 'voicemail')]"/>
                 <separator/>
-                <filter string="Behöver provisioneras" name="needs_provisioning" domain="[('type', 'in', ['desktop', 'mobile']), ('provisioning_token', '=', False)]"/>
-                <filter string="Hårdvara utan MAC" name="hardware_no_mac" domain="[('type', '=', 'hardware'), ('mac_address', '=', False)]"/>
+                <filter string="Needs provisioning" name="needs_provisioning" domain="[('type', 'in', ['desktop', 'mobile']), ('provisioning_token', '=', False)]"/>
+                <filter string="Hardware without MAC" name="hardware_no_mac" domain="[('type', '=', 'hardware'), ('mac_address', '=', False)]"/>
                 <separator/>
-                <filter string="Min enheter" name="my_devices" domain="[('extension_id.user_id', '=', uid)]"/>
+                <filter string="My Devices" name="my_devices" domain="[('extension_id.user_id', '=', uid)]"/>
                 <group expand="0" string="Group By">
-                    <filter string="Typ" name="group_type" context="{'group_by': 'type'}"/>
+                    <filter string="Type" name="group_type" context="{'group_by': 'type'}"/>
                     <filter string="Anknytning" name="group_extension" context="{'group_by': 'extension_id'}"/>
-                    <filter string="Aktiv/Inaktiv" name="group_active" context="{'group_by': 'active'}"/>
+                    <filter string="Active/Inactive" name="group_active" context="{'group_by': 'active'}"/>
                 </group>
             </search>
         </field>

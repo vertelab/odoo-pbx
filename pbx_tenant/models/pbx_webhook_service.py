@@ -20,8 +20,8 @@ class PbxWebhookService(models.AbstractModel):
     _description = "PBX Webhook Event Service"
 
     def handle_event(self, tenant_domain, topic, event):
-        # Instansen administrerar bara sin egen domän (settings) — men vi
-        # accepterar webhook-event för den domänen som anropas.
+        # The instance only manages its own domain (settings) — but we
+        # accept webhook events for the domain being called.
         if not self.env["res.company"].search_count(
             [("pbx_domain", "=", tenant_domain)]
         ):
@@ -31,8 +31,8 @@ class PbxWebhookService(models.AbstractModel):
         event_name = event.get("Event", "")
         payload = {"topic": topic, "event": event}
 
-        # 0) Config-ack från daemonen (pbx-freepbx-core) — uppdatera
-        #    företagets sync-state innan övriga händelser (inget bus-flöde).
+        # 0) Config ack from the daemon (pbx-freepbx-core) — update the
+        #    company's sync state before the other events (no bus flow).
         if topic.startswith("pbx.state.Config."):
             try:
                 self._handle_config_ack(tenant_domain, event)
@@ -74,14 +74,14 @@ class PbxWebhookService(models.AbstractModel):
                 _logger.warning("Partner resolution failed for %s: %s", caller, e)
 
         # 3) Voicemail → existing inbox handler (defensive)
-        # Asterisk 20.6 sänder MessageWaiting (MWI), INTE VoicemailMessage
+        # Asterisk 20.6 sends MessageWaiting (MWI), NOT VoicemailMessage
         if event_name in ("VoicemailMessage", "MessageWaiting"):
             try:
                 self._handle_voicemail(tenant_domain, event)
             except Exception as e:
                 _logger.warning("Voicemail handling failed: %s", e)
 
-        # 4) Call history: Cdr-händelser → pbx.call (defensiv)
+        # 4) Call history: Cdr events → pbx.call (defensive)
         if event_name == "Cdr":
             try:
                 self._handle_cdr_call(tenant_domain, event)
@@ -89,14 +89,14 @@ class PbxWebhookService(models.AbstractModel):
                 _logger.warning("Call logging failed for %s: %s", tenant_domain, e)
 
     def _handle_config_ack(self, tenant_domain, event):
-        """Uppdatera företagets sync-state från daemonens config-ack.
+        """Update the company's sync state from the daemon's config ack.
 
         Payload (event): {"domain": ..., "version": N, "status":
         "applied"|"skipped"|"error", "error": "..."}.
 
-        - applied/skipped: om versionen är den (eller nyare än den)
-          publicerade nollställs config_dirty och applied-version sätts.
-        - error: error-text sparas, config_dirty kvarstår.
+        - applied/skipped: if the version is the (or newer than the)
+          published one, config_dirty is reset and the applied version is set.
+        - error: the error text is saved, config_dirty remains.
         """
         company = self.env["res.company"].search(
             [("pbx_domain", "=", tenant_domain)], limit=1
@@ -124,7 +124,7 @@ class PbxWebhookService(models.AbstractModel):
             company.write(
                 {
                     "config_dirty": True,
-                    "pbx_config_sync_error": event.get("error") or "Okänt fel",
+                    "pbx_config_sync_error": event.get("error") or "Unknown error",
                 }
             )
             _logger.error(
@@ -133,14 +133,14 @@ class PbxWebhookService(models.AbstractModel):
             )
 
     def _handle_cdr_call(self, tenant_domain, event):
-        """Logga ett samtal i pbx.call från en AMI Cdr-händelse.
+        """Log a call in pbx.call from an AMI Cdr event.
 
-        Ett samtal producerar en CDR-post per ben; vi loggar bara den post
-        där den INTERNA enhetens egen kanal (PJSIP/u<username>-…) är Channel
-        — trunk-/övriga ben hoppas, så varje samtal ger en post.
+        One call produces one CDR record per leg; we only log the record
+        where the INTERNAL device's own channel (PJSIP/u<username>-…) is Channel
+        — trunk/other legs are skipped, so each call gives one record.
 
-        Riktning: utgående när Source = anknytningens eget nummer (samtalet
-        startade internt), annars inkommande. pbx_handling mappas från
+        Direction: outbound when Source = the extension's own number (the call
+        started internally), otherwise inbound. pbx_handling is mapped from
         Disposition (ANSWERED / NO ANSWER / BUSY / …).
         """
         channel = event.get("Channel", "") or ""
@@ -153,25 +153,25 @@ class PbxWebhookService(models.AbstractModel):
         )
         extension = sub.extension_id if sub else False
         src = str(event.get("Source", "") or "")
-        # Source är CDR:ns callerid-nummer — för interna ben kan det vara
-        # "01@pbx-test.vertel.se" (eller saniterad variant "01@pbxtestvertelse"
-        # om en äldre callerid deployats). Jämför bara prefixet före @/<.
+        # Source is the CDR's callerid number — for internal legs it can be
+        # "01@pbx-test.vertel.se" (or the sanitised variant "01@pbxtestvertelse"
+        # if an older callerid was deployed). Only compare the prefix before @/<.
         src_number = re.split(r"[@<]", src)[0].strip()
         if not src_number:
-            # Ingen Source (t.ex. Local-kanal utan callerid) — kan inte
-            # klassificera riktning pålitligt; hoppa.
+            # No Source (e.g. a Local channel without callerid) — cannot
+            # classify the direction reliably; skip.
             return
-        # Utgående: Source = anknytningens eget nummer; annars inkommande
+        # Outbound: Source = the extension's own number; otherwise inbound
         outgoing = bool(extension) and src_number in (
             extension.public_number or "",
             username,
         )
         number = event.get("Destination" if outgoing else "Source", "") or ""
         number = str(number).strip()
-        # Samma normalisering som Source: "02@pbx-test.vertel.se" → "02"
+        # Same normalisation as Source: "02@pbx-test.vertel.se" → "02"
         number = re.split(r"[@<]", number)[0].strip()
-        # Hoppa över icke-dialbara nummer (t.ex. 's' från originate till
-        # special-exten i operator panel/queue) — inga riktiga samtal
+        # Skip non-dialable numbers (e.g. 's' from an originate to
+        # special extension in the operator panel/queue) — no real calls
         if not re.match(r"^\+?[0-9]+$", number):
             return
         name = event.get("CallerIDName", "") or ""
@@ -215,8 +215,8 @@ class PbxWebhookService(models.AbstractModel):
                 "callerid_name": event.get("CallerIDName", ""),
                 "duration": int(event.get("Duration", 0) or 0),
                 "file_path": file_path,
-                # Daemonen bifogar ljudet (base64) eftersom Odoo ligger på
-                # annan maskin än Asterisk-spoolen
+                # The daemon attaches the audio (base64) because Odoo runs on
+                # a different machine than the Asterisk spool
                 "audio_base64": event.get("_audio_base64") or "",
             }
         )

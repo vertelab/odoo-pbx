@@ -1,19 +1,19 @@
 # -*- coding: utf-8 -*-
 """
-pbx-ari — Asterisk ARI-klient (Stasis) för pbx_ami_daemon.
+pbx-ari — Asterisk ARI client (Stasis) for pbx_ami_daemon.
 
-Nivå 2 (smart receptionist): AI-coworker för realtidsdialog i samtalet.
-Ansluter till Asterisk ARI (port 8089 websocket + 8088 REST), lyssnar
-på Stasis-händelser och utför åtgärder (answer, play, redirect).
+Level 2 (smart receptionist): AI coworker for real-time dialog in the call.
+Connects to Asterisk ARI (port 8089 websocket + 8088 REST), listens to
+Stasis events and performs actions (answer, play, redirect).
 
-Turn-baserad dialog (v1):
-  StasisStart → answer → record (silence-detect) → STT (pbx-transcriber,
-  fors) → LLM (Odoo /pbx/ai/dialog) → TTS (Odoo, is_asr-provider) →
-  play_uri (TTS-ljud serveras av daemonen på :8081) → record igen …
-  DTMF # = avsluta, DTMF 0 = koppla till människa.
+Turn-based dialog (v1):
+  StasisStart -> answer -> record (silence-detect) -> STT (pbx-transcriber,
+  fors) -> LLM (Odoo /pbx/ai/dialog) -> TTS (Odoo, is_asr provider) ->
+  play_uri (TTS audio served by the daemon on :8081) -> record again ...
+  DTMF # = hang up, DTMF 0 = transfer to a human.
 
-Inget nytt GitHub-beroende — bygger direkt på aiohttp (daemonen är
-redan async).
+No new GitHub dependency — builds directly on aiohttp (the daemon is
+already async).
 """
 
 import base64
@@ -28,7 +28,7 @@ logger = logging.getLogger("pbx_ari")
 
 
 class ARIChannel:
-    """En aktiv Stasis-kanal (samtal)."""
+    """An active Stasis channel (call)."""
 
     def __init__(self, client: "ARIClient", channel_id: str, data: dict = None):
         self.client = client
@@ -42,7 +42,7 @@ class ARIChannel:
         return await self.client.rest("POST", f"/channels/{self.channel_id}/answer")
 
     async def play(self, media: str, lang: str = "en"):
-        """Spela upp ljud. media: 'sound:name' eller en URL till TTS-ljud."""
+        """Play audio. media: 'sound:name' or a URL to TTS audio."""
         return await self.client.rest(
             "POST",
             f"/channels/{self.channel_id}/play",
@@ -50,7 +50,7 @@ class ARIChannel:
         )
 
     async def play_uri(self, url: str):
-        """Spela upp en ljud-URL (t.ex. TTS-genererad mp3 från Odoo)."""
+        """Play an audio URL (e.g. TTS-generated mp3 from Odoo)."""
         return await self.client.rest(
             "POST",
             f"/channels/{self.channel_id}/play",
@@ -58,7 +58,7 @@ class ARIChannel:
         )
 
     async def redirect(self, context: str, exten: str, priority: int = 1):
-        """Koppla vidare samtalet (t.ex. till kö/anknytning)."""
+        """Transfer the call (e.g. to a queue/extension)."""
         return await self.client.rest(
             "POST",
             f"/channels/{self.channel_id}/redirect",
@@ -72,7 +72,7 @@ class ARIChannel:
 
     async def record(self, name: str, format: str = "wav",
                      max_silence: int = 2, max_duration: int = 15):
-        """Starta inspelning med tystnads-detektering (turn)."""
+        """Start recording with silence detection (turn)."""
         return await self.client.rest(
             "POST",
             f"/channels/{self.channel_id}/record",
@@ -90,7 +90,7 @@ class ARIChannel:
 
 
 class ARIClient:
-    """ARI-klient: REST (8088) + WebSocket-händelser (8089)."""
+    """ARI client: REST (8088) + WebSocket events (8089)."""
 
     def __init__(self, base_url: str, ws_url: str, app: str,
                  api_key: str, on_stasis_start=None, on_dtmf=None,
@@ -108,8 +108,8 @@ class ARIClient:
         self.channels: dict[str, ARIChannel] = {}
 
     async def rest(self, method: str, path: str, json: Optional[dict] = None):
-        """Anropa ARI REST API."""
-        import aiohttp.web  # noqa: F401  (säkerställer att aiohttp är importerat)
+        """Call the ARI REST API."""
+        import aiohttp.web  # noqa: F401  (ensures aiohttp is imported)
         import aiohttp
         url = f"{self.base_url}/ari{path}"
         headers = {"Authorization": f"Basic {self._basic_auth()}"}
@@ -126,7 +126,7 @@ class ARIClient:
                 return await resp.json()
 
     async def get_recording_file(self, name: str) -> bytes:
-        """Hämta inspelad fil som bytes (wav)."""
+        """Fetch a recorded file as bytes (wav)."""
         import aiohttp
         url = f"{self.base_url}/ari/recordings/{name}/file"
         headers = {"Authorization": f"Basic {self._basic_auth()}"}
@@ -142,7 +142,7 @@ class ARIClient:
         return base64.b64encode(self.api_key.encode()).decode()
 
     async def run(self):
-        """Lyssna på ARI WebSocket-händelser (Stasis)."""
+        """Listen for ARI WebSocket events (Stasis)."""
         import aiohttp
         url = (f"{self.ws_url}/ari/events?api_key={self.api_key}"
                f"&app={self.app}")
@@ -189,12 +189,12 @@ class ARIClient:
 
 
 # ──────────────────────────────────────────────────────────────────
-# Receptionist-logik — turn-baserad dialog (STT → LLM → TTS → playback)
+# Receptionist logic — turn-based dialog (STT -> LLM -> TTS -> playback)
 # ──────────────────────────────────────────────────────────────────
 
 
 class TTSAudioServer:
-    """Serverar TTS-ljud över HTTP så ARI kan spela via play_uri."""
+    """Serves TTS audio over HTTP so ARI can play it via play_uri."""
 
     def __init__(self, port: int = 8081, ttl: int = 300):
         self.port = port
@@ -211,7 +211,7 @@ class TTSAudioServer:
         await self._runner.setup()
         site = aiohttp.web.TCPSite(self._runner, "0.0.0.0", self.port)
         await site.start()
-        logger.info("TTS-server på :%s (play_uri http://localhost:%s/tts/...)",
+        logger.info("TTS server on :%s (play_uri http://localhost:%s/tts/...)",
                     self.port, self.port)
 
     async def stop(self):
@@ -223,7 +223,7 @@ class TTSAudioServer:
         return aiohttp.web.json_response({"status": "ok", "service": "pbx-tts"})
 
     def add(self, audio: bytes, suffix: str = ".mp3") -> str:
-        """Lagra ljud, returnera URI-delen /tts/<name>."""
+        """Store audio, return the URI part /tts/<name>."""
         name = f"tts-{uuid.uuid4().hex}{suffix}"
         path = os.path.join(tempfile.gettempdir(), name)
         with open(path, "wb") as f:
@@ -244,10 +244,10 @@ class TTSAudioServer:
 
 
 class Receptionist:
-    """Turn-baserad dialog: record → STT → Odoo-LLM → TTS → playback.
+    """Turn-based dialog: record -> STT -> Odoo LLM -> TTS -> playback.
 
-    Dialogen körs i Odoo (ai.coworker) via /pbx/ai/dialog; STT lokalt på
-    pbx-transcriber (fors). TTS-ljud serveras av TTSAudioServer och spelas
+    The dialog runs in Odoo (ai.coworker) via /pbx/ai/dialog; STT locally on
+    pbx-transcriber (fors). TTS audio is served by TTSAudioServer and played
     via ARI play_uri.
     """
 
@@ -274,7 +274,7 @@ class Receptionist:
     async def stop_audio_server(self):
         await self.audio.stop()
 
-    # ── Stasis-händelser ───────────────────────────────────────────
+    # ── Stasis events ──────────────────────────────────────────────
 
     async def on_stasis_start(self, channel: ARIChannel, event: dict):
         logger.info("StasisStart: %s (%s)", channel.channel_id,
@@ -287,7 +287,7 @@ class Receptionist:
         }
         self.conversations[channel.channel_id] = state
         await channel.answer()
-        # Första turn direkt (hälsning via Odoo) — starta inspelning
+        # First turn immediately (greeting via Odoo) — start recording
         await self._start_record(channel)
 
     async def on_dtmf(self, channel: ARIChannel, digit: str, event: dict):
@@ -318,7 +318,7 @@ class Receptionist:
         state = self.conversations.get(channel.channel_id)
         if not state or state.get("ended"):
             return
-        # Svar klart — lyssna på nästa tur
+        # Reply done — listen for the next turn
         await self._start_record(channel)
 
     # ── Turn-logik ─────────────────────────────────────────────────
@@ -337,14 +337,14 @@ class Receptionist:
                             rec_name: str):
         audio = await self.client.get_recording_file(rec_name)
         if not audio:
-            logger.warning("Tom inspelning för %s", rec_name)
+            logger.warning("Empty recording for %s", rec_name)
             await self._start_record(channel)
             return
 
         transcript = await self._stt(audio)
         if not transcript or not transcript.strip():
-            # Ingen talad input — fråga igen
-            await self._play_reply(channel, state, "Jag hörde inte, kan du upprepa?")
+            # No spoken input — ask again
+            await self._play_reply(channel, state, "I did not hear that, could you repeat?")
             return
 
         state["history"].append(f"user: {transcript.strip()}")
@@ -394,20 +394,20 @@ class Receptionist:
                             uri = self.audio.add(audio)
                             self._tts_urls[uri] = True
                         return data.get("reply", "…")
-                    return "Ett ögonblick, jag kopplar dig vidare."
+                    return "One moment, I will transfer you."
         except Exception as e:
             logger.error("Odoo dialog failed: %s", e)
-            return "Ett ögonblick, jag kopplar dig vidare."
+            return "One moment, I will transfer you."
 
     async def _play_reply(self, channel: ARIChannel, state: dict, reply: str):
-        # TTS-ljudet för senaste svaret ligger på /tts/<uri> (satt av _dialog).
+        # The TTS audio for the latest reply is at /tts/<uri> (set by _dialog).
         uri = next(iter(self._tts_urls.keys()), None)
         if uri:
             await channel.play_uri(f"http://localhost:{self.audio.port}{uri}")
             del self._tts_urls[uri]
         else:
             await channel.play("sound:hello-world")
-        # on_playback_finished startar nästa turn
+        # on_playback_finished starts the next turn
 
     async def _end_dialog(self, channel: ARIChannel):
         state = self.conversations.get(channel.channel_id)
@@ -430,16 +430,16 @@ class Receptionist:
 # ──────────────────────────────────────────────────────────────────
 # CoworkerApp — AI-anknytning (Stasis(coworker,<id>))
 #
-# Generaliserad Receptionist: coworker_id kommer från Stasis-args per
-# samtal (flera AI-anknytningar kan ha olika coworkers). Turn-loppen
-# (record → STT → Odoo-LLM → TTS → playback) + DTMF-barge-in är samma
-# mekanism. stt_mode=streaming är framtida (external media); fallback
-# till turn när streaming inte är tillgängligt.
+# Generalized Receptionist: coworker_id comes from the Stasis args per
+# call (several AI extensions may have different coworkers). The turn loops
+# (record -> STT -> Odoo LLM -> TTS -> playback) + DTMF barge-in is the same
+# mechanism. stt_mode=streaming is future work (external media); fallback
+# to turn-based when streaming is unavailable.
 # ──────────────────────────────────────────────────────────────────
 
 
 class CoworkerApp:
-    """Dialog för en AI-anknytning: StasisStart(coworker,<id>)."""
+    """Dialog for an AI extension: StasisStart(coworker,<id>)."""
 
     def __init__(self, client: ARIClient, odoo_url: str = "",
                  webhook_token: str = "",
@@ -463,7 +463,7 @@ class CoworkerApp:
     async def stop_audio_server(self):
         await self.audio.stop()
 
-    # ── Stasis-händelser ───────────────────────────────────────────
+    # ── Stasis events ──────────────────────────────────────────────
 
     async def on_stasis_start(self, channel: ARIChannel, event: dict):
         args = event.get("args") or []
@@ -483,7 +483,7 @@ class CoworkerApp:
         }
         self.conversations[channel.channel_id] = state
         await channel.answer()
-        # Första tur direkt — starta inspelning (hälsning via Odoo)
+        # First turn immediately — start recording (greeting via Odoo)
         await self._start_record(channel)
 
     async def on_dtmf(self, channel: ARIChannel, digit: str, event: dict):
@@ -514,7 +514,7 @@ class CoworkerApp:
         state = self.conversations.get(channel.channel_id)
         if not state or state.get("ended"):
             return
-        # Svar klart — lyssna på nästa tur
+        # Reply done — listen for the next turn
         await self._start_record(channel)
 
     # ── Turn-logik ─────────────────────────────────────────────────
@@ -533,14 +533,14 @@ class CoworkerApp:
                             rec_name: str):
         audio = await self.client.get_recording_file(rec_name)
         if not audio:
-            logger.warning("Tom inspelning för %s", rec_name)
+            logger.warning("Empty recording for %s", rec_name)
             await self._start_record(channel)
             return
 
         transcript = await self._stt(audio)
         if not transcript or not transcript.strip():
             await self._play_reply(
-                channel, state, "Jag hörde inte, kan du upprepa?")
+                channel, state, "I did not hear that, could you repeat?")
             return
 
         state["history"].append(f"user: {transcript.strip()}")
@@ -590,10 +590,10 @@ class CoworkerApp:
                             uri = self.audio.add(audio)
                             self._tts_urls[uri] = True
                         return data.get("reply", "…")
-                    return "Ett ögonblick, jag kopplar dig vidare."
+                    return "One moment, I will transfer you."
         except Exception as e:
             logger.error("Odoo dialog failed: %s", e)
-            return "Ett ögonblick, jag kopplar dig vidare."
+            return "One moment, I will transfer you."
 
     async def _play_reply(self, channel: ARIChannel, state: dict, reply: str):
         uri = next(iter(self._tts_urls.keys()), None)
@@ -602,7 +602,7 @@ class CoworkerApp:
             del self._tts_urls[uri]
         else:
             await channel.play("sound:hello-world")
-        # on_playback_finished startar nästa turn
+        # on_playback_finished starts the next turn
 
     async def _end_dialog(self, channel: ARIChannel):
         state = self.conversations.get(channel.channel_id)

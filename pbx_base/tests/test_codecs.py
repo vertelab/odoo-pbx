@@ -38,24 +38,24 @@ class TestPbxCodecs(TransactionCase):
         """Seed: g722/ulaw/alaw/opus aktiva; video inaktiv."""
         for name in ("g722", "ulaw", "alaw", "opus"):
             codec = self._codec(name)
-            self.assertTrue(codec, "seed-codec %s saknas" % name)
+            self.assertTrue(codec, "seed codec %s is missing" % name)
             self.assertTrue(codec.active)
         self.assertFalse(self.env["pbx.codec"].search(
-            [("name", "=", "g729")], limit=1), "g729 ska inte vara i seed")
+            [("name", "=", "g729")], limit=1), "g729 must not be in the seed")
 
     def test_default_fallback(self):
-        """Enhet utan codec-rader → global default i priority-ordning."""
+        """A device without codec rows → global default in priority order."""
         sub = self._make_sub()
         pjsip = self.generator.generate_pjsip("test.se", self.env.company.id)
         block = "[%s](test.se-endpoint)" % sub.username
         self.assertIn(block, pjsip)
-        # allow-rader i priority-ordning (g722 → ulaw → alaw → opus)
+        # allow lines in priority order (g722 → ulaw → alaw → opus)
         idx_g722 = pjsip.index("allow = g722")
         idx_opus = pjsip.index("allow = opus")
         self.assertLess(idx_g722, idx_opus)
 
     def test_device_codec_lines_order(self):
-        """Enhetens rader i sequence-ordning → allow i samma ordning."""
+        """The device's rows in sequence order → allow in the same order."""
         g722 = self._codec("g722")
         ulaw = self._codec("ulaw")
         sub = self._make_sub()
@@ -74,7 +74,7 @@ class TestPbxCodecs(TransactionCase):
         self.assertLess(block.index("allow = g722"), block.index("allow = ulaw"))
 
     def test_browser_always_opus(self):
-        """Browser-enhet utan opus i raderna → opus prependas (WebRTC)."""
+        """Browser device without opus in its rows → opus is prepended (WebRTC)."""
         alaw = self._codec("alaw")
         sub = self._make_sub(device_type="browser")
         sub.write({"codec_ids": [(0, 0, {"sequence": 10, "codec_id": alaw.id})]})

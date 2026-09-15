@@ -10,11 +10,11 @@ _logger = logging.getLogger(__name__)
 
 
 class PbxWebhookServiceAI(models.AbstractModel):
-    """pbx_ai-hook på webhook-tjänsten.
+    """pbx_ai hook on the webhook service.
 
-    - Vidarebefordrar pbx.result.* (transcriber-resultat) till pbx.ai.
-    - Vid voicemail: skapar systray-aktivitet + publicerar transcribe-jobb
-      om brevlådans device har transcribe_voicemail.
+    - Forwards pbx.result.* (transcriber results) to pbx.ai.
+    - On voicemail: creates a systray activity + publishes a transcribe job
+      if the mailbox's device has transcribe_voicemail.
     """
 
     _inherit = "pbx.webhook.service"
@@ -40,23 +40,23 @@ class PbxWebhookServiceAI(models.AbstractModel):
                 return
 
             pbx_ai = self.env["pbx.ai"]
-            # Aktivitet i systray: röstmeddelande att lyssna på
+            # Systray activity: a voicemail to listen to
             try:
                 pbx_ai._create_voicemail_activity(call)
             except Exception as e:
-                _logger.warning("Voicemail-aktivitet misslyckades: %s", e)
+                _logger.warning("Voicemail activity failed: %s", e)
 
-            # Opt-in transkribering av röstmeddelandet
+            # Opt-in transcription of the voicemail
             device = pbx_ai._voicemail_device(call)
             if device and device.transcribe_voicemail and audio_b64:
                 attachment = self._voicemail_attachment(call, audio_b64)
                 if attachment:
                     pbx_ai._publish_transcribe_job(call, attachment)
         except Exception as e:
-            _logger.warning("pbx_ai voicemail-hook misslyckades: %s", e)
+            _logger.warning("pbx_ai voicemail hook failed: %s", e)
 
     def _find_voicemail_call(self, tenant, ext_number):
-        """Hitta senaste pbx.call för anknytningen (voicemail-samtal)."""
+        """Find the latest pbx.call for the extension (voicemail call)."""
         try:
             extension = self.env["pbx.extension"].search(
                 [("public_number", "=", ext_number)], limit=1
@@ -75,7 +75,7 @@ class PbxWebhookServiceAI(models.AbstractModel):
             return self.env["pbx.call"]
 
     def _voicemail_attachment(self, call, audio_b64):
-        """Spara voicemail-ljudet som ir.attachment på pbx.call."""
+        """Save the voicemail audio as an ir.attachment on pbx.call."""
         import base64
         try:
             return self.env["ir.attachment"].create(

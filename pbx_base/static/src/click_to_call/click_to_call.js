@@ -23,9 +23,9 @@ export class PbxCallButton extends Component {
                 "action_click_to_call_current_user",
                 [this.props.number]
             );
-            this.notification.add(`Ringer ${this.props.number}`, { type: "success" });
+            this.notification.add(`Calling ${this.props.number}`, { type: "success" });
         } catch (e) {
-            const msg = e.data?.message || e.message || "Kunde inte ringa";
+            const msg = e.data?.message || e.message || "Could not place the call";
             this.notification.add(msg, { type: "danger" });
         } finally {
             this.state.calling = false;

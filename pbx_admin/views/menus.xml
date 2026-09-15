@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <!-- Tenants = första valet direkt under PBX-roten (kanban) -->
+    <!-- Tenants = the first choice directly under the PBX root (kanban) -->
     <menuitem
         id="menu_pbx_tenants"
         name="Tenants"

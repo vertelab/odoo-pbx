@@ -9,10 +9,11 @@ _logger = logging.getLogger(__name__)
 
 
 class PbxCall(models.Model):
-    """Telefon-transaktion: ett inkommande eller utgående samtal.
+    """Telephone transaction: an inbound or outbound call.
 
-    Loggas av pbx_ami_daemon → webhook (eller manuellt vid test). Varje samtal
-    slås upp mot res.partner (phone/mobile) och saknas parten skapas den.
+    Logged by pbx_ami_daemon → webhook (or manually during testing). Each call
+    is looked up against res.partner (phone/mobile) and if the partner is
+    missing it is created.
     """
 
     _name = "pbx.call"
@@ -56,7 +57,7 @@ class PbxCall(models.Model):
             ("outgoing", "Outgoing"),
         ],
         string="Handled by PBX",
-        help="Hur samtalet hanterades i växeln (dialplan/AMI).",
+        help="How the call was handled in the PBX (dialplan/AMI).",
     )
     company_id = fields.Many2one(
         "res.company",
@@ -86,7 +87,7 @@ class PbxCall(models.Model):
 
     @api.model
     def _resolve_partner(self, number, name=False, create=True):
-        """Hitta res.partner på phone/mobile — auto-skapa om den saknas."""
+        """Find res.partner by phone/mobile — auto-create it if missing."""
         number = (number or "").strip()
         if not number:
             return self.env["res.partner"], False
@@ -105,7 +106,7 @@ class PbxCall(models.Model):
 
     @api.model
     def log_call(self, values):
-        """Skapa en pbx.call från en händelse (används av webhook/daemon).
+        """Create a pbx.call from an event (used by webhook/daemon).
 
         ``values``: phone_number, callerid_name, direction, start_date,
         stop_date, pbx_handling, user_id, extension_id.
@@ -114,7 +115,7 @@ class PbxCall(models.Model):
         name = (values or {}).get("callerid_name") or ""
         partner, created = self._resolve_partner(number, name)
         if created:
-            _logger.info("Skapade res.partner %s för nummer %s", partner.id, number)
+            _logger.info("Created res.partner %s for number %s", partner.id, number)
         call = self.create(
             {
                 "partner_id": partner.id or False,

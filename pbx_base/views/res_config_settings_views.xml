@@ -17,10 +17,10 @@
                 <app data-string="PBX" string="PBX" name="pbx">
                     <field name="pbx_config_managed" invisible="1"/>
 
-                    <block title="Grundinställningar">
+                    <block title="Basic settings">
                         <div class="row">
                             <div class="col-lg-6">
-                                <setting string="Min telefon-växel">
+                                <setting string="My Phone System">
                                     <div class="content-group">
                                         <div class="row mt16">
                                             <label string="SIP Domain" for="pbx_domain" class="col-lg-6 o_light_label"/>
@@ -50,7 +50,7 @@
                                 </setting>
                             </div>
                             <div class="col-lg-6">
-                                <setting string="Säkerhet">
+                                <setting string="Security">
                                     <div class="content-group">
                                         <div class="row mt16">
                                             <label string="API Key" for="pbx_api_key" class="col-lg-6 o_light_label"/>
@@ -71,7 +71,7 @@
 
                         <div class="row">
                             <div class="col-lg-6">
-                                <setting string="Meddelandekö (RabbitMQ)">
+                                <setting string="Message Queue (RabbitMQ)">
                                     <div class="content-group">
                                         <div class="row mt16">
                                             <label string="Port" for="pbx_mq_port" class="col-lg-6 o_light_label"/>
@@ -90,7 +90,7 @@
                                         <div class="row mt16">
                                             <label string="PBX Webhook Token" for="pbx_webhook_token" class="col-lg-6 o_light_label"/>
                                             <field name="pbx_webhook_token" class="col-lg-6" readonly="1"/>
-                                            <label string="SIP-lösenordslängd" for="pbx_sip_password_length" class="col-lg-6 o_light_label"/>
+                                            <label string="SIP password length" for="pbx_sip_password_length" class="col-lg-6 o_light_label"/>
                                             <field name="pbx_sip_password_length" class="col-lg-6"/>
                                         </div>
                                         <div class="row mt16">

@@ -26,7 +26,7 @@ class PbxOperatorPanel(http.Controller):
         return env[model_name] if model_name in env else None
 
     def _pbx_domain(self):
-        """Användarens företags SIP-domän (multicompany)."""
+        """The user's company SIP domain (multicompany)."""
         return request.env.user.company_id.pbx_domain or ""
 
     def _pbx_company(self):
@@ -66,8 +66,8 @@ class PbxOperatorPanel(http.Controller):
                     [("extension_id", "=", user_ext.id)]
                 ).queue_id
                 if isinstance(queues, list):
-                    # pbx.queue ej i registry (stale worker efter install) —
-                    # visa inga köer för agenten
+                    # pbx.queue not in the registry (stale worker after install) —
+                    # show no queues for the agent
                     queues = queues_model
                 queues = queues & member_queues
             extensions = extensions.filtered(lambda e: e.id == user_ext.id)
@@ -223,7 +223,7 @@ class PbxOperatorPanel(http.Controller):
 
     @http.route("/pbx/operator_panel/deploy_config", type="json", auth="user", methods=["POST"])
     def operator_panel_deploy_config(self, **kwargs):
-        """Regenerate + deploy tenant config via MQ (Odoo-ägd)."""
+        """Regenerate + deploy tenant config via MQ (Odoo-owned)."""
         tenant = self._current_tenant()
         if not tenant:
             return {"status": "error", "error": "no tenant"}

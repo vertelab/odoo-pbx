@@ -1,7 +1,7 @@
 {
     "name": "PBX HR Bridge",
     "version": "18.0.1.4.0",
-    "summary": "PBX↔HR-brygga — anknytning på hr.employee (ange/fördela, hierarkisk numrering, omnumrering)",
+    "summary": "PBX<>HR bridge — extension on hr.employee (assign/suggest, hierarchical numbering, renumbering)",
     "category": "Productivity/VOIP",
     "author": "Vertel AB",
     "website": "https://github.com/vertelab/odoo-pbx",

@@ -12,48 +12,48 @@ _logger = logging.getLogger(__name__)
 
 
 class ResPartner(models.Model):
-    """Tenant som res.partner (bifrost-mönstret: res.partner + kryssruta).
+    """Tenant as res.partner (the bifrost pattern: res.partner + a boolean).
 
-    En partner med `is_pbx_tenant = True` är en PBX-tenant: SIP-domän,
-    Asterisk-server, Salt-minion och deploy-status. Allt standard-partner
-    (bild, chatter, kanban, arkiv-ribbon) kommer gratis.
+    A partner with `is_pbx_tenant = True` is a PBX tenant: SIP domain,
+    Asterisk server, Salt minion and deploy status. Everything standard partner
+    (image, chatter, kanban, archive ribbon) comes for free.
     """
 
     _inherit = "res.partner"
 
     is_pbx_tenant = fields.Boolean(
-        string="PBX-tenant",
-        help="Kryssrutan som gör partnern till en PBX-tenant (visas i PBX → Tenants).",
+        string="PBX Tenant",
+        help="The checkbox that turns the partner into a PBX tenant (shown in PBX → Tenants).",
     )
     domain = fields.Char(
-        string="SIP-domän",
-        help="Kundens SIP-domän på Asterisk-servern, t.ex. vertel.se. Unikt bland tenanter.",
+        string="SIP Domain",
+        help="The customer's SIP domain on the Asterisk server, e.g. vertel.se. Unique among tenants.",
     )
     server_id = fields.Many2one(
         "pbx.server",
         string="PBX Server",
-        help="Asterisk-servern där tenantens växel körs.",
+        help="The Asterisk server where the tenant's PBX runs.",
     )
     minion_id = fields.Many2one(
         "salt.minion",
         string="Salt Minion",
-        help="Kundens Salt-minion (kund-Odoo) som växelinfo deployas till.",
+        help="The customer's Salt minion (customer Odoo) that the PBX info is deployed to.",
     )
     deploy_status = fields.Selection(
         [
-            ("draft", "Ej deployad"),
+            ("draft", "Not deployed"),
             ("ok", "OK"),
-            ("error", "Fel"),
+            ("error", "Error"),
             ("dry-run", "Dry-run"),
         ],
-        string="Deploy-status",
+        string="Deploy Status",
         default="draft",
     )
-    last_deploy = fields.Datetime(string="Senaste deploy")
-    deploy_log = fields.Text(string="Deploy-logg")
+    last_deploy = fields.Datetime(string="Last Deploy")
+    deploy_log = fields.Text(string="Deploy Log")
 
     def init(self):
-        """Partiellt unikt index: bara tenanter med icke-tom domän."""
+        """Partial unique index: only tenants with a non-empty domain."""
         super().init()
         self.env.cr.execute(
             """
@@ -64,20 +64,20 @@ class ResPartner(models.Model):
         )
 
     # ------------------------------------------------------------------
-    # Minion-sync (deploy av växelinfo via Salt)
+    # Minion sync (deploy of PBX info via Salt)
     # ------------------------------------------------------------------
 
     def deploy_config(self):
-        """Deploya växelinformationen till kundminionen via Salt (salt-api).
+        """Deploy the PBX information to the customer minion via Salt (salt-api).
 
-        Kör ``state.apply odoo.pbx`` med en pillar innehållande SIP-domän,
-        serveradress, API-nyckel, RabbitMQ- och webhook-konfiguration.
+        Runs ``state.apply odoo.pbx`` with a pillar containing the SIP domain,
+        server address, API key, RabbitMQ and webhook configuration.
         """
         self.ensure_one()
         if not self.is_pbx_tenant:
-            raise UserError(_("Partnern är inte en PBX-tenant."))
+            raise UserError(_("The partner is not a PBX tenant."))
         if not self.minion_id:
-            raise UserError(_("Sätt Salt-minion på tenanten först."))
+            raise UserError(_("Set a Salt minion on the tenant first."))
         pillar = self._build_pillar()
         dry_run = (
             self.env["ir.config_parameter"]
@@ -106,20 +106,20 @@ class ResPartner(models.Model):
         except Exception as e:
             self.deploy_status = "error"
             self.deploy_log = str(e)[:4000]
-            _logger.exception("Salt deploy misslyckades för %s", self.domain)
+            _logger.exception("Salt deploy failed for %s", self.domain)
             return {"status": "error", "error": str(e)}
 
     def _build_pillar(self):
-        """Bygg pillar med växelinformation att deploya till kundminionen."""
+        """Build the pillar with PBX information to deploy to the customer minion."""
         self.ensure_one()
         server = self.server_id
         ICP = self.env["ir.config_parameter"].sudo()
         company = self.company_id
         api_key = company.pbx_api_key or ""
-        # RabbitMQ körs på PBX-servern och använder SIP-domänen som vhost —
-        # host/vhost härleds (om inte centralt provisionerade i odoo.conf).
-        # Användare = SIP-domän, lösenord = API-nyckel (en hemlighet per domän,
-        # permission scoped till instansens domänset på RabbitMQ-sidan).
+        # RabbitMQ runs on the PBX server and uses the SIP domain as vhost —
+        # host/vhost are derived (unless provisioned centrally in odoo.conf).
+        # User = SIP domain, password = API key (one secret per domain,
+        # permission scoped to the instance's domain set on the RabbitMQ side).
         mq = {
             "host": ICP.get_param("pbx.mq.host", "")
             or (server.host if server else ""),
@@ -141,21 +141,21 @@ class ResPartner(models.Model):
         }
 
     def action_derive_domain_from_website(self):
-        """Härled SIP-domänen från partnerns webbplats (strip https/www/path).
+        """Derive the SIP domain from the partner's website (strip https/www/path).
 
-        Exempel: https://www.kund.se → kund.se. Bara ett förslag — användaren
-        kan justera innan spara. SIP-domänen ska vara stabil och explicit,
-        inte automatiskt följa webbplatsen vid ändringar.
+        Example: https://www.kund.se → kund.se. Just a suggestion — the user
+        can adjust it before saving. The SIP domain should be stable and explicit,
+        not automatically follow the website on changes.
         """
         self.ensure_one()
         website = (self.website or "").strip().lower()
         if not website:
-            raise UserError(_("Partnern har ingen webbplats angiven."))
+            raise UserError(_("The partner has no website configured."))
         domain = re.sub(r"^https?://", "", website)
         domain = re.sub(r"^www\.", "", domain)
         domain = domain.split("/")[0].split(":")[0]
         if not domain:
-            raise UserError(_("Kunde inte härleda en domän från webbplatsen."))
+            raise UserError(_("Could not derive a domain from the website."))
         self.domain = domain
         return {
             "type": "ir.actions.client",
@@ -163,7 +163,7 @@ class ResPartner(models.Model):
         }
 
     def action_open_partner(self):
-        """Öppna den underliggande res.partner-posten (fullständigt formulär)."""
+        """Open the underlying res.partner record (the full form)."""
         self.ensure_one()
         return {
             "type": "ir.actions.act_window",

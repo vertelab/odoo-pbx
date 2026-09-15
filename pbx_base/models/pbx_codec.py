@@ -5,12 +5,12 @@ from odoo import api, fields, models
 
 
 class PbxCodec(models.Model):
-    """Codec-katalog.
+    """Codec catalogue.
 
-    Central lista över tillgängliga codecs. "Vad som finns" styrs av
-    Asterisk (via Salt-pushad `pbx.codecs.available`); `active` sätts av
-    pbx_admin. Selektion per enhetstyp/enhet sker via pbx.codec.line
-    (one2many, ordnad med sequence).
+    Central list of available codecs. "What exists" is controlled by
+    Asterisk (via the Salt-pushed `pbx.codecs.available`); `active` is set by
+    pbx_admin. Selection per device type/device happens via pbx.codec.line
+    (one2many, ordered by sequence).
     """
 
     _name = "pbx.codec"
@@ -31,16 +31,16 @@ class PbxCodec(models.Model):
     )
     priority = fields.Integer(
         default=10,
-        help="Utgångsordning (från Salt-pushad lista). Vid ny selektion läggs "
-             "raderna i denna ordning — användaren kan sedan dra om dem.",
+        help="Output order (from the Salt-pushed list). New selections append "
+             "rows in this order — the user can then drag to rearrange them.",
     )
     supported = fields.Boolean(
         default=True,
-        help="Finns på Asterisk (justeras vid sync från servern).",
+        help="Exists on Asterisk (adjusted on sync from the server).",
     )
     active = fields.Boolean(
         default=True,
-        help="Centralt på/av (pbx_admin). Inaktiva erbjuds inte i selektioner.",
+        help="Centrally on/off (pbx_admin). Inactive codecs are not offered in selections.",
     )
     description = fields.Char()
 
@@ -48,17 +48,17 @@ class PbxCodec(models.Model):
         (
             "name_unique",
             "UNIQUE(name)",
-            "Codec-namnet måste vara unikt!",
+            "The codec name must be unique!",
         ),
     ]
 
     @api.model
     def _sync_from_available(self):
-        """Bygg/uppdatera katalogen från ir.config_parameter pbx.codecs.available.
+        """Build/update the catalogue from ir.config_parameter pbx.codecs.available.
 
-        Parametern (kommaseparerad, ordning = priority) pushas till tenant-
-        minioner via Salt (odoo/pbx.sls). Befintliga active/supported-värden
-        bevaras; saknade codecs skapas som inactive.
+        The parameter (comma-separated, order = priority) is pushed to tenant
+        minions via Salt (odoo/pbx.sls). Existing active/supported values are
+        preserved; missing codecs are created as inactive.
         """
         ICP = self.env["ir.config_parameter"].sudo()
         raw = ICP.get_param("pbx.codecs.available", "")
@@ -74,31 +74,31 @@ class PbxCodec(models.Model):
                     {
                         "name": name,
                         "priority": idx * 10,
-                        "active": False,  # ny från Asterisk — avstängd tills admin aktiverar
+                        "active": False,  # new from Asterisk — disabled until an admin enables it
                     }
                 )
         return True
 
     @api.model
     def action_sync_codecs(self):
-        """Sync-knapp (katalogen): bygg/uppdatera från pbx.codecs.available."""
+        """Sync button (catalogue): build/update from pbx.codecs.available."""
         ok = self._sync_from_available()
         return {
             "type": "ir.actions.client",
             "tag": "display_notification",
             "params": {
                 "title": "Codecs",
-                "message": "Katalogen uppdaterad från pbx.codecs.available"
+                "message": "Catalogue updated from pbx.codecs.available"
                 if ok
-                else "Ingen pbx.codecs.available satt — seed-default gäller",
+                else "No pbx.codecs.available set — the seed default applies",
                 "type": "success" if ok else "warning",
             },
         }
 
     @api.model
     def action_deploy_devices(self):
-        """Deploy-knapp (katalogen): applicera default-codec-listan på alla
-        enheter utan egen selektion (selektioner bevaras)."""
+        """Deploy button (catalogue): apply the default codec list to all
+        devices without their own selection (selections are preserved)."""
         devices = self.env["pbx.sub_extension"].search([])
         devices._ensure_default_codecs()
         return {
@@ -106,19 +106,19 @@ class PbxCodec(models.Model):
             "tag": "display_notification",
             "params": {
                 "title": "Codecs",
-                "message": "Default-codecs applicerade på %d enheter" % len(devices),
+                "message": "Default codecs applied to %d devices" % len(devices),
                 "type": "success",
             },
         }
 
 
 class PbxCodecLine(models.Model):
-    """Ordrad codec-selektion (rad).
+    """Ordered codec selection (row).
 
-    En rad = en codec i en selektion. Exakt en förälder: antingen en
-    device.template (default per enhetstyp) eller en sub_extension
-    (den gällande listan per enhet). Ordningen (sequence) är codec-
-    preferensen → pjsip allow-rader i samma ordning.
+    One row = one codec in a selection. Exactly one parent: either a
+    device.template (default per device type) or a sub_extension
+    (the effective list per device). The order (sequence) is the codec-
+    preference → pjsip allow lines in the same order.
     """
 
     _name = "pbx.codec.line"
@@ -145,6 +145,6 @@ class PbxCodecLine(models.Model):
         (
             "check_single_parent",
             "CHECK((template_id IS NOT NULL)::int + (sub_extension_id IS NOT NULL)::int = 1)",
-            "Codec-raden måste ha exakt en förälder (template eller enhet)!",
+            "A codec row must have exactly one parent (template or device)!",
         ),
     ]

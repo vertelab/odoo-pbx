@@ -1,0 +1,299 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* pbx_queue
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 18.0-20260801\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-09-15 09:28+0000\n"
+"PO-Revision-Date: 2026-09-15 09:28+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: pbx_queue
+#: model:ir.model.fields,help:pbx_queue.field_pbx_queue__join_empty
+msgid "Accept calls when no agents are logged in?"
+msgstr "Ta emot samtal när inga agenter är inloggade?"
+
+#. module: pbx_queue
+#: model:ir.model.fields,field_description:pbx_queue.field_pbx_queue__active
+msgid "Active"
+msgstr "Aktiv"
+
+#. module: pbx_queue
+#: model:ir.model.fields,field_description:pbx_queue.field_pbx_queue_member__extension_id
+msgid "Agent Extension"
+msgstr "Agentanknytning"
+
+#. module: pbx_queue
+#. odoo-javascript
+#: code:addons/pbx_queue/static/src/operator_panel/queue_tile.xml:0
+msgid "Agent status"
+msgstr "Agentstatus"
+
+#. module: pbx_queue
+#: model:ir.model.fields,field_description:pbx_queue.field_pbx_queue__member_ids
+#: model_terms:ir.ui.view,arch_db:pbx_queue.pbx_queue_form_view
+msgid "Agents"
+msgstr "Agenter"
+
+#. module: pbx_queue
+#: model:ir.model.fields,field_description:pbx_queue.field_pbx_queue__announce_position
+msgid "Announce Position"
+msgstr "Meddela position"
+
+#. module: pbx_queue
+#: model:ir.model.fields,help:pbx_queue.field_pbx_queue__timeout_seconds
+msgid ""
+"Caller max wait in queue (0 = use max_wait_time). After timeout → "
+"timeout_action"
+msgstr "Anroparens maximala väntetid i kön (0 = använd max_wait_time). Efter timeout → timeout_action"
+
+#. module: pbx_queue
+#: model:ir.model.fields,help:pbx_queue.field_pbx_queue__is_manual
+msgid ""
+"Calls here need manual handling — the Operator Panel shows them with "
+"[Handle]"
+msgstr "Samtal här kräver manuell hantering — Operator Panel visar dem med [Hantera]"
+
+#. module: pbx_queue
+#: model:ir.model.fields,field_description:pbx_queue.field_pbx_queue__company_id
+#: model:ir.model.fields,field_description:pbx_queue.field_pbx_queue_member__company_id
+msgid "Company"
+msgstr "Företag"
+
+#. module: pbx_queue
+#: model:ir.model.fields,field_description:pbx_queue.field_pbx_queue__create_uid
+#: model:ir.model.fields,field_description:pbx_queue.field_pbx_queue_member__create_uid
+msgid "Created by"
+msgstr "Skapad av"
+
+#. module: pbx_queue
+#: model:ir.model.fields,field_description:pbx_queue.field_pbx_queue__create_date
+#: model:ir.model.fields,field_description:pbx_queue.field_pbx_queue_member__create_date
+msgid "Created on"
+msgstr "Skapad den"
+
+#. module: pbx_queue
+#: model:ir.model.fields,help:pbx_queue.field_pbx_queue__overflow_destination_id
+msgid "Destination on overflow (extension, IVR, voicemail)"
+msgstr "Destination vid överflöd (anknytning, IVR, röstbrevlåda)"
+
+#. module: pbx_queue
+#: model:ir.model.fields,field_description:pbx_queue.field_pbx_queue__display_name
+#: model:ir.model.fields,field_description:pbx_queue.field_pbx_queue_member__display_name
+msgid "Display Name"
+msgstr "Visningsnamn"
+
+#. module: pbx_queue
+#: model:ir.model.fields,field_description:pbx_queue.field_pbx_queue__extension
+msgid "Extension"
+msgstr "Anknytning"
+
+#. module: pbx_queue
+#: model:ir.model.fields.selection,name:pbx_queue.selection__pbx_queue__strategy__fewestcalls
+msgid "Fewest Calls"
+msgstr "Minsta antal samtal"
+
+#. module: pbx_queue
+#: model:ir.model.fields.selection,name:pbx_queue.selection__pbx_queue__timeout_action__hangup
+msgid "Hangup"
+msgstr "Lägg på"
+
+#. module: pbx_queue
+#: model:ir.model.fields,field_description:pbx_queue.field_pbx_queue__id
+#: model:ir.model.fields,field_description:pbx_queue.field_pbx_queue_member__id
+msgid "ID"
+msgstr "ID"
+
+#. module: pbx_queue
+#: model:ir.model.fields,help:pbx_queue.field_pbx_queue__extension
+msgid ""
+"Internal extension number for the queue. Auto-generated in the service range"
+" (4xx — separate from the user extensions) when a new queue is created."
+msgstr "Autogenererat i service-serien (4xx — separat från användaranknytningarna) när den lämnas tom."
+
+#. module: pbx_queue
+#: model:ir.model.fields,field_description:pbx_queue.field_pbx_queue__is_ring_group
+msgid "Is Ring Group"
+msgstr "Är ringgrupp"
+
+#. module: pbx_queue
+#: model:ir.model.fields,field_description:pbx_queue.field_pbx_queue__join_empty
+msgid "Join Empty"
+msgstr "Anslut tom"
+
+#. module: pbx_queue
+#: model:ir.model.fields,field_description:pbx_queue.field_pbx_queue__write_uid
+#: model:ir.model.fields,field_description:pbx_queue.field_pbx_queue_member__write_uid
+msgid "Last Updated by"
+msgstr "Senast uppdaterad av"
+
+#. module: pbx_queue
+#: model:ir.model.fields,field_description:pbx_queue.field_pbx_queue__write_date
+#: model:ir.model.fields,field_description:pbx_queue.field_pbx_queue_member__write_date
+msgid "Last Updated on"
+msgstr "Senast uppdaterad den"
+
+#. module: pbx_queue
+#: model:ir.model.fields.selection,name:pbx_queue.selection__pbx_queue__strategy__leastrecent
+msgid "Least Recent"
+msgstr "Senaste"
+
+#. module: pbx_queue
+#: model:ir.model.fields.selection,name:pbx_queue.selection__pbx_queue__strategy__linear
+msgid "Linear"
+msgstr "Linjär"
+
+#. module: pbx_queue
+#: model:ir.model.fields,help:pbx_queue.field_pbx_queue_member__penalty
+msgid "Lower = higher priority"
+msgstr "Lägre = högre prioritet"
+
+#. module: pbx_queue
+#: model:ir.model.fields,field_description:pbx_queue.field_pbx_queue__manual_target_queue_id
+msgid "Manual Target Queue"
+msgstr "Manuell målkö"
+
+#. module: pbx_queue
+#: model:ir.model.fields,field_description:pbx_queue.field_pbx_queue__is_manual
+msgid "Manual/Reception Queue"
+msgstr "Manuell/receptionskö"
+
+#. module: pbx_queue
+#: model:ir.model.fields,field_description:pbx_queue.field_pbx_queue__max_wait_time
+msgid "Max Wait Time"
+msgstr "Max väntetid"
+
+#. module: pbx_queue
+#: model:ir.model.fields,help:pbx_queue.field_pbx_queue__max_wait_time
+msgid "Max wait time before overflow"
+msgstr "Max väntetid innan överflöd"
+
+#. module: pbx_queue
+#: model:ir.model.fields,field_description:pbx_queue.field_pbx_queue__name
+msgid "Name"
+msgstr "Namn"
+
+#. module: pbx_queue
+#: model_terms:ir.ui.view,arch_db:pbx_queue.pbx_queue_form_view
+msgid "Overflow / Timeout"
+msgstr "Överflöd / timeout"
+
+#. module: pbx_queue
+#: model:ir.model.fields,field_description:pbx_queue.field_pbx_queue__overflow_destination_id
+msgid "Overflow Destination"
+msgstr "Överflödsdestination"
+
+#. module: pbx_queue
+#: model:ir.model,name:pbx_queue.model_pbx_queue
+msgid "PBX Call Queue"
+msgstr "PBX-samtalskö"
+
+#. module: pbx_queue
+#: model:ir.model.fields,field_description:pbx_queue.field_pbx_queue_member__paused
+msgid "Paused"
+msgstr "Pausad"
+
+#. module: pbx_queue
+#: model:ir.model.fields,field_description:pbx_queue.field_pbx_queue_member__penalty
+msgid "Penalty"
+msgstr "Straffpoäng"
+
+#. module: pbx_queue
+#: model:ir.model.fields,field_description:pbx_queue.field_pbx_queue_member__queue_id
+#: model_terms:ir.ui.view,arch_db:pbx_queue.pbx_queue_form_view
+msgid "Queue"
+msgstr "Kö"
+
+#. module: pbx_queue
+#: model:ir.model,name:pbx_queue.model_pbx_queue_member
+msgid "Queue Member (Agent)"
+msgstr "Kömedlem (agent)"
+
+#. module: pbx_queue
+#: model:ir.actions.act_window,name:pbx_queue.pbx_queue_act_window
+#: model:ir.ui.menu,name:pbx_queue.menu_pbx_queues
+msgid "Queues"
+msgstr "Köer"
+
+#. module: pbx_queue
+#: model:ir.model.fields.selection,name:pbx_queue.selection__pbx_queue__strategy__random
+msgid "Random"
+msgstr "Slumpmässig"
+
+#. module: pbx_queue
+#: model:ir.model.fields,help:pbx_queue.field_pbx_queue__manual_target_queue_id
+msgid "Reception queue that timed-out calls end up in"
+msgstr "Receptionskö som tidsutgångna samtal hamnar i"
+
+#. module: pbx_queue
+#: model:ir.model.fields.selection,name:pbx_queue.selection__pbx_queue__strategy__ringall
+msgid "Ring All"
+msgstr "Ring alla"
+
+#. module: pbx_queue
+#: model:ir.model.fields.selection,name:pbx_queue.selection__pbx_queue__strategy__rrmemory
+msgid "Round Robin Memory"
+msgstr "Round robin-minne"
+
+#. module: pbx_queue
+#: model:ir.model.fields.selection,name:pbx_queue.selection__pbx_queue__timeout_action__route_to_manual_queue
+msgid "Route to manual queue"
+msgstr "Dirigera till manuell kö"
+
+#. module: pbx_queue
+#: model:ir.model.fields,help:pbx_queue.field_pbx_queue__timeout
+msgid "Seconds before trying next agent"
+msgstr "Sekunder innan nästa agent provas"
+
+#. module: pbx_queue
+#: model:ir.model.fields,field_description:pbx_queue.field_pbx_queue__strategy
+msgid "Strategy"
+msgstr "Strategi"
+
+#. module: pbx_queue
+#: model:ir.model.fields,field_description:pbx_queue.field_pbx_queue__timeout
+msgid "Timeout"
+msgstr "Timeout"
+
+#. module: pbx_queue
+#: model:ir.model.fields,field_description:pbx_queue.field_pbx_queue__timeout_seconds
+msgid "Timeout (s)"
+msgstr "Timeout (s)"
+
+#. module: pbx_queue
+#: model:ir.model.fields,field_description:pbx_queue.field_pbx_queue__timeout_action
+msgid "Timeout Action"
+msgstr "Åtgärd vid timeout"
+
+#. module: pbx_queue
+#: model:ir.model.fields.selection,name:pbx_queue.selection__pbx_queue__strategy__wrandom
+msgid "Weighted Random"
+msgstr "Viktad slumpmässig"
+
+#. module: pbx_queue
+#: model:ir.model.fields,help:pbx_queue.field_pbx_queue__is_ring_group
+msgid ""
+"When True: strategy forced to ringall, timeout=0, no overflow. Simple ring "
+"group."
+msgstr "När sant: strategin tvingas till ringall, timeout=0, inget överflöd. Enkel ringgrupp."
+
+#. module: pbx_queue
+#. odoo-javascript
+#: code:addons/pbx_queue/static/src/operator_panel/queue_tile.xml:0
+msgid "manual"
+msgstr "manuell"
+
+#. module: pbx_queue
+#. odoo-javascript
+#: code:addons/pbx_queue/static/src/operator_panel/queue_tile.xml:0
+msgid "waiting"
+msgstr "väntar"
+
+

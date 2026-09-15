@@ -3,7 +3,7 @@
     <t t-name="pbx_conference.PbxConferencePanel">
         <div
             class="o_pbx_operator_panel_tile o_pbx_conference_tile o_pbx_state_gray"
-            title="Gå in i konferensrum"
+            title="Join conference room"
             t-on-click="() => this.join()"
             t-if="props.conference"
         >

@@ -1,7 +1,7 @@
 /** @odoo-module **/
 /*
-    Override av OCA voip_oca-softphonen: fånga rejection från SIP.js-anrop
-    så inga ohanterade promises når Odoos formatTraceback (som kraschar på
+    Override of the OCA voip_oca softphone: catch rejections from SIP.js calls
+    so no unhandled promises reach Odoo's formatTraceback (which crashes on
     'Cannot read properties of undefined (reading split)').
 */
 import {VoipOCASoftphone} from "@voip_oca/components/softphone/softphone.esm";
@@ -30,5 +30,5 @@ PbxSoftphone.template = "voip_oca.VoipOCASoftphone";
 registry.category("main_components").add(
     "voip_oca.VoipOCASoftphone",
     {Component: PbxSoftphone},
-    {force: true},  // Odoo 18: override av befintlig nyckel kräver force
+    {force: true},  // Odoo 18: overriding an existing key requires force
 );

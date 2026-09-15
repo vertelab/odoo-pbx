@@ -10,7 +10,7 @@ class PbxConference(models.Model):
     _inherit = ["pbx.plugin", "pbx.destination.mixin", "mail.thread", "mail.activity.mixin"]
     _description = "PBX Conference Room"
 
-    name = fields.Char(required=True, help="e.g. Ledningsmöte")
+    name = fields.Char(required=True, help="e.g. Management Meeting")
     extension = fields.Char(required=True, help="Internal extension for the conference")
     pin = fields.Char(help="PIN code for participants")
     admin_pin = fields.Char(help="Admin PIN (moderator)")
@@ -58,20 +58,20 @@ class PbxConference(models.Model):
         return "\n".join(lines)
 
     def action_next_free_extension(self):
-        """Föreslå nästa lediga nummer i konferensserien (6xx)."""
+        """Suggest the next available number in the conference series (6xx)."""
         self.ensure_one()
         number = self.env["pbx.numbering"]._next_free_service_number(
             self.company_id, "conference"
         )
         if not number:
-            raise UserError(_("Inga lediga nummer i konferensserien."))
+            raise UserError(_("No available numbers in the conference series."))
         self.extension = number
         return {
             "type": "ir.actions.client",
             "tag": "display_notification",
             "params": {
-                "title": _("Nästa lediga"),
-                "message": _("Föreslår %s") % number,
+                "title": _("Next available"),
+                "message": _("Suggesting %s") % number,
                 "type": "success",
                 "sticky": False,
             },

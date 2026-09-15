@@ -6,13 +6,13 @@ from odoo.exceptions import ValidationError
 
 
 class PbxNumbering(models.AbstractModel):
-    """Nummerplan (pbx-numbering).
+    """Number plan (pbx-numbering).
 
-    Centrala hjälpmetoder för dial-namnrymden per företag:
-      - extensionbredd efter organisationsstorlek (2/3/4 siffror)
-      - tjänsteintervall (kö 4x, IVR 5x, konferens 6x — en siffra längre
-        än extensionerna, med fasta ledande prefix)
-      - unik dial-namnrymd per företag (validering över modellgränser)
+    Central helper methods for the per-company dial namespace:
+      - extension width based on organisation size (2/3/4 digits)
+      - service ranges (queue 4x, IVR 5x, conference 6x — one digit longer
+        than the extensions, with fixed leading prefixes)
+      - unique dial namespace per company (validation across model borders)
       - feature codes + operator-0
     """
 
@@ -27,7 +27,7 @@ class PbxNumbering(models.AbstractModel):
         "*82": "Pickup()",
     }
 
-    # Prefix per tjänst (första siffran i tjänsteintervallet).
+    # Prefix per service (first digit of the service range).
     SERVICE_PREFIX = {
         "queue": 4,
         "ivr": 5,
@@ -36,7 +36,7 @@ class PbxNumbering(models.AbstractModel):
         "recording": 8,
     }
 
-    # Dialbara modeller: (modellnamn, fält med numret).
+    # Dialable models: (model name, field holding the number).
     DIALABLE_MODELS = [
         ("pbx.extension", "public_number"),
         ("pbx.queue", "extension"),
@@ -48,7 +48,7 @@ class PbxNumbering(models.AbstractModel):
 
     @api.model
     def _active_employee_count(self, company):
-        """Antal aktiva anställda i företaget (för breddberäkning)."""
+        """Number of active employees in the company (for width calculation)."""
         if "hr.employee" not in self.env:
             return 0
         return self.env["hr.employee"].search_count(
@@ -57,7 +57,7 @@ class PbxNumbering(models.AbstractModel):
 
     @api.model
     def _get_extension_width(self, company):
-        """Extensionbredd efter organisationsstorlek: ≤70 → 2, 71–699 → 3,
+        """Extension width by organisation size: ≤70 → 2, 71–699 → 3,
         ≥700 → 4 siffror."""
         n = self._active_employee_count(company)
         if n <= 70:
@@ -72,7 +72,7 @@ class PbxNumbering(models.AbstractModel):
 
     @api.model
     def _service_range(self, company, service_type):
-        """(lo, hi) för en tjänstetyp: prefix*10^bredd … (prefix+1)*10^bredd-1."""
+        """(lo, hi) for a service type: prefix*10^width … (prefix+1)*10^width-1."""
         prefix = self.SERVICE_PREFIX[service_type]
         w = self._get_extension_width(company)
         base = 10 ** w
@@ -80,7 +80,7 @@ class PbxNumbering(models.AbstractModel):
 
     @api.model
     def _used_dialable_numbers(self, company):
-        """Alla upptagna dialbara nummer i företaget (över modellgränser)."""
+        """All taken dialable numbers in the company (across model borders)."""
         used = set()
         for model_name, field in self.DIALABLE_MODELS:
             if model_name not in self.env:
@@ -95,7 +95,7 @@ class PbxNumbering(models.AbstractModel):
 
     @api.model
     def _next_free_service_number(self, company, service_type):
-        """Lägsta lediga nummer i tjänstens intervall (eller False)."""
+        """Lowest free number in the service range (or False)."""
         lo, hi = self._service_range(company, service_type)
         used = self._used_dialable_numbers(company)
         for n in range(lo, hi + 1):
@@ -106,26 +106,26 @@ class PbxNumbering(models.AbstractModel):
 
     @api.model
     def _next_free_extension_number(self, company, include_existing=True):
-        """Lägsta lediga extension-nummer i företagets schema.
+        """Lowest free extension number in the company's scheme.
 
-        Används av pbx_hr (auto-tilldelning vid skapande + "Fördela
-        anknytning"). Returnerar (existing_extension|False, number).
+        Used by pbx_hr (auto-assignment on create + "Assign
+        extension"). Returns (existing_extension|False, number).
 
-        include_existing=False → hoppa över befintliga fria anknytningar
-        (för "skapa ny"-default: bara nästa oanvända nummer).
+        include_existing=False → skip existing free extensions
+        (for the "create new" default: only the next unused number).
         """
         if "pbx.extension" not in self.env:
             return False, False
         w = self._get_extension_width(company)
         if include_existing:
-            # 1) Befintlig fri extension (utan användare): lägsta numeriska nummer.
+            # 1) Existing free extension (without user): lowest numeric number.
             free = self.env["pbx.extension"].search(
                 [("company_id", "=", company.id), ("user_id", "=", False)],
                 order="public_number asc",
             )
-            # Exkludera extensioner som redan tilldelats en anställd via
-            # hr.employee.pbx_extension_id (anställd utan inloggning har ingen
-            # user_id på extensionen, men är ändå upptagen).
+            # Exclude extensions already assigned to an employee via
+            # hr.employee.pbx_extension_id (an employee without login has no
+            # user_id on the extension, but is still taken).
             if "hr.employee" in self.env and free:
                 used_by_emp = self.env["hr.employee"].search(
                     [("pbx_extension_id", "in", free.ids)]
@@ -135,8 +135,8 @@ class PbxNumbering(models.AbstractModel):
                 num = str(ext.public_number or "")
                 if num.isdigit():
                     return ext, ext.public_number
-        # 2) Ingen fri → nästa nummer som inte är upptaget av NÅGOT dialbart
-        #    objekt (extension, kö, IVR, konferens) i företaget.
+        # 2) None free → next number not taken by ANY dialable
+        #    object (extension, queue, IVR, conference) in the company.
         used = self._used_dialable_numbers(company)
         for n in range(1, 10 ** w):
             s = str(n).zfill(w)
@@ -146,8 +146,8 @@ class PbxNumbering(models.AbstractModel):
 
     @api.model
     def _check_dialable_number(self, company, number, exclude=None):
-        """Validera att `number` inte krockar med något annat dialbart objekt
-        i företaget. Höjer ValidationError vid kollision."""
+        """Validate that `number` does not collide with any other dialable
+        object in the company. Raises ValidationError on collision."""
         if not number:
             return
         number = str(number).strip()
@@ -155,12 +155,12 @@ class PbxNumbering(models.AbstractModel):
             return
         if number.startswith("*"):
             raise ValidationError(
-                _("Nummer får inte börja med '*' — prefixet är reserverat "
-                  "för feature codes (*97/*98/*43/*82).")
+                _("Number must not start with '*' — the prefix is reserved "
+                  "for feature codes (*97/*98/*43/*82).")
             )
         if not number.isdigit():
             raise ValidationError(
-                _("Dialbart nummer måste vara numeriskt: %s") % number
+                _("Dialable number must be numeric: %s") % number
             )
         exclude_id = exclude.id if exclude else False
         exclude_model = exclude._name if exclude else False
@@ -176,15 +176,15 @@ class PbxNumbering(models.AbstractModel):
                 dom.append(("id", "!=", exclude_id))
             if model.search_count(dom):
                 raise ValidationError(
-                    _("Numret %s är redan upptaget i detta företag "
+                    _("Number %s is already taken in this company "
                       "(%s)") % (number, model._description)
                 )
 
     @api.model
     def _reception_route(self, domain, company):
-        """Operator-0: route till manuell reception-kö om en finns.
+        """Operator-0: route to the manual reception queue if one exists.
 
-        Returnerar en dialplan-rad för den interna kontexten (eller "").
+        Returns a dialplan line for the internal context (or "").
         """
         if "pbx.queue" not in self.env:
             return ""
@@ -201,7 +201,7 @@ class PbxNumbering(models.AbstractModel):
 
     @api.model
     def _feature_code_entries(self, domain, company):
-        """Dialplan-rader för feature codes i den interna kontexten."""
+        """Dialplan lines for feature codes in the internal context."""
         lines = []
         for code, app in self.FEATURE_CODES.items():
             lines.append("exten => %s,1,%s" % (code, app))

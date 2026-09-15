@@ -27,7 +27,7 @@ class ResUsers(models.Model):
         self.ensure_one()
         return {
             "type": "ir.actions.act_window",
-            "name": "Mina samtal",
+            "name": "My Calls",
             "res_model": "pbx.call",
             "view_mode": "list,form",
             "domain": [("user_id", "=", self.id)],

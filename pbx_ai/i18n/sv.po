@@ -1,0 +1,320 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* pbx_ai
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 18.0-20260801\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-09-15 09:27+0000\n"
+"PO-Revision-Date: 2026-09-15 09:27+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: pbx_ai
+#: model:ir.model.fields,help:pbx_ai.field_pbx_queue__recording_mode
+msgid ""
+"'' = inherit the global policy, 'record' = force recording, 'transcribe' = "
+"recording + transcription. Inherited by extensions in the queue if they are "
+"themselves empty."
+msgstr "'' = ärv den globala policyn, 'record' = tvinga inspelning, 'transcribe' = inspelning + transkription. Ärvs av anknytningen."
+
+#. module: pbx_ai
+#: model:ir.model.fields,help:pbx_ai.field_pbx_extension__recording_mode
+msgid ""
+"'' = inherit the global policy/queue, 'record' = force recording, "
+"'transcribe' = recording + transcription."
+msgstr "'' = ärv den globala policyn/kön, 'record' = tvinga inspelning, 'transcribe' = inspelning + transkription."
+
+#. module: pbx_ai
+#: model_terms:ir.ui.view,arch_db:pbx_ai.view_pbx_sub_extension_form_ai
+msgid "AI"
+msgstr "AI"
+
+#. module: pbx_ai
+#: model_terms:ir.ui.view,arch_db:pbx_ai.view_pbx_extension_form_ai
+#: model_terms:ir.ui.view,arch_db:pbx_ai.view_pbx_queue_form_ai
+msgid "AI & Recording"
+msgstr "AI & inspelning"
+
+#. module: pbx_ai
+#: model:ir.model.fields,field_description:pbx_ai.field_pbx_call__ai_token_cost
+msgid "AI Cost"
+msgstr "AI-kostnad"
+
+#. module: pbx_ai
+#: model:ir.model.fields,field_description:pbx_ai.field_pbx_extension__ai_coworker_id
+msgid "AI Coworker"
+msgstr "AI-kollegare"
+
+#. module: pbx_ai
+#: model:ir.model,name:pbx_ai.model_ai_coworker
+msgid "AI Medarbetare"
+msgstr "AI-kollegare"
+
+#. module: pbx_ai
+#: model:ir.model.fields,help:pbx_ai.field_pbx_extension__follow_me_ai_coworker_id
+msgid ""
+"AI coworker that takes over the call after the devices have been rung "
+"without answer (Stasis(coworker,<id>))."
+msgstr "AI-kollegare som tar över samtalet efter att enheterna rings utan svar (Stasis(coworker,<id>))."
+
+#. module: pbx_ai
+#: model:ir.model.fields,field_description:pbx_ai.field_pbx_call__ai_tokens_in
+msgid "AI tokens in"
+msgstr "AI-tokens in"
+
+#. module: pbx_ai
+#: model:ir.model.fields,field_description:pbx_ai.field_pbx_call__ai_tokens_out
+msgid "AI tokens out"
+msgstr "AI-tokens ut"
+
+#. module: pbx_ai
+#: model_terms:ir.ui.view,arch_db:pbx_ai.view_pbx_extension_form_ai_coworker
+msgid "AI-kollegare"
+msgstr "AI-kollegare"
+
+#. module: pbx_ai
+#: model_terms:ir.ui.view,arch_db:pbx_ai.view_pbx_call_form_ai
+msgid "AI-transkription & tokens"
+msgstr "AI-transkription & tokens"
+
+#. module: pbx_ai
+#: model:ir.model.fields,help:pbx_ai.field_pbx_extension__ai_coworker_id
+msgid "Derived AI coworker via the user's personal_coworker_id (read-only)."
+msgstr "Härledd AI-kollegare via användarens personal_coworker_id (skrivskyddad)."
+
+#. module: pbx_ai
+#: model:ir.model.fields.selection,name:pbx_ai.selection__ai_coworker__tts_lang__en
+msgid "English (en)"
+msgstr "Engelska (en)"
+
+#. module: pbx_ai
+#: model:ir.model.fields.selection,name:pbx_ai.selection__ai_coworker__tts_lang__en-us
+msgid "English (en-US)"
+msgstr "Engelska (en-US)"
+
+#. module: pbx_ai
+#: model:ir.model.fields,help:pbx_ai.field_pbx_call__ai_token_cost
+msgid ""
+"Estimated cost (tokens x price per token, ir.config_parameter "
+"pbx.ai.token_price)."
+msgstr "Uppskattad kostnad (tokens x pris per token, ir.config_parameter pbx.ai.token_price)."
+
+#. module: pbx_ai
+#. odoo-python
+#: code:addons/pbx_ai/models/pbx_coworker.py:0
+msgid "Extension %s belongs to a user with a different personal AI coworker."
+msgstr "Anknytning %s tillhör en användare med en annan personlig AI-kollegare."
+
+#. module: pbx_ai
+#: model:ir.model.fields,field_description:pbx_ai.field_pbx_extension__follow_me_ai_coworker_id
+msgid "Follow-me AI destination"
+msgstr "Follow-me AI-destination"
+
+#. module: pbx_ai
+#: model:ir.model.fields,help:pbx_ai.field_ai_coworker__tts_lang
+msgid "Language for dialog replies (persona)."
+msgstr "Språk för dialogsvar (persona)."
+
+#. module: pbx_ai
+#: model:ir.model,name:pbx_ai.model_pbx_ai
+msgid "PBX AI Bridge — Odoo Mind integration"
+msgstr "PBX AI-brygga — Odoo Mind-integration"
+
+#. module: pbx_ai
+#: model_terms:ir.ui.view,arch_db:pbx_ai.view_ai_coworker_form_pbx
+msgid "PBX Anknytning"
+msgstr "PBX-anknytning"
+
+#. module: pbx_ai
+#: model:ir.model,name:pbx_ai.model_pbx_call
+msgid "PBX Call (phone transaction)"
+msgstr "PBX-samtal (telefonitransaktion)"
+
+#. module: pbx_ai
+#: model:ir.model,name:pbx_ai.model_pbx_queue
+msgid "PBX Call Queue"
+msgstr "PBX-samtalskö"
+
+#. module: pbx_ai
+#: model:ir.model,name:pbx_ai.model_pbx_config_generator
+msgid "PBX Config Generator"
+msgstr "PBX-konfigurationsgenerator"
+
+#. module: pbx_ai
+#: model:ir.model,name:pbx_ai.model_pbx_extension
+msgid "PBX Extension (public number)"
+msgstr "PBX-anknytning (publikt nummer)"
+
+#. module: pbx_ai
+#: model:ir.model,name:pbx_ai.model_pbx_sub_extension
+msgid "PBX Sub Extension (individual device)"
+msgstr "PBX-underanknytning (enskild enhet)"
+
+#. module: pbx_ai
+#: model:ir.model,name:pbx_ai.model_pbx_webhook_service
+msgid "PBX Webhook Event Service"
+msgstr "PBX-händelsetjänst för webhook"
+
+#. module: pbx_ai
+#: model:ir.model.fields.selection,name:pbx_ai.selection__pbx_extension__recording_mode__record
+#: model:ir.model.fields.selection,name:pbx_ai.selection__pbx_queue__recording_mode__record
+msgid "Record"
+msgstr "Spela in"
+
+#. module: pbx_ai
+#: model:ir.model.fields,field_description:pbx_ai.field_pbx_call__recording_attachment_id
+msgid "Recording"
+msgstr "Inspelning"
+
+#. module: pbx_ai
+#: model:ir.model.fields,field_description:pbx_ai.field_pbx_extension__recording_mode
+#: model:ir.model.fields,field_description:pbx_ai.field_pbx_queue__recording_mode
+msgid "Recording/Transcription"
+msgstr "Inspelning/transkribering"
+
+#. module: pbx_ai
+#: model:ir.model.fields,help:pbx_ai.field_pbx_extension__transcribe_enabled
+msgid ""
+"Replaced by 'Recording/Transcription'. Kept for backwards compatibility."
+msgstr "Ersatt av 'Inspelning/transkribering'. Bevarad för bakåtkompatibilitet."
+
+#. module: pbx_ai
+#: model:ir.model.fields,field_description:pbx_ai.field_pbx_call__stt_duration_s
+msgid "STT Audio Length (s)"
+msgstr "STT-ljudlängd (s)"
+
+#. module: pbx_ai
+#: model:ir.model.fields,field_description:pbx_ai.field_ai_coworker__stt_mode
+msgid "STT Mode"
+msgstr "STT-läge"
+
+#. module: pbx_ai
+#: model:ir.model.fields,field_description:pbx_ai.field_pbx_call__stt_model
+msgid "STT Model"
+msgstr "STT-modell"
+
+#. module: pbx_ai
+#: model:ir.model.fields,field_description:pbx_ai.field_pbx_call__stt_processing_s
+msgid "STT Processing (s)"
+msgstr "STT-bearbetning (s)"
+
+#. module: pbx_ai
+#: model:ir.model.fields.selection,name:pbx_ai.selection__ai_coworker__stt_mode__streaming
+msgid "Streaming (external media)"
+msgstr "Streaming (extern media)"
+
+#. module: pbx_ai
+#: model:ir.model.fields.selection,name:pbx_ai.selection__ai_coworker__tts_lang__sv
+msgid "Swedish (sv)"
+msgstr "Svenska (sv)"
+
+#. module: pbx_ai
+#: model:ir.model.fields.selection,name:pbx_ai.selection__ai_coworker__tts_lang__sv-se
+msgid "Swedish (sv-SE)"
+msgstr "Svenska (sv-SE)"
+
+#. module: pbx_ai
+#: model:ir.model.fields,field_description:pbx_ai.field_ai_coworker__tts_lang
+msgid "TTS Language"
+msgstr "TTS-språk"
+
+#. module: pbx_ai
+#: model:ir.model.fields,field_description:pbx_ai.field_ai_coworker__tts_voice
+msgid "TTS Voice"
+msgstr "TTS-röst"
+
+#. module: pbx_ai
+#: model:ir.model.fields,help:pbx_ai.field_pbx_call__transcript_attachment_id
+msgid "Text attachment with the transcription of the call."
+msgstr "Textbilaga med samtalets transkription."
+
+#. module: pbx_ai
+#: model:ir.model.fields,help:pbx_ai.field_pbx_call__recording_attachment_id
+msgid "The audio recording of the call (Garage S3 via ir.attachment)."
+msgstr "Ljudinspelningen av samtalet (Garage S3 via ir.attachment)."
+
+#. module: pbx_ai
+#: model:ir.model.fields,help:pbx_ai.field_pbx_call__stt_duration_s
+msgid "The length of the audio in seconds that was transcribed."
+msgstr "Längden på ljudet i sekunder som transkriberades."
+
+#. module: pbx_ai
+#: model:ir.model.fields,help:pbx_ai.field_pbx_call__transcript_text
+msgid "The transcription of the call (for display)."
+msgstr "Samtalets transkription (för visning)."
+
+#. module: pbx_ai
+#: model:ir.model.fields,help:pbx_ai.field_pbx_call__ai_tokens_in
+msgid ""
+"Tokens sent to the LLM (memory + entity extraction). Local STT costs no "
+"tokens — this is the LLM usage afterwards."
+msgstr "Tokens som skickats till LLM:en (minne + entitetsextraktion). Lokal STT kostar inga tokens — detta är LLM-användningen efteråt."
+
+#. module: pbx_ai
+#: model:ir.model.fields.selection,name:pbx_ai.selection__pbx_extension__recording_mode__transcribe
+#: model:ir.model.fields.selection,name:pbx_ai.selection__pbx_queue__recording_mode__transcribe
+msgid "Transcribe"
+msgstr "Transkribera"
+
+#. module: pbx_ai
+#: model:ir.model.fields,field_description:pbx_ai.field_pbx_extension__transcribe_enabled
+msgid "Transcribe calls (deprecated)"
+msgstr "Transkribera samtal (föråldrat)"
+
+#. module: pbx_ai
+#: model:ir.model.fields,field_description:pbx_ai.field_pbx_sub_extension__transcribe_voicemail
+msgid "Transcribe voicemails"
+msgstr "Transkribera röstmeddelanden"
+
+#. module: pbx_ai
+#: model:ir.model.fields,help:pbx_ai.field_pbx_sub_extension__transcribe_voicemail
+msgid ""
+"Transcribe voicemails for this mailbox (requires the device to be of type "
+"voicemail). Independent of the extension's recording_mode."
+msgstr "Transkribera röstmeddelanden för denna brevlåda (kräver att enheten är av typen voicemail). Oberoende av anknytningens record-inställning."
+
+#. module: pbx_ai
+#: model:ir.model.fields,field_description:pbx_ai.field_pbx_call__transcript_text
+msgid "Transcript"
+msgstr "Transkript"
+
+#. module: pbx_ai
+#: model:ir.model.fields,field_description:pbx_ai.field_pbx_call__transcript_attachment_id
+msgid "Transcript Document"
+msgstr "Transkriptdokument"
+
+#. module: pbx_ai
+#: model:ir.model.fields,help:pbx_ai.field_pbx_call__stt_processing_s
+msgid "Transcription time in seconds (local, no tokens)."
+msgstr "Transkriptionstid i sekunder (lokal, inga tokens)."
+
+#. module: pbx_ai
+#: model:ir.model.fields.selection,name:pbx_ai.selection__ai_coworker__stt_mode__turn
+msgid "Turn (record -> local STT)"
+msgstr "Turn (spela in -> lokal STT)"
+
+#. module: pbx_ai
+#: model:ir.model.fields,help:pbx_ai.field_ai_coworker__tts_voice
+msgid "Voice for dialog replies (persona). Leave empty for the default voice."
+msgstr "Röst för dialogsvar (persona). Lämna tom för standardrösten."
+
+#. module: pbx_ai
+#: model:mail.activity.type,name:pbx_ai.activity_type_voicemail
+msgid "Voicemail"
+msgstr "Röstbrevlåda"
+
+#. module: pbx_ai
+#: model:ir.model.fields,help:pbx_ai.field_ai_coworker__stt_mode
+msgid ""
+"turn = recording chunks -> local pbx-transcriber (fors); streaming = ARI "
+"externalMedia -> streaming STT backend. If the streaming capability is "
+"missing the system falls back to turn."
+msgstr "turn = inspelningsbitar -> lokal pbx-transcriber (fors); streaming = ARI externalMedia -> streaming-STT-backend. Om"
+
+

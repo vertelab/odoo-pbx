@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <!-- Tenant-partners hanteras via res.partner-standard (PBX Office får
-         läsa/skriva partner via base; fälten is_pbx_tenant/domain m.m. syns
-         bara i PBX-tenantvyerna). -->
+    <!-- Tenant partners are managed via the res.partner standard (PBX Office may
+         read/write partners via base; the fields is_pbx_tenant/domain etc. are only
+         visible in the PBX tenant views). -->
 </odoo>

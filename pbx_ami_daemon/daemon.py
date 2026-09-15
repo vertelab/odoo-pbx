@@ -188,10 +188,10 @@ class AMIConnection:
 
 
 def _load_known_domains(config_path: str) -> set:
-    """Kända domäner från tenant-config-filerna (tenants/<domän>-*.conf).
+    """Known domains from the tenant config files (tenants/<domain>-*.conf).
 
-    Använder suffix-strippning (inte split på bindestreck) eftersom domänen
-    själv kan innehålla bindestreck (t.ex. pbx-test.vertel.se).
+    Uses suffix stripping (not splitting on hyphens) because the domain
+    itself may contain hyphens (e.g. pbx-test.vertel.se).
     """
     suffixes = (
         "-extensions.conf",
@@ -214,13 +214,13 @@ def extract_tenant_from_event(
 ) -> Optional[str]:
     """Extract tenant domain from an AMI event.
 
-    Endpoints/channels är nu PJSIP/u<username>-… (utan domän), så domänen
-    kan inte längre hämtas från kanalnamnet. Prioritet:
-    1. Kända domäner (från tenants/<domän>-*.conf på disk) som prefix på
-       Context/DestinationContext/Channel — Context fält är alltid
-       <domän>-internal/ext/vm/…
-    2. @domän-suffix (CallerIDNum/Mailbox m.m.)
-    3. SIP/domän-prefix (legacy kanalnamn)
+    Endpoints/channels are now PJSIP/u<username>-... (without domain), so the
+    domain can no longer be derived from the channel name. Priority:
+    1. Known domains (from tenants/<domain>-*.conf on disk) as a prefix of
+       Context/DestinationContext/Channel — the Context field is always
+       <domain>-internal/ext/vm/...
+    2. @domain suffix (CallerIDNum/Mailbox etc.)
+    3. SIP/domain prefix (legacy channel names)
     """
     candidates = [
         event.get("Context", ""),
@@ -237,9 +237,9 @@ def extract_tenant_from_event(
                 if candidate.startswith(domain):
                     return domain
 
-    # @domain suffix — med kända domäner accepteras bara exakt match
-    # (Local-kanaler är "Local/01@<context>;<uniqueid>" — får inte tolkas
-    # som domän)
+    # @domain suffix — with known domains only an exact match is accepted
+    # (Local channels are "Local/01@<context>;<uniqueid>" — must not be
+    # interpreted as a domain)
     for candidate in candidates:
         at_match = re.search(r"@(\S+)", candidate)
         if at_match:
@@ -267,14 +267,14 @@ def extract_tenant_from_event(
 
 
 def _read_voicemail_audio(event: dict) -> Optional[str]:
-    """Läs senaste voicemail-inspelningen (INBOX/msg*.wav) som base64.
+    """Read the latest voicemail recording (INBOX/msg*.wav) as base64.
 
-    Asterisk 20.6 sänder inget VoicemailMessage — bara MessageWaiting (MWI)
-    med Mailbox=02@domän. Spool: /var/spool/asterisk/voicemail/<domän>/<mb>/INBOX/
-    Filer: msg0000.wav, msg0001.wav … (nyaste = högst nummer).
+    Asterisk 20.6 does not emit VoicemailMessage — only MessageWaiting (MWI)
+    with Mailbox=02@domain. Spool: /var/spool/asterisk/voicemail/<domain>/<mb>/INBOX/
+    Files: msg0000.wav, msg0001.wav ... (newest = highest number).
 
-    Berikar dessutom eventet med callerid/duration från msg*.txt (MWI har
-    ingen metadata).
+    Also enriches the event with callerid/duration from msg*.txt (MWI carries
+    no metadata).
     """
     mailbox = event.get("Mailbox", "") or ""
     if "@" in mailbox:
@@ -299,7 +299,7 @@ def _read_voicemail_audio(event: dict) -> Optional[str]:
     newest = max(candidates, key=_num)
     path = os.path.join(inbox, newest)
 
-    # Metadata från msg*.txt (callerid/duration) — MWI-eventet saknar dem
+    # Metadata from msg*.txt (callerid/duration) — the MWI event lacks it
     txt_path = os.path.join(inbox, newest.replace(".wav", ".txt"))
     try:
         with open(txt_path) as f:
@@ -419,8 +419,8 @@ class EventConsumer:
             topic = f"pbx.event.{tenant}.AMI.{event_name}"
             await self.publisher(topic, event)
             if event_name in ("VoicemailMessage", "MessageWaiting"):
-                # Bifoga ljudet (base64) + berika med caller/duration —
-                # Odoo läser inte spool-filen lokalt
+                # Attach the audio (base64) + enrich with caller/duration —
+                # Odoo does not read the spool file locally
                 payload = dict(event)
                 audio = _read_voicemail_audio(payload)
                 if audio:
@@ -597,7 +597,7 @@ class ConfigConsumer:
             return None
         if config_type == "tenant":
             return os.path.join(self.config_path, f"{domain}-{name}"), name
-        # manager/ari: instansen får bara skriva sin egen fil
+        # manager/ari: the instance may only write its own file
         expected = f"{domain}.conf"
         if name != expected:
             logger.warning(
@@ -772,7 +772,7 @@ async def amain(config_path: str):
 
         await cmd_queue.consume(on_command)
 
-        # Config subscriber (Odoo-ägd config-generering → filer + reload)
+        # Config subscriber (Odoo-owned config generation -> files + reload)
         cfg_queue = await channel.declare_queue("pbx-ami-daemon-config", durable=True)
         await cfg_queue.bind(exchange, routing_key="pbx.config.#")
 
@@ -827,8 +827,8 @@ async def amain(config_path: str):
     # Health check
     health_server = await start_health_server(health_port)
 
-    # ── ARI (nivå 2 — smart receptionist) ──
-    # Startar ARI-klienten parallellt med AMI (om aktiverad i config).
+    # ── ARI (level 2 — smart receptionist) ──
+    # Starts the ARI client in parallel with AMI (if enabled in config).
     ari_task = None
     cfg_ari = config.get("ari", {})
     if cfg_ari.get("enabled", False):

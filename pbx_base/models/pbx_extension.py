@@ -17,11 +17,11 @@ class PbxExtension(models.Model):
     public_number = fields.Char(required=True, default=lambda self: self._default_public_number())
 
     def _default_public_number(self):
-        """Förslag: nästa lediga anknytningsnummer (pbx.numbering).
+        """Suggestion: next free extension number (pbx.numbering).
 
-        include_existing=False → bara nästa OANVÄNDA nummer (inte återbruk av
-        befintliga fria anknytningar) — annars krockar default med
-        unique-public_number vid skapelse.
+        include_existing=False → only the next UNUSED number (not reuse of
+        existing free extensions) — otherwise the default collides with the
+        unique(company_id, public_number) constraint on create.
         """
         try:
             _, number = self.env["pbx.numbering"]._next_free_extension_number(
@@ -34,12 +34,12 @@ class PbxExtension(models.Model):
     password = fields.Char(
         string="SIP Password",
         groups="base.group_user",
-        help="Personligt SIP-lösenord som gäller för alla enheter på anknytningen. "
-             "Auto-genereras och skrivs in i den genererade pjsip-konfigurationen.",
+        help="Personal SIP password used by every device on the extension. "
+             "Auto-generated and written into the generated pjsip configuration.",
     )
     callerid_name = fields.Char(
-        help="Visas som namn på utgående samtal. Fylls i från användarens namn "
-             "när en användare kopplas — kan överskrivas manuellt."
+        help="Shown as the caller ID name on outgoing calls. Filled in from the "
+             "user's name when a user is linked — can be overridden manually."
     )
 
     @api.onchange("user_id")
@@ -49,8 +49,9 @@ class PbxExtension(models.Model):
 
     @api.model_create_multi
     def create(self, vals_list):
-        """Generera delat SIP-lösenord, skapa implicit Odoo VOIP-enhet, synka
-        user-länken (pbx_extension_id) och voip_oca-inställningarna."""
+        """Generate the shared SIP password, create the implicit Odoo VOIP
+        device, and sync the user link (pbx_extension_id) and the voip_oca
+        settings."""
         skip_check = self.env.context.get("pbx_skip_number_check")
         for vals in vals_list:
             vals.setdefault("password", self._generate_sip_password())
@@ -75,7 +76,7 @@ class PbxExtension(models.Model):
                         "extension_id": ext.id,
                         "type": "browser",
                         "label": "Odoo VOIP",
-                        "transport": "wss",  # browser kräver WSS/WebRTC
+                        "transport": "wss",  # browser requires WSS/WebRTC
                         "sequence": 1,
                     }
                 )
@@ -114,7 +115,7 @@ class PbxExtension(models.Model):
         return res
 
     def _generate_sip_password(self):
-        """Generera SIP-lösenord med konfigurerad längd (pbx.sip_password_length)."""
+        """Generate a SIP password with the configured length (pbx.sip_password_length)."""
         length = int(
             self.env["ir.config_parameter"].sudo().get_param(
                 "pbx.sip_password_length", "10"
@@ -123,10 +124,11 @@ class PbxExtension(models.Model):
         return _generate_sip_secret(length)
 
     def action_generate_new_password(self):
-        """Generera nytt delat SIP-lösenord (gäller alla enheter).
+        """Generate a new shared SIP password (applies to every device).
 
-        Ägarkoll: egen anknytning (user_id) eller PBX Office/Admin. Dirty-
-        flaggning + voip_oca-sync sker automatiskt via write-hook.
+        Ownership check: the user's own extension (user_id) or PBX
+        Office/Admin. Dirty flagging + voip_oca sync happen automatically via
+        the write hook.
         """
         for ext in self:
             if ext.user_id.id != self.env.user.id and not (
@@ -134,17 +136,19 @@ class PbxExtension(models.Model):
                 or self.env.user.has_group("pbx_base.group_pbx_admin")
                 or self.env.user.has_group("base.group_system")
             ):
-                raise AccessError(_("Du kan bara rotera lösenordet på din egen anknytning."))
+                raise AccessError(
+                    _("You can only rotate the password on your own extension.")
+                )
         self.write({"password": self._generate_sip_password()})
-        self.message_post(body=_("SIP-lösenord roterat"))
+        self.message_post(body=_("SIP password rotated"))
         return True
 
     def _sync_user_link(self):
-        """Säkerställ att user.pbx_extension_id pekar på denna extension.
+        """Ensure user.pbx_extension_id points at this extension.
 
-        Självbetjäning (egen anknytning/enheter/samtal) är tillgänglig för
-        alla interna användare via base.group_user — ingen PBX-grupp krävs.
-        PBX Operator/Office/Admin tilldelas manuellt av en administratör.
+        Self-service (own extension/devices/calls) is available to every
+        internal user through base.group_user — no PBX group is required.
+        PBX Operator/Office/Admin are assigned manually by an administrator.
         """
         self.ensure_one()
         user = self.user_id
@@ -154,16 +158,16 @@ class PbxExtension(models.Model):
             user.pbx_extension_id = self.id
 
     def _sync_voip(self):
-        """Synka voip_oca-inställningarna på den kopplade användaren.
+        """Sync the voip_oca settings on the linked user.
 
-        - PBX (voip.pbx) hämtas/skapas från företagets Asterisk-konfig
-        - ws_server: explicit `company.pbx_ws_server` vinner; annars härleds
-          `{ws|wss}://<host>:<port>/ws` (schema från browser-sub-extensionens
-          transport, port från `pbx_sip_ws_port`, default 8089). Skrivs även
-          på befintlig voip.pbx (självläkande) så gamla installationer med
-          felaktig adress rättas vid nästa synk.
-        - Username från den implicita browser-sub-extensionen (Odoo VOIP)
-        - Lösenord = personens delade SIP-lösenord (gäller alla enheter)
+        - PBX (voip.pbx) is fetched/created from the company's Asterisk config
+        - ws_server: an explicit `company.pbx_ws_server` wins; otherwise
+          `{ws|wss}://<host>:<port>/ws` is derived (scheme from the browser
+          sub-extension transport, port from `pbx_sip_ws_port`, default 8089).
+          Also written to an existing voip.pbx (self-healing) so old
+          installations with a wrong address are corrected on the next sync.
+        - Username from the implicit browser sub-extension (Odoo VOIP)
+        - Password = the person's shared SIP password (applies to all devices)
         """
         self.ensure_one()
         if "voip.pbx" not in self.env or not self.user_id:
@@ -193,13 +197,13 @@ class PbxExtension(models.Model):
 
     @staticmethod
     def _derive_ws_server(company, browser_sub):
-        """Härled WebSocket-URL för Odoo-softphonen (SIP.js).
+        """Derive the WebSocket URL for the Odoo softphone (SIP.js).
 
-        Prioritet:
-        1. `company.pbx_ws_server` — explicit override (används exakt).
-        2. Legacy: `pbx_server_host` som redan innehåller ws:// eller wss://.
-        3. Auto: `{ws|wss}://<host>:<port>/ws` — schema från browser-
-           sub-extensionens transport, port från pbx_sip_ws_port (default 8089).
+        Priority:
+        1. `company.pbx_ws_server` — explicit override (used verbatim).
+        2. Legacy: `pbx_server_host` that already contains ws:// or wss://.
+        3. Auto: `{ws|wss}://<host>:<port>/ws` — scheme from the browser
+           sub-extension transport, port from pbx_sip_ws_port (default 8089).
         """
         if company.pbx_ws_server:
             return company.pbx_ws_server.strip()
@@ -211,11 +215,11 @@ class PbxExtension(models.Model):
         return "%s://%s:%s/ws" % (scheme, host, port)
     description = fields.Char(
         string="Description",
-        help="Visas i Operator Panel-panelen, t.ex. 'Reception', 'Anna – Support'",
+        help="Shown in the Operator Panel, e.g. 'Reception', 'Anna – Support'",
     )
     is_receptionist = fields.Boolean(
         string="Receptionist",
-        help="Receptionist ser alla anknytningar + allt inkommande + manuell hantering i Operator Panel",
+        help="A receptionist sees every extension + all inbound calls + manual handling in the Operator Panel",
     )
     ring_strategy = fields.Selection(
         [("sequential", "Sequential"), ("parallel", "Parallel")],
@@ -223,15 +227,15 @@ class PbxExtension(models.Model):
     )
     respect_schedule = fields.Boolean(
         default=True,
-        string="Respektera schema",
-        help="Ring bara under personens arbetstid (resource.calendar via HR). "
-             "Utanför arbetstid: meddela 'tillbaka {tid}' och gå till röstbrevlåda.",
+        string="Respect Schedule",
+        help="Ring only during the person's working hours (resource.calendar via HR). "
+             "Outside working hours: announce 'back {time}' and go to voicemail.",
     )
     respect_calendar = fields.Boolean(
         default=True,
-        string="Respektera kalender",
-        help="Ring inte när personen är upptagen i kalendern (calendar.event). "
-             "Upptagen: meddela 'tillbaka {tid}' och gå till röstbrevlåda.",
+        string="Respect Calendar",
+        help="Do not ring when the person is busy in the calendar (calendar.event). "
+             "Busy: announce 'back {time}' and go to voicemail.",
     )
     sub_extension_ids = fields.One2many(
         "pbx.sub_extension",
@@ -361,34 +365,34 @@ class PbxExtension(models.Model):
 
     @api.model
     def action_click_to_call_current_user(self, number):
-        """Click-to-call för inloggad användare (anropas via RPC/route)."""
+        """Click-to-call for the logged-in user (called via RPC/route)."""
         ext = self.search([("user_id", "=", self.env.user.id)], limit=1)
         if not ext:
-            raise UserError(_("Du har ingen PBX-anknytning kopplad."))
+            raise UserError(_("You have no PBX extension linked."))
         return ext.action_click_to_call(number)
 
     def action_click_to_call(self, number):
-        """Ring användarens första aktiva enhet och koppla målnumret.
+        """Ring the user's first active device and bridge the target number.
 
-        Publicerar ``pbx.cmd.Action.Originate`` (→ daemonen kör AMI Originate):
-        channel = PJSIP/<username> (användarens telefon ringer först),
-        exten = <normaliserat nummer>, context = <domain>-outbound.
+        Publishes ``pbx.cmd.Action.Originate`` (→ the daemon runs AMI
+        Originate): channel = PJSIP/<username> (the user's phone rings
+        first), exten = <normalized number>, context = <domain>-outbound.
         """
         self.ensure_one()
         if not self.user_id:
-            raise UserError(_("Anknytningen har ingen användare kopplad."))
+            raise UserError(_("The extension has no user linked."))
         device = self.sub_extension_ids.filtered(
             lambda s: s.active and s.type != "voicemail"
         ).sorted("sequence")[:1]
         if not device:
-            raise UserError(_("Ingen aktiv enhet finns på anknytningen."))
+            raise UserError(_("The extension has no active device."))
         number = self._normalize_click_number(number)
         if not number:
-            raise UserError(_("Ogiltigt telefonnummer."))
+            raise UserError(_("Invalid phone number."))
         company = self.company_id
         domain = company.pbx_domain
         if not domain:
-            raise UserError(_("Ingen SIP-domän är konfigurerad för företaget."))
+            raise UserError(_("No SIP domain is configured for the company."))
         channel = "PJSIP/%s" % device.username
         ok = self.env["pbx.mq.publisher"].action_originate(
             server=company.pbx_server_host or "asterisk",
@@ -405,12 +409,12 @@ class PbxExtension(models.Model):
 
     @staticmethod
     def _normalize_click_number(number):
-        """Normalisera till E.164: '+46 (70) 123-456' / '0701-23 45 67' /
+        """Normalize to E.164: '+46 (70) 123-456' / '0701-23 45 67' /
         '46725020525' → '+46725020525'.
 
-        - Ledande '+' → som det är
-        - Svensk E.164 utan '+' (46 + minst 9 siffror) → lägg till '+'
-        - Svenskt nationellt format (0 + minst 8 siffror) → +46 + resten
+        - Leading '+' → kept as is
+        - Swedish E.164 without '+' (46 + at least 9 digits) → prepend '+'
+        - Swedish national format (0 + at least 8 digits) → +46 + the rest
         """
         digits = re.sub(r"[\s\(\)\-\.]", "", number or "").strip()
         if not digits:

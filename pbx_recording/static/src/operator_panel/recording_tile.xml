@@ -2,9 +2,9 @@
 <templates xml:space="preserve">
     <t t-name="pbx_recording.PbxRecordingControl">
         <div class="o_pbx_operator_panel_tile o_pbx_recording_tile o_pbx_state_gray">
-            <div class="o_pbx_operator_panel_desc">Inspelning</div>
+            <div class="o_pbx_operator_panel_desc">Recording</div>
             <div class="o_pbx_operator_panel_desc" t-if="props.incoming.length">
-                Samtal: <t t-esc="props.incoming[0].number"/>
+                Call: <t t-esc="props.incoming[0].number"/>
             </div>
             <button
                 class="btn btn-sm o_pbx_rec_btn"

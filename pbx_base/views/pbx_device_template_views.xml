@@ -39,7 +39,7 @@
                     <group string="Codecs (default)" colspan="2">
                         <field name="codec_ids" nolabel="1">
                             <list editable="bottom">
-                                <field name="sequence" string="Ordning" widget="handle"/>
+                                <field name="sequence" string="Order" widget="handle"/>
                                 <field name="codec_id"/>
                             </list>
                         </field>

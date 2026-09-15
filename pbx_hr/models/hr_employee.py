@@ -10,21 +10,21 @@ class HrEmployee(models.Model):
 
     pbx_extension_id = fields.Many2one(
         "pbx.extension",
-        string="PBX-anknytning",
-        help="Samma anknytning som personen har i PBX/res.users. "
-             "Auto-fylls från länkad användare eller fördelas (nästa lediga).",
+        string="PBX Extension",
+        help="Same extension the person has in the PBX/res.users. "
+             "Auto-filled from the linked user or assigned (next available).",
     )
 
     @api.onchange("user_id")
     def _onchange_user_id(self):
-        """Fyll anknytningen från användarens extension vid användarbyte —
-        men respektera en manuell override (fältet redan satt)."""
+        """Fill the extension from the user's extension when the user changes —
+        but respect a manual override (field already set)."""
         if self.user_id and self.user_id.pbx_extension_id:
             if not self.pbx_extension_id:
                 self.pbx_extension_id = self.user_id.pbx_extension_id
         elif self.user_id:
-            # Användare bytt till en utan anknytning — rensa bara om värdet
-            # härstammade från en tidigare användare (enkel: rensa ej manuell).
+            # User changed to one without an extension — only clear if the value
+            # came from a previous user (simple: do not clear a manual value).
             pass
 
     @api.model_create_multi
@@ -36,7 +36,7 @@ class HrEmployee(models.Model):
         return recs
 
     def _assign_from_user_or_next_free(self):
-        """1) Användarens extension om en finns; 2) annars nästa lediga."""
+        """1) The user's extension if one exists; 2) otherwise the next available."""
         self.ensure_one()
         user = self.user_id
         if user and user.pbx_extension_id:
@@ -45,7 +45,7 @@ class HrEmployee(models.Model):
         self._assign_next_free()
 
     def _assign_next_free(self):
-        """Fördela nästa lediga anknytning (pbx-numbering)."""
+        """Assign the next available extension (pbx-numbering)."""
         self.ensure_one()
         company = self.company_id
         if not company:
@@ -59,8 +59,8 @@ class HrEmployee(models.Model):
             return
         if not number:
             raise ValidationError(
-                _("Ingen ledig anknytning i företaget %s — omnumrera "
-                  "organisationen eller utöka nummerplanen.") % company.name
+                _("No available extension in company %s — renumber "
+                  "the organization or extend the number plan.") % company.name
             )
         ext = self.env["pbx.extension"].create(
             {
@@ -73,13 +73,13 @@ class HrEmployee(models.Model):
         self.pbx_extension_id = ext
 
     def action_assign_extension(self):
-        """Knapp 'Fördela anknytning' — nästa lediga."""
+        """Button 'Assign Extension' — next available."""
         for rec in self:
             rec._assign_next_free()
         return True
 
     def action_sync_from_user(self):
-        """Knapp 'Synka från användare' — hämta användarens anknytning."""
+        """Button 'Sync from User' — fetch the user's extension."""
         for rec in self:
             user = rec.user_id
             if user and user.pbx_extension_id:
@@ -87,15 +87,15 @@ class HrEmployee(models.Model):
         return True
 
     # ------------------------------------------------------------------
-    # Omnumrering (server action i kugghjulet)
+    # Renumbering (server action from the cogwheel)
     # ------------------------------------------------------------------
 
     def action_renumber_organization(self):
-        """Server action 'Numrera om organisation'.
+        """Server action 'Renumber Organization'.
 
-        För varje företag i markeringen: numrera alla aktiva anställda
-        hierarkiskt (VD=01, BFS nedåt) med bredd efter orgstorlek;
-        inaktiva anställdas extensioner flyttas efter det aktiva intervallet.
+        For each company in the selection: number all active employees
+        hierarchically (CEO=01, BFS downwards) with width based on org size;
+        inactive employees' extensions are moved after the active range.
         """
         companies = self.mapped("company_id")
         if not companies:
@@ -105,11 +105,11 @@ class HrEmployee(models.Model):
         return True
 
     def _hierarchical_order(self, company):
-        """Aktiva anställda i BFS-ordning från organisationsroten.
+        """Active employees in BFS order from the organization root.
 
-        Rot = aktiv anställd utan chef (parent_id False), lägst id vid flera.
-        Samma nivå sorteras på id. Anställda som inte nås (separata träd)
-        läggs till sist i id-ordning.
+        Root = active employee without a manager (parent_id False), lowest id
+        when there are several. The same level is sorted by id. Employees that
+        cannot be reached (separate trees) are added last in id order.
         """
         employees = self.search(
             [("company_id", "=", company.id), ("active", "=", True)]
@@ -149,19 +149,19 @@ class HrEmployee(models.Model):
             order="id",
         )
         all_emps = ordered_rs + inactive
-        # 1) Säkerställ att alla anställda har en extension (annars skapa).
+        # 1) Ensure every employee has an extension (create one otherwise).
         for emp in all_emps:
             if not emp.pbx_extension_id:
                 emp._assign_next_free()
-        # 2) Beräkna mappning anställd → nummer.
+        # 2) Compute the employee -> number mapping.
         mapping = {}
         for idx, emp in enumerate(ordered, start=1):
             mapping[emp.id] = str(idx).zfill(width)
         for idx, emp in enumerate(inactive, start=1):
             mapping[emp.id] = str(len(ordered) + idx).zfill(width)
-        # 3) Applicera i två faser (undvik transienta unik-kollisioner vid
-        #    nummerbyten). OBS: Odoo slår ihop pending writes per fält —
-        #    därför MÅSTE fas 1 flushen till DB innan fas 2 skrivs.
+        # 3) Apply in two phases (avoid transient unique collisions when
+        #    numbers are swapped). NOTE: Odoo merges pending writes per field —
+        #    therefore phase 1 MUST flush to the DB before phase 2 is written.
         all_exts = all_emps.mapped("pbx_extension_id")
         ctx = {"pbx_skip_number_check": True}
         for emp in all_emps:
@@ -178,20 +178,20 @@ class HrEmployee(models.Model):
                     {"public_number": mapping[emp.id]}
                 )
         self.env.flush_all()
-        # 4) Sanity: inga dubbletter kvar i företaget.
+        # 4) Sanity: no duplicates left in the company.
         numbers = all_exts.mapped("public_number")
         if len(numbers) != len(set(numbers)):
             raise ValidationError(
-                _("Omnumreringen gav dubbletter i %s — återställ manuellt.") %
+                _("The renumbering produced duplicates in %s — restore manually.") %
                 company.name
             )
-        # 5) Markera config-dirty (pbx.config.dirty.mixin på extension).
+        # 5) Mark config-dirty (pbx.config.dirty.mixin on extension).
         all_exts._pbx_mark_dirty()
         return True
 
 
 class HrEmployeePublic(models.Model):
-    """SQL-view-modellen bakom org chart — måste deklareras explicit."""
+    """The SQL view model behind the org chart — must be declared explicitly."""
 
     _inherit = "hr.employee.public"
 
@@ -199,5 +199,5 @@ class HrEmployeePublic(models.Model):
         "pbx.extension",
         related="employee_id.pbx_extension_id",
         readonly=True,
-        string="PBX-anknytning",
+        string="PBX Extension",
     )

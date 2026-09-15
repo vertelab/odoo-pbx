@@ -4,17 +4,17 @@
         <div class="pbx-sip-config-table">
             <div class="d-flex align-items-center mb-1">
                 <button class="btn btn-sm btn-link p-0 me-2" t-on-click="() => this.toggleTable()"
-                        t-att-title="this.state.show ? 'Dölj SIP-konfiguration' : 'Visa SIP-konfiguration'">
+                        t-att-title="this.state.show ? 'Hide SIP configuration' : 'Show SIP configuration'">
                     <i t-att-class="this.state.show ? 'fa fa-gear fa-fw text-muted' : 'fa fa-gear fa-fw'"
                        style="font-size: 1.1rem;"/>
                 </button>
-                <span class="text-muted small">SIP-konfiguration</span>
+                <span class="text-muted small">SIP configuration</span>
             </div>
             <table t-if="this.state.show" class="table table-sm table-hover mb-0">
                 <thead>
                     <tr>
                         <th class="w-40">Parameter</th>
-                        <th>Värde</th>
+                        <th>Value</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -30,11 +30,11 @@
                                     <span t-else="" t-esc="row.value" class="font-monospace text-break"/>
                                     <span class="ms-2">
                                         <button class="btn btn-sm btn-link p-0 me-1" t-on-click="() => this.toggleReveal(row.key)"
-                                                t-if="row.secret" t-att-title="this.isRevealed(row.key) ? 'Dölj' : 'Visa'">
+                                                t-if="row.secret" t-att-title="this.isRevealed(row.key) ? 'Hide' : 'Show'">
                                             <i t-att-class="this.isRevealed(row.key) ? 'fa fa-eye-slash text-muted' : 'fa fa-eye text-muted'"/>
                                         </button>
                                         <button class="btn btn-sm btn-link p-0" t-on-click="() => this.onCopy(row.value)"
-                                                t-if="row.value" title="Kopiera">
+                                                t-if="row.value" title="Copy">
                                             <i class="fa fa-copy text-muted"/>
                                         </button>
                                     </span>
@@ -44,7 +44,7 @@
                         <t t-if="row.help"><tr class="pbx-sip-config-help"><td colspan="2" class="text-muted small pt-0"><t t-esc="row.help"/></td></tr></t>
                     </t>
                     <t t-if="!rows.length">
-                        <tr><td colspan="2" class="text-muted text-center py-3">Ingen SIP-konfiguration (mall saknas eller empty).</td></tr>
+                        <tr><td colspan="2" class="text-muted text-center py-3">No SIP configuration (template missing or empty).</td></tr>
                     </t>
                 </tbody>
             </table>

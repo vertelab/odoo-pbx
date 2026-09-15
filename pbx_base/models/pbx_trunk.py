@@ -20,14 +20,14 @@ class PbxTrunk(models.Model):
     callerid = fields.Char(string="Outgoing CallerID")
     identify_ip = fields.Char(
         string="Identify IP",
-        help="Käll-IP för inkommande trunk-samtal (identify-match). Tom = "
-             "resolvera trunkens host via DNS vid config-generering.",
+        help="Source IP for inbound trunk calls (identify match). Empty = "
+             "resolve the trunk host via DNS at config generation time.",
     )
     inbound_destination_id = fields.Reference(
         selection=destination_models,
         string="Inbound Account Destination",
-        help="Destination för inkommande samtal där Telavox/providern använder "
-             "kontonamnet (username) som uppringd part istället för DID:et. "
+        help="Destination for inbound calls where Telavox/the provider uses "
+             "the account name (username) as the called party instead of the DID. "
              "Tom = ingen kontonamns-rutt.",
     )
     active = fields.Boolean(default=True)

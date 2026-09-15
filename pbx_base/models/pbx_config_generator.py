@@ -55,9 +55,9 @@ username = {username}
 type = aor
 """
 
-# WebRTC/DTLS-optioner för wss-endpoints (verifierat mot Asterisk 20.6):
-# media_encryption = dtls (inte dtls_srtp — ogiltigt i 20.6), ice_support,
-# use_avpf (krävs för RTP/SAVPF-offer), rtcp_mux (krävs av Chrome/Edge),
+# WebRTC/DTLS options for wss endpoints (verified against Asterisk 20.6):
+# media_encryption = dtls (not dtls_srtp — invalid in 20.6), ice_support,
+# use_avpf (required for the RTP/SAVPF offer), rtcp_mux (required by Chrome/Edge),
 # dtls_cert/private_key + dtls_verify = no.
 WEBRTC_OPTIONS_TEMPLATE = """\
 media_encryption = dtls
@@ -90,8 +90,8 @@ contact = sip:{host}:{port}
 {registration}
 {identify}"""
 
-# Register-baserad trunk (inkommande utan publik port-forward): Telavox
-# m.fl. når boxen via received:port — AOR:t behöver ingen statisk port.
+# Registration-based trunk (inbound without a public port-forward): providers
+# such as Telavox reach the box via received:port — the AOR needs no static port.
 REGISTRATION_TEMPLATE = """\
 [{domain}-trunk-{slug}-reg]
 type = registration
@@ -142,7 +142,7 @@ same => n,Hangup()
 {availability_announcement}"""
 
 # Announcement played when the person is unavailable (outside work hours or
-# busy in the calendar): "personen är tillbaka HH:MM" via SayUnixTime, then
+# busy in the calendar): "the person is back at HH:MM" via SayUnixTime, then
 # voicemail. OC_AVAIL is set by the availability gate: "ok:<ts>" | "busy:<ts>".
 AVAILABILITY_ANNOUNCEMENT_TEMPLATE = """\
 same => n(unavailable),NoOp(Person unavailable — next ${{CUT(OC_AVAIL,:,2)}})
@@ -165,10 +165,10 @@ VOICEMAIL_CONF_TEMPLATE = """\
 {mailboxes}
 """
 
-# Mailbox-options för filbaserad voicemail: INGA attach=yes/delete=yes —
-# delete=yes får notify_new_message att radera meddelandet från INBOX direkt
-# (designat för email/IMAP-setup); utan email försvinner inspelningen.
-# attach=yes har ingen funktion utan email_/imap_konfiguration.
+# Mailbox options for file-based voicemail: NO attach=yes/delete=yes —
+# delete=yes makes notify_new_message delete the message from INBOX immediately
+# (designed for email/IMAP setups); without email the recording disappears.
+# attach=yes has no effect without email_/imap_ configuration.
 MAILBOX_TEMPLATE = "{public_number} => {pin},{callerid_name},,,maxmsg={max_messages}|maxsecs={max_duration}"
 
 # GotoIfTime days-of-week map: resource.calendar.attendance.dayofweek is
@@ -184,11 +184,11 @@ class PbxConfigGenerator(models.AbstractModel):
     # pjsip
     # ------------------------------------------------------------------
     def _codec_allows(self, company, sub=None):
-        """Codec allow-rader för en endpoint.
+        """Codec allow lines for an endpoint.
 
-        Enhetens codec-rader (sequence-ordning) → annars global default
-        (active + supported, priority-ordning). Browser (Odoo VOIP) kräver
-        alltid opus (WebRTC).
+        The device's codec rows (sequence order) → otherwise the global default
+        (active + supported, priority order). Browser (Odoo VOIP) always
+        requires opus (WebRTC).
         """
         names = []
         if sub and sub.codec_ids:
@@ -204,11 +204,11 @@ class PbxConfigGenerator(models.AbstractModel):
 
     @api.model
     def _webrtc_options(self):
-        """DTLS/ICE/AVPF-optioner för WebRTC (wss) endpoints.
+        """DTLS/ICE/AVPF options for WebRTC (wss) endpoints.
 
-        DTLS-certifikatens sökvägar kan överridas via ir.config_parameter
-        (pbx.dtls.cert_file / pbx.dtls.private_key) — default matchar
-        salt-deployad Asterisk.
+        The DTLS certificate paths can be overridden via ir.config_parameter
+        (pbx.dtls.cert_file / pbx.dtls.private_key) — the default matches the
+        salt-deployed Asterisk.
         """
         ICP = self.env["ir.config_parameter"].sudo()
         return WEBRTC_OPTIONS_TEMPLATE.format(
@@ -263,13 +263,13 @@ class PbxConfigGenerator(models.AbstractModel):
         trunk_blocks = []
         for trunk in trunks:
             slug = self._slug(trunk.name)
-            # OBS: external_media_address/external_signaling_address är
-            # TRANSPORT-optioner i chan_pjsip — de sätts i transport-sektionen
-            # (pjsip.conf, salt-ägd), inte per endpoint. Låg tidigare i
-            # endpoint-sektionen och gjorde att hela endpointen failade:
+            # NOTE: external_media_address/external_signaling_address are
+            # TRANSPORT options in chan_pjsip — they are set in the transport
+            # section (pjsip.conf, salt-owned), not per endpoint. They used to
+            # live in the endpoint section and made the whole endpoint fail:
             # "Could not find option suitable for category '…-trunk-…'
-            #  named 'external_media_address'" → inga samtal in/ut.
-            # Registration: register-baserad inkommande (utan statisk port)
+            #  named 'external_media_address'" → no calls in/out.
+            # Registration: registration-based inbound (without a static port)
             registration = ""
             if trunk.username and trunk.host:
                 registration = "\n" + REGISTRATION_TEMPLATE.format(
@@ -279,8 +279,8 @@ class PbxConfigGenerator(models.AbstractModel):
                     host=trunk.host,
                     port=trunk.port or 5060,
                 )
-            # Identify: explicit fält vinner; annars DNS-lookup på host
-            # (ingen hårdkodning — IP:n hämtas dynamiskt vid generering)
+            # Identify: an explicit field wins; otherwise DNS lookup on the host
+            # (no hardcoding — the IP is fetched dynamically at generation time)
             identify = ""
             identify_ip = (trunk.identify_ip or "").strip()
             if not identify_ip and trunk.host:
@@ -352,7 +352,7 @@ class PbxConfigGenerator(models.AbstractModel):
         for ext in extensions:
             entry = self._get_extension_internal_entry(ext, domain)
             if entry:
-                # Plugin-tillhandahållen intern entry (t.ex. AI-anknytning → Stasis).
+                # Plugin-provided internal entry (e.g. AI extension → Stasis).
                 internal_entries.append(entry)
                 continue
             active_subs = ext.sub_extension_ids.filtered(
@@ -366,7 +366,7 @@ class PbxConfigGenerator(models.AbstractModel):
             )
 
             # Build busy gates (DEVICE_STATE check per active sub).
-            # Alltid: om användaren pratar i någon av sina telefoner → voicemail.
+            # Always: if the user is talking on any of their phones → voicemail.
             busy_gates = ""
             for sub in active_subs:
                 busy_gates += (
@@ -391,8 +391,8 @@ class PbxConfigGenerator(models.AbstractModel):
                         "same => n,Dial(PJSIP/{username},{timeout})\n"
                     ).format(username=sub.username, timeout=to)
                     if i + 1 < len(sorted_subs):
-                        # Inte format-ed — enkla klamrar så ${DIALSTATUS} hamnar
-                        # rätt i output (dubbla klamrar skulle bli ${{DIALSTATUS}})
+                        # Not format-ed — single braces so ${DIALSTATUS} ends up
+                        # correct in the output (double braces would become ${{DIALSTATUS}})
                         dial_lines += (
                             'same => n,GotoIf($["${DIALSTATUS}"'
                             ' != "NOANSWER"]?done)\n'
@@ -404,7 +404,7 @@ class PbxConfigGenerator(models.AbstractModel):
                 domain, ext.public_number, bool(availability_gates)
             )
 
-            # Follow-me-fallback: AI-destination (plugin) eller voicemail.
+            # Follow-me fallback: AI destination (plugin) or voicemail.
             follow_me_fallback = self._follow_me_fallback(ext, domain)
 
             ext_contexts.append(
@@ -434,17 +434,17 @@ class PbxConfigGenerator(models.AbstractModel):
             if snippet:
                 internal_entries.append(snippet)
 
-        # Feature codes + operator-0 (pbx-numbering) i den interna kontexten
+        # Feature codes + operator-0 (pbx-numbering) in the internal context
         feature_entries = self.env["pbx.numbering"]._feature_code_entries(
             domain, company
         )
         if feature_entries:
             internal_entries.append(feature_entries)
 
-        # Outbound entry from the internal context (0 + number, eller +46,
-        # -> outbound). Goto till ${EXTEN} (inte s,1) — utåtgående-kontexten
-        # har inga s-extensioner, bara mönster som matchar det uppringda
-        # numret.
+        # Outbound entry from the internal context (0 + number, or +46,
+        # -> outbound). Goto to ${EXTEN} (not s,1) — the outbound context
+        # has no s-extensions, only patterns matching the dialled
+        # number.
         outbound_entry = ""
         if self.env["pbx.outbound_route"].search_count(
             [("company_id", "=", self._company_id(company)), ("active", "=", True)]
@@ -453,7 +453,7 @@ class PbxConfigGenerator(models.AbstractModel):
                 "exten => _0.,1,Goto(%s-outbound,${EXTEN},1)\n" % domain
                 + "exten => _+.,1,Goto(%s-outbound,${EXTEN},1)\n" % domain
             )
-            # E.164 utan '+' (46725020525) → normalisera till +46… innan ut
+            # E.164 without '+' (46725020525) → normalise to +46… before outbound
             outbound_entry += (
                 "exten => _46XXXXXXXX.,1,Set(DIAL_NUMBER=+${EXTEN})\n"
                 "same => n,Goto(%s-outbound,${DIAL_NUMBER},1)\n" % domain
@@ -538,10 +538,10 @@ class PbxConfigGenerator(models.AbstractModel):
                 lines.append("same => n,Playback(ss-noservice)")
                 lines.append("same => n,Hangup()")
 
-        # Trunk-kontonamns-alias: vissa providerar (t.ex. Telavox) skickar
-        # inkommande samtal med KONTONAMNET (trunk.username) som uppringd part
-        # istället för DID:et. Trunkar med inbound_destination_id får en egen
-        # exten för kontonamnet → destinationen.
+        # Trunk account-name alias: some providers (e.g. Telavox) send
+        # inbound calls with the ACCOUNT NAME (trunk.username) as the called party
+        # instead of the DID. Trunks with inbound_destination_id get their own
+        # exten for the account name → the destination.
         for trunk in self.env["pbx.trunk"].search(
             [("company_id", "=", self._company_id(company)), ("active", "=", True)]
         ):
@@ -814,10 +814,10 @@ class PbxConfigGenerator(models.AbstractModel):
         )
 
     def _follow_me_fallback(self, ext, domain):
-        """Dialplan-rad efter att enheterna ringts utan svar.
+        """Dialplan line after the devices have been rung without answer.
 
-        Om anknytningen har en AI-follow-me-destination (fält från pbx_ai)
-        dirigeras samtalet till Stasis(coworker,<id>); annars voicemail.
+        If the extension has an AI follow-me destination (field from pbx_ai)
+        the call is routed to Stasis(coworker,<id>); otherwise voicemail.
         """
         ai_coworker = False
         if "follow_me_ai_coworker_id" in self.env["pbx.extension"]._fields:
@@ -830,11 +830,11 @@ class PbxConfigGenerator(models.AbstractModel):
             public_number=ext.public_number, domain=domain)
 
     def _get_extension_internal_entry(self, ext, domain):
-        """Returnera den interna dialplan-entrin för en anknytning, eller None.
+        """Return the internal dialplan entry for an extension, or None.
 
-        Default: None → anroparen faller tillbaka på standard-entrin
-        ``Goto(domain-ext-<num>,s,1)`` (ring-gruppen). Plugins kan override:a
-        denna hook för att leverera en egen entry (t.ex. AI-anknytning →
+        Default: None → the caller falls back to the standard entry
+        ``Goto(domain-ext-<num>,s,1)`` (the ring group). Plugins can override
+        this hook to deliver their own entry (e.g. AI extension →
         Stasis(coworker,<id>)).
         """
         return None
@@ -892,10 +892,10 @@ class PbxConfigGenerator(models.AbstractModel):
     def get_sync_state(self):
         """Current sync state for the user's company (used by the systray).
 
-        can_sync = self-service för alla interna användare (base.group_user + 
-        superuser). Att anropa res.users.has_group via RPC fungerar inte
-        (has_group är @api.readonly och call_kw tolkar strängen som ids) —
-        därför beräknas can_sync här server-side.
+        can_sync = self-service for all internal users (base.group_user +
+        superuser). Calling res.users.has_group via RPC does not work
+        (has_group is @api.readonly and call_kw interprets the string as ids) —
+        therefore can_sync is computed here server-side.
 
         state: clean | sent | applied | error (res.company.pbx_config_sync_state).
         """
@@ -920,24 +920,24 @@ class PbxConfigGenerator(models.AbstractModel):
         if not self.env.user._is_internal():
             return {
                 "ok": False,
-                "message": "Endast interna användare kan synka konfigurationen.",
+                "message": "Only internal users can sync the configuration.",
             }
         company = self.env.company
         domain = company.pbx_domain
         if not domain:
             return {
                 "ok": False,
-                "message": "Konfigurationsfel: ingen SIP-domän satt för företaget (Settings → PBX).",
+                "message": "Configuration error: no SIP domain set for the company (Settings → PBX).",
             }
         ok = self.write_config(domain, company)
         if ok:
             return {
                 "ok": True,
-                "message": "Konfiguration skickad till Asterisk för %s (version %s). "
-                "Väntar på bekräftelse…" % (domain, ok),
+                "message": "Configuration sent to Asterisk for %s (version %s). "
+                "Waiting for confirmation…" % (domain, ok),
             }
         return {
             "ok": False,
-            "message": "Konfigurationsfel: kunde inte skickas för %s — kontrollera RabbitMQ-inställningarna (Settings → PBX)."
+            "message": "Configuration error: could not send for %s — check the RabbitMQ settings (Settings → PBX)."
             % domain,
         }

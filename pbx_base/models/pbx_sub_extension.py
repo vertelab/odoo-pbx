@@ -22,10 +22,10 @@ class PbxSubExtension(models.Model):
 
     extension_id = fields.Many2one("pbx.extension", required=True, ondelete="cascade")
     number = fields.Char(
-        string="Nummer",
+        string="Number",
         readonly=True,
-        help="SIP-identitet för enheten (auto-genererat, t.ex. 101 för anknytning 10). "
-             "Har ingen koppling till ringordningen — sequence styr i vilken ordning enheterna ringer.",
+        help="SIP identity for the device (auto-generated, e.g. 101 for extension 10). "
+             "Has no relation to the ring order — sequence determines the order in which the devices ring.",
     )
     label = fields.Char(help="e.g. Odoo, Yealink, Mobile")
     type = fields.Selection(
@@ -42,7 +42,7 @@ class PbxSubExtension(models.Model):
     sequence = fields.Integer(
         default=1,
         string="Sequence",
-        help="Ringordning (1 = först). Number har ingen koppling till ringordningen.",
+        help="Ring order (1 = first). Number has no relation to the ring order.",
     )
     ring_timeout = fields.Integer(
         default=10,
@@ -54,12 +54,12 @@ class PbxSubExtension(models.Model):
         [("wss", "WebSocket Secure"), ("udp", "UDP"), ("tcp", "TCP")],
         default="udp",
         string="Transport",
-        help="wss för browser/Odoo VOIP (sätts automatiskt); udp/tcp för "
-             "hårdvarutelefoner och övriga enheter.",
+        help="wss for browser/Odoo VOIP (set automatically); udp/tcp for "
+             "hardware phones and other devices.",
     )
     username = fields.Char(
         readonly=True,
-        help="SIP-användarnamn (auto-genereras som u+nummer).",
+        help="SIP username (auto-generated as u+number).",
     )
     secret = fields.Char(default=lambda self: _generate_sip_secret())
     active = fields.Boolean(
@@ -70,28 +70,29 @@ class PbxSubExtension(models.Model):
     sip_config_display = fields.Char(
         string="SIP-konfiguration",
         compute="_compute_sip_config_display",
-        help="Genererade SIP-parametrar för enheten: username, lösenord, server, port, "
-             "domän, protokoll och STUN.",
+        help="Generated SIP parameters for the device: username, password, server, port, "
+             "domain, protocol and STUN.",
     )
 
     config = fields.Json(
         string="SIP-konfiguration (resolverad)",
         compute="_compute_config",
-        help="Per-parameter SIP-konfiguration populerad från enhetstypens mall "
-             "(pbx.device.template) med skarpa data.",
+        help="Per-parameter SIP configuration populated from the device type template "
+             "(pbx.device.template) with real data.",
     )
 
     @api.model_create_multi
     def create(self, vals_list):
-        """Auto-generera `number` (SIP-identitet) när den inte anges.
+        """Auto-generate `number` (SIP identity) when it is not given.
 
-        Konvention: {extension.public_number}{index} → anknytning 10 får enheter
-        101, 102, 103…  Minsta lediga nummer väljs så att raderingar/prio-byten
-        aldrig orsakar kollisioner eller omnumrering. Nummer som genereras i
-        samma batch räknas med (annars kolliderar flera rader på samma nummer).
+        Convention: {extension.public_number}{index} → extension 10 gets devices
+        101, 102, 103…  The lowest free number is chosen so that deletions or
+        priority changes never cause collisions or renumbering. Numbers generated
+        in the same batch are counted (otherwise several rows would collide on
+        the same number).
 
-        För provisioning: `mac_address` normaliseras för hardware-typ och
-        `provisioning_token` auto-genereras för desktop/mobile-typ.
+        For provisioning: `mac_address` is normalised for the hardware type and
+        `provisioning_token` is auto-generated for the desktop/mobile type.
         """
         used = {}
         for vals in vals_list:
@@ -108,8 +109,8 @@ class PbxSubExtension(models.Model):
                         .mapped("number")
                     )
                 if vals.get("number"):
-                    # Explicita nummer i samma batch räknas med, annars
-                    # kolliderar genererade nummer med dem vid flush.
+                    # Explicit numbers in the same batch are counted, otherwise
+                    # generated numbers collide with them at flush.
                     used[ext_id].add(vals["number"])
                 else:
                     number = self._next_free_number(ext_id, used[ext_id])
@@ -131,8 +132,8 @@ class PbxSubExtension(models.Model):
         return recs
 
     def _ensure_default_codecs(self):
-        """Alla enheter får default-codec-listan (active + supported, i
-        priority-ordning) om ingen egen selektion satts."""
+        """All devices get the default codec list (active + supported, in
+        priority order) if no selection of their own has been set."""
         codecs = self.env["pbx.codec"].search(
             [("active", "=", True), ("supported", "=", True)]
         ).sorted("priority")
@@ -148,7 +149,7 @@ class PbxSubExtension(models.Model):
         if vals.get("mac_address"):
             vals["mac_address"] = self._normalize_mac(vals["mac_address"])
         if vals.get("type") in ("desktop", "mobile"):
-            # Rotera bara om token saknas (skapa sköter generering).
+            # Only rotate if the token is missing (create handles generation).
             for rec in self:
                 if not rec.provisioning_token:
                     vals.setdefault("provisioning_token", secrets.token_hex(16))
@@ -158,11 +159,11 @@ class PbxSubExtension(models.Model):
         return res
 
     def _validate_provisioning_fields(self):
-        """Hardware kräver mac_address; övriga typer får inte ha MAC."""
+        """Hardware requires mac_address; other types must not have a MAC."""
         for rec in self:
             if rec.type == "hardware" and not rec.mac_address:
                 raise ValidationError(
-                    _("Hårdvaruenhet kräver MAC-adress.")
+                    _("Hardware devices require a MAC address.")
                 )
 
     @staticmethod
@@ -195,7 +196,7 @@ class PbxSubExtension(models.Model):
     def _compute_sip_config_display(self):
         for rec in self:
             company = rec.extension_id.company_id
-            server = company.pbx_server_host or "«central inställning saknas»"
+            server = company.pbx_server_host or "«global setting missing»"
             domain = company.pbx_domain or "—"
             port = company.pbx_sip_port or (5061 if rec.transport == "wss" else 5060)
             stun = ""
@@ -205,8 +206,8 @@ class PbxSubExtension(models.Model):
                     stun = " | TURN: %s" % turn
             shared = rec.extension_id.password or rec.secret
             rec.sip_config_display = (
-                "Användare: %s | Lösenord: %s | Server: %s:%s | Domän: %s | "
-                "Protokoll: %s%s" % (rec.username, shared, server, port, domain, rec.transport, stun)
+                "User: %s | Password: %s | Server: %s:%s | Domain: %s | "
+                "Protocol: %s%s" % (rec.username, shared, server, port, domain, rec.transport, stun)
             )
 
     @api.depends(
@@ -223,10 +224,10 @@ class PbxSubExtension(models.Model):
         "extension_id.company_id",
     )
     def _compute_config(self):
-        """Resolverad SIP-konfiguration från enhetstypens mall.
+        """Resolved SIP configuration from the device type template.
 
-        Mall-prioritet: explicit template_id → företagsspecifik per typ →
-        global per typ (company_id=False).
+        Template priority: explicit template_id → company-specific per type →
+        global per type (company_id=False).
         """
         for rec in self:
             template = rec.template_id
@@ -246,13 +247,13 @@ class PbxSubExtension(models.Model):
             rec.config = rec._populate_config(template.config_template)
 
     def _populate_config(self, config_template):
-        """Fyll mallens parameterdefinitioner med skarpa data.
+        """Populate the template's parameter definitions with real data.
 
-        Returns {"<param_key>": {"label": …, "value": <skarpt värde>, "help": …}}
+        Returns {"<param_key>": {"label": …, "value": <live value>, "help": …}}
         """
         self.ensure_one()
         if isinstance(config_template, str):
-            # XML-data kan leverera Json-fältet som sträng — parsa defensivt.
+            # XML data may deliver the Json field as a string — parse defensively.
             try:
                 config_template = json.loads(config_template or "{}")
             except (ValueError, TypeError):
@@ -298,9 +299,9 @@ class PbxSubExtension(models.Model):
         return resolved
 
     config_display = fields.Char(
-        string="SIP-konfiguration (detalj)",
+        string="SIP configuration (detail)",
         compute="_compute_config_display",
-        help="Läsbar per-parameter SIP-konfiguration (från enhetstypens mall).",
+        help="Readable per-parameter SIP configuration (from the device type template).",
     )
 
     @api.depends("config", "sip_config_display")
@@ -323,41 +324,41 @@ class PbxSubExtension(models.Model):
 
     # Provisioning (pbx-provisioning): hardware keyed by MAC, softphones by token
     mac_address = fields.Char(
-        string="MAC-adress",
-        help="Fysisk enhets MAC — provisioning-nyckel för hårdvarutelefoner. "
-             "Normaliseras till gemener utan separatorer (001565a1b2c3).",
+        string="MAC address",
+        help="Physical device MAC — provisioning key for hardware phones. "
+             "Normalised to lower case without separators (001565a1b2c3).",
     )
     codec_ids = fields.One2many(
         "pbx.codec.line",
         "sub_extension_id",
         string="Codecs",
-        help="Den gällande codec-listan för enheten (ordnad — sequence är "
-             "preferensen). Lämnas tom → mallens default / global default.",
+        help="The effective codec list for the device (ordered — sequence is "
+             "the preference). Left empty → the template default / global default.",
     )
     template_id = fields.Many2one(
         "pbx.device.template",
-        string="Enhetsmall",
-        help="Enhetsmall som styr SIP-konfigurationen. Välj mall → "
-             "konfigurationen anpassas till enheten.",
+        string="Device Template",
+        help="Device template that controls the SIP configuration. Choose a template → "
+             "the configuration is adapted to the device.",
     )
 
     @api.onchange("template_id")
     def _onchange_template_id(self):
-        """Vid mallval: föreslå transport (och default-codecs) från mallen."""
+        """On template selection: suggest transport (and default codecs) from the template."""
         if not self.template_id:
             return
         if self.template_id.transport:
             self.transport = self.template_id.transport
     device_model = fields.Char(
-        string="Enhetsmodell",
-        help="t.ex. T46S — för att välja rätt gemensam provisioning-config.",
+        string="Device Model",
+        help="e.g. T46S — to select the correct shared provisioning config.",
     )
     provisioning_token = fields.Char(
-        string="Provisioning-token",
+        string="Provisioning Token",
         copy=False,
         groups="pbx_base.group_pbx_admin",
-        help="Per-enhet token för softphone-provisioning (desktop/mobile). "
-             "Auto-genereras; URL:en är /pbx/provisioning/softphone/<token>.xml",
+        help="Per-device token for softphone provisioning (desktop/mobile). "
+             "Auto-generated; the URL is /pbx/provisioning/softphone/<token>.xml",
     )
 
     _sql_constraints = [
@@ -369,11 +370,11 @@ class PbxSubExtension(models.Model):
         (
             "sub_ext_mac_unique",
             "unique(mac_address)",
-            "MAC-adressen får bara användas av en enhet!",
+            "The MAC address may only be used by one device!",
         ),
         (
             "sub_ext_token_unique",
             "unique(provisioning_token)",
-            "Provisioning-token måste vara unik!",
+            "The provisioning token must be unique!",
         ),
     ]

@@ -16,6 +16,7 @@ class TestPbxTimeCondition(TransactionCase):
         cls.server = cls.env["pbx.server"].create(
             {"name": "Test", "host": "127.0.0.1", "config_path": "/tmp/pbx-test"}
         )
+        cls.outbound_route = cls.env["pbx.outbound.route"].create(
             {
                 "company_id": cls.env.company.id,
                 "extension_id": cls.env["pbx.extension"]
@@ -52,13 +53,13 @@ class TestPbxTimeCondition(TransactionCase):
                 "holidays_calendar_id": self.env["resource.calendar"]
                 .create(
                     {
-                        "name": "Helgdagar",
+                        "name": "Public Holidays",
                         "leave_ids": [
                             (
                                 0,
                                 0,
                                 {
-                                    "name": "Nyårsdagen",
+                                    "name": "New Year's Day",
                                     "date_from": datetime(2026, 1, 1, 0, 0),
                                     "date_to": datetime(2026, 1, 1, 23, 59),
                                 },

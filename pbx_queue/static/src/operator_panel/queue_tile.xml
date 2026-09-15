@@ -8,15 +8,15 @@
             <div class="o_pbx_operator_panel_num"><t t-esc="props.queue.key"/></div>
             <div class="o_pbx_operator_panel_desc"><t t-esc="props.queue.name"/></div>
             <div t-if="(props.waiting || {})[props.queue.name]" class="o_pbx_operator_panel_badge">
-                <t t-esc="(props.waiting || {})[props.queue.name]"/> väntar
+                <t t-esc="(props.waiting || {})[props.queue.name]"/> waiting
             </div>
-            <div t-if="props.queue.is_manual" class="o_pbx_operator_panel_badge o_pbx_manual_badge">manuell</div>
+            <div t-if="props.queue.is_manual" class="o_pbx_operator_panel_badge o_pbx_manual_badge">manual</div>
             <div class="o_pbx_operator_panel_members" t-if="props.queue.members.length">
                 <t t-foreach="props.queue.members" t-as="m" t-key="m">
                     <span
                         class="o_pbx_operator_panel_member o_pbx_state_{(props.states || {})[m] || 'gray'}"
                         t-esc="m"
-                        title="Agentstatus"
+                        title="Agent status"
                     />
                 </t>
             </div>

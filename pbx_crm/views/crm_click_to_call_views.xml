@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <!-- Click-to-call: ring-ikon intill telefonnummerfält i CRM -->
+    <!-- Click-to-call: phone icon next to the phone number field in CRM -->
     <record id="crm_lead_click_to_call" model="ir.ui.view">
         <field name="name">crm.lead.click.to.call</field>
         <field name="model">crm.lead</field>

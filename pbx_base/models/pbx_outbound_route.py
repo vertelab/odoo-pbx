@@ -35,8 +35,8 @@ class PbxOutboundRoute(models.Model):
         string="Time Restriction",
         default="none",
     )
-    # time_condition_id läggs till av pbx_time_condition (plugin) — modellen
-    # finns bara när den modulen är installerad.
+    # time_condition_id is added by pbx_time_condition (plugin) — the model
+    # only exists when that module is installed.
     calendar_id = fields.Many2one(
         "resource.calendar",
         string="Working Hours",

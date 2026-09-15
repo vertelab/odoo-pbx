@@ -5,8 +5,8 @@ from odoo import fields, models
 
 
 class ResConfigSettings(models.TransientModel):
-    """Centrala (MSP) inställningar — läggs på samma settings-sida som
-    pbx_base:s Grundinställningar (en enda settings-sida)."""
+    """Central (MSP) settings — added to the same settings page as
+    pbx_base's Basic settings (a single settings page)."""
 
     _inherit = "res.config.settings"
 
@@ -18,8 +18,8 @@ class ResConfigSettings(models.TransientModel):
     pbx_turn_server = fields.Char(
         string="TURN Server (central)",
         config_parameter="pbx.turn.server",
-        help="Coturn-adress för STUN+TURN, t.ex. turn.vertel.se:3478. "
-        "Deployas till kundminioner via Salt (odoo.conf + pillar).",
+        help="Coturn address for STUN+TURN, e.g. turn.vertel.se:3478. "
+        "Deployed to customer minions via Salt (odoo.conf + pillar).",
     )
     rabbitmq_host = fields.Char(
         string="RabbitMQ Host (central)",
@@ -53,11 +53,11 @@ class ResConfigSettings(models.TransientModel):
     zabbix_url = fields.Char(
         string="Zabbix URL",
         config_parameter="pbx_admin.zabbix_url",
-        help="Zabbix-server för övervakning av Asterisk-servern (MSP).",
+        help="Zabbix server for monitoring of the Asterisk server (MSP).",
     )
     zabbix_token = fields.Char(
         string="Zabbix Token",
         config_parameter="pbx_admin.zabbix_token",
         groups="base.group_system",
-        help="API-token mot Zabbix för övervakning (MSP).",
+        help="API token for Zabbix monitoring (MSP).",
     )

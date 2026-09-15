@@ -6,46 +6,46 @@ from odoo import fields, models
 
 
 class PbxCallAI(models.Model):
-    """AI-arv på pbx.call — attachments, token-spårning, STT-metadata."""
+    """AI additions to pbx.call — attachments, token tracking, STT metadata."""
 
     _inherit = "pbx.call"
 
     recording_attachment_id = fields.Many2one(
         "ir.attachment",
-        string="Inspelning",
-        help="Ljudinspelningen av samtalet (Garage S3 via ir.attachment).",
+        string="Recording",
+        help="The audio recording of the call (Garage S3 via ir.attachment).",
     )
     transcript_attachment_id = fields.Many2one(
         "ir.attachment",
-        string="Transcript-dokument",
-        help="Text-bilaga med transkriptionen av samtalet.",
+        string="Transcript Document",
+        help="Text attachment with the transcription of the call.",
     )
     transcript_text = fields.Text(
         string="Transcript",
-        help="Transkriptionen av samtalet (för visning).",
+        help="The transcription of the call (for display).",
     )
 
-    # Token-förbrukning från LLM-bearbetningen efter transkription
+    # Token usage from the LLM processing after transcription
     ai_tokens_in = fields.Integer(
         string="AI tokens in",
-        help="Tokens till LLM (memory + entity extraction). Lokal STT kostar "
-             "inga tokens — detta är LLM-förbrukningen efteråt.",
+        help="Tokens sent to the LLM (memory + entity extraction). Local STT "
+             "costs no tokens — this is the LLM usage afterwards.",
     )
     ai_tokens_out = fields.Integer(string="AI tokens out")
     ai_token_cost = fields.Float(
-        string="AI kostnad",
+        string="AI Cost",
         digits=(16, 6),
-        help="Beräknad kostnad (tokens × pris per token, "
+        help="Estimated cost (tokens x price per token, "
              "ir.config_parameter pbx.ai.token_price).",
     )
 
-    # STT-metadata (lokal transkribering)
-    stt_model = fields.Char(string="STT-modell")
+    # STT metadata (local transcription)
+    stt_model = fields.Char(string="STT Model")
     stt_duration_s = fields.Float(
-        string="STT ljudlängd (s)",
-        help="Ljudets längd i sekunder som transkriberades.",
+        string="STT Audio Length (s)",
+        help="The length of the audio in seconds that was transcribed.",
     )
     stt_processing_s = fields.Float(
-        string="STT processering (s)",
-        help="Transkriberingstid i sekunder (lokalt, inga tokens).",
+        string="STT Processing (s)",
+        help="Transcription time in seconds (local, no tokens).",
     )

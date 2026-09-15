@@ -2,21 +2,12 @@
 # This file contains the translation of the following modules:
 # 	* pbx_base
 #
-#. module: pbx_base
 msgid ""
 msgstr ""
-
-#. module: pbx_base
-msgid ""
-msgstr ""
-
-#. module: pbx_base
-msgid ""
-msgstr ""
-"Project-Id-Version: Odoo Server 18.0-20260701\n"
+"Project-Id-Version: Odoo Server 18.0-20260801\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-12 10:59+0000\n"
-"PO-Revision-Date: 2026-08-12 10:59+0000\n"
+"POT-Creation-Date: 2026-09-15 09:24+0000\n"
+"PO-Revision-Date: 2026-09-15 09:24+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -25,22 +16,65 @@ msgstr ""
 "Plural-Forms: \n"
 
 #. module: pbx_base
+#: model_terms:ir.ui.view,arch_db:pbx_base.pbx_sub_extension_kanban
+msgid ""
+"<i class=\"fa fa-cog me-1\" title=\"Provisionerbar\"/>\n"
+"                                Provisionerbar"
+msgstr ""
+"<i class=\"fa fa-cog me-1\" title=\"Provisionerbar\"/>
+"
+"                                Provisionerbar"
+
+#. module: pbx_base
+#: model_terms:ir.ui.view,arch_db:pbx_base.pbx_sub_extension_kanban
+msgid ""
+"<i class=\"fa fa-exclamation-triangle me-1\" title=\"Saknar provisionering\"/>\n"
+"                                Ej provisionerad"
+msgstr ""
+"<i class=\"fa fa-exclamation-triangle me-1\" title=\"Saknar provisionering\"/>
+"
+"                                Ej provisionerad"
+
+#. module: pbx_base
+#: model_terms:ir.ui.view,arch_db:pbx_base.pbx_sub_extension_kanban
+msgid "<i class=\"fa fa-hashtag me-1\" title=\"MAC\"/>"
+msgstr "<i class=\\"fa fa-hashtag me-1\\" title=\\"MAC\\"/>"
+
+#. module: pbx_base
+#: model_terms:ir.ui.view,arch_db:pbx_base.pbx_sub_extension_kanban
+msgid "<i class=\"fa fa-random me-1\" title=\"Transport\"/>"
+msgstr "<i class=\\"fa fa-random me-1\\" title=\\"Transport\\"/>"
+
+#. module: pbx_base
+#: model:ir.model.constraint,message:pbx_base.constraint_pbx_codec_line_check_single_parent
+msgid "A codec row must have exactly one parent (template or device)!"
+msgstr "En codec-rad måste ha exakt en förälder (mall eller enhet)!"
+
+#. module: pbx_base
+#: model:ir.model.fields,help:pbx_base.field_pbx_extension__is_receptionist
+msgid ""
+"A receptionist sees every extension + all inbound calls + manual handling in"
+" the Operator Panel"
+msgstr "En receptionist ser varje anknytning + alla inkommande samtal + manuell hantering i Operator Panel"
+
+#. module: pbx_base
 #: model:ir.model.fields,field_description:pbx_base.field_res_config_settings__pbx_api_key
 #: model_terms:ir.ui.view,arch_db:pbx_base.res_config_settings_view_form_pbx
 msgid "API Key"
 msgstr "API-nyckel"
 
 #. module: pbx_base
-#: model:ir.model.fields,help:pbx_base.field_res_company__pbx_api_key
-msgid "API-nyckel mot Asterisk-servern / provisioning-daemon"
-msgstr ""
-
-#. module: pbx_base
 #: model:ir.model.fields,help:pbx_base.field_res_config_settings__pbx_api_key
-msgid "API-nyckel mot Asterisk-servern / provisioning-daemon (per företag)."
+msgid "API key for the Asterisk server / provisioning daemon (per company)."
 msgstr "API-nyckel mot Asterisk-servern / provisioning-daemon (per företag)."
 
 #. module: pbx_base
+#: model:ir.model.fields,help:pbx_base.field_res_company__pbx_api_key
+msgid "API-nyckel mot Asterisk-servern / provisioning-daemon"
+msgstr "API-nyckel mot Asterisk-servern / provisioneringsdaemonen"
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_call__message_needaction
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_extension__message_needaction
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_inbound_route__message_needaction
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_outbound_route__message_needaction
@@ -49,6 +83,7 @@ msgid "Action Needed"
 msgstr "Åtgärd krävs"
 
 #. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_codec__active
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_device_template__active
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_extension__active
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_inbound_route__active
@@ -59,52 +94,67 @@ msgid "Active"
 msgstr "Aktiv"
 
 #. module: pbx_base
+#: model_terms:ir.ui.view,arch_db:pbx_base.pbx_sub_extension_search
+msgid "Active/Inactive"
+msgstr "Aktiv/Inaktiv"
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_call__activity_ids
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_extension__activity_ids
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_inbound_route__activity_ids
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_outbound_route__activity_ids
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_trunk__activity_ids
 msgid "Activities"
-msgstr ""
+msgstr "Aktiviteter"
 
 #. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_call__activity_exception_decoration
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_extension__activity_exception_decoration
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_inbound_route__activity_exception_decoration
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_outbound_route__activity_exception_decoration
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_trunk__activity_exception_decoration
 msgid "Activity Exception Decoration"
-msgstr ""
+msgstr "Dekoration för aktivitetsundantag"
 
 #. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_call__activity_state
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_extension__activity_state
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_inbound_route__activity_state
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_outbound_route__activity_state
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_trunk__activity_state
 msgid "Activity State"
-msgstr ""
+msgstr "Aktivitetsstatus"
 
 #. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_call__activity_type_icon
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_extension__activity_type_icon
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_inbound_route__activity_type_icon
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_outbound_route__activity_type_icon
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_trunk__activity_type_icon
 msgid "Activity Type Icon"
-msgstr ""
+msgstr "Ikon för aktivitetstyp"
+
+#. module: pbx_base
+#: model_terms:ir.ui.view,arch_db:pbx_base.pbx_codec_search
+#: model_terms:ir.ui.view,arch_db:pbx_base.pbx_sub_extension_search
+msgid "Aktiva"
+msgstr "Aktiva"
 
 #. module: pbx_base
 #: model:ir.model.constraint,message:pbx_base.constraint_pbx_inbound_route_inbound_route_unique
 msgid "An inbound route with this DID/CID combination already exists!"
-msgstr ""
+msgstr "En inkommande rutt med denna DID/CID-kombination finns redan!"
 
 #. module: pbx_base
 #: model_terms:ir.ui.view,arch_db:pbx_base.pbx_call_list_view
+#: model_terms:ir.ui.view,arch_db:pbx_base.pbx_sub_extension_search
 msgid "Anknytning"
-msgstr ""
+msgstr "Anknytning"
 
 #. module: pbx_base
-#. odoo-python
-#: code:addons/pbx_base/models/pbx_extension.py:0
-msgid "Anknytningen har ingen användare kopplad."
-msgstr "Anknytningen har ingen användare kopplad."
+#: model_terms:ir.ui.view,arch_db:pbx_base.pbx_extension_form_view
+msgid "Anknytningsnummer…"
+msgstr "Anknytningsnummer…"
 
 #. module: pbx_base
 #: model:ir.model.fields.selection,name:pbx_base.selection__pbx_call__pbx_handling__answered
@@ -112,23 +162,49 @@ msgid "Answered"
 msgstr "Besvarad"
 
 #. module: pbx_base
-#: model_terms:ir.ui.view,arch_db:pbx_base.pbx_call_list_view
-#: model_terms:ir.ui.view,arch_db:pbx_base.pbx_call_search_view
-msgid "Användare"
-msgstr "Användare"
-
-#. module: pbx_base
 #: model:ir.ui.menu,name:pbx_base.menu_pbx_applications
 msgid "Applications"
 msgstr "Applikationer"
 
 #. module: pbx_base
+#: model:ir.model.fields.selection,name:pbx_base.selection__res_company__pbx_config_sync_state__applied
+msgid "Applied"
+msgstr "Tillämpad"
+
+#. module: pbx_base
+#. odoo-javascript
+#: code:addons/pbx_base/static/src/codec_list_header_buttons.xml:0
+msgid ""
+"Apply the default codec list to all devices without their own selection"
+msgstr "Tillämpa standard-codeclistan på alla enheter utan eget val"
+
+#. module: pbx_base
 #: model_terms:ir.ui.view,arch_db:pbx_base.pbx_extension_form_view
 #: model_terms:ir.ui.view,arch_db:pbx_base.pbx_inbound_route_form_view
 #: model_terms:ir.ui.view,arch_db:pbx_base.pbx_outbound_route_form_view
+#: model_terms:ir.ui.view,arch_db:pbx_base.pbx_sub_extension_form
+#: model_terms:ir.ui.view,arch_db:pbx_base.pbx_sub_extension_kanban
 #: model_terms:ir.ui.view,arch_db:pbx_base.pbx_trunk_form_view
 msgid "Archived"
 msgstr "Arkiverad"
+
+#. module: pbx_base
+#: model_terms:ir.ui.view,arch_db:pbx_base.pbx_sub_extension_search
+msgid "Arkiverade"
+msgstr "Arkiverade"
+
+#. module: pbx_base
+#: model:ir.model.fields,help:pbx_base.field_res_company__pbx_sip_ws_port
+msgid ""
+"Asterisk HTTP/WebSocket port for the Odoo softphone (SIP.js). Default 8089 "
+"(WSS). Used when deriving ws_server if no explicit pbx_ws_server is "
+"specified."
+msgstr "Asterisks HTTP/WebSocket-port för Odoo-mjuktelefonen (SIP.js). Standard 8089 (WSS). Används vid härledning av ws_server om ingen explicit URL angetts."
+
+#. module: pbx_base
+#: model:ir.model.fields,help:pbx_base.field_res_config_settings__pbx_sip_ws_port
+msgid "Asterisk HTTP/WebSocket port for the Odoo softphone (per company)."
+msgstr "Asterisks HTTP/WebSocket-port för Odoo-mjuktelefonen (per företag)."
 
 #. module: pbx_base
 #: model:ir.model.fields,help:pbx_base.field_pbx_outbound_route__pattern
@@ -143,16 +219,17 @@ msgid "Asterisk dialplan context, e.g. app-blackhole"
 msgstr "Asterisk-dialplan-kontext, t.ex. app-blackhole"
 
 #. module: pbx_base
-#: model:ir.model.fields,help:pbx_base.field_res_config_settings__pbx_server_host
-msgid "Asterisk-serveradress (per företag)."
-msgstr "Asterisk-serveradress (per företag)."
-
-#. module: pbx_base
 #: model:ir.model.fields,help:pbx_base.field_res_company__pbx_server_host
-msgid "Asterisk-serveradress (tom = använd global setting)"
+msgid "Asterisk server address (empty = use the global setting)"
 msgstr "Asterisk-serveradress (tom = använd global setting)"
 
 #. module: pbx_base
+#: model:ir.model.fields,help:pbx_base.field_res_config_settings__pbx_server_host
+msgid "Asterisk server address (per company)."
+msgstr "Asterisk-serveradress (per företag)."
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_call__message_attachment_count
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_extension__message_attachment_count
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_inbound_route__message_attachment_count
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_outbound_route__message_attachment_count
@@ -161,14 +238,39 @@ msgid "Attachment Count"
 msgstr "Antal bilagor"
 
 #. module: pbx_base
+#: model:ir.model.fields.selection,name:pbx_base.selection__pbx_codec__kind__audio
+msgid "Audio"
+msgstr "Ljud"
+
+#. module: pbx_base
 #: model_terms:ir.ui.view,arch_db:pbx_base.res_config_settings_view_form_pbx
-msgid "Bearer-token"
-msgstr ""
+msgid "Basic settings"
+msgstr "Grundinställningar"
 
 #. module: pbx_base
 #: model:ir.model.fields,help:pbx_base.field_res_config_settings__pbx_webhook_token
-msgid "Bearer-token som pbx_ami_daemon använder mot /pbx/webhook"
+msgid ""
+"Bearer token that pbx_ami_daemon uses against /pbx/webhook. Generated "
+"automatically if none exists (standalone use), or provisioned by pbx_admin "
+"via odoo.conf."
 msgstr "Bearer-token som pbx_ami_daemon använder mot /pbx/webhook"
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_codec_line__codec_description
+#: model_terms:ir.ui.view,arch_db:pbx_base.pbx_sub_extension_form
+msgid "Beskrivning"
+msgstr "Beskrivning"
+
+#. module: pbx_base
+#. odoo-javascript
+#: code:addons/pbx_base/static/src/codec_list_header_buttons.xml:0
+msgid "Build/update the catalogue from pbx.codecs.available (Salt-pushed)"
+msgstr "Bygg/uppdatera katalogen från pbx.codecs.available (Salt-pushad)"
+
+#. module: pbx_base
+#: model:ir.model.fields.selection,name:pbx_base.selection__pbx_call__pbx_handling__busy
+msgid "Busy"
+msgstr "Upptagen"
 
 #. module: pbx_base
 #: model_terms:ir.ui.view,arch_db:pbx_base.pbx_call_form_view
@@ -186,6 +288,11 @@ msgstr "Samtalshistorik"
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_inbound_route__cid
 msgid "Caller ID"
 msgstr "Nummerpresentation"
+
+#. module: pbx_base
+#: model_terms:ir.ui.view,arch_db:pbx_base.pbx_extension_form_view
+msgid "Caller ID Name"
+msgstr "Nummerpresentationsnamn"
 
 #. module: pbx_base
 #: model:ir.model.fields,help:pbx_base.field_pbx_inbound_route__cid
@@ -206,9 +313,20 @@ msgid "Calls"
 msgstr "Samtal"
 
 #. module: pbx_base
+#: model:ir.model.fields,help:pbx_base.field_pbx_codec__active
+msgid ""
+"Centrally on/off (pbx_admin). Inactive codecs are not offered in selections."
+msgstr "Centralt på/av (pbx_admin). Inaktiva codecs erbjuds inte i val."
+
+#. module: pbx_base
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_trunk__channels
 msgid "Channels"
 msgstr "Kanaler"
+
+#. module: pbx_base
+#: model:ir.model.fields.selection,name:pbx_base.selection__res_company__pbx_config_sync_state__clean
+msgid "Clean"
+msgstr "Ren"
 
 #. module: pbx_base
 #. odoo-javascript
@@ -217,9 +335,32 @@ msgid "Click-to-call"
 msgstr "Klick-till-samtal"
 
 #. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_codec_line__codec_id
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_codec_line__codec_name
+#: model_terms:ir.ui.view,arch_db:pbx_base.pbx_codec_form
+msgid "Codec"
+msgstr "Codec"
+
+#. module: pbx_base
+#: model:ir.actions.act_window,name:pbx_base.pbx_codec_act_window
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_sub_extension__codec_ids
+#: model:ir.ui.menu,name:pbx_base.menu_pbx_codecs
+#: model_terms:ir.ui.view,arch_db:pbx_base.pbx_codec_list
+#: model_terms:ir.ui.view,arch_db:pbx_base.pbx_codec_search
+#: model_terms:ir.ui.view,arch_db:pbx_base.pbx_sub_extension_form
+msgid "Codecs"
+msgstr "Codecs"
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_device_template__codec_ids
+#: model_terms:ir.ui.view,arch_db:pbx_base.pbx_device_template_form
+msgid "Codecs (default)"
+msgstr "Codecs (standard)"
+
+#. module: pbx_base
 #: model:ir.model,name:pbx_base.model_res_company
 msgid "Companies"
-msgstr "Företag"
+msgstr "Bolag"
 
 #. module: pbx_base
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_call__company_id
@@ -233,6 +374,11 @@ msgstr "Företag"
 #: model:ir.model.fields,field_description:pbx_base.field_voip_pbx__company_id
 msgid "Company"
 msgstr "Företag"
+
+#. module: pbx_base
+#: model:ir.model.fields,help:pbx_base.field_pbx_device_template__company_id
+msgid "Company (empty = global template)."
+msgstr "Företag (tomt = global mall)."
 
 #. module: pbx_base
 #: model:ir.model,name:pbx_base.model_res_config_settings
@@ -266,7 +412,22 @@ msgid "Continue"
 msgstr "Fortsätt"
 
 #. module: pbx_base
+#. odoo-javascript
+#: code:addons/pbx_base/static/src/sip_config/sip_config.xml:0
+msgid "Copy"
+msgstr "Kopiera"
+
+#. module: pbx_base
+#: model:ir.model.fields,help:pbx_base.field_res_config_settings__pbx_turn_server
+msgid ""
+"Coturn address for STUN+TURN, e.g. turn.vertel.se:3478. Deployed to customer"
+" minions via Salt (odoo.conf + pillar)."
+msgstr "Distribueras till kundminions via Salt (odoo.conf + pillar)."
+
+#. module: pbx_base
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_call__create_uid
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_codec__create_uid
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_codec_line__create_uid
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_custom_destination__create_uid
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_device_template__create_uid
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_extension__create_uid
@@ -281,6 +442,8 @@ msgstr "Skapad av"
 
 #. module: pbx_base
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_call__create_date
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_codec__create_date
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_codec_line__create_date
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_custom_destination__create_date
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_device_template__create_date
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_extension__create_date
@@ -296,7 +459,21 @@ msgstr "Skapad den"
 #. module: pbx_base
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_inbound_route__did
 msgid "DID"
-msgstr ""
+msgstr "DID"
+
+#. module: pbx_base
+#: model:ir.model.fields,help:pbx_base.field_pbx_device_template__transport
+msgid ""
+"Default SIP transport for devices using this template. The device may "
+"override it."
+msgstr "Standardtransport för SIP för enheter som använder mallen. Enheten kan åsidosätta den."
+
+#. module: pbx_base
+#: model:ir.model.fields,help:pbx_base.field_pbx_device_template__codec_ids
+msgid ""
+"Default codec selection for devices using this template. The order "
+"(sequence) is the codec preference. Left empty → global default."
+msgstr "Standard-codecval för enheter som använder mallen. Ordningen (sequence) är codec-prioriteringen. Lämnad tom → global standard."
 
 #. module: pbx_base
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_sub_extension__delete_after_days
@@ -304,16 +481,28 @@ msgid "Delete After Days"
 msgstr "Radera efter dagar"
 
 #. module: pbx_base
+#. odoo-javascript
+#: code:addons/pbx_base/static/src/codec_list_header_buttons.xml:0
+msgid "Deploy devices"
+msgstr "Distribuera enheter"
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_codec__description
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_extension__description
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_inbound_route__description
 msgid "Description"
 msgstr "Beskrivning"
 
 #. module: pbx_base
+#: model_terms:ir.ui.view,arch_db:pbx_base.pbx_sub_extension_search
+msgid "Desktop"
+msgstr "Stationär"
+
+#. module: pbx_base
 #: model:ir.model.fields.selection,name:pbx_base.selection__pbx_device_template__device_type__desktop
 #: model:ir.model.fields.selection,name:pbx_base.selection__pbx_sub_extension__type__desktop
 msgid "Desktop Softphone"
-msgstr ""
+msgstr "Stationär mjuktelefon"
 
 #. module: pbx_base
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_inbound_route__destination_id
@@ -322,13 +511,32 @@ msgid "Destination"
 msgstr "Destination"
 
 #. module: pbx_base
+#: model:ir.model.fields,help:pbx_base.field_pbx_trunk__inbound_destination_id
+msgid ""
+"Destination for inbound calls where Telavox/the provider uses the account "
+"name (username) as the called party instead of the DID. Tom = ingen "
+"kontonamns-rutt."
+msgstr "Destination för inkommande samtal där Telavox/leverantören använder kontonamnet (användarnamnet) som uppringd part istället för DID."
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_codec_line__sub_extension_id
+#: model_terms:ir.ui.view,arch_db:pbx_base.pbx_sub_extension_form
+msgid "Device"
+msgstr "Enhet"
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_sub_extension__device_model
+msgid "Device Model"
+msgstr "Enhetsmodell"
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_sub_extension__template_id
 #: model_terms:ir.ui.view,arch_db:pbx_base.pbx_device_template_form
 msgid "Device Template"
 msgstr "Enhetsmall"
 
 #. module: pbx_base
 #: model:ir.actions.act_window,name:pbx_base.pbx_device_template_action
-#: model:ir.ui.menu,name:pbx_base.menu_pbx_device_template
 #: model_terms:ir.ui.view,arch_db:pbx_base.pbx_device_template_list
 msgid "Device Templates"
 msgstr "Enhetsmallar"
@@ -339,10 +547,26 @@ msgid "Device Type"
 msgstr "Enhetstyp"
 
 #. module: pbx_base
+#: model:ir.model.fields,help:pbx_base.field_pbx_sub_extension__template_id
+msgid ""
+"Device template that controls the SIP configuration. Choose a template → the"
+" configuration is adapted to the device."
+msgstr "Enhetsmall som styr SIP-konfigurationen. Välj en mall → konfigurationen anpassas till enheten."
+
+#. module: pbx_base
+#: model:ir.actions.act_window,name:pbx_base.pbx_sub_extension_act_window
+#: model:ir.ui.menu,name:pbx_base.menu_pbx_devices
+#: model_terms:ir.ui.view,arch_db:pbx_base.pbx_extension_form_view
+#: model_terms:ir.ui.view,arch_db:pbx_base.pbx_sub_extension_list
+#: model_terms:ir.ui.view,arch_db:pbx_base.pbx_sub_extension_search
+msgid "Devices"
+msgstr "Enheter"
+
+#. module: pbx_base
 #. odoo-python
 #: code:addons/pbx_base/models/pbx_numbering.py:0
-msgid "Dialbart nummer måste vara numeriskt: %s"
-msgstr "Dialbart nummer måste vara numeriskt: %s"
+msgid "Dialable number must be numeric: %s"
+msgstr "Uppringningsbart nummer måste vara numeriskt: %s"
 
 #. module: pbx_base
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_call__direction
@@ -351,6 +575,8 @@ msgstr "Riktning"
 
 #. module: pbx_base
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_call__display_name
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_codec__display_name
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_codec_line__display_name
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_custom_destination__display_name
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_device_template__display_name
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_extension__display_name
@@ -364,13 +590,15 @@ msgid "Display Name"
 msgstr "Visningsnamn"
 
 #. module: pbx_base
-#. odoo-python
-#: code:addons/pbx_base/models/pbx_extension.py:0
-msgid "Du har ingen PBX-anknytning kopplad."
-msgstr ""
+#: model:ir.model.fields,help:pbx_base.field_pbx_extension__respect_calendar
+msgid ""
+"Do not ring when the person is busy in the calendar (calendar.event). Busy: "
+"announce 'back {time}' and go to voicemail."
+msgstr "Upptagen: meddela 'tillbaka {time}' och gå till röstbrevlåda."
 
 #. module: pbx_base
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_call__duration
+#: model_terms:ir.ui.view,arch_db:pbx_base.pbx_call_list_view
 msgid "Duration (s)"
 msgstr "Varaktighet (s)"
 
@@ -380,24 +608,56 @@ msgid "Emergency Route"
 msgstr "Nödrutt"
 
 #. module: pbx_base
-#: model:ir.model.constraint,message:pbx_base.constraint_pbx_device_template_unique_device_type_company
-msgid "Endast en mall per enhetstyp och företag!"
-msgstr "Endast en mall per enhetstyp och företag!"
+#: model:ir.model.fields,help:pbx_base.field_res_company__pbx_turn_enabled
+msgid ""
+"Enable TURN for devices behind NAT (coturn handles both STUN discovery and "
+"TURN media relay on the same address)."
+msgstr "Aktivera TURN för enheter bakom NAT (coturn hanterar både STUN-upptäckt och TURN-medlarelay på samma adress)."
 
 #. module: pbx_base
-#: model_terms:ir.ui.view,arch_db:pbx_base.pbx_extension_form_view
-msgid "Enheter"
-msgstr ""
+#: model_terms:ir.ui.view,arch_db:pbx_base.res_config_settings_view_form_pbx
+msgid "Endpoint"
+msgstr "Endpoint"
 
 #. module: pbx_base
-#: model:ir.model.fields,field_description:pbx_base.field_pbx_sub_extension__device_model
-msgid "Enhetsmodell"
-msgstr ""
+#: model_terms:ir.ui.view,arch_db:pbx_base.pbx_sub_extension_form
+msgid "Enhetsetikett…"
+msgstr "Enhetsetikett…"
 
 #. module: pbx_base
-#: model:ir.model.fields.selection,name:pbx_base.selection__res_config_settings__pbx_tenant_plan__enterprise
-msgid "Enterprise"
-msgstr ""
+#: model_terms:ir.ui.view,arch_db:pbx_base.pbx_sub_extension_form
+msgid "Enhetsmall"
+msgstr "Enhetsmall"
+
+#. module: pbx_base
+#: model:ir.ui.menu,name:pbx_base.menu_pbx_device_template
+msgid "Enhetsmallar"
+msgstr "Enhetsmallar"
+
+#. module: pbx_base
+#: model:ir.model.fields.selection,name:pbx_base.selection__res_company__pbx_config_sync_state__error
+msgid "Error"
+msgstr "Fel"
+
+#. module: pbx_base
+#: model:ir.model.fields,help:pbx_base.field_pbx_codec__supported
+msgid "Exists on Asterisk (adjusted on sync from the server)."
+msgstr "Finns på Asterisk (justeras vid synk från servern)."
+
+#. module: pbx_base
+#: model:ir.model.fields,help:pbx_base.field_res_config_settings__pbx_ws_server
+msgid ""
+"Explicit WebSocket URL for the Odoo softphone (per company). Empty = derive "
+"automatically."
+msgstr "Explicit WebSocket-URL för Odoo-mjuktelefonen (per företag). Tom = härleds automatiskt."
+
+#. module: pbx_base
+#: model:ir.model.fields,help:pbx_base.field_res_company__pbx_ws_server
+msgid ""
+"Explicit WebSocket URL for the Odoo softphone, e.g. "
+"wss://192.168.11.213:8089/ws. Empty = derived automatically from "
+"pbx_server_host + pbx_sip_ws_port."
+msgstr "Tom = härleds automatiskt från pbx_ws_server."
 
 #. module: pbx_base
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_custom_destination__exten
@@ -408,6 +668,7 @@ msgstr "Anknytningsnummer"
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_call__extension_id
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_sub_extension__extension_id
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_voicemail_destination__extension_id
+#: model_terms:ir.ui.view,arch_db:pbx_base.pbx_extension_form_view
 msgid "Extension"
 msgstr "Anknytning"
 
@@ -428,6 +689,16 @@ msgid "Extensions"
 msgstr "Anknytningar"
 
 #. module: pbx_base
+#: model_terms:ir.ui.view,arch_db:pbx_base.res_config_settings_view_form_pbx
+msgid "Extern IP (Asterisk)"
+msgstr "Extern IP (Asterisk)"
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_res_config_settings__pbx_external_ip
+msgid "External IP (Asterisk)"
+msgstr "Extern IP (Asterisk)"
+
+#. module: pbx_base
 #: model_terms:ir.ui.view,arch_db:pbx_base.pbx_outbound_route_form_view
 msgid "Failover"
 msgstr "Failover"
@@ -440,9 +711,10 @@ msgstr "Failover-destination"
 #. module: pbx_base
 #: model:ir.model.fields,help:pbx_base.field_pbx_outbound_route_trunk__sequence
 msgid "Failover order within the route"
-msgstr ""
+msgstr "Failover-ordning inom rutten"
 
 #. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_call__message_follower_ids
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_extension__message_follower_ids
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_inbound_route__message_follower_ids
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_outbound_route__message_follower_ids
@@ -451,6 +723,7 @@ msgid "Followers"
 msgstr "Följare"
 
 #. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_call__message_partner_ids
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_extension__message_partner_ids
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_inbound_route__message_partner_ids
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_outbound_route__message_partner_ids
@@ -459,6 +732,7 @@ msgid "Followers (Partners)"
 msgstr "Följare (kontakter)"
 
 #. module: pbx_base
+#: model:ir.model.fields,help:pbx_base.field_pbx_call__activity_type_icon
 #: model:ir.model.fields,help:pbx_base.field_pbx_extension__activity_type_icon
 #: model:ir.model.fields,help:pbx_base.field_pbx_inbound_route__activity_type_icon
 #: model:ir.model.fields,help:pbx_base.field_pbx_outbound_route__activity_type_icon
@@ -467,28 +741,28 @@ msgid "Font awesome icon e.g. fa-tasks"
 msgstr "Font-awesome-ikon, t.ex. fa-tasks"
 
 #. module: pbx_base
-#: model:ir.model.fields,help:pbx_base.field_pbx_sub_extension__mac_address
+#: model:ir.model.fields,help:pbx_base.field_res_config_settings__pbx_webhook_url
 msgid ""
-msgstr ""
-"\"\"Fysisk enhets MAC — provisioning-nyckel för hårdvarutelefoner. "
-"Normaliseras \"\"till gemener utan separatorer (001565a1b2c3)."
+"Full endpoint that pbx_ami_daemon POSTs to (based on the Odoo URL or "
+"web.base.url)."
+msgstr "Fullständig endpoint som pbx_ami_daemon POSTar till (baserad på Odoo-URL:en eller web.base.url)."
 
 #. module: pbx_base
-#: model:ir.model.fields,help:pbx_base.field_res_config_settings__pbx_domain
-msgid "Företagets SIP-domän på Asterisk-servern (per företag)."
-msgstr "Företagets SIP-domän på Asterisk-servern (per företag)."
-
-#. module: pbx_base
-#: model:ir.model.fields,help:pbx_base.field_res_company__pbx_domain
-msgid "Företagets SIP-domän på Asterisk-servern, t.ex. vertel.se"
-msgstr "Företagets SIP-domän på Asterisk-servern, t.ex. vertel.se"
+#: model_terms:ir.ui.view,arch_db:pbx_base.pbx_extension_form_view
+msgid "Generate a new password"
+msgstr "Generera ett nytt lösenord"
 
 #. module: pbx_base
 #: model:ir.model.fields,help:pbx_base.field_pbx_sub_extension__sip_config_display
 msgid ""
-msgstr ""
-"\"\"Genererade SIP-parametrar för enheten: username, lösenord, server, port,"
-" \"\"domän, protokoll och STUN."
+"Generated SIP parameters for the device: username, password, server, port, "
+"domain, protocol and STUN."
+msgstr "protokoll och STUN."
+
+#. module: pbx_base
+#: model_terms:ir.ui.view,arch_db:pbx_base.res_config_settings_view_form_pbx
+msgid "Generera ny token"
+msgstr "Generera ny token"
 
 #. module: pbx_base
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_sub_extension__greeting
@@ -496,29 +770,35 @@ msgid "Greeting"
 msgstr "Hälsning"
 
 #. module: pbx_base
-#: model_terms:ir.ui.view,arch_db:pbx_base.res_config_settings_view_form_pbx
-msgid "Grundinställningar"
-msgstr "Grundinställningar"
+#: model_terms:ir.ui.view,arch_db:pbx_base.pbx_codec_search
+#: model_terms:ir.ui.view,arch_db:pbx_base.pbx_sub_extension_search
+msgid "Group By"
+msgstr "Gruppera efter"
 
 #. module: pbx_base
 #: model_terms:ir.ui.view,arch_db:pbx_base.pbx_call_search_view
 msgid "Gruppera"
-msgstr ""
+msgstr "Gruppera"
 
 #. module: pbx_base
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_call__pbx_handling
 msgid "Handled by PBX"
-msgstr ""
+msgstr "Hanteras av PBX"
 
 #. module: pbx_base
 #: model_terms:ir.ui.view,arch_db:pbx_base.pbx_call_search_view
 msgid "Hanterat"
-msgstr ""
+msgstr "Hanterat"
 
 #. module: pbx_base
 #: model_terms:ir.ui.view,arch_db:pbx_base.pbx_call_list_view
 msgid "Hanterat av PBX"
-msgstr ""
+msgstr "Hanterat av PBX"
+
+#. module: pbx_base
+#: model_terms:ir.ui.view,arch_db:pbx_base.pbx_sub_extension_search
+msgid "Hardware"
+msgstr "Hårdvara"
 
 #. module: pbx_base
 #: model:ir.model.fields.selection,name:pbx_base.selection__pbx_device_template__device_type__hardware
@@ -527,6 +807,18 @@ msgid "Hardware Phone"
 msgstr "Hårdvarutelefon"
 
 #. module: pbx_base
+#. odoo-python
+#: code:addons/pbx_base/models/pbx_sub_extension.py:0
+msgid "Hardware devices require a MAC address."
+msgstr "Hårdvaruenheter kräver en MAC-adress."
+
+#. module: pbx_base
+#: model_terms:ir.ui.view,arch_db:pbx_base.pbx_sub_extension_search
+msgid "Hardware without MAC"
+msgstr "Hårdvara utan MAC"
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_call__has_message
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_extension__has_message
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_inbound_route__has_message
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_outbound_route__has_message
@@ -535,42 +827,32 @@ msgid "Has Message"
 msgstr "Har meddelande"
 
 #. module: pbx_base
-#: model:ir.model.fields,help:pbx_base.field_res_company__pbx_provisioning_token
-msgid ""
-msgstr ""
-"\"\"Hemlig token för provisioning-endpointen (hårdvarutelefoner). Telefonen "
-"\"\"skickar den som lösenord i URL:en: "
-"\"\"https://<domän>:<token>@provision.../<MAC>.cfg"
-
-#. module: pbx_base
 #: model:ir.model.fields,help:pbx_base.field_pbx_outbound_route__emergency_route
 msgid "Highest priority — matches regardless of route ordering"
 msgstr "Högsta prioritet — matchar oavsett rutternas ordning"
 
 #. module: pbx_base
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_trunk__host
-#: model_terms:ir.ui.view,arch_db:pbx_base.res_config_settings_view_form_pbx
 msgid "Host"
 msgstr "Värd"
 
 #. module: pbx_base
 #: model:ir.model.fields,help:pbx_base.field_pbx_sub_extension__ring_timeout
 msgid ""
-msgstr ""
+"How long (seconds) to ring this device before giving up. In sequential mode "
+"each device gets its own timeout; in parallel mode the longest timeout among"
+" active devices is used."
+msgstr "I parallellt läge rings alla enheter samtidigt."
 
 #. module: pbx_base
 #: model:ir.model.fields,help:pbx_base.field_pbx_call__pbx_handling
-msgid "Hur samtalet hanterades i växeln (dialplan/AMI)."
+msgid "How the call was handled in the PBX (dialplan/AMI)."
 msgstr "Hur samtalet hanterades i växeln (dialplan/AMI)."
 
 #. module: pbx_base
-#. odoo-python
-#: code:addons/pbx_base/models/pbx_sub_extension.py:0
-msgid "Hårdvaruenhet kräver MAC-adress."
-msgstr "Hårdvaruenhet kräver MAC-adress."
-
-#. module: pbx_base
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_call__id
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_codec__id
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_codec_line__id
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_custom_destination__id
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_device_template__id
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_extension__id
@@ -581,14 +863,15 @@ msgstr "Hårdvaruenhet kräver MAC-adress."
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_trunk__id
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_voicemail_destination__id
 msgid "ID"
-msgstr ""
+msgstr "ID"
 
 #. module: pbx_base
 #: model:ir.model.fields.selection,name:pbx_base.selection__pbx_call__pbx_handling__ivr
 msgid "IVR"
-msgstr ""
+msgstr "IVR"
 
 #. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_call__activity_exception_icon
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_extension__activity_exception_icon
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_inbound_route__activity_exception_icon
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_outbound_route__activity_exception_icon
@@ -597,14 +880,21 @@ msgid "Icon"
 msgstr "Ikon"
 
 #. module: pbx_base
+#: model:ir.model.fields,help:pbx_base.field_pbx_call__activity_exception_icon
 #: model:ir.model.fields,help:pbx_base.field_pbx_extension__activity_exception_icon
 #: model:ir.model.fields,help:pbx_base.field_pbx_inbound_route__activity_exception_icon
 #: model:ir.model.fields,help:pbx_base.field_pbx_outbound_route__activity_exception_icon
 #: model:ir.model.fields,help:pbx_base.field_pbx_trunk__activity_exception_icon
 msgid "Icon to indicate an exception activity."
-msgstr ""
+msgstr "Ikon som anger en undantagsaktivitet."
 
 #. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_trunk__identify_ip
+msgid "Identify IP"
+msgstr "Identifiera IP"
+
+#. module: pbx_base
+#: model:ir.model.fields,help:pbx_base.field_pbx_call__message_needaction
 #: model:ir.model.fields,help:pbx_base.field_pbx_extension__message_needaction
 #: model:ir.model.fields,help:pbx_base.field_pbx_inbound_route__message_needaction
 #: model:ir.model.fields,help:pbx_base.field_pbx_outbound_route__message_needaction
@@ -613,6 +903,7 @@ msgid "If checked, new messages require your attention."
 msgstr "Om markerat kräver nya meddelanden din uppmärksamhet."
 
 #. module: pbx_base
+#: model:ir.model.fields,help:pbx_base.field_pbx_call__message_has_error
 #: model:ir.model.fields,help:pbx_base.field_pbx_extension__message_has_error
 #: model:ir.model.fields,help:pbx_base.field_pbx_inbound_route__message_has_error
 #: model:ir.model.fields,help:pbx_base.field_pbx_outbound_route__message_has_error
@@ -621,8 +912,17 @@ msgid "If checked, some messages have a delivery error."
 msgstr "Om markerat har vissa meddelanden leveransfel."
 
 #. module: pbx_base
+#: model:ir.model.fields.selection,name:pbx_base.selection__pbx_codec__kind__image
+msgid "Image"
+msgstr "Bild"
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_trunk__inbound_destination_id
+msgid "Inbound Account Destination"
+msgstr "Destination för inkommande konto"
+
+#. module: pbx_base
 #: model:ir.actions.act_window,name:pbx_base.pbx_inbound_route_act_window
-#: model:ir.ui.menu,name:pbx_base.menu_pbx_inbound_routes
 msgid "Inbound Routes"
 msgstr "Inkommande rutter"
 
@@ -632,23 +932,23 @@ msgid "Incoming"
 msgstr "Inkommande"
 
 #. module: pbx_base
-#. odoo-python
-#: code:addons/pbx_base/models/pbx_extension.py:0
-msgid "Ingen SIP-domän är konfigurerad för företaget."
-msgstr "Ingen SIP-domän är konfigurerad för företaget."
-
-#. module: pbx_base
-#. odoo-python
-#: code:addons/pbx_base/models/pbx_extension.py:0
-msgid "Ingen aktiv enhet finns på anknytningen."
-msgstr "Ingen aktiv enhet finns på anknytningen."
-
-#. module: pbx_base
 #: model_terms:ir.ui.view,arch_db:pbx_base.pbx_call_search_view
 msgid "Inkommande"
-msgstr ""
+msgstr "Inkommande"
 
 #. module: pbx_base
+#: model:ir.ui.menu,name:pbx_base.menu_pbx_inbound_routes
+msgid "Inkommande rutter"
+msgstr "Inkommande rutter"
+
+#. module: pbx_base
+#. odoo-python
+#: code:addons/pbx_base/models/pbx_extension.py:0
+msgid "Invalid phone number."
+msgstr "Ogiltigt telefonnummer."
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_call__message_is_follower
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_extension__message_is_follower
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_inbound_route__message_is_follower
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_outbound_route__message_is_follower
@@ -657,23 +957,15 @@ msgid "Is Follower"
 msgstr "Är följare"
 
 #. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_codec__kind
+#: model_terms:ir.ui.view,arch_db:pbx_base.pbx_codec_search
+msgid "Kind"
+msgstr "Typ"
+
+#. module: pbx_base
 #: model_terms:ir.ui.view,arch_db:pbx_base.pbx_call_list_view
 msgid "Kontakt"
-msgstr ""
-
-#. module: pbx_base
-#: model:ir.model.fields,help:pbx_base.field_res_config_settings__pbx_odoo_url
-msgid "Kundens Odoo-bas-URL för tillgänglighetskontroll i genererad dialplan."
-msgstr ""
-"Kundens Odoo-bas-URL för tillgänglighetskontroll i genererad dialplan."
-
-#. module: pbx_base
-#: model:ir.model.fields,help:pbx_base.field_res_company__pbx_odoo_url
-msgid ""
-msgstr ""
-"\"\"Kundens Odoo-bas-URL som den genererade dialplanen anropar för "
-"\"\"tillgänglighetskontroll (t.ex. https://crm.vertel.se). Tom = använd "
-"\"\"web.base.url."
+msgstr "Kontakt"
 
 #. module: pbx_base
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_sub_extension__label
@@ -682,6 +974,8 @@ msgstr "Etikett"
 
 #. module: pbx_base
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_call__write_uid
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_codec__write_uid
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_codec_line__write_uid
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_custom_destination__write_uid
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_device_template__write_uid
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_extension__write_uid
@@ -696,6 +990,8 @@ msgstr "Senast uppdaterad av"
 
 #. module: pbx_base
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_call__write_date
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_codec__write_date
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_codec_line__write_date
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_custom_destination__write_date
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_device_template__write_date
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_extension__write_date
@@ -709,14 +1005,29 @@ msgid "Last Updated on"
 msgstr "Senast uppdaterad"
 
 #. module: pbx_base
+#: model:ir.model.fields,help:pbx_base.field_res_company__pbx_config_applied_version
+msgid "Last confirmed applied config version (from the daemon ack)."
+msgstr "Senast bekräftade tillämpade konfigurationsversion (från daemonens ack)."
+
+#. module: pbx_base
+#: model:ir.model.fields,help:pbx_base.field_res_company__pbx_config_version
+msgid "Last published config version (incremented on every sync)."
+msgstr "Senast publicerade konfigurationsversion (ökas vid varje synk)."
+
+#. module: pbx_base
+#: model:ir.model.fields,help:pbx_base.field_res_company__pbx_config_sync_error
+msgid "Latest error message from the daemon ack (empty = no error)."
+msgstr "Senaste felmeddelandet från daemonens ack (tomt = inget fel)."
+
+#. module: pbx_base
 #: model:ir.model.fields,help:pbx_base.field_pbx_outbound_route__strip_digits
 msgid "Leading digits to strip from the dialed number"
 msgstr "Inledande siffror att stryka från det uppringda numret"
 
 #. module: pbx_base
-#: model_terms:ir.ui.view,arch_db:pbx_base.res_config_settings_view_form_pbx
-msgid "Leasavtal (från central förvaltning)"
-msgstr "Leasavtal (från central förvaltning)"
+#: model:ir.model.fields,help:pbx_base.field_res_config_settings__pbx_sip_password_length
+msgid "Length of generated SIP passwords (extension.password)."
+msgstr "Längd på genererade SIP-lösenord (extension.password)."
 
 #. module: pbx_base
 #: model:ir.model.fields,help:pbx_base.field_pbx_inbound_route__sequence
@@ -729,26 +1040,12 @@ msgid "Lower sequence is tried first"
 msgstr "Lägre sekvens provas först"
 
 #. module: pbx_base
-#: model_terms:ir.ui.view,arch_db:pbx_base.pbx_call_list_view
-msgid "Längd (s)"
-msgstr "Längd (s)"
-
-#. module: pbx_base
-#: model:ir.model.fields,help:pbx_base.field_pbx_sub_extension__config_display
-msgid "Läsbar per-parameter SIP-konfiguration (från enhetstypens mall)."
-msgstr "Läsbar per-parameter SIP-konfiguration (från enhetstypens mall)."
-
-#. module: pbx_base
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_sub_extension__mac_address
-msgid "MAC-adress"
-msgstr ""
+msgid "MAC address"
+msgstr "MAC-adress"
 
 #. module: pbx_base
-#: model:ir.model.constraint,message:pbx_base.constraint_pbx_sub_extension_sub_ext_mac_unique
-msgid "MAC-adressen får bara användas av en enhet!"
-msgstr "MAC-adressen får bara användas av en enhet!"
-
-#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_call__activity_main_partner_id
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_extension__activity_main_partner_id
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_inbound_route__activity_main_partner_id
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_outbound_route__activity_main_partner_id
@@ -767,12 +1064,6 @@ msgid "Max Duration"
 msgstr "Max varaktighet"
 
 #. module: pbx_base
-#: model:ir.model.fields,field_description:pbx_base.field_res_config_settings__pbx_tenant_max_extensions
-#: model_terms:ir.ui.view,arch_db:pbx_base.res_config_settings_view_form_pbx
-msgid "Max Extensions"
-msgstr "Max anknytningar"
-
-#. module: pbx_base
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_sub_extension__max_messages
 msgid "Max Messages"
 msgstr "Max meddelanden"
@@ -788,6 +1079,7 @@ msgid "Max simultaneous channels"
 msgstr "Max samtidiga kanaler"
 
 #. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_call__message_has_error
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_extension__message_has_error
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_inbound_route__message_has_error
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_outbound_route__message_has_error
@@ -797,10 +1089,11 @@ msgstr "Leveransfel på meddelande"
 
 #. module: pbx_base
 #: model_terms:ir.ui.view,arch_db:pbx_base.res_config_settings_view_form_pbx
-msgid "Message broker"
-msgstr "Meddelandekö"
+msgid "Message Queue (RabbitMQ)"
+msgstr "Meddelandekö (RabbitMQ)"
 
 #. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_call__message_ids
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_extension__message_ids
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_inbound_route__message_ids
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_outbound_route__message_ids
@@ -809,20 +1102,14 @@ msgid "Messages"
 msgstr "Meddelanden"
 
 #. module: pbx_base
-#: model_terms:ir.ui.view,arch_db:pbx_base.res_config_settings_view_form_pbx
-msgid "Min telefon-växel"
-msgstr "Min telefon-växel"
-
-#. module: pbx_base
-#: model_terms:ir.ui.view,arch_db:pbx_base.view_users_form_pbx_call
-#: model_terms:ir.ui.view,arch_db:pbx_base.view_users_form_simple_pbx_call
-msgid "Mina samtal"
-msgstr ""
-
-#. module: pbx_base
 #: model:ir.model.fields.selection,name:pbx_base.selection__pbx_call__pbx_handling__missed
 msgid "Missed"
 msgstr "Missad"
+
+#. module: pbx_base
+#: model_terms:ir.ui.view,arch_db:pbx_base.pbx_sub_extension_search
+msgid "Mobil"
+msgstr "Mobil"
 
 #. module: pbx_base
 #: model:ir.model.fields.selection,name:pbx_base.selection__pbx_device_template__device_type__mobile
@@ -831,58 +1118,94 @@ msgid "Mobile"
 msgstr "Mobil"
 
 #. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_call__my_activity_date_deadline
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_extension__my_activity_date_deadline
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_inbound_route__my_activity_date_deadline
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_outbound_route__my_activity_date_deadline
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_trunk__my_activity_date_deadline
 msgid "My Activity Deadline"
-msgstr ""
+msgstr "Min aktivitetsdeadline"
 
 #. module: pbx_base
+#: model_terms:ir.ui.view,arch_db:pbx_base.view_users_form_pbx_call
+#: model_terms:ir.ui.view,arch_db:pbx_base.view_users_form_simple_pbx_call
+msgid "My Calls"
+msgstr "Mina samtal"
+
+#. module: pbx_base
+#: model_terms:ir.ui.view,arch_db:pbx_base.pbx_sub_extension_search
+msgid "My Devices"
+msgstr "Mina enheter"
+
+#. module: pbx_base
+#: model_terms:ir.ui.view,arch_db:pbx_base.res_config_settings_view_form_pbx
+msgid "My Phone System"
+msgstr "Min telefonväxel"
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_codec__name
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_custom_destination__name
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_device_template__name
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_outbound_route__name
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_trunk__name
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_voicemail_destination__name
+#: model_terms:ir.ui.view,arch_db:pbx_base.pbx_call_list_view
+#: model_terms:ir.ui.view,arch_db:pbx_base.pbx_sub_extension_form
 msgid "Name"
 msgstr "Namn"
 
 #. module: pbx_base
-#: model_terms:ir.ui.view,arch_db:pbx_base.pbx_call_list_view
-msgid "Namn"
-msgstr ""
+#: model_terms:ir.ui.view,arch_db:pbx_base.pbx_sub_extension_search
+msgid "Needs provisioning"
+msgstr "Behöver provisioneras"
 
 #. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_call__activity_calendar_event_id
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_extension__activity_calendar_event_id
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_inbound_route__activity_calendar_event_id
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_outbound_route__activity_calendar_event_id
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_trunk__activity_calendar_event_id
 msgid "Next Activity Calendar Event"
-msgstr ""
+msgstr "Nästa aktivitetskalenderhändelse"
 
 #. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_call__activity_date_deadline
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_extension__activity_date_deadline
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_inbound_route__activity_date_deadline
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_outbound_route__activity_date_deadline
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_trunk__activity_date_deadline
 msgid "Next Activity Deadline"
-msgstr ""
+msgstr "Nästa aktivitetsdeadline"
 
 #. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_call__activity_summary
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_extension__activity_summary
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_inbound_route__activity_summary
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_outbound_route__activity_summary
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_trunk__activity_summary
 msgid "Next Activity Summary"
-msgstr ""
+msgstr "Nästa aktivitetssammanfattning"
 
 #. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_call__activity_type_id
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_extension__activity_type_id
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_inbound_route__activity_type_id
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_outbound_route__activity_type_id
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_trunk__activity_type_id
 msgid "Next Activity Type"
-msgstr ""
+msgstr "Nästa aktivitetstyp"
+
+#. module: pbx_base
+#. odoo-javascript
+#: code:addons/pbx_base/static/src/sip_config/sip_config.xml:0
+msgid "No SIP configuration (template missing or empty)."
+msgstr "Ingen SIP-konfiguration (mall saknas eller är tom)."
+
+#. module: pbx_base
+#. odoo-python
+#: code:addons/pbx_base/models/pbx_extension.py:0
+msgid "No SIP domain is configured for the company."
+msgstr "Ingen SIP-domän är konfigurerad för företaget."
 
 #. module: pbx_base
 #: model:ir.model.fields.selection,name:pbx_base.selection__pbx_outbound_route__time_source__none
@@ -891,8 +1214,16 @@ msgstr "Ingen tidsbegränsning"
 
 #. module: pbx_base
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_call__phone_number
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_sub_extension__number
+#: model_terms:ir.ui.view,arch_db:pbx_base.pbx_call_list_view
 msgid "Number"
 msgstr "Nummer"
+
+#. module: pbx_base
+#. odoo-python
+#: code:addons/pbx_base/models/pbx_numbering.py:0
+msgid "Number %s is already taken in this company (%s)"
+msgstr "Numret %s är redan upptaget i detta företag (%s)"
 
 #. module: pbx_base
 #: model_terms:ir.ui.view,arch_db:pbx_base.pbx_outbound_route_form_view
@@ -900,6 +1231,15 @@ msgid "Number handling"
 msgstr "Nummerhantering"
 
 #. module: pbx_base
+#. odoo-python
+#: code:addons/pbx_base/models/pbx_numbering.py:0
+msgid ""
+"Number must not start with '*' — the prefix is reserved for feature codes "
+"(*97/*98/*43/*82)."
+msgstr "Numret får inte börja med '*' — prefixet är reserverat för tjänstekoder (*97/*98/*43/*82)."
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_call__message_needaction_counter
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_extension__message_needaction_counter
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_inbound_route__message_needaction_counter
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_outbound_route__message_needaction_counter
@@ -908,6 +1248,7 @@ msgid "Number of Actions"
 msgstr "Antal åtgärder"
 
 #. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_call__message_has_error_counter
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_extension__message_has_error_counter
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_inbound_route__message_has_error_counter
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_outbound_route__message_has_error_counter
@@ -916,6 +1257,7 @@ msgid "Number of errors"
 msgstr "Antal fel"
 
 #. module: pbx_base
+#: model:ir.model.fields,help:pbx_base.field_pbx_call__message_needaction_counter
 #: model:ir.model.fields,help:pbx_base.field_pbx_extension__message_needaction_counter
 #: model:ir.model.fields,help:pbx_base.field_pbx_inbound_route__message_needaction_counter
 #: model:ir.model.fields,help:pbx_base.field_pbx_outbound_route__message_needaction_counter
@@ -924,6 +1266,7 @@ msgid "Number of messages requiring action"
 msgstr "Antal meddelanden som kräver åtgärd"
 
 #. module: pbx_base
+#: model:ir.model.fields,help:pbx_base.field_pbx_call__message_has_error_counter
 #: model:ir.model.fields,help:pbx_base.field_pbx_extension__message_has_error_counter
 #: model:ir.model.fields,help:pbx_base.field_pbx_inbound_route__message_has_error_counter
 #: model:ir.model.fields,help:pbx_base.field_pbx_outbound_route__message_has_error_counter
@@ -937,48 +1280,35 @@ msgid "Number or Asterisk pattern to match. Empty = any DID"
 msgstr "Nummer eller Asterisk-mönster att matcha. Tom = vilket DID som helst"
 
 #. module: pbx_base
-#: model:ir.model.fields,field_description:pbx_base.field_pbx_sub_extension__number
-#: model_terms:ir.ui.view,arch_db:pbx_base.pbx_call_list_view
-msgid "Nummer"
-msgstr ""
-
-#. module: pbx_base
-#. odoo-python
-#: code:addons/pbx_base/models/pbx_numbering.py:0
-msgid ""
-msgstr ""
-"\"\"Nummer får inte börja med '*' — prefixet är reserverat för feature codes"
-" \"\"(*97/*98/*43/*82)."
-
-#. module: pbx_base
-#. odoo-python
-#: code:addons/pbx_base/models/pbx_numbering.py:0
-msgid "Numret %s är redan upptaget i detta företag (%s)"
-msgstr "Numret %s är redan upptaget i detta företag (%s)"
-
-#. module: pbx_base
 #: model:ir.model.fields,field_description:pbx_base.field_res_company__pbx_odoo_url
 #: model:ir.model.fields,field_description:pbx_base.field_res_config_settings__pbx_odoo_url
-#: model_terms:ir.ui.view,arch_db:pbx_base.res_config_settings_view_form_pbx
 msgid "Odoo URL"
 msgstr "Odoo-URL"
 
 #. module: pbx_base
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_extension__user_id
+#: model_terms:ir.ui.view,arch_db:pbx_base.pbx_extension_form_view
 msgid "Odoo User"
 msgstr "Odoo-användare"
 
 #. module: pbx_base
 #: model:ir.model.fields.selection,name:pbx_base.selection__pbx_device_template__device_type__browser
 #: model:ir.model.fields.selection,name:pbx_base.selection__pbx_sub_extension__type__browser
+#: model_terms:ir.ui.view,arch_db:pbx_base.pbx_sub_extension_search
 msgid "Odoo VOIP"
 msgstr "Odoo VOIP"
 
 #. module: pbx_base
-#. odoo-python
-#: code:addons/pbx_base/models/pbx_extension.py:0
-msgid "Ogiltigt telefonnummer."
-msgstr ""
+#: model:ir.model.constraint,message:pbx_base.constraint_pbx_device_template_unique_device_type_company
+msgid "Only one template per device type and company!"
+msgstr "Endast en mall per enhetstyp och företag!"
+
+#. module: pbx_base
+#: model_terms:ir.ui.view,arch_db:pbx_base.pbx_codec_list
+#: model_terms:ir.ui.view,arch_db:pbx_base.pbx_device_template_form
+#: model_terms:ir.ui.view,arch_db:pbx_base.pbx_sub_extension_form
+msgid "Order"
+msgstr "Ordning"
 
 #. module: pbx_base
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_outbound_route__outbound_callerid
@@ -999,6 +1329,7 @@ msgstr "Utgående rutter"
 #. module: pbx_base
 #: model:ir.model.fields.selection,name:pbx_base.selection__pbx_call__direction__outgoing
 #: model:ir.model.fields.selection,name:pbx_base.selection__pbx_call__pbx_handling__outgoing
+#: model_terms:ir.ui.view,arch_db:pbx_base.pbx_call_search_view
 msgid "Outgoing"
 msgstr "Utgående"
 
@@ -1008,148 +1339,195 @@ msgid "Outgoing CallerID"
 msgstr "Utgående nummerpresentation"
 
 #. module: pbx_base
+#: model:ir.model.fields,help:pbx_base.field_pbx_codec__priority
+msgid ""
+"Output order (from the Salt-pushed list). New selections append rows in this"
+" order — the user can then drag to rearrange them."
+msgstr "Nya val lägger till rader i denna ordning — användaren kan sedan dra för att ordna om dem."
+
+#. module: pbx_base
 #: model:ir.ui.menu,name:pbx_base.menu_pbx_root
 #: model_terms:ir.ui.view,arch_db:pbx_base.res_config_settings_view_form_pbx
 msgid "PBX"
-msgstr ""
+msgstr "PBX"
 
 #. module: pbx_base
 #: model_terms:ir.ui.view,arch_db:pbx_base.view_company_form_pbx
 msgid "PBX / Asterisk"
-msgstr ""
+msgstr "PBX / Asterisk"
 
 #. module: pbx_base
 #: model:ir.model.fields,field_description:pbx_base.field_res_company__pbx_api_key
 msgid "PBX API Key"
-msgstr ""
+msgstr "PBX API-nyckel"
 
 #. module: pbx_base
 #: model:res.groups,name:pbx_base.group_pbx_admin
 msgid "PBX Admin"
-msgstr ""
+msgstr "PBX-administratör"
 
 #. module: pbx_base
 #: model:ir.model,name:pbx_base.model_pbx_call
 msgid "PBX Call (phone transaction)"
-msgstr ""
+msgstr "PBX-samtal (telefonitransaktion)"
+
+#. module: pbx_base
+#: model:ir.model,name:pbx_base.model_pbx_codec
+msgid "PBX Codec"
+msgstr "PBX-codec"
+
+#. module: pbx_base
+#: model:ir.model,name:pbx_base.model_pbx_codec_line
+msgid "PBX Codec Selection Line"
+msgstr "PBX-codecvalsrad"
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_res_company__pbx_config_applied_version
+msgid "PBX Config Applied Version"
+msgstr "Tillämpad PBX-konfigurationsversion"
 
 #. module: pbx_base
 #: model:ir.model.fields,field_description:pbx_base.field_res_company__config_dirty
 msgid "PBX Config Dirty"
-msgstr ""
+msgstr "PBX-konfiguration ej synkad"
 
 #. module: pbx_base
 #: model:ir.model,name:pbx_base.model_pbx_config_dirty_mixin
 msgid "PBX Config Dirty Mixin"
-msgstr ""
+msgstr "Mixin för PBX-konfiguration ej synkad"
 
 #. module: pbx_base
 #: model:ir.model,name:pbx_base.model_pbx_config_generator
 msgid "PBX Config Generator"
-msgstr ""
+msgstr "PBX-konfigurationsgenerator"
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_res_company__pbx_config_sync_error
+msgid "PBX Config Sync Error"
+msgstr "Synkfel för PBX-konfiguration"
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_res_company__pbx_config_sync_state
+msgid "PBX Config Sync State"
+msgstr "Synkstatus för PBX-konfiguration"
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_res_company__pbx_config_version
+msgid "PBX Config Version"
+msgstr "PBX-konfigurationsversion"
 
 #. module: pbx_base
 #: model:ir.model,name:pbx_base.model_pbx_custom_destination
 msgid "PBX Custom Destination (raw dialplan goto-triple)"
-msgstr ""
+msgstr "PBX-anpassad destination (rå dialplan goto-trippel)"
 
 #. module: pbx_base
 #: model:ir.model,name:pbx_base.model_pbx_destination_mixin
 msgid "PBX Destination Interface"
-msgstr ""
+msgstr "PBX-destinationsgränssnitt"
 
 #. module: pbx_base
 #: model:ir.model,name:pbx_base.model_pbx_device_template
 msgid "PBX Device Template"
-msgstr ""
+msgstr "PBX-enhetsmall"
 
 #. module: pbx_base
 #: model:ir.model.fields,field_description:pbx_base.field_res_users__pbx_extension_id
 msgid "PBX Extension"
-msgstr ""
+msgstr "PBX-anknytning"
 
 #. module: pbx_base
 #: model:ir.model,name:pbx_base.model_pbx_extension
 msgid "PBX Extension (public number)"
-msgstr ""
+msgstr "PBX-anknytning (publikt nummer)"
 
 #. module: pbx_base
 #: model:ir.model,name:pbx_base.model_pbx_inbound_route
 msgid "PBX Inbound Route (DID/CID -> destination)"
-msgstr ""
+msgstr "PBX inkommande rutt (DID/CID -> destination)"
 
 #. module: pbx_base
 #: model:ir.model,name:pbx_base.model_pbx_numbering
 msgid "PBX Number Plan (helpers)"
-msgstr ""
+msgstr "PBX nummerplan (hjälpmetoder)"
 
 #. module: pbx_base
 #: model:res.groups,name:pbx_base.group_pbx_office
 msgid "PBX Office"
-msgstr ""
+msgstr "PBX-kontor"
 
 #. module: pbx_base
 #: model:res.groups,name:pbx_base.group_pbx_operator
 msgid "PBX Operator"
-msgstr ""
+msgstr "PBX-operator"
 
 #. module: pbx_base
 #: model:ir.model,name:pbx_base.model_pbx_outbound_route
 msgid "PBX Outbound Route"
-msgstr ""
+msgstr "PBX utgående rutt"
 
 #. module: pbx_base
 #: model:ir.model,name:pbx_base.model_pbx_plugin
 msgid "PBX Plugin Interface"
-msgstr ""
+msgstr "PBX-plugin-gränssnitt"
 
 #. module: pbx_base
 #: model:ir.model.fields,field_description:pbx_base.field_res_company__pbx_provisioning_token
 msgid "PBX Provisioning-token"
-msgstr ""
+msgstr "PBX-provisioneringstoken"
 
 #. module: pbx_base
 #: model:ir.model,name:pbx_base.model_pbx_mq_publisher
 msgid "PBX RabbitMQ Publisher"
-msgstr ""
+msgstr "PBX RabbitMQ-publicerare"
 
 #. module: pbx_base
 #: model:ir.model,name:pbx_base.model_pbx_trunk
 msgid "PBX SIP Trunk"
-msgstr ""
+msgstr "PBX SIP-trunk"
 
 #. module: pbx_base
 #: model:ir.model.fields,field_description:pbx_base.field_res_company__pbx_server_host
 #: model:ir.model.fields,field_description:pbx_base.field_res_config_settings__pbx_server_host
 #: model_terms:ir.ui.view,arch_db:pbx_base.res_config_settings_view_form_pbx
 msgid "PBX Server"
-msgstr ""
+msgstr "PBX-server"
 
 #. module: pbx_base
 #: model:ir.actions.act_window,name:pbx_base.pbx_config_settings_action
 msgid "PBX Settings"
-msgstr ""
+msgstr "PBX-inställningar"
 
 #. module: pbx_base
 #: model:ir.model,name:pbx_base.model_pbx_sub_extension
 msgid "PBX Sub Extension (individual device)"
-msgstr ""
+msgstr "PBX-underanknytning (enskild enhet)"
 
 #. module: pbx_base
 #: model:ir.model,name:pbx_base.model_pbx_voicemail_destination
 msgid "PBX Voicemail Destination"
-msgstr ""
+msgstr "PBX-röstbrevlådedestination"
 
 #. module: pbx_base
 #: model:ir.model.fields,field_description:pbx_base.field_res_config_settings__pbx_webhook_token
 #: model_terms:ir.ui.view,arch_db:pbx_base.res_config_settings_view_form_pbx
 msgid "PBX Webhook Token"
-msgstr ""
+msgstr "PBX-webhooktoken"
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_res_config_settings__pbx_webhook_url
+msgid "PBX Webhook URL"
+msgstr "PBX-webhook-URL"
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_res_config_settings__pbx_config_managed
+msgid "PBX konfigureras centralt"
+msgstr "PBX konfigureras centralt"
 
 #. module: pbx_base
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_outbound_route__password
 msgid "PIN"
-msgstr ""
+msgstr "PIN"
 
 #. module: pbx_base
 #: model:ir.model.fields.selection,name:pbx_base.selection__pbx_extension__ring_strategy__parallel
@@ -1157,17 +1535,26 @@ msgid "Parallel"
 msgstr "Parallell"
 
 #. module: pbx_base
+#. odoo-javascript
+#: code:addons/pbx_base/static/src/sip_config/sip_config.xml:0
+msgid "Parameter"
+msgstr "Parameter"
+
+#. module: pbx_base
 #: model:ir.model.fields,help:pbx_base.field_pbx_device_template__config_template
 msgid ""
-msgstr ""
+"Parameterdefinitioner per enhetstyp: {\"nyckel\": {\"label\": …, \"source\":"
+" device|extension|company|config|user|static, \"field\"/\"value\": …, "
+"\"only_if\": …, \"order\": …}}"
+msgstr "Parameterdefinitioner per enhetstyp: {\"nyckel\": {\"label\": …, \"source\": device|extension|company|config|user|static, \"value\": …}}"
 
 #. module: pbx_base
 #: model_terms:ir.ui.view,arch_db:pbx_base.pbx_device_template_form
 msgid "Parametrar i mallen"
-msgstr ""
+msgstr "Parametrar i mallen"
 
 #. module: pbx_base
-#: model_terms:ir.ui.view,arch_db:pbx_base.res_config_settings_view_form_pbx
+#: model_terms:ir.ui.view,arch_db:pbx_base.pbx_trunk_form_view
 msgid "Password"
 msgstr "Lösenord"
 
@@ -1179,29 +1566,30 @@ msgstr "Mönster"
 #. module: pbx_base
 #: model:ir.model.fields,help:pbx_base.field_pbx_sub_extension__provisioning_token
 msgid ""
-msgstr ""
-"\"\"Per-enhet token för softphone-provisioning (desktop/mobile). Auto-"
-"genereras;\"\" URL:en är /pbx/provisioning/softphone/<token>.xml"
+"Per-device token for softphone provisioning (desktop/mobile). Auto-"
+"generated; the URL is /pbx/provisioning/softphone/<token>.xml"
+msgstr "Autogenererad; URL:en är /pbx/provisioning/softphone/<token>."
 
 #. module: pbx_base
 #: model:ir.model.fields,help:pbx_base.field_pbx_sub_extension__config
 msgid ""
-msgstr ""
-"\"\"Per-parameter SIP-konfiguration populerad från enhetstypens mall "
-"\"\"(pbx.device.template) med skarpa data."
+"Per-parameter SIP configuration populated from the device type template "
+"(pbx.device.template) with real data."
+msgstr "SIP-konfiguration per parameter, ifylld från enhetstypmallen (pbx.device.template) med skarpa data."
 
 #. module: pbx_base
 #: model:ir.model.fields,help:pbx_base.field_pbx_extension__password
 msgid ""
-msgstr ""
-"\"\"Personligt SIP-lösenord som gäller för alla enheter på anknytningen. "
-"Auto-\"\"genereras och skrivs in i den genererade pjsip-konfigurationen."
+"Personal SIP password used by every device on the extension. Auto-generated "
+"and written into the generated pjsip configuration."
+msgstr "Personligt SIP-lösenord som används av varje enhet på anknytningen. Autogenererat och skrivs in i den genererade pjsip-konfigurationen."
 
 #. module: pbx_base
-#: model:ir.model.fields,field_description:pbx_base.field_res_config_settings__pbx_tenant_plan
-#: model_terms:ir.ui.view,arch_db:pbx_base.res_config_settings_view_form_pbx
-msgid "Plan"
-msgstr "Plan"
+#: model:ir.model.fields,help:pbx_base.field_pbx_sub_extension__mac_address
+msgid ""
+"Physical device MAC — provisioning key for hardware phones. Normalised to "
+"lower case without separators (001565a1b2c3)."
+msgstr "Normaliseras till gemener utan avgränsare (001565a1b2c3)."
 
 #. module: pbx_base
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_trunk__port
@@ -1215,16 +1603,12 @@ msgid "Prefix added before the number sent to the trunk"
 msgstr "Prefix som läggs före numret som skickas till trunken"
 
 #. module: pbx_base
-#: model:ir.model.fields.selection,name:pbx_base.selection__res_config_settings__pbx_tenant_plan__premium
-msgid "Premium"
-msgstr "Premium"
-
-#. module: pbx_base
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_outbound_route__prepend_digits
 msgid "Prepend Digits"
 msgstr "Prefixsiffror"
 
 #. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_codec__priority
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_custom_destination__priority
 msgid "Priority"
 msgstr "Prioritet"
@@ -1236,13 +1620,16 @@ msgstr "Prioritet inom kontexten"
 
 #. module: pbx_base
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_sub_extension__provisioning_token
-msgid "Provisioning-token"
-msgstr ""
+msgid "Provisioning Token"
+msgstr "Provisioneringstoken"
 
 #. module: pbx_base
-#: model:ir.model.constraint,message:pbx_base.constraint_pbx_sub_extension_sub_ext_token_unique
-msgid "Provisioning-token måste vara unik!"
-msgstr "Provisioning-token måste vara unik!"
+#: model:ir.model.fields,help:pbx_base.field_res_config_settings__pbx_external_ip
+msgid ""
+"Public IP of the Asterisk box — used as external_media_address on trunks and"
+" external_signaling_address (the transport, salt side). Empty = no external "
+"address is generated."
+msgstr "Publik IP för Asterisk-servern — används som external_media_address på trunkar och external_signaling_address (transporten, inte endpointen)."
 
 #. module: pbx_base
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_extension__public_number
@@ -1255,42 +1642,30 @@ msgid "Queue"
 msgstr "Kö"
 
 #. module: pbx_base
-#: model_terms:ir.ui.view,arch_db:pbx_base.res_config_settings_view_form_pbx
-msgid "RabbitMQ (actions + config-transport)"
-msgstr ""
-
-#. module: pbx_base
-#: model:ir.model.fields,field_description:pbx_base.field_res_config_settings__pbx_mq_host
-msgid "RabbitMQ Host"
-msgstr ""
-
-#. module: pbx_base
 #: model:ir.model.fields,field_description:pbx_base.field_res_config_settings__pbx_mq_password
 msgid "RabbitMQ Password"
-msgstr ""
+msgstr "RabbitMQ-lösenord"
 
 #. module: pbx_base
 #: model:ir.model.fields,field_description:pbx_base.field_res_config_settings__pbx_mq_port
 msgid "RabbitMQ Port"
-msgstr ""
+msgstr "RabbitMQ-port"
 
 #. module: pbx_base
 #: model:ir.model.fields,field_description:pbx_base.field_res_config_settings__pbx_mq_user
 msgid "RabbitMQ User"
-msgstr ""
+msgstr "RabbitMQ-användare"
 
 #. module: pbx_base
 #: model:ir.model.fields,field_description:pbx_base.field_res_config_settings__pbx_mq_vhost
 msgid "RabbitMQ Vhost"
-msgstr ""
+msgstr "RabbitMQ-vhost"
 
 #. module: pbx_base
-#: model:ir.model.fields,field_description:pbx_base.field_pbx_extension__rating_ids
-#: model:ir.model.fields,field_description:pbx_base.field_pbx_inbound_route__rating_ids
-#: model:ir.model.fields,field_description:pbx_base.field_pbx_outbound_route__rating_ids
-#: model:ir.model.fields,field_description:pbx_base.field_pbx_trunk__rating_ids
-msgid "Ratings"
-msgstr "Betyg"
+#: model:ir.model.fields,help:pbx_base.field_pbx_sub_extension__config_display
+msgid ""
+"Readable per-parameter SIP configuration (from the device type template)."
+msgstr "Läsbar per-parameter SIP-konfiguration (från enhetstypens mall)."
 
 #. module: pbx_base
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_extension__is_receptionist
@@ -1298,21 +1673,17 @@ msgid "Receptionist"
 msgstr "Receptionist"
 
 #. module: pbx_base
-#: model:ir.model.fields,help:pbx_base.field_pbx_extension__is_receptionist
-msgid ""
-msgstr ""
-
-#. module: pbx_base
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_extension__respect_calendar
-msgid "Respektera kalender"
-msgstr ""
+msgid "Respect Calendar"
+msgstr "Respektera kalender"
 
 #. module: pbx_base
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_extension__respect_schedule
-msgid "Respektera schema"
-msgstr ""
+msgid "Respect Schedule"
+msgstr "Respektera schema"
 
 #. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_call__activity_user_id
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_extension__activity_user_id
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_inbound_route__activity_user_id
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_outbound_route__activity_user_id
@@ -1324,7 +1695,7 @@ msgstr "Ansvarig användare"
 #: model_terms:ir.ui.view,arch_db:pbx_base.pbx_call_list_view
 #: model_terms:ir.ui.view,arch_db:pbx_base.pbx_call_search_view
 msgid "Riktning"
-msgstr ""
+msgstr "Riktning"
 
 #. module: pbx_base
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_extension__ring_strategy
@@ -1339,16 +1710,15 @@ msgstr "Ringningstid"
 #. module: pbx_base
 #: model:ir.model.fields,help:pbx_base.field_pbx_extension__respect_schedule
 msgid ""
-msgstr ""
-"\"\"Ring bara under personens arbetstid (resource.calendar via HR). Utanför "
-"\"\"arbetstid: meddela 'tillbaka {tid}' och gå till röstbrevlåda."
+"Ring only during the person's working hours (resource.calendar via HR). "
+"Outside working hours: announce 'back {time}' and go to voicemail."
+msgstr "Utanför arbetstid: meddela 'tillbaka {time}' och erbjud röstbrevlåda."
 
 #. module: pbx_base
-#: model:ir.model.fields,help:pbx_base.field_pbx_extension__respect_calendar
-msgid ""
+#: model:ir.model.fields,help:pbx_base.field_pbx_sub_extension__sequence
+msgid "Ring order (1 = first). Number has no relation to the ring order."
 msgstr ""
-"\"\"Ring inte när personen är upptagen i kalendern (calendar.event). "
-"Upptagen: \"\"meddela 'tillbaka {tid}' och gå till röstbrevlåda."
+"Ringordning (1 = först). Number har ingen koppling till ringordningen."
 
 #. module: pbx_base
 #: model:ir.model.fields.selection,name:pbx_base.selection__pbx_call__pbx_handling__ringing
@@ -1356,15 +1726,20 @@ msgid "Ringing"
 msgstr "Ringer"
 
 #. module: pbx_base
-#: model:ir.model.fields,help:pbx_base.field_pbx_sub_extension__sequence
-msgid "Ringordning (1 = först). Number har ingen koppling till ringordningen."
-msgstr ""
-"Ringordning (1 = först). Number har ingen koppling till ringordningen."
+#: model_terms:ir.ui.view,arch_db:pbx_base.pbx_sub_extension_form
+#: model_terms:ir.ui.view,arch_db:pbx_base.pbx_sub_extension_list
+msgid "Ringordning"
+msgstr "Ringordning"
 
 #. module: pbx_base
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_outbound_route_trunk__route_id
 msgid "Route"
 msgstr "Rutt"
+
+#. module: pbx_base
+#: model_terms:ir.ui.view,arch_db:pbx_base.pbx_sub_extension_form
+msgid "SIP Configuration"
+msgstr "SIP-konfiguration"
 
 #. module: pbx_base
 #: model:ir.model.fields,field_description:pbx_base.field_res_company__pbx_domain
@@ -1375,6 +1750,7 @@ msgstr "SIP-domän"
 
 #. module: pbx_base
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_extension__password
+#: model_terms:ir.ui.view,arch_db:pbx_base.pbx_extension_form_view
 msgid "SIP Password"
 msgstr "SIP-lösenord"
 
@@ -1387,64 +1763,96 @@ msgstr "SIP-port"
 
 #. module: pbx_base
 #: model:ir.actions.act_window,name:pbx_base.pbx_trunk_act_window
-#: model:ir.ui.menu,name:pbx_base.menu_pbx_trunks
 msgid "SIP Trunks"
 msgstr "SIP-trunkar"
 
 #. module: pbx_base
-#: model:ir.model.fields,help:pbx_base.field_pbx_sub_extension__number
-msgid ""
-msgstr ""
-"\"\"SIP-identitet för enheten (auto-genererat, t.ex. 101 för anknytning 10)."
-" Har\"\" ingen koppling till ringordningen — sequence styr i vilken ordning "
-"\"\"enheterna ringer."
-
-#. module: pbx_base
-#: model:ir.model.fields,field_description:pbx_base.field_pbx_sub_extension__sip_config_display
-msgid "SIP-konfiguration"
-msgstr ""
+#. odoo-javascript
+#: code:addons/pbx_base/static/src/sip_config/sip_config.xml:0
+msgid "SIP configuration"
+msgstr "SIP-konfiguration"
 
 #. module: pbx_base
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_sub_extension__config_display
-msgid "SIP-konfiguration (detalj)"
-msgstr ""
+msgid "SIP configuration (detail)"
+msgstr "SIP-konfiguration (detalj)"
 
 #. module: pbx_base
-#: model:ir.model.fields,field_description:pbx_base.field_pbx_sub_extension__config
-msgid "SIP-konfiguration (resolverad)"
-msgstr ""
+#: model:ir.model.fields,help:pbx_base.field_pbx_sub_extension__number
+msgid ""
+"SIP identity for the device (auto-generated, e.g. 101 for extension 10). Has"
+" no relation to the ring order — sequence determines the order in which the "
+"devices ring."
+msgstr "SIP-identitet för enheten (autogenererad, t.ex. 101 för anknytning 10). Har ingen koppling till ringordningen — sequence avgör ordningen."
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_res_config_settings__pbx_sip_password_length
+#: model_terms:ir.ui.view,arch_db:pbx_base.res_config_settings_view_form_pbx
+msgid "SIP password length"
+msgstr "Längd på SIP-lösenord"
+
+#. module: pbx_base
+#. odoo-python
+#: code:addons/pbx_base/models/pbx_extension.py:0
+msgid "SIP password rotated"
+msgstr "SIP-lösenord roterat"
 
 #. module: pbx_base
 #: model:ir.model.fields,help:pbx_base.field_res_company__pbx_sip_port
-msgid "SIP-port för enheter (5061 för WSS/WebRTC, 5060 för UDP/TCP)"
+msgid "SIP port for devices (5061 for WSS/WebRTC, 5060 for UDP/TCP)"
 msgstr "SIP-port för enheter (5061 för WSS/WebRTC, 5060 för UDP/TCP)"
 
 #. module: pbx_base
 #: model:ir.model.fields,help:pbx_base.field_res_config_settings__pbx_sip_port
-msgid "SIP-port för enheter (per företag)."
+msgid "SIP port for devices (per company)."
 msgstr "SIP-port för enheter (per företag)."
 
 #. module: pbx_base
-#: model:ir.model.fields,field_description:pbx_base.field_res_company__pbx_stun_server
-#: model:ir.model.fields,field_description:pbx_base.field_res_config_settings__pbx_stun_server
-#: model_terms:ir.ui.view,arch_db:pbx_base.res_config_settings_view_form_pbx
-msgid "STUN Server"
-msgstr "STUN-server"
+#: model:ir.model.fields,help:pbx_base.field_pbx_sub_extension__username
+msgid "SIP username (auto-generated as u+number)."
+msgstr "SIP-användarnamn (autogenererat som u+nummer)."
 
 #. module: pbx_base
-#: model:ir.model.fields,field_description:pbx_base.field_res_company__pbx_stun_enabled
-#: model:ir.model.fields,field_description:pbx_base.field_res_config_settings__pbx_stun_enabled
-#: model_terms:ir.ui.view,arch_db:pbx_base.res_config_settings_view_form_pbx
-msgid "STUN aktiverad"
-msgstr ""
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_sub_extension__sip_config_display
+msgid "SIP-konfiguration"
+msgstr "SIP-konfiguration"
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_sub_extension__config
+msgid "SIP-konfiguration (resolverad)"
+msgstr "SIP-konfiguration (resolverad)"
+
+#. module: pbx_base
+#: model:ir.ui.menu,name:pbx_base.menu_pbx_trunks
+msgid "SIP-trunkar"
+msgstr "SIP-trunkar"
 
 #. module: pbx_base
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_sub_extension__secret
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_trunk__secret
 msgid "Secret"
-msgstr ""
+msgstr "Hemlighet"
 
 #. module: pbx_base
+#: model:ir.model.fields,help:pbx_base.field_res_company__pbx_provisioning_token
+msgid ""
+"Secret token for the provisioning endpoint (hardware phones). The phone "
+"sends it as the password in the URL: "
+"https://<domain>:<token>@provision.../<MAC>.cfg"
+msgstr "Hemlig token för provisionerings-endpointen (hårdvarutelefoner). Telefonen skickar den som lösenord i URL:en: https://<domän>/pbx/provisioning/<token>"
+
+#. module: pbx_base
+#: model_terms:ir.ui.view,arch_db:pbx_base.res_config_settings_view_form_pbx
+msgid "Security"
+msgstr "Säkerhet"
+
+#. module: pbx_base
+#: model:ir.model.fields.selection,name:pbx_base.selection__res_company__pbx_config_sync_state__sent
+msgid "Sent"
+msgstr "Skickad"
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_codec_line__sequence
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_inbound_route__sequence
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_outbound_route__sequence
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_outbound_route_trunk__sequence
@@ -1464,15 +1872,34 @@ msgid "Settings"
 msgstr "Inställningar"
 
 #. module: pbx_base
-#: model:ir.model.fields,help:pbx_base.field_res_company__pbx_stun_enabled
-#: model:ir.model.fields,help:pbx_base.field_res_config_settings__pbx_stun_enabled
-msgid "Slå på STUN för enheter bakom NAT (mobil/desktop)."
-msgstr "Slå på STUN för enheter bakom NAT (mobil/desktop)."
+#: model_terms:ir.ui.view,arch_db:pbx_base.pbx_extension_form_view
+msgid "Shared SIP password for all devices. Generate a new one via the icon."
+msgstr "Delat SIP-lösenord för alla enheter. Generera ett nytt via ikonen."
 
 #. module: pbx_base
-#: model:ir.model.fields.selection,name:pbx_base.selection__res_config_settings__pbx_tenant_plan__standard
-msgid "Standard"
-msgstr ""
+#: model:ir.model.fields,help:pbx_base.field_pbx_extension__callerid_name
+msgid ""
+"Shown as the caller ID name on outgoing calls. Filled in from the user's "
+"name when a user is linked — can be overridden manually."
+msgstr "Visas som nummerpresentationsnamn vid utgående samtal. Fylls i från användarens namn när en användare är kopplad — kan åsidosättas"
+
+#. module: pbx_base
+#: model_terms:ir.ui.view,arch_db:pbx_base.pbx_extension_form_view
+msgid ""
+"Shown in the Operator Panel (fallback: caller ID name → username → number)."
+msgstr "Visas i Operator Panel (fallback: nummerpresentationsnamn → användarnamn → nummer)."
+
+#. module: pbx_base
+#: model:ir.model.fields,help:pbx_base.field_pbx_extension__description
+msgid "Shown in the Operator Panel, e.g. 'Reception', 'Anna – Support'"
+msgstr "Visas i Operator Panel, t.ex. 'Reception', 'Anna – Support'"
+
+#. module: pbx_base
+#: model:ir.model.fields,help:pbx_base.field_pbx_trunk__identify_ip
+msgid ""
+"Source IP for inbound trunk calls (identify match). Empty = resolve the "
+"trunk host via DNS at config generation time."
+msgstr "Käll-IP för inkommande trunksamtal (identify-matchning). Tom = trunkens host löses via DNS vid konfigurationsgenerering."
 
 #. module: pbx_base
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_call__start_date
@@ -1486,12 +1913,17 @@ msgid "State"
 msgstr "Status"
 
 #. module: pbx_base
+#: model:ir.model.fields,help:pbx_base.field_pbx_call__activity_state
 #: model:ir.model.fields,help:pbx_base.field_pbx_extension__activity_state
 #: model:ir.model.fields,help:pbx_base.field_pbx_inbound_route__activity_state
 #: model:ir.model.fields,help:pbx_base.field_pbx_outbound_route__activity_state
 #: model:ir.model.fields,help:pbx_base.field_pbx_trunk__activity_state
 msgid ""
-msgstr ""
+"Status based on activities\n"
+"Overdue: Due date is already passed\n"
+"Today: Activity date is today\n"
+"Planned: Future activities."
+msgstr "Status baserad på aktiviteter\nFörsenad: Förfallodatumet har passerat\nIdag: Aktivitetsdatumet är idag\nPlanerad: Framtida aktiviteter."
 
 #. module: pbx_base
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_call__stop_date
@@ -1512,22 +1944,134 @@ msgstr "Underenheter"
 #. module: pbx_base
 #: model:ir.model.constraint,message:pbx_base.constraint_pbx_sub_extension_sub_ext_unique
 msgid "Sub-extension number must be unique per extension!"
-msgstr ""
+msgstr "Underanknytningsnumret måste vara unikt per anknytning!"
 
 #. module: pbx_base
-#: model:ir.ui.menu,name:pbx_base.menu_pbx_sync
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_codec__supported
+#: model_terms:ir.ui.view,arch_db:pbx_base.pbx_codec_search
+msgid "Supported"
+msgstr "Stöds"
+
+#. module: pbx_base
+#. odoo-javascript
+#: code:addons/pbx_base/static/src/codec_list_header_buttons.xml:0
 msgid "Sync"
 msgstr "Synka"
 
 #. module: pbx_base
-#: model:ir.actions.server,name:pbx_base.action_pbx_sync
-msgid "Sync to Asterisk"
-msgstr "Synka till Asterisk"
+#: model:ir.actions.server,name:pbx_base.action_pbx_codec_sync
+msgid "Sync Codecs"
+msgstr "Synka codecs"
 
 #. module: pbx_base
+#: model:ir.model.fields,help:pbx_base.field_res_company__pbx_config_sync_state
+msgid ""
+"Sync status: clean/applied = confirmed, sent = published without "
+"confirmation, error = the daemon reported an error."
+msgstr "Synkstatus: clean/applied = bekräftad, sent = publicerad utan bekräftelse, error = daemonen rapporterade ett fel."
+
+#. module: pbx_base
+#: model:ir.model.fields.selection,name:pbx_base.selection__pbx_device_template__transport__tcp
 #: model:ir.model.fields.selection,name:pbx_base.selection__pbx_sub_extension__transport__tcp
 msgid "TCP"
 msgstr "TCP"
+
+#. module: pbx_base
+#: model_terms:ir.ui.view,arch_db:pbx_base.res_config_settings_view_form_pbx
+msgid "TURN Server"
+msgstr "STUN-server"
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_res_config_settings__pbx_turn_server
+msgid "TURN Server (central)"
+msgstr "TURN-server (central)"
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_res_company__pbx_turn_enabled
+#: model_terms:ir.ui.view,arch_db:pbx_base.res_config_settings_view_form_pbx
+msgid "TURN aktiverad"
+msgstr "STUN aktiverad"
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_res_config_settings__pbx_turn_enabled
+msgid "TURN enabled"
+msgstr "TURN aktiverat"
+
+#. module: pbx_base
+#: model:ir.model.fields,help:pbx_base.field_res_config_settings__pbx_turn_enabled
+msgid ""
+"TURN for devices behind NAT (coturn serves both STUN+TURN on the same "
+"address)."
+msgstr "TURN för enheter bakom NAT (coturn betjänar både STUN+TURN på samma adress)."
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_codec_line__template_id
+msgid "Template"
+msgstr "Mall"
+
+#. module: pbx_base
+#: model:ir.model.fields.selection,name:pbx_base.selection__pbx_codec__kind__text
+msgid "Text"
+msgstr "Text"
+
+#. module: pbx_base
+#: model:ir.model.constraint,message:pbx_base.constraint_pbx_sub_extension_sub_ext_mac_unique
+msgid "The MAC address may only be used by one device!"
+msgstr "MAC-adressen får bara användas av en enhet!"
+
+#. module: pbx_base
+#: model:ir.model.constraint,message:pbx_base.constraint_pbx_codec_name_unique
+msgid "The codec name must be unique!"
+msgstr "Codec-namnet måste vara unikt!"
+
+#. module: pbx_base
+#: model:ir.model.fields,help:pbx_base.field_res_config_settings__pbx_domain
+msgid "The company's SIP domain on the Asterisk server (per company)."
+msgstr "Företagets SIP-domän på Asterisk-servern (per företag)."
+
+#. module: pbx_base
+#: model:ir.model.fields,help:pbx_base.field_res_company__pbx_domain
+msgid "The company's SIP domain on the Asterisk server, e.g. vertel.se"
+msgstr "Företagets SIP-domän på Asterisk-servern, t.ex. vertel.se"
+
+#. module: pbx_base
+#: model:ir.model.fields,help:pbx_base.field_res_config_settings__pbx_odoo_url
+msgid ""
+"The customer's Odoo base URL for availability checks in the generated "
+"dialplan."
+msgstr ""
+"Kundens Odoo-bas-URL för tillgänglighetskontroll i genererad dialplan."
+
+#. module: pbx_base
+#: model:ir.model.fields,help:pbx_base.field_res_company__pbx_odoo_url
+msgid ""
+"The customer's Odoo base URL that the generated dialplan calls for "
+"availability checks (e.g. https://crm.vertel.se). Empty = use web.base.url."
+msgstr "URL"
+
+#. module: pbx_base
+#: model:ir.model.fields,help:pbx_base.field_pbx_sub_extension__codec_ids
+msgid ""
+"The effective codec list for the device (ordered — sequence is the "
+"preference). Left empty → the template default / global default."
+msgstr "Den effektiva codeclistan för enheten (ordnad — sequence är prioriteringen). Lämnad tom → mallens standard / global standard används."
+
+#. module: pbx_base
+#. odoo-python
+#: code:addons/pbx_base/models/pbx_extension.py:0
+msgid "The extension has no active device."
+msgstr "Anknytningen har ingen aktiv enhet."
+
+#. module: pbx_base
+#. odoo-python
+#: code:addons/pbx_base/models/pbx_extension.py:0
+msgid "The extension has no user linked."
+msgstr "Anknytningen har ingen kopplad användare."
+
+#. module: pbx_base
+#: model:ir.model.constraint,message:pbx_base.constraint_pbx_sub_extension_sub_ext_token_unique
+msgid "The provisioning token must be unique!"
+msgstr "Provisioning-token måste vara unik!"
 
 #. module: pbx_base
 #: model:ir.model.fields,help:pbx_base.field_res_users__pbx_extension_id
@@ -1565,9 +2109,21 @@ msgid "Transport"
 msgstr "Transport"
 
 #. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_pbx_device_template__transport
+msgid "Transport (default)"
+msgstr "Transport (standard)"
+
+#. module: pbx_base
 #: model:ir.model.fields,help:pbx_base.field_res_company__config_dirty
-msgid "True när konfigurationsändringar väntar på att synkas till Asterisk."
+msgid "True when configuration changes are waiting to be synced to Asterisk."
 msgstr "True när konfigurationsändringar väntar på att synkas till Asterisk."
+
+#. module: pbx_base
+#: model:ir.model.fields,help:pbx_base.field_res_config_settings__pbx_config_managed
+msgid ""
+"True when pbx_admin/Salt has provisioned the settings via odoo.conf — the "
+"fields become read-only because administration is central."
+msgstr "Sant när pbx_admin/Salt har provisionerat inställningarna via odoo.conf — fälten blir skrivskyddade eftersom administrationen sker centralt."
 
 #. module: pbx_base
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_outbound_route_trunk__trunk_id
@@ -1584,7 +2140,7 @@ msgstr "Trunkar"
 #. module: pbx_base
 #: model_terms:ir.ui.view,arch_db:pbx_base.pbx_outbound_route_form_view
 msgid "Trunks (failover order)"
-msgstr ""
+msgstr "Trunkar (failover-ordning)"
 
 #. module: pbx_base
 #: model:ir.model.fields,help:pbx_base.field_pbx_outbound_route_trunk__continue_
@@ -1594,10 +2150,12 @@ msgstr "Prova nästa trunk när denna misslyckas (upptagen/ej tillgänglig)"
 #. module: pbx_base
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_sub_extension__type
 #: model_terms:ir.ui.view,arch_db:pbx_base.pbx_device_template_search
+#: model_terms:ir.ui.view,arch_db:pbx_base.pbx_sub_extension_search
 msgid "Type"
 msgstr "Typ"
 
 #. module: pbx_base
+#: model:ir.model.fields,help:pbx_base.field_pbx_call__activity_exception_decoration
 #: model:ir.model.fields,help:pbx_base.field_pbx_extension__activity_exception_decoration
 #: model:ir.model.fields,help:pbx_base.field_pbx_inbound_route__activity_exception_decoration
 #: model:ir.model.fields,help:pbx_base.field_pbx_outbound_route__activity_exception_decoration
@@ -1606,14 +2164,23 @@ msgid "Type of the exception activity on record."
 msgstr "Typ av undantagsaktivitet på posten."
 
 #. module: pbx_base
+#: model:ir.model.fields.selection,name:pbx_base.selection__pbx_device_template__transport__udp
 #: model:ir.model.fields.selection,name:pbx_base.selection__pbx_sub_extension__transport__udp
 msgid "UDP"
 msgstr "UDP"
 
 #. module: pbx_base
+#: model:ir.model.fields,help:pbx_base.field_pbx_outbound_route__calendar_id
+msgid ""
+"Used when time_source = Working Hours Calendar. Attendance lines define "
+"working hours, leaves exclude days."
+msgstr "Används när time_source = Working Hours Calendar. Närvarorader definierar arbetstid, ledigheter utesluter dagar."
+
+#. module: pbx_base
 #: model:ir.model,name:pbx_base.model_res_users
 #: model:ir.model.fields,field_description:pbx_base.field_pbx_call__user_id
-#: model_terms:ir.ui.view,arch_db:pbx_base.res_config_settings_view_form_pbx
+#: model_terms:ir.ui.view,arch_db:pbx_base.pbx_call_list_view
+#: model_terms:ir.ui.view,arch_db:pbx_base.pbx_call_search_view
 msgid "User"
 msgstr "Användare"
 
@@ -1624,47 +2191,61 @@ msgid "Username"
 msgstr "Användarnamn"
 
 #. module: pbx_base
-#: model_terms:ir.ui.view,arch_db:pbx_base.pbx_call_search_view
-msgid "Utgående"
-msgstr "Utgående"
+#. odoo-javascript
+#: code:addons/pbx_base/static/src/sip_config/sip_config.xml:0
+msgid "Value"
+msgstr "Värde"
 
 #. module: pbx_base
-#: model_terms:ir.ui.view,arch_db:pbx_base.res_config_settings_view_form_pbx
-msgid "Vhost"
-msgstr "Vhost"
-
-#. module: pbx_base
-#: model:ir.model.fields,help:pbx_base.field_pbx_extension__description
-msgid "Visas i Operator Panel-panelen, t.ex. 'Reception', 'Anna – Support'"
-msgstr ""
+#: model:ir.model.fields.selection,name:pbx_base.selection__pbx_codec__kind__video
+#: model_terms:ir.ui.view,arch_db:pbx_base.pbx_codec_search
+msgid "Video"
+msgstr "Video"
 
 #. module: pbx_base
 #: model:ir.model.fields.selection,name:pbx_base.selection__pbx_call__pbx_handling__voicemail
 #: model:ir.model.fields.selection,name:pbx_base.selection__pbx_device_template__device_type__voicemail
 #: model:ir.model.fields.selection,name:pbx_base.selection__pbx_sub_extension__type__voicemail
 #: model:ir.model.fields.selection,name:pbx_base.selection__voip_call__state__voicemail
+#: model_terms:ir.ui.view,arch_db:pbx_base.pbx_sub_extension_form
+#: model_terms:ir.ui.view,arch_db:pbx_base.pbx_sub_extension_search
 msgid "Voicemail"
 msgstr "Röstbrevlåda"
 
 #. module: pbx_base
 #: model:ir.model,name:pbx_base.model_voip_call
 msgid "Voip OCA Call"
-msgstr ""
+msgstr "Voip OCA-samtal"
 
 #. module: pbx_base
 #: model:ir.model,name:pbx_base.model_voip_pbx
 msgid "Voip Pbx"
-msgstr ""
+msgstr "Voip Pbx"
 
 #. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_res_company__pbx_sip_ws_port
+#: model:ir.model.fields,field_description:pbx_base.field_res_config_settings__pbx_sip_ws_port
+#: model_terms:ir.ui.view,arch_db:pbx_base.res_config_settings_view_form_pbx
+msgid "WebSocket Port"
+msgstr "WebSocket-port"
+
+#. module: pbx_base
+#: model:ir.model.fields.selection,name:pbx_base.selection__pbx_device_template__transport__wss
 #: model:ir.model.fields.selection,name:pbx_base.selection__pbx_sub_extension__transport__wss
 msgid "WebSocket Secure"
-msgstr "WebSocket Secure"
+msgstr "Säker WebSocket"
+
+#. module: pbx_base
+#: model:ir.model.fields,field_description:pbx_base.field_res_company__pbx_ws_server
+#: model:ir.model.fields,field_description:pbx_base.field_res_config_settings__pbx_ws_server
+#: model_terms:ir.ui.view,arch_db:pbx_base.res_config_settings_view_form_pbx
+msgid "WebSocket Server (override)"
+msgstr "WebSocket-server (åsidosättning)"
 
 #. module: pbx_base
 #: model_terms:ir.ui.view,arch_db:pbx_base.res_config_settings_view_form_pbx
 msgid "Webhook (daemon → Odoo)"
-msgstr ""
+msgstr "Webhook (daemon → Odoo)"
 
 #. module: pbx_base
 #: model:ir.model.fields,help:pbx_base.field_pbx_sub_extension__active
@@ -1692,6 +2273,18 @@ msgid "Working Hours Calendar"
 msgstr "Arbetstidskalender"
 
 #. module: pbx_base
+#. odoo-python
+#: code:addons/pbx_base/models/pbx_extension.py:0
+msgid "You can only rotate the password on your own extension."
+msgstr "Du kan bara rotera lösenordet på din egen anknytning."
+
+#. module: pbx_base
+#. odoo-python
+#: code:addons/pbx_base/models/pbx_extension.py:0
+msgid "You have no PBX extension linked."
+msgstr "Du har ingen PBX-anknytning kopplad."
+
+#. module: pbx_base
 #: model_terms:ir.ui.view,arch_db:pbx_base.pbx_inbound_route_form_view
 msgid "e.g. 070-5551234"
 msgstr "t.ex. 070-5551234"
@@ -1707,6 +2300,11 @@ msgid "e.g. Odoo, Yealink, Mobile"
 msgstr "t.ex. Odoo, Yealink, Mobil"
 
 #. module: pbx_base
+#: model:ir.model.fields,help:pbx_base.field_pbx_sub_extension__device_model
+msgid "e.g. T46S — to select the correct shared provisioning config."
+msgstr "t.ex. T46S — för att välja rätt gemensam provisioning-config."
+
+#. module: pbx_base
 #: model:ir.model.fields,help:pbx_base.field_pbx_trunk__name
 msgid "e.g. Telia"
 msgstr "t.ex. Telia"
@@ -1717,12 +2315,16 @@ msgid "e.g. _0. or _00."
 msgstr "t.ex. _0. eller _00."
 
 #. module: pbx_base
-#: model:ir.model.fields,help:pbx_base.field_pbx_sub_extension__device_model
-msgid "t.ex. T46S — för att välja rätt gemensam provisioning-config."
-msgstr "t.ex. T46S — för att välja rätt gemensam provisioning-config."
+#: model:ir.model.fields,help:pbx_base.field_pbx_codec__name
+#: model:ir.model.fields,help:pbx_base.field_pbx_codec_line__codec_name
+msgid "pjsip-namn, t.ex. g722, ulaw, alaw, opus"
+msgstr "pjsip-namn, t.ex. g722, ulaw, alaw, opus"
 
 #. module: pbx_base
-#: model:ir.model.fields,help:pbx_base.field_res_company__pbx_stun_server
-#: model:ir.model.fields,help:pbx_base.field_res_config_settings__pbx_stun_server
-msgid "t.ex. stun.vertel.se:3478"
-msgstr ""
+#: model:ir.model.fields,help:pbx_base.field_pbx_sub_extension__transport
+msgid ""
+"wss for browser/Odoo VOIP (set automatically); udp/tcp for hardware phones "
+"and other devices."
+msgstr "wss för webbläsare/Odoo VOIP (sätts automatiskt); udp/tcp för hårdvarutelefoner och andra enheter."
+
+

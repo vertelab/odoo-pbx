@@ -1,0 +1,53 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* pbx_provisioning
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 18.0-20260801\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-09-15 09:27+0000\n"
+"PO-Revision-Date: 2026-09-15 09:27+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: pbx_provisioning
+#: model:ir.model,name:pbx_provisioning.model_pbx_sub_extension
+msgid "PBX Sub Extension (individual device)"
+msgstr "PBX-underanknytning (enskild enhet)"
+
+#. module: pbx_provisioning
+#: model_terms:ir.ui.view,arch_db:pbx_provisioning.pbx_provisioning_sub_extension_search
+msgid "Provisionerad"
+msgstr "Provisionerad"
+
+#. module: pbx_provisioning
+#: model_terms:ir.ui.view,arch_db:pbx_provisioning.pbx_provisioning_sub_extension_form
+msgid "Provisioning"
+msgstr "Provisionering"
+
+#. module: pbx_provisioning
+#: model:ir.model.fields,field_description:pbx_provisioning.field_pbx_sub_extension__provisioning_qr
+msgid "Provisioning QR"
+msgstr "Provisionerings-QR"
+
+#. module: pbx_provisioning
+#: model:ir.model.fields,field_description:pbx_provisioning.field_pbx_sub_extension__provisioning_url
+msgid "Provisioning URL"
+msgstr "Provisionerings-URL"
+
+#. module: pbx_provisioning
+#: model:ir.model.fields,help:pbx_provisioning.field_pbx_sub_extension__provisioning_qr
+msgid "QR code containing the provisioning URL (for onboarding/label)."
+msgstr "QR-kod som innehåller provisionerings-URL:en (för onboarding/etikett)."
+
+#. module: pbx_provisioning
+#: model:ir.model.fields,help:pbx_provisioning.field_pbx_sub_extension__provisioning_url
+msgid "URL the phone/app fetches its configuration from."
+msgstr "URL som telefonen/appen hämtar sin konfiguration från."
+
+

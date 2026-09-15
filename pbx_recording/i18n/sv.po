@@ -1,0 +1,140 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* pbx_recording
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 18.0-20260801\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-09-15 09:28+0000\n"
+"PO-Revision-Date: 2026-09-15 09:28+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: pbx_recording
+#: model:ir.model.fields,field_description:pbx_recording.field_pbx_recording_policy__active
+msgid "Active"
+msgstr "Aktiv"
+
+#. module: pbx_recording
+#: model:ir.model.fields.selection,name:pbx_recording.selection__pbx_recording_policy__mode__always
+msgid "Always"
+msgstr "Alltid"
+
+#. module: pbx_recording
+#. odoo-javascript
+#: code:addons/pbx_recording/static/src/operator_panel/recording_tile.xml:0
+msgid "Call:"
+msgstr "Samtal:"
+
+#. module: pbx_recording
+#: model:ir.model.fields,field_description:pbx_recording.field_pbx_recording_policy__company_id
+#: model:ir.model.fields.selection,name:pbx_recording.selection__pbx_recording_policy__scope__company
+msgid "Company"
+msgstr "Företag"
+
+#. module: pbx_recording
+#: model:ir.model.fields,field_description:pbx_recording.field_pbx_recording_policy__create_uid
+msgid "Created by"
+msgstr "Skapad av"
+
+#. module: pbx_recording
+#: model:ir.model.fields,field_description:pbx_recording.field_pbx_recording_policy__create_date
+msgid "Created on"
+msgstr "Skapad den"
+
+#. module: pbx_recording
+#: model:ir.model.fields,field_description:pbx_recording.field_pbx_recording_policy__display_name
+msgid "Display Name"
+msgstr "Visningsnamn"
+
+#. module: pbx_recording
+#: model:ir.model.fields,field_description:pbx_recording.field_pbx_recording_policy__extension
+#: model:ir.model.fields,field_description:pbx_recording.field_pbx_recording_policy__extension_id
+#: model:ir.model.fields.selection,name:pbx_recording.selection__pbx_recording_policy__scope__extension
+msgid "Extension"
+msgstr "Anknytning"
+
+#. module: pbx_recording
+#: model:ir.model.fields,field_description:pbx_recording.field_pbx_recording_policy__id
+msgid "ID"
+msgstr "ID"
+
+#. module: pbx_recording
+#: model:ir.model.fields,help:pbx_recording.field_pbx_recording_policy__extension
+msgid ""
+"Internal number in the recording series (8xx). Suggested by 'Next "
+"available'."
+msgstr "Internt nummer i inspelningsserien (8xx). Föreslås av 'Nästa lediga'."
+
+#. module: pbx_recording
+#: model:ir.model.fields,field_description:pbx_recording.field_pbx_recording_policy__write_uid
+msgid "Last Updated by"
+msgstr "Senast uppdaterad av"
+
+#. module: pbx_recording
+#: model:ir.model.fields,field_description:pbx_recording.field_pbx_recording_policy__write_date
+msgid "Last Updated on"
+msgstr "Senast uppdaterad den"
+
+#. module: pbx_recording
+#: model:ir.model.fields,field_description:pbx_recording.field_pbx_recording_policy__mode
+msgid "Mode"
+msgstr "Läge"
+
+#. module: pbx_recording
+#: model:ir.model.fields.selection,name:pbx_recording.selection__pbx_recording_policy__mode__never
+msgid "Never"
+msgstr "Aldrig"
+
+#. module: pbx_recording
+#. odoo-python
+#: code:addons/pbx_recording/models/pbx_recording.py:0
+#: model_terms:ir.ui.view,arch_db:pbx_recording.pbx_recording_policy_form_view
+msgid "Next available"
+msgstr "Nästa lediga"
+
+#. module: pbx_recording
+#. odoo-python
+#: code:addons/pbx_recording/models/pbx_recording.py:0
+msgid "No available numbers in the recording series."
+msgstr "Inga lediga nummer i inspelningsserien."
+
+#. module: pbx_recording
+#: model:ir.model.fields.selection,name:pbx_recording.selection__pbx_recording_policy__mode__on_demand
+msgid "On Demand"
+msgstr "På begäran"
+
+#. module: pbx_recording
+#: model:ir.model,name:pbx_recording.model_pbx_recording_policy
+msgid "PBX Recording Policy"
+msgstr "PBX-inspelningspolicy"
+
+#. module: pbx_recording
+#. odoo-javascript
+#: code:addons/pbx_recording/static/src/operator_panel/recording_tile.xml:0
+#: model:ir.ui.menu,name:pbx_recording.menu_pbx_recording
+msgid "Recording"
+msgstr "Inspelning"
+
+#. module: pbx_recording
+#: model:ir.actions.act_window,name:pbx_recording.pbx_recording_policy_act_window
+msgid "Recording Policies"
+msgstr "Inspelningspolicyer"
+
+#. module: pbx_recording
+#: model:ir.model.fields,field_description:pbx_recording.field_pbx_recording_policy__scope
+msgid "Scope"
+msgstr "Omfattning"
+
+#. module: pbx_recording
+#. odoo-python
+#: code:addons/pbx_recording/models/pbx_recording.py:0
+msgid "Suggesting %s"
+msgstr "Föreslår %s"
+
+

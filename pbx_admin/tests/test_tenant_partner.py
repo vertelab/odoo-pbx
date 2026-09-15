@@ -30,14 +30,14 @@ class TestTenantAsPartner(TransactionCase):
     def test_tenant_flag(self):
         partner = self._make_tenant()
         self.assertTrue(partner.is_pbx_tenant)
-        # visas i tenant-sökningen
+        # shown in the tenant search
         found = self.env["res.partner"].search(
             [("is_pbx_tenant", "=", True)]
         )
         self.assertIn(partner, found)
 
     def test_non_tenant_not_in_kanban_domain(self):
-        normal = self.env["res.partner"].create({"name": "Vanlig kund"})
+        normal = self.env["res.partner"].create({"name": "Ordinary Customer"})
         tenants = self.env["res.partner"].search([("is_pbx_tenant", "=", True)])
         self.assertNotIn(normal, tenants)
 
@@ -57,7 +57,7 @@ class TestTenantAsPartner(TransactionCase):
             tenant.deploy_config()
 
     def test_deploy_non_tenant_raises(self):
-        normal = self.env["res.partner"].create({"name": "Inte tenant"})
+        normal = self.env["res.partner"].create({"name": "Not a tenant"})
         with self.assertRaises(UserError):
             normal.deploy_config()
 
@@ -65,8 +65,8 @@ class TestTenantAsPartner(TransactionCase):
         tenant = self._make_tenant()
         ICP = self.env["ir.config_parameter"].sudo()
         ICP.set_param("pbx_admin.salt_dry_run", "true")
-        # utan minion → dry-run kräver ändå minion (fel först)
-        # sätt en minion utan att salt-api behövs (dry-run bygger bara pillar)
+        # without a minion → dry-run still requires a minion (error first)
+        # set a minion without needing salt-api (dry-run only builds the pillar)
         tenant.minion_id = self.env["salt.minion"].create({"name": "test-minion"}).id
         res = tenant.deploy_config()
         self.assertEqual(res["status"], "dry-run")

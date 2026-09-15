@@ -17,7 +17,8 @@ class PbxTimeCondition(models.Model):
     name = fields.Char(required=True, help="e.g. Office Hours")
     extension = fields.Char(
         string="Extension",
-        help="Internt nummer i applikationsserien (7xx). Föreslås av 'Nästa lediga'.",
+        help="Internal number in the application series (7xx). Suggested by "
+        "'Next available'.",
     )
     timezone = fields.Char(default="Europe/Stockholm")
     days_of_week = fields.Char(
@@ -50,13 +51,13 @@ class PbxTimeCondition(models.Model):
     )
 
     def action_next_free_extension(self):
-        """Föreslå nästa lediga nummer i tidvillkorets serie (7xx)."""
+        """Suggest the next available number in the time condition series (7xx)."""
         self.ensure_one()
         number = self.env["pbx.numbering"]._next_free_service_number(
             self.company_id, "time_condition"
         )
         if not number:
-            raise UserError(_("Inga lediga nummer i tidvillkorsserien."))
+            raise UserError(_("No available numbers in the time condition series."))
         self.extension = number
         return self._notify_suggested(number)
 
@@ -65,8 +66,8 @@ class PbxTimeCondition(models.Model):
             "type": "ir.actions.client",
             "tag": "display_notification",
             "params": {
-                "title": _("Nästa lediga"),
-                "message": _("Föreslår %s") % number,
+                "title": _("Next available"),
+                "message": _("Suggesting %s") % number,
                 "type": "success",
                 "sticky": False,
             },
@@ -134,7 +135,7 @@ class PbxTimeCondition(models.Model):
 
 
 class PbxOutboundRoute(models.Model):
-    """Tillägg på outbound-route när pbx_time_condition är installerat."""
+    """Additions to outbound routes when pbx_time_condition is installed."""
 
     _inherit = "pbx.outbound_route"
 

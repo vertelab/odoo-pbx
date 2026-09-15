@@ -14,8 +14,8 @@
                 t-att-disabled="state.syncing"
             >
                 <i t-attf-class="fa {{pbxSyncIcon()}}"/>
-                <span t-if="state.syncState === 'sent'" class="o_pbx_sync_badge" title="Skickat — väntar på bekräftelse"/>
-                <span t-if="state.syncState === 'error'" class="o_pbx_sync_badge o_pbx_sync_badge_error" title="Fel vid applicering"/>
+                <span t-if="state.syncState === 'sent'" class="o_pbx_sync_badge" title="Sent — waiting for confirmation"/>
+                <span t-if="state.syncState === 'error'" class="o_pbx_sync_badge o_pbx_sync_badge_error" title="Error applying"/>
             </button>
             <i
                 t-else=""

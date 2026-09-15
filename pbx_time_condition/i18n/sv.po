@@ -1,0 +1,365 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* pbx_time_condition
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 18.0-20260801\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-09-15 09:29+0000\n"
+"PO-Revision-Date: 2026-09-15 09:29+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: pbx_time_condition
+#: model:ir.model.fields,field_description:pbx_time_condition.field_pbx_time_condition__message_needaction
+msgid "Action Needed"
+msgstr "Åtgärd krävs"
+
+#. module: pbx_time_condition
+#: model:ir.model.fields,field_description:pbx_time_condition.field_pbx_time_condition__active
+msgid "Active"
+msgstr "Aktiv"
+
+#. module: pbx_time_condition
+#: model:ir.model.fields,field_description:pbx_time_condition.field_pbx_time_condition__activity_ids
+msgid "Activities"
+msgstr "Aktiviteter"
+
+#. module: pbx_time_condition
+#: model:ir.model.fields,field_description:pbx_time_condition.field_pbx_time_condition__activity_exception_decoration
+msgid "Activity Exception Decoration"
+msgstr "Dekoration för aktivitetsundantag"
+
+#. module: pbx_time_condition
+#: model:ir.model.fields,field_description:pbx_time_condition.field_pbx_time_condition__activity_state
+msgid "Activity State"
+msgstr "Aktivitetsstatus"
+
+#. module: pbx_time_condition
+#: model:ir.model.fields,field_description:pbx_time_condition.field_pbx_time_condition__activity_type_icon
+msgid "Activity Type Icon"
+msgstr "Ikon för aktivitetstyp"
+
+#. module: pbx_time_condition
+#: model:ir.model.fields,field_description:pbx_time_condition.field_pbx_time_condition__message_attachment_count
+msgid "Attachment Count"
+msgstr "Antal bilagor"
+
+#. module: pbx_time_condition
+#: model:ir.model.fields,field_description:pbx_time_condition.field_pbx_time_condition__company_id
+msgid "Company"
+msgstr "Företag"
+
+#. module: pbx_time_condition
+#: model:ir.model.fields,field_description:pbx_time_condition.field_pbx_time_condition__create_uid
+msgid "Created by"
+msgstr "Skapad av"
+
+#. module: pbx_time_condition
+#: model:ir.model.fields,field_description:pbx_time_condition.field_pbx_time_condition__create_date
+msgid "Created on"
+msgstr "Skapad den"
+
+#. module: pbx_time_condition
+#: model:ir.model.fields,field_description:pbx_time_condition.field_pbx_time_condition__days_of_week
+msgid "Days Of Week"
+msgstr "Veckodagar"
+
+#. module: pbx_time_condition
+#: model:ir.model.fields,help:pbx_time_condition.field_pbx_time_condition__days_of_week
+msgid "Days: mon,tue,wed,thu,fri,sat,sun or ranges like mon-fri"
+msgstr "Dagar: mon,tue,wed,thu,fri,sat,sun eller intervall som mon-fri"
+
+#. module: pbx_time_condition
+#: model:ir.model.fields,field_description:pbx_time_condition.field_pbx_time_condition__display_name
+msgid "Display Name"
+msgstr "Visningsnamn"
+
+#. module: pbx_time_condition
+#: model:ir.model.fields,field_description:pbx_time_condition.field_pbx_time_condition__end_time
+msgid "End Time"
+msgstr "Sluttid"
+
+#. module: pbx_time_condition
+#: model:ir.model.fields,help:pbx_time_condition.field_pbx_time_condition__end_time
+msgid "End time (17.0 = 17:00)"
+msgstr "Sluttid (17.0 = 17:00)"
+
+#. module: pbx_time_condition
+#: model:ir.model.fields,field_description:pbx_time_condition.field_pbx_time_condition__extension
+msgid "Extension"
+msgstr "Anknytning"
+
+#. module: pbx_time_condition
+#: model:ir.model.fields,field_description:pbx_time_condition.field_pbx_time_condition__message_follower_ids
+msgid "Followers"
+msgstr "Följare"
+
+#. module: pbx_time_condition
+#: model:ir.model.fields,field_description:pbx_time_condition.field_pbx_time_condition__message_partner_ids
+msgid "Followers (Partners)"
+msgstr "Följare (partner)"
+
+#. module: pbx_time_condition
+#: model:ir.model.fields,help:pbx_time_condition.field_pbx_time_condition__activity_type_icon
+msgid "Font awesome icon e.g. fa-tasks"
+msgstr "Font Awesome-ikon, t.ex. fa-tasks"
+
+#. module: pbx_time_condition
+#: model:ir.model.fields,field_description:pbx_time_condition.field_pbx_time_condition__has_message
+msgid "Has Message"
+msgstr "Har meddelande"
+
+#. module: pbx_time_condition
+#: model:ir.model.fields,field_description:pbx_time_condition.field_pbx_time_condition__holidays_calendar_id
+msgid "Holiday Calendar"
+msgstr "Helgdagskalender"
+
+#. module: pbx_time_condition
+#: model:ir.model.fields,field_description:pbx_time_condition.field_pbx_time_condition__id
+msgid "ID"
+msgstr "ID"
+
+#. module: pbx_time_condition
+#: model:ir.model.fields,field_description:pbx_time_condition.field_pbx_time_condition__activity_exception_icon
+msgid "Icon"
+msgstr "Ikon"
+
+#. module: pbx_time_condition
+#: model:ir.model.fields,help:pbx_time_condition.field_pbx_time_condition__activity_exception_icon
+msgid "Icon to indicate an exception activity."
+msgstr "Ikon som anger en undantagsaktivitet."
+
+#. module: pbx_time_condition
+#: model:ir.model.fields,help:pbx_time_condition.field_pbx_time_condition__message_needaction
+msgid "If checked, new messages require your attention."
+msgstr "Om markerad kräver nya meddelanden din uppmärksamhet."
+
+#. module: pbx_time_condition
+#: model:ir.model.fields,help:pbx_time_condition.field_pbx_time_condition__message_has_error
+#: model:ir.model.fields,help:pbx_time_condition.field_pbx_time_condition__message_has_sms_error
+msgid "If checked, some messages have a delivery error."
+msgstr "Om markerad har vissa meddelanden ett leveransfel."
+
+#. module: pbx_time_condition
+#: model:ir.model.fields,help:pbx_time_condition.field_pbx_time_condition__extension
+msgid ""
+"Internal number in the application series (7xx). Suggested by 'Next "
+"available'."
+msgstr "Internt nummer i applikationsserien (7xx). Föreslås av 'Nästa lediga'."
+
+#. module: pbx_time_condition
+#: model:ir.model.fields,field_description:pbx_time_condition.field_pbx_time_condition__message_is_follower
+msgid "Is Follower"
+msgstr "Är följare"
+
+#. module: pbx_time_condition
+#: model:ir.model.fields,field_description:pbx_time_condition.field_pbx_time_condition__write_uid
+msgid "Last Updated by"
+msgstr "Senast uppdaterad av"
+
+#. module: pbx_time_condition
+#: model:ir.model.fields,field_description:pbx_time_condition.field_pbx_time_condition__write_date
+msgid "Last Updated on"
+msgstr "Senast uppdaterad den"
+
+#. module: pbx_time_condition
+#: model:ir.model.fields,field_description:pbx_time_condition.field_pbx_time_condition__activity_main_partner_id
+msgid "Main Contact"
+msgstr "Huvudkontakt"
+
+#. module: pbx_time_condition
+#: model:ir.model.fields,field_description:pbx_time_condition.field_pbx_time_condition__destination_match_id
+msgid "Match Destination"
+msgstr "Matchande destination"
+
+#. module: pbx_time_condition
+#: model:ir.model.fields,field_description:pbx_time_condition.field_pbx_time_condition__message_has_error
+msgid "Message Delivery error"
+msgstr "Meddelandeleveransfel"
+
+#. module: pbx_time_condition
+#: model:ir.model.fields,field_description:pbx_time_condition.field_pbx_time_condition__message_ids
+msgid "Messages"
+msgstr "Meddelanden"
+
+#. module: pbx_time_condition
+#: model:ir.model.fields,field_description:pbx_time_condition.field_pbx_time_condition__my_activity_date_deadline
+msgid "My Activity Deadline"
+msgstr "Min aktivitetsdeadline"
+
+#. module: pbx_time_condition
+#: model:ir.model.fields,field_description:pbx_time_condition.field_pbx_time_condition__name
+msgid "Name"
+msgstr "Namn"
+
+#. module: pbx_time_condition
+#: model:ir.model.fields,field_description:pbx_time_condition.field_pbx_time_condition__activity_calendar_event_id
+msgid "Next Activity Calendar Event"
+msgstr "Nästa aktivitetskalenderhändelse"
+
+#. module: pbx_time_condition
+#: model:ir.model.fields,field_description:pbx_time_condition.field_pbx_time_condition__activity_date_deadline
+msgid "Next Activity Deadline"
+msgstr "Nästa aktivitetsdeadline"
+
+#. module: pbx_time_condition
+#: model:ir.model.fields,field_description:pbx_time_condition.field_pbx_time_condition__activity_summary
+msgid "Next Activity Summary"
+msgstr "Nästa aktivitetssammanfattning"
+
+#. module: pbx_time_condition
+#: model:ir.model.fields,field_description:pbx_time_condition.field_pbx_time_condition__activity_type_id
+msgid "Next Activity Type"
+msgstr "Nästa aktivitetstyp"
+
+#. module: pbx_time_condition
+#. odoo-python
+#: code:addons/pbx_time_condition/models/pbx_time_condition.py:0
+#: model_terms:ir.ui.view,arch_db:pbx_time_condition.pbx_time_condition_form_view
+msgid "Next available"
+msgstr "Nästa lediga"
+
+#. module: pbx_time_condition
+#. odoo-python
+#: code:addons/pbx_time_condition/models/pbx_time_condition.py:0
+msgid "No available numbers in the time condition series."
+msgstr "Inga lediga nummer i tidsvillkorsserien."
+
+#. module: pbx_time_condition
+#: model:ir.model.fields,field_description:pbx_time_condition.field_pbx_time_condition__destination_nomatch_id
+msgid "No-Match Destination"
+msgstr "Icke-matchande destination"
+
+#. module: pbx_time_condition
+#: model:ir.model.fields,field_description:pbx_time_condition.field_pbx_time_condition__message_needaction_counter
+msgid "Number of Actions"
+msgstr "Antal åtgärder"
+
+#. module: pbx_time_condition
+#: model:ir.model.fields,field_description:pbx_time_condition.field_pbx_time_condition__message_has_error_counter
+msgid "Number of errors"
+msgstr "Antal fel"
+
+#. module: pbx_time_condition
+#: model:ir.model.fields,help:pbx_time_condition.field_pbx_time_condition__message_needaction_counter
+msgid "Number of messages requiring action"
+msgstr "Antal meddelanden som kräver åtgärd"
+
+#. module: pbx_time_condition
+#: model:ir.model.fields,help:pbx_time_condition.field_pbx_time_condition__message_has_error_counter
+msgid "Number of messages with delivery error"
+msgstr "Antal meddelanden med leveransfel"
+
+#. module: pbx_time_condition
+#: model:ir.model,name:pbx_time_condition.model_pbx_outbound_route
+msgid "PBX Outbound Route"
+msgstr "PBX utgående rutt"
+
+#. module: pbx_time_condition
+#: model:ir.model,name:pbx_time_condition.model_pbx_time_condition
+msgid "PBX Time Condition"
+msgstr "PBX-tidsvillkor"
+
+#. module: pbx_time_condition
+#: model:ir.model.fields,field_description:pbx_time_condition.field_pbx_time_condition__activity_user_id
+msgid "Responsible User"
+msgstr "Ansvarig användare"
+
+#. module: pbx_time_condition
+#: model:ir.model.fields,field_description:pbx_time_condition.field_pbx_time_condition__message_has_sms_error
+msgid "SMS Delivery error"
+msgstr "SMS-leveransfel"
+
+#. module: pbx_time_condition
+#: model_terms:ir.ui.view,arch_db:pbx_time_condition.pbx_time_condition_form_view
+msgid "Schedule"
+msgstr "Schema"
+
+#. module: pbx_time_condition
+#: model:ir.model.fields,field_description:pbx_time_condition.field_pbx_time_condition__start_time
+msgid "Start Time"
+msgstr "Starttid"
+
+#. module: pbx_time_condition
+#: model:ir.model.fields,help:pbx_time_condition.field_pbx_time_condition__start_time
+msgid "Start time (8.0 = 08:00)"
+msgstr "Starttid (8.0 = 08:00)"
+
+#. module: pbx_time_condition
+#: model:ir.model.fields,help:pbx_time_condition.field_pbx_time_condition__activity_state
+msgid ""
+"Status based on activities\n"
+"Overdue: Due date is already passed\n"
+"Today: Activity date is today\n"
+"Planned: Future activities."
+msgstr "Status baserad på aktiviteter\nFörsenad: Förfallodatumet har passerat\nIdag: Aktivitetsdatumet är idag\nPlanerad: Framtida aktiviteter."
+
+#. module: pbx_time_condition
+#. odoo-python
+#: code:addons/pbx_time_condition/models/pbx_time_condition.py:0
+msgid "Suggesting %s"
+msgstr "Föreslår %s"
+
+#. module: pbx_time_condition
+#: model:ir.model.fields,field_description:pbx_time_condition.field_pbx_outbound_route__time_condition_id
+msgid "Time Condition"
+msgstr "Tidsvillkor"
+
+#. module: pbx_time_condition
+#: model:ir.actions.act_window,name:pbx_time_condition.pbx_time_condition_act_window
+#: model:ir.ui.menu,name:pbx_time_condition.menu_pbx_time_conditions
+msgid "Time Conditions"
+msgstr "Tidsvillkor"
+
+#. module: pbx_time_condition
+#: model:ir.model.fields,field_description:pbx_time_condition.field_pbx_time_condition__timezone
+msgid "Timezone"
+msgstr "Tidszon"
+
+#. module: pbx_time_condition
+#: model:ir.model.fields,help:pbx_time_condition.field_pbx_time_condition__activity_exception_decoration
+msgid "Type of the exception activity on record."
+msgstr "Typ av undantagsaktivitet på posten."
+
+#. module: pbx_time_condition
+#: model:ir.model.fields,help:pbx_time_condition.field_pbx_outbound_route__time_condition_id
+msgid "Used when time_source = Time Condition"
+msgstr "Används när time_source = Time Condition"
+
+#. module: pbx_time_condition
+#: model:ir.model.fields,field_description:pbx_time_condition.field_pbx_time_condition__website_message_ids
+msgid "Website Messages"
+msgstr "Webbplatsmeddelanden"
+
+#. module: pbx_time_condition
+#: model:ir.model.fields,help:pbx_time_condition.field_pbx_time_condition__website_message_ids
+msgid "Website communication history"
+msgstr "Kommunikationshistorik för webbplatsen"
+
+#. module: pbx_time_condition
+#: model_terms:ir.ui.view,arch_db:pbx_time_condition.pbx_time_condition_form_view
+msgid "When time MATCHES — route to:"
+msgstr "När tiden MATCHAR — dirigera till:"
+
+#. module: pbx_time_condition
+#: model_terms:ir.ui.view,arch_db:pbx_time_condition.pbx_time_condition_form_view
+msgid "When time does NOT match — route to:"
+msgstr "När tiden INTE matchar — dirigera till:"
+
+#. module: pbx_time_condition
+#: model:ir.model.fields,help:pbx_time_condition.field_pbx_time_condition__name
+msgid "e.g. Office Hours"
+msgstr "t.ex. Kontorstid"
+
+#. module: pbx_time_condition
+#: model:ir.model.fields,help:pbx_time_condition.field_pbx_time_condition__holidays_calendar_id
+msgid "resource.calendar whose leaves are treated as no-match days"
+msgstr "resource.calendar vars ledigheter behandlas som icke-matchande dagar"
+
+

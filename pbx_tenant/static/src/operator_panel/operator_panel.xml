@@ -18,7 +18,7 @@
                     <t t-foreach="state.extensions" t-as="ext" t-key="ext.key">
                         <div
                             class="o_pbx_operator_panel_tile o_pbx_state_{state.states[ext.key] || 'gray'}"
-                            title="Click-to-call — släpp ett samtal här för transfer"
+                            title="Click-to-call — drop a call here to transfer"
                             t-on-click="() => this.originate(ext.key)"
                             t-on-dragover="(ev) => this.onDragOver(ev)"
                             t-on-drop="(ev) => this.onDropToAgent(ev, ext)"
@@ -32,7 +32,7 @@
                     <t t-foreach="state.queues" t-as="q" t-key="q.key">
                         <div
                             class="o_pbx_operator_panel_tile o_pbx_queue_tile o_pbx_state_{(state.waiting[q.description] || 0) > 0 ? 'yellow' : 'green'}"
-                            title="Click-to-call till kö — släpp ett samtal här för transfer"
+                            title="Click-to-call to queue — drop a call here to transfer"
                             t-on-click="() => this.originate('queue:' + q.description)"
                             t-on-dragover="(ev) => this.onDragOver(ev)"
                             t-on-drop="(ev) => this.onDropToQueue(ev, q)"
@@ -40,9 +40,9 @@
                             <div class="o_pbx_operator_panel_num"><t t-esc="q.key"/></div>
                             <div class="o_pbx_operator_panel_desc"><t t-esc="q.description"/></div>
                             <div t-if="state.waiting[q.description]" class="o_pbx_operator_panel_badge">
-                                <t t-esc="state.waiting[q.description]"/> väntar
+                                <t t-esc="state.waiting[q.description]"/> waiting
                             </div>
-                            <div t-if="q.is_manual" class="o_pbx_operator_panel_badge o_pbx_manual_badge">manuell</div>
+                            <div t-if="q.is_manual" class="o_pbx_operator_panel_badge o_pbx_manual_badge">manual</div>
                         </div>
                     </t>
 
@@ -75,7 +75,7 @@
                                 >✕</button>
                             </div>
                         </t>
-                        <span t-if="state.incoming.length === 0" class="text-muted">Inga inkommande samtal</span>
+                        <span t-if="state.incoming.length === 0" class="text-muted">No incoming calls</span>
                     </div>
 
                     <div class="o_pbx_operator_panel_section" t-if="state.isReceptionist">
@@ -95,7 +95,7 @@
                                 >✕</button>
                             </div>
                         </t>
-                        <span t-if="state.manual.length === 0" class="text-muted">Inga väntande manuella samtal</span>
+                        <span t-if="state.manual.length === 0" class="text-muted">No manual calls waiting</span>
                     </div>
                 </div>
             </t>

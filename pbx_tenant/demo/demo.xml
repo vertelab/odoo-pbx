@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
-        <!-- Företagets SIP-domän (multicompany: domänen ligger på res.company) -->
+        <!-- Company SIP domain (multicompany: the domain lives on res.company) -->
         <record id="base.main_company" model="res.company">
             <field name="pbx_domain">vertel.test</field>
             <field name="pbx_server_host">localhost</field>
         </record>
 
         <!-- Anknytningar med beskrivning (Operator Panel-grid).
-             Instansen administrerar bara sin egen växel (company). -->
+             The instance administers only its own PBX (company). -->
         <record id="demo_ext_reception" model="pbx.extension">
             <field name="public_number">10</field>
             <field name="user_id" ref="base.user_admin"/>
@@ -26,8 +26,8 @@
 
         <record id="demo_ext_bjorn" model="pbx.extension">
             <field name="public_number">12</field>
-            <field name="callerid_name">Björn</field>
-            <field name="description">Björn – Ledning</field>
+            <field name="callerid_name">Bruno</field>
+            <field name="description">Bruno – Management</field>
         </record>
 
         <!-- Sub-anknytningar -->
@@ -64,18 +64,18 @@
         <record id="demo_sub_bjorn_2" model="pbx.sub_extension">
             <field name="extension_id" ref="demo_ext_bjorn"/>
             <field name="number">122</field>
-            <field name="label">Röstbrevlåda</field>
+            <field name="label">Voicemail</field>
             <field name="type">voicemail</field>
             <field name="sequence">2</field>
         </record>
 
-        <!-- Admin får receptionist-anknytningen (Operator Panel visar allt) + PBX-grupper -->
+        <!-- Admin gets the receptionist extension (the Operator Panel shows everything) + PBX groups -->
         <record id="base.user_admin" model="res.users">
             <field name="pbx_extension_id" ref="demo_ext_reception"/>
             <field name="groups_id" eval="[(4, ref('pbx_base.group_pbx_operator')), (4, ref('pbx_base.group_pbx_admin'))]"/>
         </record>
 
-        <!-- Test-token för webhook (daemon → Odoo) -->
+        <!-- Test token for the webhook (daemon → Odoo) -->
         <record id="demo_webhook_token" model="ir.config_parameter">
             <field name="key">pbx.webhook.token</field>
             <field name="value">test-token-123</field>
@@ -90,6 +90,6 @@
     <field name="name">Vertel Test</field>
     <field name="is_pbx_tenant">True</field>
     <field name="domain">vertel.test</field>
-    <field name="comment">Demotenant för PBX-test.</field>
+    <field name="comment">Demo tenant for PBX testing.</field>
 </record>
 </odoo>

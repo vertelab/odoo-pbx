@@ -22,9 +22,9 @@ class VoicemailService(models.AbstractModel):
             - callerid_num: caller number
             - callerid_name: caller name
             - duration: recording duration in seconds
-            - file_path: path to .wav file on Asterisk server (samma maskin)
-            - audio_base64: inspelningen som base64 (daemonen läser spoolen
-              åt Odoo när de ligger på olika maskiner)
+            - file_path: path to .wav file on the Asterisk server (same machine)
+            - audio_base64: the recording as base64 (the daemon reads the spool
+              for Odoo when they run on different machines)
         """
         domain = event_data.get("domain", "")
         mailbox = event_data.get("mailbox", "")
@@ -34,8 +34,8 @@ class VoicemailService(models.AbstractModel):
         file_path = event_data.get("file_path", "")
         audio_base64 = event_data.get("audio_base64", "") or ""
 
-        # Find the extension. Instansen administrerar bara sin egen växel
-        # (company-scopad via ir.rule) — ingen tenant-post krävs lokalt.
+        # Find the extension. The instance only manages its own PBX
+        # (company-scoped via ir.rule) — no tenant record is needed locally.
         public_number = mailbox.split("@")[0] if "@" in mailbox else mailbox
         extension = self.env["pbx.extension"].search(
             [("public_number", "=", public_number)],
@@ -55,8 +55,8 @@ class VoicemailService(models.AbstractModel):
         if partner:
             caller_name = partner.display_name
 
-        # Create attachment from audio (base64 från daemonen, eller lokal fil
-        # när Odoo och Asterisk delar maskin)
+        # Create attachment from audio (base64 from the daemon, or a local file
+        # when Odoo and Asterisk share a machine)
         attachment = None
         if audio_base64:
             try:
@@ -106,21 +106,21 @@ class VoicemailService(models.AbstractModel):
                 "duration": duration,
                 "audio_attachment_id": attachment.id if attachment else False,
                 "call_id": call.id,
-                # sudo()-kontext (webhook) har ingen env.company — ta från
-                # anknytningen
+                # sudo() context (webhook) has no env.company — take it from
+                # the extension
                 "company_id": extension.company_id.id,
             }
         )
-        # Länka attachment till MOTTAGAREN (bilaga på mottagarens partner),
-        # inte till pbx.voicemail.message — så inspelningen syns som bilaga på
-        # den som fick samtalet. audio_attachment_id på meddelandet behålls
-        # för formuläret.
+        # Link the attachment to the RECEIVER (attachment on the receiver's partner),
+        # not to pbx.voicemail.message — so the recording shows up as an attachment on
+        # the person who received the call. audio_attachment_id on the message is kept
+        # for the form.
         if attachment:
             receiver = extension.user_id.partner_id or extension.company_id.partner_id
             attachment.write({"res_model": "res.partner", "res_id": receiver.id})
 
-        # Notify user (defensivt — får inte blockera lagringen; notify_info
-        # finns inte på res.users i alla Odoo-versioner)
+        # Notify user (defensive — must not block the storage; notify_info
+        # does not exist on res.users in all Odoo versions)
         if extension.user_id:
             try:
                 extension.user_id.notify_info(

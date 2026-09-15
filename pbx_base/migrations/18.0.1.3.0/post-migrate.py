@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
-"""Migrate to 18.0.1.3.0: flytta global SIP-domän till res.company.
+"""Migrate to 18.0.1.3.0: move the global SIP domain to res.company.
 
-Före: domänen låg i ir_config_parameter 'pbx.domain' (en global setting).
-Efter: multicompany — varje företag har egen pbx_domain på res.company.
+Before: the domain lived in ir_config_parameter 'pbx.domain' (a global setting).
+After: multicompany — each company has its own pbx_domain on res.company.
 
-Kopierar värdet till huvudföretaget (id 1) om det inte redan är satt,
-och rensar den globala parametern (ersatt av per-företag).
+Copies the value to the main company (id 1) if it is not already set,
+and clears the global parameter (replaced by per-company).
 """
 
 import logging
@@ -24,9 +24,9 @@ def migrate(cr, version):
             "WHERE id = 1 AND (pbx_domain IS NULL OR pbx_domain = '')",
             (row[0],),
         )
-        _logger.info("pbx.domain '%s' flyttad till res.company (id=1)", row[0])
+        _logger.info("pbx.domain '%s' moved to res.company (id=1)", row[0])
     cr.execute("DELETE FROM ir_config_parameter WHERE key = 'pbx.domain'")
-    # server-host/api-key flyttas också (om de fanns)
+    # server-host/api-key are moved too (if they existed)
     for old_key, new_col in (
         ("pbx.server.host", "pbx_server_host"),
         ("pbx.api.key", "pbx_api_key"),
@@ -44,4 +44,4 @@ def migrate(cr, version):
         cr.execute(
             "DELETE FROM ir_config_parameter WHERE key = %s", (old_key,)
         )
-    _logger.info("Migration 18.0.1.3.0 klar: SIP-domän per företag")
+    _logger.info("Migration 18.0.1.3.0 done: SIP domain per company")

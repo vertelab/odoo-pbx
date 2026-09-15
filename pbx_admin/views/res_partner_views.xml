@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <!-- is_pbx_tenant på standard-partnerformuläret (Misc-gruppen, i höjd med company) -->
+    <!-- is_pbx_tenant on the standard partner form (Misc group, level with company) -->
     <record id="res_partner_pbx_tenant_flag" model="ir.ui.view">
         <field name="name">res.partner.pbx.tenant.flag</field>
         <field name="model">res.partner</field>
@@ -54,7 +54,7 @@
         </field>
     </record>
 
-    <!-- Tenant form: helt eget formulär — namn/bild + PBX-unika fält + länk till res.partner -->
+    <!-- Tenant form: entirely its own form — name/image + PBX-specific fields + link to res.partner -->
     <record id="pbx_tenant_form" model="ir.ui.view">
         <field name="name">res.partner.tenant.form</field>
         <field name="model">res.partner</field>
@@ -62,10 +62,10 @@
         <field name="arch" type="xml">
             <form string="PBX Tenant">
                 <header>
-                    <button name="deploy_config" type="object" string="Minion-sync"
+                    <button name="deploy_config" type="object" string="Minion Sync"
                             class="btn-primary" icon="fa-cloud-upload"
-                            confirm="Deploya växelinfo till minionen? (salt state.apply odoo.pbx)"/>
-                    <button name="action_open_partner" type="object" string="Öppna partner"
+                            confirm="Deploy PBX information to the minion? (salt state.apply odoo.pbx)"/>
+                    <button name="action_open_partner" type="object" string="Open Partner"
                             class="btn-secondary" icon="fa-external-link"/>
                 </header>
                 <sheet>
@@ -78,8 +78,8 @@
                         <group>
                             <field name="domain"/>
                             <button name="action_derive_domain_from_website" type="object"
-                                    string="Härled från webbplats" icon="fa-globe"
-                                    class="btn-link" help="Fyll SIP-domänen från partnerns webbplats (https://www.kund.se → kund.se)"/>
+                                    string="Derive from Website" icon="fa-globe"
+                                    class="btn-link" help="Fill the SIP domain from the partner's website (https://www.customer.com → customer.com)"/>
                             <field name="server_id"/>
                             <field name="minion_id"/>
                         </group>
@@ -88,13 +88,13 @@
                             <field name="last_deploy"/>
                         </group>
                     </group>
-                    <group string="Deploy-logg">
+                    <group string="Deploy Log">
                         <field name="deploy_log" readonly="1" nolabel="1"
-                               placeholder="Minion-sync-logg…"/>
+                               placeholder="Minion sync log…"/>
                     </group>
                     <notebook>
                         <page string="Notes" name="pbx_tenant_notes">
-                            <field name="comment" nolabel="1" placeholder="Anteckningar om tenanten…"/>
+                            <field name="comment" nolabel="1" placeholder="Notes about the tenant…"/>
                         </page>
                     </notebook>
                 </sheet>

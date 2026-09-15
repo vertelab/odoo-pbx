@@ -17,37 +17,37 @@ class PbxAI(models.AbstractModel):
     _inherit = ["pbx.plugin"]
     _description = "PBX AI Bridge — Odoo Mind integration"
 
-    # ── Inspelning redo → publicera transcribe-jobb (lokal transcriber) ──
+    # ── Recording ready -> publish transcribe job (local transcriber) ──
 
     def on_recording_ready(self, voip_call, attachment):
         """Called by pbx_recording when a recording is available.
 
-        Bestäm om samtalet ska transkriberas (tri-state recording_mode eller
-        voicemail-opt-in) och publicera ett transcribe-jobb till den lokala
-        pbx-transcriberen (fors). Resultatet hanteras i
+        Decide whether the call should be transcribed (tri-state recording_mode
+        or voicemail opt-in) and publish a transcribe job to the local
+        pbx-transcriber (fors). The result is handled in
         handle_transcribe_result (via webhook).
         """
         if not self._should_transcribe(voip_call):
             return
         if not self._publish_transcribe_job(voip_call, attachment):
-            # Fallback om MQ saknas: transkribera direkt via provider
+            # Fallback when MQ is unavailable: transcribe directly via the provider
             self._transcribe_and_document(voip_call, attachment)
 
-    # ── Policy-upplösning ────────────────────────────────────────────
+    # ── Policy resolution ────────────────────────────────────────────
 
     def _should_transcribe(self, voip_call):
-        """Avgör om samtalet ska transkriberas:
-        (a) voicemail-samtal med brevlåda som har transcribe_voicemail, eller
-        (b) anknytningens upplösta recording_mode == transcribe."""
+        """Decide whether the call should be transcribed:
+        (a) voicemail call whose mailbox has transcribe_voicemail, or
+        (b) the extension's resolved recording_mode == transcribe."""
         if not voip_call:
             return False
         if voip_call.pbx_handling == 'voicemail' or voip_call.type_call == 'voicemail':
-            # Voicemail: kräver opt-in per brevlåda (device)
+            # Voicemail: requires per-mailbox opt-in (device)
             device = self._voicemail_device(voip_call)
             if device and device.transcribe_voicemail:
                 return True
-            # Bakåtkompatibilitet: gammalt beteende transkriberade alla
-            # voicemail — nu opt-in, men tillåt företags-policy
+            # Backwards compatibility: the old behaviour transcribed all
+            # voicemail — now opt-in, but allow a company policy
             policy = self.env["pbx.recording.policy"].search(
                 [("scope", "=", "company"), ("active", "=", True)], limit=1
             )
@@ -57,12 +57,12 @@ class PbxAI(models.AbstractModel):
             if mode == "transcribe":
                 return True
             if mode == "record" and voip_call.extension_id.transcribe_enabled:
-                # Deprecerad kombination: transcribe_enabled tvingar ändå
+                # Deprecated combination: transcribe_enabled still forces it
                 return True
         return False
 
     def _voicemail_device(self, voip_call):
-        """Hitta voicemail-enheten (pbx.sub_extension) för samtalet."""
+        """Find the voicemail device (pbx.sub_extension) for the call."""
         try:
             if voip_call.extension_id:
                 dev = self.env["pbx.sub_extension"].search(
@@ -87,13 +87,13 @@ class PbxAI(models.AbstractModel):
             _logger.warning("voicemail device lookup failed: %s", e)
         return self.env["pbx.sub_extension"]
 
-    # ── Publicera transcribe-jobb (lokal pbx-transcriber, fors) ──────
+    # ── Publish transcribe job (local pbx-transcriber, fors) ─────────
 
     def _publish_transcribe_job(self, voip_call, attachment):
-        """Publicera pbx.job.transcribe med ljudet (base64) via pbx.mq.publisher.
+        """Publish pbx.job.transcribe with the audio (base64) via pbx.mq.publisher.
 
-        Returns True om jobbet publicerades, False om MQ saknas (caller
-        får då fallbacka till direkt transkribering).
+        Returns True if the job was published, False if MQ is unavailable (the
+        caller then falls back to direct transcription).
         """
         publisher = self.env.get("pbx.mq.publisher")
         if not publisher:
@@ -111,7 +111,7 @@ class PbxAI(models.AbstractModel):
         try:
             publisher.publish(TRANSCRIBE_JOB_KEY, payload)
             _logger.info(
-                "Transcribe-jobb publicerat för pbx.call %s (attachment %s)",
+                "Transcribe job published for pbx.call %s (attachment %s)",
                 voip_call.id, attachment.id,
             )
             return True
@@ -119,10 +119,10 @@ class PbxAI(models.AbstractModel):
             _logger.warning("MQ publish failed: %s", e)
             return False
 
-    # ── Resultat (pbx.result.transcribe via webhook) ─────────────────
+    # ── Result (pbx.result.transcribe via webhook) ───────────────────
 
     def handle_transcribe_result(self, tenant_domain, event):
-        """Processa pbx.result.transcribe (från pbx-transcriber via daemonen).
+        """Process pbx.result.transcribe (from pbx-transcriber via the daemon).
 
         event: {"job_id", "call_id", "tenant", "status", "transcript",
                 "model", "language", "duration_seconds", "processing_seconds",
@@ -132,22 +132,22 @@ class PbxAI(models.AbstractModel):
         call = self.env["pbx.call"].sudo().browse(call_id) if call_id else \
             self.env["pbx.call"]
         if not call.exists():
-            _logger.warning("Transcribe-resultat för okänd pbx.call %s", call_id)
+            _logger.warning("Transcribe result for unknown pbx.call %s", call_id)
             return
 
         status = event.get("status", "error")
         if status != "ok" or not event.get("transcript"):
             _logger.error(
-                "Transkribering misslyckades för pbx.call %s: %s",
+                "Transcription failed for pbx.call %s: %s",
                 call_id, event.get("error"),
             )
-            # Zabbix-alert via logg (zabbix-aggregate i drift)
+            # Zabbix alert via log (zabbix-aggregate in production)
             _logger.error("PBX_TRANSCRIBE_ERROR call=%s error=%s",
                           call_id, event.get("error"))
             return
 
         transcript = event.get("transcript")
-        # Dokument (text-bilaga) + stt-metadata
+        # Document (text attachment) + stt metadata
         self._create_transcript_document(call, transcript)
         call.write({
             "stt_model": event.get("model") or "large-v3-turbo",
@@ -155,7 +155,7 @@ class PbxAI(models.AbstractModel):
             "stt_processing_s": event.get("processing_seconds") or 0.0,
         })
 
-        # LLM-pipeline: memory + entity extraction (token-förbrukning här)
+        # LLM pipeline: memory + entity extraction (token usage here)
         usage = {}
         if self._has_ai_agent_core():
             usage = self._create_company_memory(call, transcript)
@@ -163,10 +163,10 @@ class PbxAI(models.AbstractModel):
         if usage:
             self._record_token_usage(call, usage)
 
-    # ── Token-förbrukning ────────────────────────────────────────────
+    # ── Token usage ──────────────────────────────────────────────────
 
     def _record_token_usage(self, voip_call, usage):
-        """Sätt token-fält på pbx.call från LLM-usage.
+        """Set token fields on pbx.call from the LLM usage.
 
         usage: dict {"in": int, "out": int} (tokens).
         """
@@ -183,7 +183,7 @@ class PbxAI(models.AbstractModel):
             "ai_token_cost": round(cost, 6),
         })
 
-    # ── Befintliga hjälpmetoder (LLM-pipeline) ───────────────────────
+    # ── Existing helper methods (LLM pipeline) ───────────────────────
 
     def _has_odoo_ai(self):
         return "odoo.ai" in self.env.registry
@@ -193,7 +193,7 @@ class PbxAI(models.AbstractModel):
             "ai.coworker" in self.env.registry
 
     def _create_company_memory(self, voip_call, transcript):
-        """Skapa ai.company.memory. Returnerar token-usage om tillgängligt."""
+        """Create ai.company.memory. Returns token usage if available."""
         memory_model = self.env.get("ai.company.memory")
         if not memory_model:
             return {}
@@ -213,8 +213,8 @@ class PbxAI(models.AbstractModel):
             "scope": "internal",
             "importance": "medium",
         })
-        # v1: token-usage från LLM rapporteras inte i memory-skapandet —
-        # fälten fylls av dialog/pipeline när usage finns tillgängligt.
+        # v1: LLM token usage is not reported when creating the memory —
+        # the fields are filled by the dialog/pipeline when usage is available.
         return {}
 
     def _extract_entities(self, voip_call, transcript):
@@ -235,12 +235,12 @@ class PbxAI(models.AbstractModel):
         return {}
 
     def get_internal_dialplan(self, domain, company):
-        """Make AI-anknytningar reachable by their public number (Stasis).
+        """Make AI extensions reachable by their public number (Stasis).
 
-        Används av tester + ev. direktbruk. Produktionsvägen är
-        ``pbx.config.generator._get_extension_internal_entry`` (override:ad
-        av pbx_ai) som genererar samma entry per anknytning i den interna
-        kontexten.
+        Used by tests and possibly directly. The production path is
+        ``pbx.config.generator._get_extension_internal_entry`` (overridden
+        by pbx_ai), which generates the same entry per extension in the
+        internal context.
         """
         company_id = company.id if isinstance(company, models.Model) else company
         generator = self.env["pbx.config.generator"]
@@ -259,20 +259,20 @@ class PbxAI(models.AbstractModel):
     # ── Transcript-dokument (pbx-ai-call-assistant) ──────────────────
 
     def _create_transcript_document(self, voip_call, transcript):
-        """Skapa ir.attachment (text) med samtalet som bilaga + koppla till
-        pbx.call. Returnerar attachment."""
+        """Create an ir.attachment (text) with the call as an attachment + link
+        it to pbx.call. Returns the attachment."""
         if not voip_call or not transcript:
             return self.env['ir.attachment']
         content = (
-            f"Samtal {voip_call.create_date.strftime('%Y-%m-%d %H:%M')}\n"
-            f"Riktning: {voip_call.direction or voip_call.type_call}\n"
-            f"Nummer: {voip_call.phone_number or ''}\n"
-            f"Anknytning: {voip_call.extension_id.public_number if voip_call.extension_id else ''}\n"
-            f"Varaktighet: {voip_call.duration or 0}s\n"
-            f"\n--- Transkription ---\n{transcript}\n"
+            f"Call {voip_call.create_date.strftime('%Y-%m-%d %H:%M')}\n"
+            f"Direction: {voip_call.direction or voip_call.type_call}\n"
+            f"Number: {voip_call.phone_number or ''}\n"
+            f"Extension: {voip_call.extension_id.public_number if voip_call.extension_id else ''}\n"
+            f"Duration: {voip_call.duration or 0}s\n"
+            f"\n--- Transcription ---\n{transcript}\n"
         )
         attach = self.env['ir.attachment'].create({
-            'name': f"samtal-{voip_call.id}.txt",
+            'name': f"call-{voip_call.id}.txt",
             'mimetype': 'text/plain',
             'datas': base64.b64encode(content.encode('utf-8')),
             'res_model': 'pbx.call',
@@ -285,8 +285,8 @@ class PbxAI(models.AbstractModel):
         return attach
 
     def _transcribe_and_document(self, voip_call, attachment):
-        """FALLBACK (ingen MQ): transkribera direkt via provider och skapa
-        dokument + memory. Används när pbx.mq.publisher saknas."""
+        """FALLBACK (no MQ): transcribe directly via the provider and create
+        a document + memory. Used when pbx.mq.publisher is unavailable."""
         if not self._should_transcribe(voip_call):
             return
         try:
@@ -331,22 +331,22 @@ class PbxAI(models.AbstractModel):
             _logger.warning('transcribe via provider failed: %s', e)
             return ''
 
-    # ── Voicemail-aktivitet (systray) ────────────────────────────────
+    # ── Voicemail activity (systray) ─────────────────────────────────
 
     def _create_voicemail_activity(self, voip_call, attachment=None):
-        """Skapa mail.activity "Röstmeddelande" på pbx.call (systray)."""
+        """Create a mail.activity "Voicemail" on pbx.call (systray)."""
         activity_type = self.env.ref(
             "pbx_ai.activity_type_voicemail", raise_if_not_found=False
         )
         if not activity_type:
             activity_type = self.env["mail.activity.type"].search(
-                [("name", "=", "Röstmeddelande")], limit=1
+                [("name", "=", "Voicemail")], limit=1
             )
         if not activity_type:
-            _logger.warning("Aktivitetstyp 'Röstmeddelande' saknas")
+            _logger.warning("Activity type 'Voicemail' is missing")
             return
 
-        # Mottagare: röstbrevlådans ägare (device → extension → user)
+        # Recipient: the voicemail box owner (device -> extension -> user)
         user = False
         device = self._voicemail_device(voip_call)
         if device and device.extension_id and device.extension_id.user_id:
@@ -354,7 +354,7 @@ class PbxAI(models.AbstractModel):
         if not user and voip_call.extension_id and voip_call.extension_id.user_id:
             user = voip_call.extension_id.user_id
 
-        # Undvik dubbletter (en aktivitet per samtal)
+        # Avoid duplicates (one activity per call)
         existing = self.env["mail.activity"].search(
             [
                 ("res_model", "=", "pbx.call"),
@@ -366,9 +366,9 @@ class PbxAI(models.AbstractModel):
         if existing:
             return existing
 
-        summary = "Röstmeddelande att lyssna på"
+        summary = "Voicemail to listen to"
         if voip_call.phone_number:
-            summary += f" från {voip_call.phone_number}"
+            summary += f" from {voip_call.phone_number}"
         return self.env["mail.activity"].create(
             {
                 "res_model": "pbx.call",
@@ -378,16 +378,16 @@ class PbxAI(models.AbstractModel):
                 "date_deadline": self.env["fields"].Date.today(),
                 "summary": summary,
                 "note": (
-                    "Det finns ett röstmeddelande att lyssna på."
-                    + (" Länk: %s" % attachment.name if attachment else "")
+                    "There is a voicemail to listen to."
+                    + (" Link: %s" % attachment.name if attachment else "")
                 ),
             }
         )
 
-    # ── Receptionist-verktyg (samtals-coworker) ──────────────────────
+    # ── Receptionist tools (call coworker) ───────────────────────────
 
     def pbx_call_get(self, call_id):
-        """Hämta samtalskontext (JSON) för receptionist-dialog."""
+        """Fetch the call context (JSON) for the receptionist dialog."""
         call = self.env["pbx.call"].sudo().browse(int(call_id))
         if not call.exists():
             return {"error": "call not found"}
@@ -402,7 +402,7 @@ class PbxAI(models.AbstractModel):
 
     def pbx_ticket_create(self, call_id, caller_number='', caller_name='',
                           transcript=''):
-        """Skapa helpdesk-ticket via pbx_helpdesk (felanmälan)."""
+        """Create a helpdesk ticket via pbx_helpdesk (fault report)."""
         helpdesk = self.env.get('pbx.helpdesk')
         if not helpdesk:
             return 'pbx_helpdesk ej installerat'
@@ -419,7 +419,7 @@ class PbxAI(models.AbstractModel):
         return 'Ticket skapad: %s' % result
 
     def pbx_lead_create(self, call_id, caller_number='', caller_name=''):
-        """Skapa CRM-lead via pbx_crm (intresseanmälan)."""
+        """Create a CRM lead via pbx_crm (sales inquiry)."""
         crm = self.env.get('pbx.crm')
         if not crm:
             return 'pbx_crm ej installerat'
@@ -427,14 +427,14 @@ class PbxAI(models.AbstractModel):
         return 'Lead skapad: %s' % result
 
     def pbx_transfer_queue(self, call_id, queue_id):
-        """Vidarekoppla samtal till kö (pbx.queue)."""
+        """Transfer the call to a queue (pbx.queue)."""
         queue = self.env['pbx.queue'].sudo().browse(int(queue_id))
         if not queue.exists():
             return 'Queue %s not found' % queue_id
         return 'transfer_to_queue:%s:%s' % (queue.extension or '', queue.id)
 
     def pbx_transfer_extension(self, call_id, extension_id):
-        """Vidarekoppla samtal till anknytning."""
+        """Forward the call to an extension."""
         ext = self.env['pbx.extension'].sudo().browse(int(extension_id))
         if not ext.exists():
             return 'Extension %s not found' % extension_id

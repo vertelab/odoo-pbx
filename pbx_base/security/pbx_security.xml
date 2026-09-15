@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <!-- Grundroll: får använda Operator Panel (FOP), ser varken
-         Applications eller Configuration. -->
+    <!-- Base role: may use the Operator Panel (FOP), sees neither
+         Applications nor Configuration. -->
     <record id="group_pbx_operator" model="res.groups">
         <field name="name">PBX Operator</field>
         <field name="category_id" ref="base.module_category_hidden"/>
@@ -68,10 +68,10 @@
         <field name="perm_unlink" eval="False"/>
     </record>
 
-    <!-- Office/Admin: full access to all extensions (administrerar växeln).
-         Odoo 18 kombinerar globala regler (AND) med gruppregler (OR) —
-         utan dessa regler skulle operator-begränsningen (egen anknytning)
-         även träffa office/admin via implied-grupper. -->
+    <!-- Office/Admin: full access to all extensions (administers the PBX).
+         Odoo 18 combines global rules (AND) with group rules (OR) —
+         without these rules the operator restriction (own extension)
+         would also hit office/admin via implied groups. -->
     <record id="rule_pbx_extension_all" model="ir.rule">
         <field name="name">PBX Extension: full access (office/admin)</field>
         <field name="model_id" ref="model_pbx_extension"/>
@@ -86,8 +86,8 @@
         <field name="domain_force">[(1, '=', 1)]</field>
     </record>
 
-    <!-- Samtal (pbx.call): interna användare ser sina egna samtal (Mina
-         samtal + voicemail-aktivitet → pbx.call); office/admin ser alla. -->
+    <!-- Calls (pbx.call): internal users see their own calls (My
+         Calls + voicemail activity → pbx.call); office/admin see all. -->
     <record id="rule_pbx_call_own" model="ir.rule">
         <field name="name">PBX Call: own calls only</field>
         <field name="model_id" ref="model_pbx_call"/>

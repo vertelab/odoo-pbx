@@ -9,6 +9,6 @@
         <div t-elif="audioAttachmentId" class="pbx_voicemail_player">
             <span class="text-muted">Bilaga (icke-ljud)</span>
         </div>
-        <div t-else="" class="text-muted">Ingen inspelning.</div>
+        <div t-else="" class="text-muted">No recording.</div>
     </t>
 </templates>

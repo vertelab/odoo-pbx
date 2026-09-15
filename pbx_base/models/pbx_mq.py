@@ -21,11 +21,11 @@ class PbxMqPublisher(models.AbstractModel):
     workers (no persistent consumer threads inside the Odoo process).
 
     Config via ir.config_parameter:
-      pbx.mq.host     (default: företagets pbx_server_host, fallback localhost)
+      pbx.mq.host     (default: the company's pbx_server_host, fallback localhost)
       pbx.mq.port     (default 5672)
       pbx.mq.user     (default pbx)
       pbx.mq.password
-      pbx.mq.vhost    (default: företagets pbx_domain, fallback pbx)
+      pbx.mq.vhost    (default: the company's pbx_domain, fallback pbx)
     """
 
     _name = "pbx.mq.publisher"
@@ -36,9 +36,9 @@ class PbxMqPublisher(models.AbstractModel):
     def _get_config(self):
         ICP = self.env["ir.config_parameter"].sudo()
         company = self.env.company
-        # Host härleds från företagets PBX-server (RabbitMQ körs på samma
-        # maskin som Asterisk i standarduppsättningen). Vhost härleds från
-        # SIP-domänen (tenant == domän == topic).
+        # Host is derived from the company's PBX server (RabbitMQ runs on the
+        # same machine as Asterisk in the default setup). Vhost is derived from
+        # the SIP domain (tenant == domain == topic).
         mq_host = ICP.get_param("pbx.mq.host", "")
         if not mq_host:
             mq_host = company.pbx_server_host or "localhost"
@@ -124,7 +124,7 @@ class PbxMqPublisher(models.AbstractModel):
             {"Action": "Start", "Channel": channel, "File": file},
         )
 
-    # ── Config deploy (Odoo-ägd generering → daemon) ────────────
+    # ── Config deploy (Odoo-owned generation → daemon) ────────────
 
     def publish_config(self, domain, configs, version=None, reload=True):
         """Publish a generated config set for the instance's domain.

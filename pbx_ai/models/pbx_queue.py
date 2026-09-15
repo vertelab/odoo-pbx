@@ -6,18 +6,18 @@ from odoo import fields, models
 
 
 class PbxQueueAI(models.Model):
-    """AI/recording-arv på pbx.queue — tri-state inspelning/transkribering."""
+    """AI/recording inheritance on pbx.queue — tri-state recording/transcription."""
 
     _inherit = "pbx.queue"
 
     recording_mode = fields.Selection(
         [
-            ("record", "Spela in"),
-            ("transcribe", "Transkribera"),
+            ("record", "Record"),
+            ("transcribe", "Transcribe"),
         ],
         default="",
-        string="Inspelning/Transkribering",
-        help="'' = ärv global policy, 'record' = tvinga inspelning, "
-             "'transcribe' = inspelning + transkribering. Ärvs av "
-             "anknytningar i kön om de själva är tomma.",
+        string="Recording/Transcription",
+        help="'' = inherit the global policy, 'record' = force recording, "
+             "'transcribe' = recording + transcription. Inherited by "
+             "extensions in the queue if they are themselves empty.",
     )

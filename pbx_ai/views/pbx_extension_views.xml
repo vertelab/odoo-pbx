@@ -7,7 +7,7 @@
         <field name="inherit_id" ref="pbx_base.pbx_extension_form_view"/>
         <field name="arch" type="xml">
             <xpath expr="//sheet" position="inside">
-                <group name="ai" string="AI &amp; inspelning">
+                <group name="ai" string="AI &amp; Recording">
                     <field name="recording_mode"/>
                     <field name="transcribe_enabled" invisible="1"/>
                 </group>

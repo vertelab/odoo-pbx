@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
-"""Tester för pbx-ai-extension-coworker — coworker-as-extension.
+"""Tests for pbx-ai-extension-coworker — coworker-as-extension.
 
-Körs med: odoo --test-enable -u pbx_ai (eller checkmodule -t).
+Run with: odoo --test-enable -u pbx_ai (or checkmodule -t).
 """
 
 from odoo.tests import common, tagged
@@ -9,7 +9,7 @@ from odoo.tests import common, tagged
 
 @tagged('post_install', '-at_install')
 class TestCoworkerExtension(common.TransactionCase):
-    """7.1: extension-härledning (coworker → employee → user → ext)."""
+    """7.1: extension derivation (coworker → employee → user → ext)."""
 
     @classmethod
     def setUpClass(cls):
@@ -19,13 +19,13 @@ class TestCoworkerExtension(common.TransactionCase):
             'name': 'Test-Coworker',
             'model_ids': [(6, 0, [cls.env['ir.model']._get('project.task').id])],
         })
-        # Leader-agent-koppling
+        # Leader agent link
         cls.env['ai.coworker.agent'].create({
             'coworker_id': cls.coworker.id,
             'agent_id': cls.agent.id,
             'role': 'leader',
         })
-        # Anställd (is_ai) + användare med personal_coworker_id
+        # Employee (is_ai) + user with personal_coworker_id
         cls.employee = cls.env['hr.employee'].create({
             'name': 'Test-Coworker',
             'is_ai': True,
@@ -45,7 +45,7 @@ class TestCoworkerExtension(common.TransactionCase):
         })
 
     def test_get_pbx_extension(self):
-        """Coworkerns anknytning härleds ur personen."""
+        """The coworker's extension is derived from the person."""
         ext = self.coworker._get_pbx_extension()
         self.assertEqual(ext.id, self.extension.id)
 
@@ -109,14 +109,14 @@ class TestCoworkerDialplan(common.TransactionCase):
             f"Stasis(coworker,{self.coworker.id})", dialplan)
 
     def test_follow_me_fallback_ai(self):
-        """Follow-me-fallback → Stasis(coworker) när AI-destination satt."""
+        """Follow-me fallback → Stasis(coworker) when an AI destination is set."""
         generator = self.env['pbx.config.generator']
         fallback = generator._follow_me_fallback(
             self.extension, 'testdomain')
         self.assertIn('Stasis(coworker,', fallback)
 
     def test_follow_me_fallback_voicemail_default(self):
-        """Utan AI-destination → voicemail som vanligt."""
+        """Without an AI destination → voicemail as usual."""
         generator = self.env['pbx.config.generator']
         ext = self.env['pbx.extension'].create({
             'public_number': '6097',

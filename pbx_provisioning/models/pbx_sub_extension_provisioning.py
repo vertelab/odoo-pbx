@@ -8,26 +8,26 @@ from odoo import api, fields, models
 
 
 class PbxSubExtensionProvisioning(models.Model):
-    """Provisioning-stöd på pbx.sub_extension (pbx-provisioning).
+    """Provisioning support on pbx.sub_extension (pbx-provisioning).
 
-    - Hardware (MAC): Yealink AutoP-konfiguration, per-tenant token
-    - Desktop/Mobile (token): Linphone provisioning-XML
+    - Hardware (MAC): Yealink AutoP configuration, per-tenant token
+    - Desktop/Mobile (token): Linphone provisioning XML
     """
 
     _inherit = "pbx.sub_extension"
 
     provisioning_url = fields.Char(
-        string="Provisioning-URL",
+        string="Provisioning URL",
         compute="_compute_provisioning_info",
         groups="pbx_base.group_pbx_admin",
-        help="URL telefonen/appen hämtar sin konfiguration från.",
+        help="URL the phone/app fetches its configuration from.",
     )
     provisioning_qr = fields.Binary(
-        string="Provisioning-QR",
+        string="Provisioning QR",
         compute="_compute_provisioning_info",
         groups="pbx_base.group_pbx_admin",
         attachment=False,
-        help="QR-kod med provisioning-URL:en (för onboarding/etikett).",
+        help="QR code containing the provisioning URL (for onboarding/label).",
     )
 
     @api.depends(
@@ -40,7 +40,7 @@ class PbxSubExtensionProvisioning(models.Model):
             rec.provisioning_qr = rec._qr_png(url) if url else False
 
     def _provisioning_base(self):
-        """Bas-URL för provisioning (Caddy/Odoo), med scheman+tokens borttagna."""
+        """Base URL for provisioning (Caddy/Odoo), with scheme+credentials stripped."""
         self.ensure_one()
         company = self.extension_id.company_id
         base = company.pbx_odoo_url or self.env["ir.config_parameter"].get_param(
@@ -55,7 +55,7 @@ class PbxSubExtensionProvisioning(models.Model):
         if self.type == "hardware" and self.mac_address:
             company._ensure_pbx_provisioning_token()
             token = company.pbx_provisioning_token
-            # Injicera credentials i URL:en: https://<domän>:<token>@host/...
+            # Inject credentials into the URL: https://<domain>:<token>@host/...
             domain = company.pbx_domain or company.name or "tenant"
             from urllib.parse import urlsplit, urlunsplit
 
@@ -74,8 +74,8 @@ class PbxSubExtensionProvisioning(models.Model):
 
     @staticmethod
     def _qr_png(url):
-        """QR-kod som PNG-bytes (guarded import — modulen installeras även
-        utan qrcode-paketet)."""
+        """QR code as PNG bytes (guarded import — the module also installs
+        without the qrcode package)."""
         try:
             import qrcode
         except ImportError:
@@ -89,14 +89,14 @@ class PbxSubExtensionProvisioning(models.Model):
             return False
 
     # ------------------------------------------------------------------
-    # Config-generering
+    # Config generation
     # ------------------------------------------------------------------
 
     def _yealink_transport_type(self):
         return {"udp": 0, "tcp": 1, "wss": 2}.get(self.transport, 0)
 
     def _get_yealink_config(self):
-        """INI-konfig för Yealink AutoP (`account.1.*`)."""
+        """INI config for Yealink AutoP (`account.1.*`)."""
         self.ensure_one()
         company = self.extension_id.company_id
         ext = self.extension_id
@@ -126,7 +126,7 @@ class PbxSubExtensionProvisioning(models.Model):
         return {"wss": "tls", "udp": "udp", "tcp": "tcp"}.get(self.transport, "udp")
 
     def _get_linphone_xml(self):
-        """Linphone provisioning-XML (proxy_0/auth_info_0/misc)."""
+        """Linphone provisioning XML (proxy_0/auth_info_0/misc)."""
         self.ensure_one()
         company = self.extension_id.company_id
         domain = company.pbx_domain or "localhost"

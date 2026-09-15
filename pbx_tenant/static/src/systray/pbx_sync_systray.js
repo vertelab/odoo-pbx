@@ -1,6 +1,6 @@
 /** @odoo-module **/
-/* PBX Sync systray — visar när konfiguration väntar på att skickas till
-   Asterisk (res.company.config_dirty) och kör synken vid klick. */
+/* PBX Sync systray — shows when configuration is waiting to be sent to
+   Asterisk (res.company.config_dirty) and runs the sync on click. */
 
 import { Component, useState, onWillStart, onWillUnmount } from "@odoo/owl";
 import { registry } from "@web/core/registry";
@@ -58,7 +58,7 @@ export class PbxSyncSystray extends Component {
             this.state.error = state.error || "";
             this.canSync = Boolean(state.can_sync);
         } catch (err) {
-            // tyst — ingen PBX-konfig än
+            // silent — no PBX configuration yet
         }
     }
 
@@ -91,15 +91,15 @@ export class PbxSyncSystray extends Component {
                 ? this.state.version
                 : this.state.version;
         if (this.state.syncState === "error") {
-            return `PBX: fel vid applicering (v${this.state.version}) — ${this.state.error || "okänt fel"}`;
+            return `PBX: error applying (v${this.state.version}) — ${this.state.error || "unknown error"}`;
         }
         if (this.state.syncState === "sent") {
-            return `PBX: v${this.state.version} skickat — väntar på bekräftelse`;
+            return `PBX: v${this.state.version} sent — waiting for confirmation`;
         }
         if (this.state.dirty) {
-            return "PBX: ändringar väntar på synk";
+            return "PBX: changes waiting to be synced";
         }
-        return `PBX: konfiguration applicerad (v${version})`;
+        return `PBX: configuration applied (v${version})`;
     }
 
     async _sync() {
@@ -123,10 +123,10 @@ export class PbxSyncSystray extends Component {
             );
             await this._refresh();
         } catch (err) {
-            // Aldrig lämna en ohanterad rejection (maskerar riktiga fel i
-            // Odoos formatTraceback)
+            // Never leave an unhandled rejection (masks real errors in
+            // Odoo's formatTraceback)
             this.notification.add(
-                err && err.message ? err.message : "PBX Sync misslyckades",
+                err && err.message ? err.message : "PBX Sync failed",
                 {
                     title: "PBX Sync",
                     type: "danger",
