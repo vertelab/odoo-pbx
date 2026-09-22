@@ -4,7 +4,7 @@
     "summary": "PBX AI — transcript-dokument, receptionist-coworker, ARI",
     "category": "Productivity/VOIP",
     "author": "Vertel Sverige AB",
-    "website": "https://github.com/vertelab/odoo-pbx",
+    "website": "https://vertel.se/apps/odoo-pbx/pbx_ai",
     "license": "AGPL-3",
     "depends": [
         "pbx_tenant",

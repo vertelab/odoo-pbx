@@ -6,7 +6,7 @@
     'sequence': -201,
     'description': """Phone Managment Sofware""",
     'category': 'Theme',
-    'website': "https://www.odoomates.tech",
+    'website': "https://vertel.se/apps/odoo-pbx/pbx_46elks",
     'license': 'LGPL-3',
     'depends': ['website', 'base', 'contacts', 'sms'],
     'data': [

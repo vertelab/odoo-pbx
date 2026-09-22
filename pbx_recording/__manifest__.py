@@ -4,7 +4,7 @@
     "summary": "Call recording with Garage S3 storage",
     "category": "Productivity/VOIP",
     "author": "Vertel AB",
-    "website": "https://github.com/vertelab/odoo-pbx",
+    "website": "https://vertel.se/apps/odoo-pbx/pbx_recording",
     "license": "AGPL-3",
     "depends": ["pbx_base"],
     "data": [

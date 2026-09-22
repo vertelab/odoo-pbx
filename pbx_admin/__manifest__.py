@@ -4,7 +4,7 @@
     "summary": "Central MSP panel for multi-tenant PBX management",
     "category": "Productivity/VOIP",
     "author": "Vertel AB",
-    "website": "https://github.com/vertelab/odoo-pbx",
+    "website": "https://vertel.se/apps/odoo-pbx/pbx_admin",
     "license": "AGPL-3",
     "depends": ["pbx_base", "saltstack"],
     "data": [

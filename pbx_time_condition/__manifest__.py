@@ -4,7 +4,7 @@
     "summary": "Time-based call routing for Asterisk",
     "category": "Productivity/VOIP",
     "author": "Vertel AB",
-    "website": "https://github.com/vertelab/odoo-pbx",
+    "website": "https://vertel.se/apps/odoo-pbx/pbx_time_condition",
     "license": "AGPL-3",
     "depends": ["pbx_base", "resource"],
     "data": [

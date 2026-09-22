@@ -4,7 +4,7 @@
     "summary": "IVR menu tree management for Asterisk",
     "category": "Productivity/VOIP",
     "author": "Vertel AB",
-    "website": "https://github.com/vertelab/odoo-pbx",
+    "website": "https://vertel.se/apps/odoo-pbx/pbx_ivr",
     "license": "AGPL-3",
     "depends": ["pbx_base"],
     "data": [

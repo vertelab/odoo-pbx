@@ -4,7 +4,7 @@
     "summary": "CRM integration for PBX — lead popup, call logging",
     "category": "Productivity/VOIP",
     "author": "Vertel AB",
-    "website": "https://github.com/vertelab/odoo-pbx",
+    "website": "https://vertel.se/apps/odoo-pbx/pbx_crm",
     "license": "AGPL-3",
     "depends": ["pbx_tenant", "crm"],
     "data": [

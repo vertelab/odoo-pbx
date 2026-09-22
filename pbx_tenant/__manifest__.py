@@ -4,7 +4,7 @@
     "summary": "Customer PBX module with softphone, Operator Panel, and voicemail",
     "category": "Productivity/VOIP",
     "author": "Vertel AB",
-    "website": "https://github.com/vertelab/odoo-pbx",
+    "website": "https://vertel.se/apps/odoo-pbx/pbx_tenant",
     "license": "AGPL-3",
     "depends": ["pbx_base", "voip_oca"],
     "data": [

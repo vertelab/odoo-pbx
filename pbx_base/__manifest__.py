@@ -4,7 +4,7 @@
     "summary": "Core PBX abstraction for multi-tenant Asterisk management",
     "category": "Productivity/VOIP",
     "author": "Vertel AB",
-    "website": "https://github.com/vertelab/odoo-pbx",
+    "website": "https://vertel.se/apps/odoo-pbx/pbx_base",
     "license": "AGPL-3",
     "assets": {
         "web.assets_backend": [

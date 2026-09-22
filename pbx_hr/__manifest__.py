@@ -4,7 +4,7 @@
     "summary": "PBX<>HR bridge — extension on hr.employee (assign/suggest, hierarchical numbering, renumbering)",
     "category": "Productivity/VOIP",
     "author": "Vertel AB",
-    "website": "https://github.com/vertelab/odoo-pbx",
+    "website": "https://vertel.se/apps/odoo-pbx/pbx_hr",
     "license": "AGPL-3",
     "depends": ["pbx_base", "hr", "hr_org_chart"],
     "data": [
