@@ -1,10 +1,21 @@
 # -*- coding: utf-8 -*-
 {
     'name': "46Elks IVR",
-    'version': '1.1',
-    'summary': 'Phone Managment Sofware',
+    'version': '18.0.1.1.0',
+    'summary': 'Phone Managment Sofware.',
     'sequence': -201,
-    'description': """Phone Managment Sofware""",
+    'description': '''
+46Elks IVR
+==========
+
+    Phone Managment Sofware.
+
+    Features:
+
+        - Web integration: Exposes HTTP endpoints for external systems.
+        - UI Integration: Extends 2 view(s) in the Odoo interface.
+        - Extends Odoo: Builds on mail.thread, sms.sms.
+    ''',
     'category': 'Theme',
     'website': "https://vertel.se/apps/odoo-pbx/pbx_46elks",
     'license': 'LGPL-3',
