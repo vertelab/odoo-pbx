@@ -203,10 +203,10 @@ class PbxWebhookService(models.AbstractModel):
 
     def _handle_voicemail(self, tenant, event):
         mailbox = event.get("Mailbox", "")  # ext@domain
-        spool_dir = event.get("Dir", "")  # /var/spool/asterisk/voicemail/<domain>/<ext>
-        file_path = ""
-        if spool_dir:
-            file_path = f"{spool_dir.rstrip('/')}/msg0001.wav"
+        # No path fallback: a hardcoded spool filename (msg0001.wav) would attach
+        # an unrelated recording when the event carries no audio. The daemon
+        # sends the message's own audio as _audio_base64; without it the message
+        # is stored without an attachment.
         self.env["pbx.voicemail.service"].handle_voicemail_event(
             {
                 "domain": tenant,
@@ -214,7 +214,6 @@ class PbxWebhookService(models.AbstractModel):
                 "callerid_num": event.get("CallerIDNum", ""),
                 "callerid_name": event.get("CallerIDName", ""),
                 "duration": int(event.get("Duration", 0) or 0),
-                "file_path": file_path,
                 # The daemon attaches the audio (base64) because Odoo runs on
                 # a different machine than the Asterisk spool
                 "audio_base64": event.get("_audio_base64") or "",

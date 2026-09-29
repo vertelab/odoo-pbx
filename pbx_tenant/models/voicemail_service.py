@@ -2,6 +2,7 @@
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 
 import base64
+import hashlib
 import logging
 
 from odoo import fields, models
@@ -55,35 +56,55 @@ class VoicemailService(models.AbstractModel):
         if partner:
             caller_name = partner.display_name
 
-        # Create attachment from audio (base64 from the daemon, or a local file
-        # when Odoo and Asterisk share a machine)
+        # Create attachment from audio (base64 from the daemon). A path-based
+        # read is only used when the caller passed a path belonging to the SAME
+        # message — never as a substitute for message-specific audio.
         attachment = None
         if audio_base64:
             try:
+                decoded = base64.b64decode(audio_base64)
+                audio_hash = hashlib.md5(decoded).hexdigest()
                 attachment = self.env["ir.attachment"].create(
                     {
                         "name": f"Voicemail_{caller_number}_{fields.Datetime.now()}",
-                        "datas": base64.b64encode(base64.b64decode(audio_base64)),
+                        "datas": base64.b64encode(decoded),
                         "mimetype": "audio/wav",
                         "res_model": "pbx.voicemail.message",
                     }
+                )
+                _logger.info(
+                    "voicemail stored extension=%s hash=%s attachment_id=%s bytes=%d",
+                    public_number, audio_hash, attachment.id, len(decoded),
                 )
             except Exception as e:
                 _logger.warning("Could not store voicemail audio: %s", e)
         elif file_path:
             try:
                 with open(file_path, "rb") as f:
-                    audio_data = base64.b64encode(f.read())
+                    raw = f.read()
+                audio_hash = hashlib.md5(raw).hexdigest()
                 attachment = self.env["ir.attachment"].create(
                     {
                         "name": f"Voicemail_{caller_number}_{fields.Datetime.now()}",
-                        "datas": audio_data,
+                        "datas": base64.b64encode(raw),
                         "mimetype": "audio/wav",
                         "res_model": "pbx.voicemail.message",
                     }
                 )
+                _logger.info(
+                    "voicemail stored extension=%s hash=%s attachment_id=%s "
+                    "bytes=%d source=file",
+                    public_number, audio_hash, attachment.id, len(raw),
+                )
             except (FileNotFoundError, OSError) as e:
                 _logger.warning("Could not read voicemail file %s: %s", file_path, e)
+        else:
+            # No audio in the event: create the message WITHOUT an attachment.
+            # Never fall back to another recording.
+            _logger.info(
+                "voicemail without audio extension=%s — no attachment created",
+                public_number,
+            )
 
         # Create voip.call record
         call = self.env["voip.call"].sudo().create(

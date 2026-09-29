@@ -15,6 +15,7 @@ Usage:
 import argparse
 import base64
 import asyncio
+import hashlib
 import json
 import logging
 import os
@@ -34,6 +35,9 @@ except ImportError:
     aio_pika = None
 
 logger = logging.getLogger("pbx_ami_daemon")
+
+# Voicemail spool root. Module-level so tests can point it at a temp dir.
+_VOICEMAIL_SPOOL = "/var/spool/asterisk/voicemail"
 
 # ──────────────────────────────────────────────────────────────────
 # Configuration
@@ -77,6 +81,53 @@ class StateCache:
 
     def all(self) -> dict:
         return dict(self._states)
+
+
+# ──────────────────────────────────────────────────────────────────
+# Mailbox Marker
+# ──────────────────────────────────────────────────────────────────
+
+
+class MailboxMarker:
+    """Per-mailbox marker: the last voicemail audio delivered.
+
+    Asterisk emits ``MessageWaiting`` (MWI) not only for a new message but also
+    on playback, deletion and ``new`` ⇄ ``old`` transitions. Without a marker
+    every such event re-reads the newest spool file and delivers identical
+    audio again, which is what produced duplicate voicemails in Odoo.
+
+    The marker is keyed on the **content hash** of the audio (Asterisk's
+    ``sha1=`` from ``msgN.txt`` when present, otherwise md5 of the decoded
+    bytes) — not on the ``msgN`` filename alone, which would miss a file that
+    is rewritten under a reused number.
+
+    Assumes a **sequential caller**: ``EventConsumer.run()`` processes events in
+    a single ``async for`` loop, so no locking is needed today. If event
+    handling is ever parallelised (e.g. ``asyncio.create_task`` per event),
+    this shared mutable structure needs a lock.
+    """
+
+    def __init__(self):
+        self._marks: dict[str, dict] = {}
+
+    def is_new(self, mailbox: str, file_name: str, md5: str) -> bool:
+        """True when this content hash has not been delivered for the mailbox."""
+        prev = self._marks.get(mailbox)
+        if prev and prev["md5"] == md5:
+            return False
+        return True
+
+    def remember(self, mailbox: str, file_name: str, md5: str):
+        """Record the delivered (or seeded) audio for the mailbox."""
+        self._marks[mailbox] = {
+            "file": file_name, "md5": md5, "updated": int(time.time()),
+        }
+
+    def get(self, mailbox: str) -> Optional[dict]:
+        return self._marks.get(mailbox)
+
+    def all(self) -> dict:
+        return dict(self._marks)
 
 
 # ──────────────────────────────────────────────────────────────────
@@ -266,22 +317,31 @@ def extract_tenant_from_event(
 # ──────────────────────────────────────────────────────────────────
 
 
-def _read_voicemail_audio(event: dict) -> Optional[str]:
+def _read_voicemail_audio(event: dict) -> Optional[dict]:
     """Read the latest voicemail recording (INBOX/msg*.wav) as base64.
 
     Asterisk 20.6 does not emit VoicemailMessage — only MessageWaiting (MWI)
     with Mailbox=02@domain. Spool: /var/spool/asterisk/voicemail/<domain>/<mb>/INBOX/
     Files: msg0000.wav, msg0001.wav ... (newest = highest number).
 
-    Also enriches the event with callerid/duration from msg*.txt (MWI carries
-    no metadata).
+    Returns a dict with the base64 audio, the chosen file name, a content hash
+    and the metadata taken from **that file's** ``msgN.txt`` — or ``None`` when
+    there is no recording. The hash is Asterisk's own ``sha1=`` from the txt
+    when present (cheaper than hashing the wav), otherwise md5 of the decoded
+    bytes. Returns a structure rather than a bare string so the caller can bind
+    its delivery decision and the metadata to one specific file.
+
+    Known limitation (tight arrival): when two messages arrive faster than the
+    events are processed, ``max()`` below already picks the newest file for
+    both events, so the older one is not delivered separately. Solving that
+    needs a diff over the whole INBOX per event — documented, not built.
     """
     mailbox = event.get("Mailbox", "") or ""
     if "@" in mailbox:
         mb, domain = mailbox.split("@", 1)
     else:
         mb, domain = mailbox, ""
-    inbox = os.path.join("/var/spool/asterisk/voicemail", domain, mb, "INBOX")
+    inbox = os.path.join(_VOICEMAIL_SPOOL, domain, mb, "INBOX")
     try:
         candidates = [
             f for f in os.listdir(inbox)
@@ -299,25 +359,53 @@ def _read_voicemail_audio(event: dict) -> Optional[str]:
     newest = max(candidates, key=_num)
     path = os.path.join(inbox, newest)
 
-    # Metadata from msg*.txt (callerid/duration) — the MWI event lacks it
+    # Metadata from the txt belonging to the SELECTED file. Kept in the return
+    # value (not written onto the event) so callerid/duration cannot be paired
+    # with a different recording.
+    callerid = ""
+    caller_name = ""
+    duration = ""
+    sha1 = ""
     txt_path = os.path.join(inbox, newest.replace(".wav", ".txt"))
     try:
         with open(txt_path) as f:
             for line in f:
                 line = line.strip()
                 if line.startswith("callerid="):
-                    event.setdefault("CallerIDNum", line.split("=", 1)[1].strip())
+                    callerid = line.split("=", 1)[1].strip()
+                elif line.startswith("origdate="):
+                    pass
                 elif line.startswith("duration="):
-                    event.setdefault("Duration", line.split("=", 1)[1].strip())
+                    duration = line.split("=", 1)[1].strip()
+                elif line.startswith("name="):
+                    caller_name = line.split("=", 1)[1].strip()
+                elif line.startswith("sha1="):
+                    sha1 = line.split("=", 1)[1].strip()
     except OSError:
         pass
 
     try:
         with open(path, "rb") as f:
-            return base64.b64encode(f.read()).decode()
+            raw = f.read()
     except OSError as e:
         logger.warning("Could not read voicemail audio %s: %s", path, e)
         return None
+
+    # sha1 from Asterisk when present, else md5 of the decoded bytes. base64 is
+    # deterministic, but we hash the raw data so the digest is stable
+    # regardless of how the string is transported (newlines, padding).
+    md5 = sha1 or hashlib.md5(raw).hexdigest()
+
+    return {
+        "path": path,
+        "name": newest,
+        "md5": md5,
+        "sha1": sha1,
+        "callerid": callerid,
+        "caller_name": caller_name,
+        "duration": duration,
+        "base64": base64.b64encode(raw).decode(),
+    }
 
 
 class WebhookPublisher:
@@ -388,12 +476,17 @@ class EventConsumer:
     def __init__(
         self, ami: AMIConnection, publisher, state_cache: StateCache,
         webhook=None, known_domains: Optional[set] = None,
+        marker: Optional[MailboxMarker] = None,
     ):
         self.ami = ami
         self.publisher = publisher
         self.state_cache = state_cache
         self.webhook = webhook or WebhookPublisher()
         self.known_domains = known_domains or set()
+        # Shared across reconnects — amain() creates it once. Defaulting to a
+        # private marker keeps EventConsumer constructible in tests, but then
+        # the caller owns the duplicate-suppression scope.
+        self.marker = marker if marker is not None else MailboxMarker()
 
     async def run(self):
         async for event in self.ami.read_events():
@@ -420,14 +513,66 @@ class EventConsumer:
             await self.publisher(topic, event)
             if event_name in ("VoicemailMessage", "MessageWaiting"):
                 # Attach the audio (base64) + enrich with caller/duration —
-                # Odoo does not read the spool file locally
-                payload = dict(event)
-                audio = _read_voicemail_audio(payload)
-                if audio:
-                    payload["_audio_base64"] = audio
-                await self.webhook.publish(tenant, topic, payload)
+                # Odoo does not read the spool file locally. MWI is a STATE
+                # event (also emitted on playback/delete/new⇄old), so the audio
+                # is delivered only when the mailbox marker sees a new hash.
+                await self._publish_voicemail(tenant, topic, event)
             else:
                 await self.webhook.publish(tenant, topic, event)
+
+    async def _publish_voicemail(self, tenant: str, topic: str, event: dict):
+        """Deliver voicemail audio once per new message, per mailbox.
+
+        The event itself is always published (MQ + webhook) so state consumers
+        see playback/deletion transitions; only ``_audio_base64`` is withheld
+        when the marker says this content was already delivered.
+        """
+        mailbox = event.get("Mailbox", "") or ""
+        payload = dict(event)
+        info = _read_voicemail_audio(payload)
+
+        if not info:
+            # Nothing readable in the spool — publish the bare event.
+            await self.webhook.publish(tenant, topic, payload)
+            return
+
+        # Metadata always comes from the delivered file, overriding whatever the
+        # MWI event carried; the event's values are only a fallback.
+        payload["CallerIDNum"] = info["callerid"] or event.get("CallerIDNum", "")
+        payload["Duration"] = info["duration"] or event.get("Duration", "")
+        if info["caller_name"]:
+            payload["CallerIDName"] = info["caller_name"]
+
+        is_new = self.marker.is_new(mailbox, info["name"], info["md5"])
+        if not is_new:
+            logger.info(
+                "voicemail dedup mailbox=%s msg_file=%s hash=%s outcome=dedup",
+                mailbox, info["name"], info["md5"],
+            )
+            await self.webhook.publish(tenant, topic, payload)
+            return
+
+        if self.marker.get(mailbox) is None:
+            # First MWI for this mailbox since the daemon started: we cannot
+            # tell whether the newest file is new or already delivered, so seed
+            # the marker without sending audio. Fail-safe — silent rather than
+            # wrong audio; the message stays in the spool.
+            self.marker.remember(mailbox, info["name"], info["md5"])
+            logger.info(
+                "voicemail seed-after-restart mailbox=%s msg_file=%s hash=%s "
+                "outcome=seed (audio omitted)",
+                mailbox, info["name"], info["md5"],
+            )
+            await self.webhook.publish(tenant, topic, payload)
+            return
+
+        payload["_audio_base64"] = info["base64"]
+        self.marker.remember(mailbox, info["name"], info["md5"])
+        logger.info(
+            "voicemail sent mailbox=%s msg_file=%s hash=%s outcome=sent",
+            mailbox, info["name"], info["md5"],
+        )
+        await self.webhook.publish(tenant, topic, payload)
 
 
 # ──────────────────────────────────────────────────────────────────
@@ -824,6 +969,11 @@ async def amain(config_path: str):
     # State cache
     state_cache = StateCache(publisher)
 
+    # Mailbox marker — created ONCE, outside the reconnect loop below, so a
+    # dropped AMI connection does not reset it (which would re-deliver every
+    # message as a duplicate). See MailboxMarker / design D2.
+    marker = MailboxMarker()
+
     # Health check
     health_server = await start_health_server(health_port)
 
@@ -875,6 +1025,7 @@ async def amain(config_path: str):
             consumer = EventConsumer(
                 ami, publisher, state_cache, webhook,
                 known_domains=_load_known_domains(tenants_config_path),
+                marker=marker,
             )
             logger.info("Event consumer started (webhook=%s)", webhook.url or "disabled")
             await consumer.run()
