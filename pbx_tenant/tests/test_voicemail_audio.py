@@ -1,4 +1,4 @@
-# Copyright 2026 Vertel AB
+# Copyright 2026 Vertel Sverige AB
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 """Voicemail-audio integrity on the Odoo side (pbx-voicemail-audio-integrity).
 
