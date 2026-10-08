@@ -1,4 +1,4 @@
-# Copyright 2026 Vertel AB
+# Copyright 2026 Vertel Sverige AB
 # License AGPL-3.0 or later (https://vertel.se).
 
 """pbx_base 18.0.1.12.0 — backfill user↔extension link + implicit browser sub

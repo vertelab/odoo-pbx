@@ -1,4 +1,4 @@
-# Copyright 2026 Vertel AB
+# Copyright 2026 Vertel Sverige AB
 # License AGPL-3.0 or later (https://vertel.se).
 
 """pbx_base 18.0.1.14.0 — strip removed skip_if_busy fields from stored views.

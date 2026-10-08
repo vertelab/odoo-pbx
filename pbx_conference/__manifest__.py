@@ -3,8 +3,8 @@
     "version": "18.0.1.5.0",
     "summary": "Conference room management for Asterisk",
     "category": "Productivity/VOIP",
-    "author": "Vertel AB",
-    "website": "https://vertel.se/apps/odoo-pbx/pbx_conference",
+    "author": "Vertel Sverige AB",
+    "website": "https://github.com/vertelab/odoo-pbx",
     "license": "AGPL-3",
     "depends": ["pbx_base"],
     "data": [

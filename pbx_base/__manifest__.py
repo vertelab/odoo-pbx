@@ -3,8 +3,8 @@
     "version": "18.0.1.45.4",
     "summary": "Core PBX abstraction for multi-tenant Asterisk management",
     "category": "Productivity/VOIP",
-    "author": "Vertel AB",
-    "website": "https://vertel.se/apps/odoo-pbx/pbx_base",
+    "author": "Vertel Sverige AB",
+    "website": "https://github.com/vertelab/odoo-pbx",
     "license": "AGPL-3",
     "assets": {
         "web.assets_backend": [

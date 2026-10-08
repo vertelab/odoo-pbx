@@ -1,10 +1,10 @@
 {
     "name": "PBX Tenant",
-    "version": "18.0.1.16.0",
+    "version": "18.0.1.15.0",
     "summary": "Customer PBX module with softphone, Operator Panel, and voicemail",
     "category": "Productivity/VOIP",
-    "author": "Vertel AB",
-    "website": "https://vertel.se/apps/odoo-pbx/pbx_tenant",
+    "author": "Vertel Sverige AB",
+    "website": "https://github.com/vertelab/odoo-pbx",
     "license": "AGPL-3",
     "depends": ["pbx_base", "voip_oca"],
     "data": [

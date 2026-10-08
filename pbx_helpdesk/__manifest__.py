@@ -3,8 +3,8 @@
     "version": "18.0.1.1.0",
     "summary": "Helpdesk integration for PBX — ticket popup, SLA monitoring",
     "category": "Productivity/VOIP",
-    "author": "Vertel AB",
-    "website": "https://vertel.se/apps/odoo-pbx/pbx_helpdesk",
+    "author": "Vertel Sverige AB",
+    "website": "https://github.com/vertelab/odoo-pbx",
     "license": "AGPL-3",
     "depends": ["pbx_tenant", "helpdesk"],
     "data": [

@@ -1,4 +1,4 @@
-# Copyright 2026 Vertel AB
+# Copyright 2026 Vertel Sverige AB
 # License AGPL-3.0 or later (https://vertel.se).
 
 """pbx_base 18.0.1.8.0 — rename pbx_sub_extension.priority → sequence.
