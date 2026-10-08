@@ -17,8 +17,9 @@
             "target_id_field": "partner_id"
         }, {
             "type": "HANDLED_BY",
-            "target_label": "User",
-            "target_id_field": "user_id"
+            "target_label": "OdooPartner",
+            "target_id_field": "user_id",
+            "target_id_via": "partner_id"
         }]</field>
         <field name="active">True</field>
     </record>
