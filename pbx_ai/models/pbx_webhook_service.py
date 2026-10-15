@@ -19,14 +19,14 @@ class PbxWebhookServiceAI(models.AbstractModel):
 
     _inherit = "pbx.webhook.service"
 
-    def handle_event(self, tenant_domain, topic, event):
+    def handle_event(self, tenant_domain, topic, event, host_timezone=None):
         if topic.startswith("pbx.result."):
             try:
                 self.env["pbx.ai"].handle_transcribe_result(tenant_domain, event)
             except Exception as e:
                 _logger.warning("Transcribe-resultat misslyckades: %s", e)
             return
-        return super().handle_event(tenant_domain, topic, event)
+        return super().handle_event(tenant_domain, topic, event, host_timezone)
 
     def _handle_voicemail(self, tenant, event):
         """Voicemail → aktivitet (systray) + opt-in transkribering."""
