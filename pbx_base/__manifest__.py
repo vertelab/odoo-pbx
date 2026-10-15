@@ -1,6 +1,6 @@
 {
     "name": "PBX Base",
-    "version": "18.0.1.50.0",
+    "version": "18.0.1.51.0",
     "summary": "Core PBX abstraction for multi-tenant Asterisk management",
     "category": "Productivity/VOIP",
     "author": "Vertel Sverige AB",
@@ -16,6 +16,7 @@
             "pbx_base/static/src/sip_config/sip_config.xml",
             "pbx_base/static/src/softphone/softphone.esm.js",
             "pbx_base/static/src/services/voip_oca_service.esm.js",
+            "pbx_base/static/src/services/voip_oca_agent_patch.esm.js",
         ],
     },
     "web_icon": "static/description/icon.png",
