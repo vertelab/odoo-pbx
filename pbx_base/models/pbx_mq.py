@@ -130,15 +130,32 @@ class PbxMqPublisher(models.AbstractModel):
         """Publish a generated config set for the instance's domain.
 
         Returns the published version (int) on success, False on failure.
+
+        The version counter is derived from the MAXIMUM of the two places a
+        version can live — res_company.pbx_config_version (written by
+        write_config) and the ir.config_parameter fallback — plus one. Using
+        only the parameter lets the two drift apart: if the parameter is
+        rolled back (or a legacy install never wrote it) the same version is
+        published again, the daemon sees an already-applied version and the
+        sync stalls forever.
         """
         if version is None:
-            version = int(
-                self.env["ir.config_parameter"]
-                .sudo()
-                .get_param(f"pbx.config.version.{domain}", "0")
-            ) + 1
+            param_key = f"pbx.config.version.{domain}"
+            param_version = int(
+                self.env["ir.config_parameter"].sudo().get_param(param_key, "0")
+            )
+            company_version = 0
+            company = self.env["res.company"].sudo().search(
+                [("pbx_domain", "=", domain)], limit=1
+            )
+            if company:
+                company_version = max(
+                    company.pbx_config_version or 0,
+                    company.pbx_config_applied_version or 0,
+                )
+            version = max(param_version, company_version) + 1
             self.env["ir.config_parameter"].sudo().set_param(
-                f"pbx.config.version.{domain}", str(version)
+                param_key, str(version)
             )
         ok = self.publish(
             f"pbx.config.{domain}",

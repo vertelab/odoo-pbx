@@ -311,7 +311,10 @@ class PbxAI(models.AbstractModel):
     def _transcribe_via_provider(self, attachment):
         """Whisper via ai.provider (ai_agent_core)."""
         try:
-            import subprocess, tempfile, os
+            import os
+            import subprocess
+            import tempfile
+
             provider = self.env['ai.provider'].search(
                 [('active', '=', True)], limit=1)
             if not provider or not hasattr(provider, '_transcribe_audio'):
