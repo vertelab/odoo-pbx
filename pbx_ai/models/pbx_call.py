@@ -15,6 +15,11 @@ class PbxCallAI(models.Model):
         string="Recording",
         help="The audio recording of the call (Garage S3 via ir.attachment).",
     )
+    recording_mimetype = fields.Char(
+        string="Recording Type",
+        related="recording_attachment_id.mimetype",
+        help="Mimetype of the recording, used by the audio player widget.",
+    )
     transcript_attachment_id = fields.Many2one(
         "ir.attachment",
         string="Transcript Document",

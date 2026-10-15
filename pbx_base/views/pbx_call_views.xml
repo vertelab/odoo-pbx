@@ -4,7 +4,7 @@
     <record model="ir.ui.view" id="pbx_call_list_view">
         <field name="model">pbx.call</field>
         <field name="arch" type="xml">
-            <list string="Calls">
+            <list string="Calls" default_order="start_date desc, id desc">
                 <field name="direction" string="Riktning"/>
                 <field name="partner_id" string="Kontakt"/>
                 <field name="phone_number" string="Number"/>
@@ -12,6 +12,7 @@
                 <field name="user_id" string="User"/>
                 <field name="extension_id" string="Anknytning"/>
                 <field name="pbx_handling" string="Hanterat av PBX"/>
+                <field name="voicemail_read" string="Läst"/>
                 <field name="start_date" string="Start"/>
                 <field name="stop_date" string="Stop"/>
                 <field name="duration" string="Duration (s)"/>
@@ -29,6 +30,8 @@
                         <field name="partner_id"/>
                         <field name="phone_number"/>
                         <field name="callerid_name"/>
+                        <field name="voicemail_read"
+                               invisible="pbx_handling != 'voicemail'"/>
                     </group>
                     <group>
                         <field name="user_id"/>
@@ -55,6 +58,12 @@
                         domain="[('direction','=','incoming')]"/>
                 <filter name="outgoing" string="Outgoing"
                         domain="[('direction','=','outgoing')]"/>
+                <filter name="voicemail" string="Röstmeddelanden"
+                        domain="[('pbx_handling','=','voicemail')]"/>
+                <separator/>
+                <filter name="voicemail_unread" string="Olästa röstmeddelanden"
+                        domain="[('pbx_handling','=','voicemail'),
+                                 ('voicemail_read','=',False)]"/>
                 <group expand="0" string="Gruppera">
                     <filter name="group_direction" string="Riktning"
                             context="{'group_by':'direction'}"/>

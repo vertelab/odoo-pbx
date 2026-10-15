@@ -74,6 +74,12 @@ class PbxCall(models.Model):
              "devices, so one inbound call produces one CDR Dial leg per "
              "rung — all sharing the same UniqueID.",
     )
+    voicemail_read = fields.Boolean(
+        string="Voicemail Read",
+        default=False,
+        help="Whether a voicemail message (pbx_handling = 'voicemail') has "
+             "been listened to. Not used for regular calls.",
+    )
 
     _sql_constraints = []
 

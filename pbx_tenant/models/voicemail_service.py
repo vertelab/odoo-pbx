@@ -4,6 +4,7 @@
 import base64
 import hashlib
 import logging
+from datetime import timedelta
 
 from odoo import fields, models
 
@@ -16,6 +17,10 @@ class VoicemailService(models.AbstractModel):
 
     def handle_voicemail_event(self, event_data: dict):
         """Process a VoicemailMessage event from RabbitMQ.
+
+        A voicemail is stored as a single ``pbx.call`` with
+        ``pbx_handling = 'voicemail'``. The recording is an ir.attachment on
+        that call and the transcript is written to ``transcript_text``.
 
         event_data contains:
             - domain: tenant SIP domain
@@ -56,125 +61,128 @@ class VoicemailService(models.AbstractModel):
         if partner:
             caller_name = partner.display_name
 
-        # Create attachment from audio (base64 from the daemon). A path-based
-        # read is only used when the caller passed a path belonging to the SAME
-        # message — never as a substitute for message-specific audio.
-        attachment = None
-        if audio_base64:
-            try:
-                decoded = base64.b64decode(audio_base64)
-                audio_hash = hashlib.md5(decoded).hexdigest()
-                attachment = self.env["ir.attachment"].create(
-                    {
-                        "name": f"Voicemail_{caller_number}_{fields.Datetime.now()}",
-                        "datas": base64.b64encode(decoded),
-                        "mimetype": "audio/wav",
-                        "res_model": "pbx.voicemail.message",
-                    }
-                )
-                _logger.info(
-                    "voicemail stored extension=%s hash=%s attachment_id=%s bytes=%d",
-                    public_number, audio_hash, attachment.id, len(decoded),
-                )
-            except Exception as e:
-                _logger.warning("Could not store voicemail audio: %s", e)
-        elif file_path:
-            try:
-                with open(file_path, "rb") as f:
-                    raw = f.read()
-                audio_hash = hashlib.md5(raw).hexdigest()
-                attachment = self.env["ir.attachment"].create(
-                    {
-                        "name": f"Voicemail_{caller_number}_{fields.Datetime.now()}",
-                        "datas": base64.b64encode(raw),
-                        "mimetype": "audio/wav",
-                        "res_model": "pbx.voicemail.message",
-                    }
-                )
-                _logger.info(
-                    "voicemail stored extension=%s hash=%s attachment_id=%s "
-                    "bytes=%d source=file",
-                    public_number, audio_hash, attachment.id, len(raw),
-                )
-            except (FileNotFoundError, OSError) as e:
-                _logger.warning("Could not read voicemail file %s: %s", file_path, e)
-        else:
-            # No audio in the event: create the message WITHOUT an attachment.
-            # Never fall back to another recording.
-            _logger.info(
-                "voicemail without audio extension=%s — no attachment created",
-                public_number,
-            )
-
-        # Create voip.call record
-        call = self.env["voip.call"].sudo().create(
+        # The call is created BEFORE the attachment so the attachment can be
+        # linked to it (res_model='pbx.call', res_id=call.id).
+        # duration is computed from start_date/stop_date on pbx.call — never
+        # write it directly, or the compute will be silenced.
+        stop = fields.Datetime.now()
+        start = stop - timedelta(seconds=max(0, duration))
+        call = self.env["pbx.call"].sudo().create(
             {
                 "phone_number": caller_number,
-                "type_call": "incoming",
-                "state": "voicemail",
-                "end_date": fields.Datetime.now(),
+                "callerid_name": caller_name,
+                "direction": "incoming",
+                "pbx_handling": "voicemail",
+                "start_date": start,
+                "stop_date": stop,
                 "partner_id": partner.id if partner else False,
                 "user_id": extension.user_id.id or self.env.uid,
-            }
-        )
-
-        # Create voicemail message
-        message = self.env["pbx.voicemail.message"].create(
-            {
                 "extension_id": extension.id,
-                "caller_number": caller_number,
-                "caller_name": caller_name,
-                "duration": duration,
-                "audio_attachment_id": attachment.id if attachment else False,
-                "call_id": call.id,
                 # sudo() context (webhook) has no env.company — take it from
                 # the extension
                 "company_id": extension.company_id.id,
+                "voicemail_read": False,
             }
         )
-        # Link the attachment to the RECEIVER (attachment on the receiver's partner),
-        # not to pbx.voicemail.message — so the recording shows up as an attachment on
-        # the person who received the call. audio_attachment_id on the message is kept
-        # for the form.
-        if attachment:
-            receiver = extension.user_id.partner_id or extension.company_id.partner_id
-            attachment.write({"res_model": "res.partner", "res_id": receiver.id})
 
-        # Notify user (defensive — must not block the storage; notify_info
-        # does not exist on res.users in all Odoo versions)
-        if extension.user_id:
-            try:
-                extension.user_id.notify_info(
-                    f"New voicemail from {caller_name or caller_number} ({duration}s)"
-                )
-            except Exception as e:
-                _logger.warning("Voicemail notify failed: %s", e)
+        # Store the audio as an attachment ON THE CALL.
+        attachment = self._store_audio(call, caller_number, audio_base64, file_path)
 
         # Transcribe if enabled and odoo_ai is available
         voicemail_sub = extension.sub_extension_ids.filtered(
             lambda s: s.type == "voicemail" and s.transcribe_enabled
         )
-        if voicemail_sub and attachment and self._has_odoo_ai():
-            self._transcribe_async(message, attachment)
+        if voicemail_sub and attachment:
+            self._trigger_transcription(call, attachment)
 
-        return message
+        # Notify the mailbox owner via the Odoo bus (the same mechanism the
+        # webhook service uses). res.users has no notify_info in Odoo 18 —
+        # that came from OCA web_notify. Must not block the storage.
+        if extension.user_id:
+            try:
+                self.env["bus.bus"]._sendone(
+                    f"res.partner.{extension.user_id.partner_id.id}",
+                    "pbx_event",
+                    {
+                        "event": {
+                            "Event": "VoicemailMessage",
+                            "CallerIDNum": caller_number,
+                            "CallerIDName": caller_name,
+                            "Duration": duration,
+                            "CallId": call.id,
+                            "Extension": extension.public_number,
+                        }
+                    },
+                )
+            except Exception as e:
+                _logger.warning("Voicemail notify failed: %s", e)
 
-    def _has_odoo_ai(self):
-        """Check if odoo_ai module is installed."""
-        return "odoo.ai" in self.env.registry
+        return call
 
-    def _transcribe_async(self, message, attachment):
-        """Transcribe voicemail asynchronously using odoo_ai."""
-        # This runs in a separate thread/cron to avoid blocking
-        self.env.cr.commit()  # Commit the message before async work
-        try:
-            ai_model = self.env["odoo.ai"]
-            transcript = ai_model.transcribe_audio(
-                attachment.datas, language="sv"
+    def _store_audio(self, call, caller_number, audio_base64, file_path):
+        """Attach the recording to the call. Returns the attachment or False.
+
+        A path-based read is only used when the caller passed a path belonging
+        to the SAME message — never as a substitute for message-specific audio.
+        """
+        raw = None
+        source = None
+        if audio_base64:
+            try:
+                raw = base64.b64decode(audio_base64)
+                source = "base64"
+            except Exception as e:
+                _logger.warning("Could not decode voicemail audio: %s", e)
+        elif file_path:
+            try:
+                with open(file_path, "rb") as f:
+                    raw = f.read()
+                source = "file"
+            except (FileNotFoundError, OSError) as e:
+                _logger.warning("Could not read voicemail file %s: %s", file_path, e)
+
+        if raw is None:
+            # No audio in the event: keep the call WITHOUT an attachment.
+            # Never fall back to another recording.
+            _logger.info(
+                "voicemail without audio call=%s — no attachment created", call.id
             )
-            if transcript:
-                message.sudo().write({"transcript": transcript})
-                attachment.sudo().write({"description": transcript})
-            _logger.info("Voicemail %d transcribed", message.id)
+            return self.env["ir.attachment"]
+
+        audio_hash = hashlib.md5(raw).hexdigest()
+        attachment = self.env["ir.attachment"].sudo().create(
+            {
+                "name": f"Voicemail_{caller_number}_{fields.Datetime.now()}.wav",
+                "datas": base64.b64encode(raw),
+                "mimetype": "audio/wav",
+                "res_model": "pbx.call",
+                "res_id": call.id,
+            }
+        )
+        call.sudo().write({"recording_attachment_id": attachment.id})
+        _logger.info(
+            "voicemail stored call=%s hash=%s attachment_id=%s bytes=%d source=%s",
+            call.id, audio_hash, attachment.id, len(raw), source,
+        )
+        return attachment
+
+    def _trigger_transcription(self, call, attachment):
+        """Hand the recording to pbx_ai, which decides (tri-state policy /
+        voicemail opt-in) and publishes the transcribe job to the local
+        transcriber. pbx_tenant does not depend on pbx_ai, so the service is
+        looked up defensively.
+
+        Note: pbx.ai is an AbstractModel — env.get() returns an EMPTY
+        recordset (bool() is False) even when the model exists, so the
+        registry must be checked instead.
+        """
+        if "pbx.ai" not in self.env.registry:
+            _logger.info(
+                "voicemail: pbx_ai not installed — transcription skipped call=%s",
+                call.id,
+            )
+            return
+        try:
+            self.env["pbx.ai"].on_recording_ready(call, attachment)
         except Exception as e:
-            _logger.warning("Voicemail transcription failed: %s", e)
+            _logger.warning("Could not trigger transcription call=%s: %s", call.id, e)

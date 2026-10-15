@@ -5,7 +5,7 @@ import base64
 import json
 import logging
 
-from odoo import models
+from odoo import fields, models
 
 _logger = logging.getLogger(__name__)
 
@@ -94,9 +94,12 @@ class PbxAI(models.AbstractModel):
 
         Returns True if the job was published, False if MQ is unavailable (the
         caller then falls back to direct transcription).
+
+        Note: pbx.mq.publisher is an AbstractModel — env.get() returns an
+        EMPTY recordset (bool() is False) even when the model exists, so the
+        registry must be checked instead.
         """
-        publisher = self.env.get("pbx.mq.publisher")
-        if not publisher:
+        if "pbx.mq.publisher" not in self.env.registry:
             return False
         if not attachment or not attachment.datas:
             return False
@@ -109,7 +112,7 @@ class PbxAI(models.AbstractModel):
             "language": "sv",
         }
         try:
-            publisher.publish(TRANSCRIBE_JOB_KEY, payload)
+            self.env["pbx.mq.publisher"].publish(TRANSCRIBE_JOB_KEY, payload)
             _logger.info(
                 "Transcribe job published for pbx.call %s (attachment %s)",
                 voip_call.id, attachment.id,
@@ -369,13 +372,17 @@ class PbxAI(models.AbstractModel):
         summary = "Voicemail to listen to"
         if voip_call.phone_number:
             summary += f" from {voip_call.phone_number}"
+        # res_model_id (many2one ir.model) is NOT NULL on mail.activity —
+        # setting res_model (the string) alone violates the constraint.
+        call_model = self.env["ir.model"]._get_id("pbx.call")
         return self.env["mail.activity"].create(
             {
                 "res_model": "pbx.call",
+                "res_model_id": call_model,
                 "res_id": voip_call.id,
                 "activity_type_id": activity_type.id,
                 "user_id": user.id if user else self.env.uid,
-                "date_deadline": self.env["fields"].Date.today(),
+                "date_deadline": fields.Date.today(),
                 "summary": summary,
                 "note": (
                     "There is a voicemail to listen to."

@@ -21,11 +21,17 @@
         <field name="inherit_id" ref="pbx_base.pbx_call_form_view"/>
         <field name="arch" type="xml">
             <xpath expr="//sheet" position="inside">
-                <group name="ai_recording" string="AI-transkription &amp; tokens">
+                <group name="ai_recording" string="Recording">
+                    <field name="recording_mimetype" invisible="1"/>
+                    <field name="recording_attachment_id"
+                           widget="pbx_voicemail_audio" nolabel="1"/>
+                </group>
+                <group name="ai_transcript" string="Transcript">
+                    <field name="transcript_text" readonly="1" nolabel="1"/>
+                </group>
+                <group name="ai_recording_details" string="AI-transkription &amp; tokens">
                     <group>
-                        <field name="recording_attachment_id" widget="binary"/>
                         <field name="transcript_attachment_id"/>
-                        <field name="transcript_text" readonly="1" nolabel="1"/>
                     </group>
                     <group>
                         <field name="stt_model" readonly="1"/>
