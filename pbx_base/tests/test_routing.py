@@ -93,6 +93,77 @@ class TestPbxRouting(TransactionCase):
         # extensions are still generated
         self.assertIn("[u80101]", pjsip)
 
+    def test_trunk_identify_by_ip(self):
+        """A trunk with an identify rule must pin identify_by = ip.
+
+        Asterisk defaults to identify_by = username,ip. Providers such as
+        Telavox put the CUSTOMER'S number in the From user, not the trunk
+        account, so the username identifier never matches and every inbound
+        request is rejected with "No matching endpoint found" — even though
+        the source IP matches the identify rule (RFC 3261 §18.2.1).
+        """
+        self.env["pbx.trunk"].create(
+            {
+                "company_id": self.env.company.id,
+                "name": "Telavox",
+                "host": "sip.telavox.se",
+                "username": "u0133410596",
+                "secret": "secret1",
+                "identify_ip": "80.83.209.147",
+            }
+        )
+        pjsip = self.generator.generate_pjsip("test.se", self.env.company.id)
+        self.assertIn("identify_by = ip", pjsip)
+        self.assertIn("[test.se-trunk-telavox-identify]", pjsip)
+        self.assertIn("match = 80.83.209.147", pjsip)
+
+    def test_trunk_identify_nets_multiple_matches(self):
+        """identify_nets emits one `match =` line per network.
+
+        Telavox signals inbound from several SBCs (80.83.208.0/22 plus
+        80.83.212.0/24); a single /32 rejects every call. Blank lines and
+        `#` comments are ignored.
+        """
+        self.env["pbx.trunk"].create(
+            {
+                "company_id": self.env.company.id,
+                "name": "Telavox",
+                "host": "sip.telavox.se",
+                "username": "u0133410596",
+                "secret": "secret1",
+                "identify_ip": "80.83.209.147",
+                "identify_nets": (
+                    "# Telavox datacenter\n\n"
+                    "80.83.208.0/22\n"
+                    "80.83.212.0/24\n"
+                ),
+            }
+        )
+        pjsip = self.generator.generate_pjsip("test.se", self.env.company.id)
+        self.assertIn("match = 80.83.208.0/22", pjsip)
+        self.assertIn("match = 80.83.212.0/24", pjsip)
+        # identify_nets wins over identify_ip — only the listed nets match
+        self.assertNotIn("match = 80.83.209.147", pjsip)
+        self.assertIn("identify_by = ip", pjsip)
+
+    def test_trunk_no_identify_rule_leaves_identify_by_unset(self):
+        """Without an identify rule we must not pin identify_by.
+
+        Registration-only trunks (no inbound) keep Asterisk's default so
+        the username identifier still resolves the AOR for REGISTER.
+        """
+        self.env["pbx.trunk"].create(
+            {
+                "company_id": self.env.company.id,
+                "name": "NoInbound",
+                "host": "sip.example.com",
+                "username": "user1",
+                "secret": "secret1",
+            }
+        )
+        pjsip = self.generator.generate_pjsip("test.se", self.env.company.id)
+        self.assertNotIn("identify_by = ip", pjsip)
+
     # ------------------------------------------------------------------
     # Inbound routes
     # ------------------------------------------------------------------

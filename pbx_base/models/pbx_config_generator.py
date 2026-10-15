@@ -77,6 +77,7 @@ disallow = all
 outbound_auth = {domain}-trunk-{slug}-auth
 aors = {domain}-trunk-{slug}-aor
 callerid = "{callerid}"
+{identify_by}
 
 [{domain}-trunk-{slug}-auth]
 type = auth
@@ -104,7 +105,7 @@ outbound_auth = {domain}-trunk-{slug}-auth
 IDENTIFY_TEMPLATE = """\
 [{domain}-trunk-{slug}-identify]
 type = identify
-match = {ip}
+{matches}
 endpoint = {domain}-trunk-{slug}
 """
 
@@ -279,21 +280,56 @@ class PbxConfigGenerator(models.AbstractModel):
                     host=trunk.host,
                     port=trunk.port or 5060,
                 )
-            # Identify: an explicit field wins; otherwise DNS lookup on the host
-            # (no hardcoding — the IP is fetched dynamically at generation time)
-            identify = ""
-            identify_ip = (trunk.identify_ip or "").strip()
-            if not identify_ip and trunk.host:
-                try:
-                    import socket
+            # Identify: explicit networks win; then a single explicit IP;
+            # otherwise DNS lookup on the host (no hardcoding — the IP is
+            # fetched dynamically at generation time).
+            #
+            # Providers such as Telavox signal inbound from several SBCs, not
+            # from the host's A record: sip.telavox.se resolves to one address
+            # (sipproxy16) while INVITEs arrive from sip62/sip118 in the same
+            # 80.83.208.0/22 range. A single /32 therefore rejects every
+            # inbound call with "No matching endpoint found". identify_nets
+            # lets the operator list every network the provider uses.
+            identify_matches = []
+            for line in (trunk.identify_nets or "").splitlines():
+                line = line.strip()
+                if line and not line.startswith("#"):
+                    identify_matches.append(line)
+            if not identify_matches:
+                identify_ip = (trunk.identify_ip or "").strip()
+                if not identify_ip and trunk.host:
+                    try:
+                        import socket
 
-                    identify_ip = socket.gethostbyname(trunk.host)
-                except OSError:
-                    identify_ip = ""
-            if identify_ip:
+                        identify_ip = socket.gethostbyname(trunk.host)
+                    except OSError:
+                        identify_ip = ""
+                if identify_ip:
+                    identify_matches.append(identify_ip)
+            identify = ""
+            identify_by = ""
+            if identify_matches:
                 identify = "\n" + IDENTIFY_TEMPLATE.format(
-                    domain=domain, slug=slug, ip=identify_ip
+                    domain=domain,
+                    slug=slug,
+                    matches="\n".join(
+                        "match = %s" % m for m in identify_matches
+                    ),
                 )
+                # RFC 3261 §18.2.1: the only trustworthy identity of a SIP
+                # request is the packet's source IP — the From header "can be
+                # modified arbitrarily by the owner of a UA" (§26.1.1).
+                #
+                # Asterisk defaults to identify_by = username,ip. With that
+                # default the username identifier runs first; providers such
+                # as Telavox put the CUSTOMER'S number (e.g. 0725020525) in
+                # the From user, not the trunk account, so the username match
+                # fails and the request is rejected with "No matching endpoint
+                # found" even though the source IP matches the identify rule.
+                #
+                # Pinning identify_by = ip makes the endpoint match on source
+                # IP only — exactly what the identify section describes.
+                identify_by = "identify_by = ip"
             trunk_blocks.append(
                 TRUNK_TEMPLATE.format(
                     domain=domain,
@@ -306,6 +342,7 @@ class PbxConfigGenerator(models.AbstractModel):
                     codec_allows=self._codec_allows(company),
                     registration=registration,
                     identify=identify,
+                    identify_by=identify_by,
                 )
             )
 
