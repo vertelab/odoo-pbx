@@ -2,6 +2,7 @@
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 
 import re
+from datetime import timezone
 
 from odoo import _, api, fields, models
 from odoo.exceptions import AccessError, UserError
@@ -310,10 +311,7 @@ class PbxExtension(models.Model):
                     limit=1,
                 )
                 if events:
-                    stop = events[0].stop
-                    if isinstance(stop, str):
-                        stop = fields.Datetime.to_datetime(stop)
-                    return False, int(stop.timestamp())
+                    return False, self._epoch_utc(events[0].stop)
 
         # 2) Schedule check (resource.calendar via HR)
         if self.respect_schedule:
@@ -347,6 +345,26 @@ class PbxExtension(models.Model):
                                 )
                     return False, 0
         return True, 0
+
+    @api.model
+    def _epoch_utc(self, value):
+        """Convert a datetime/string field value to an epoch, UTC-based.
+
+        ``fields.Datetime`` values are naive UTC. A naive ``datetime``'s
+        ``.timestamp()`` interprets it as *local* time, which shifts the
+        answer by the server's UTC offset, so we pin the timezone explicitly.
+        Returns 0 when the value is missing or unparsable — the dialplan
+        treats 0 as "unknown next time", which is the safe default.
+        """
+        if not value:
+            return 0
+        if isinstance(value, str):
+            value = fields.Datetime.to_datetime(value)
+        if not value:
+            return 0
+        if value.tzinfo is None:
+            value = value.replace(tzinfo=timezone.utc)
+        return int(value.timestamp())
 
     def _render_availability_gate(self, odoo_url, webhook_token):
         """Dialplan lines checking availability before follow-me ringing."""

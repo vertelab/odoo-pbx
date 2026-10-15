@@ -1,6 +1,6 @@
 {
     "name": "PBX Base",
-    "version": "18.0.1.47.0",
+    "version": "18.0.1.47.1",
     "summary": "Core PBX abstraction for multi-tenant Asterisk management",
     "category": "Productivity/VOIP",
     "author": "Vertel Sverige AB",

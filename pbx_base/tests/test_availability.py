@@ -1,7 +1,7 @@
 # Copyright 2026 Vertel Sverige AB
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 from odoo.tests import TransactionCase, tagged
 
@@ -83,3 +83,46 @@ class TestAvailability(TransactionCase):
             }
         )
         self.assertEqual(ext._render_availability_gate("https://x", "tok"), "")
+
+    # ------------------------------------------------------------------
+    # HTTP route: the dialplan passes public_number, not the database id
+    # ------------------------------------------------------------------
+    def test_route_resolves_by_public_number(self):
+        """The gate emits /pbx/availability/<public_number>.
+
+        The route must resolve that string. Regression: it was declared
+        `<int:ext_id>`, so "01" was coerced to 1 and looked up the wrong
+        record (or 500'd) instead of the extension the dialplan meant.
+        """
+        from odoo.tests.common import HttpCase
+
+        rule = None
+        for r in self.env["ir.http"]._routing_map().iter_rules():
+            if r.rule == "/pbx/availability/<string:number>":
+                rule = r
+                break
+        self.assertIsNotNone(
+            rule, "route /pbx/availability/<string:number> is missing"
+        )
+
+    def test_epoch_utc_treats_naive_as_utc(self):
+        """_epoch_utc must not shift naive datetimes by the server offset."""
+        naive = datetime(2026, 10, 15, 12, 0, 0)
+        self.assertEqual(
+            self.env["pbx.extension"]._epoch_utc(naive),
+            int(naive.replace(tzinfo=timezone.utc).timestamp()),
+        )
+
+    def test_epoch_utc_handles_missing_values(self):
+        """Missing/unparsable values yield 0 (dialplan: 'unknown next time')."""
+        Extension = self.env["pbx.extension"]
+        self.assertEqual(Extension._epoch_utc(False), 0)
+        self.assertEqual(Extension._epoch_utc(None), 0)
+        self.assertEqual(Extension._epoch_utc(""), 0)
+
+    def test_epoch_utc_parses_string(self):
+        Extension = self.env["pbx.extension"]
+        self.assertEqual(
+            Extension._epoch_utc("2026-10-15 12:00:00"),
+            int(datetime(2026, 10, 15, 12, 0, 0, tzinfo=timezone.utc).timestamp()),
+        )
