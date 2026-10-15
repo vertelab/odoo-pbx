@@ -1,6 +1,6 @@
 {
     "name": "PBX Tenant",
-    "version": "18.0.1.22.0",
+    "version": "18.0.1.23.0",
     "summary": "Customer PBX module with softphone, Operator Panel, and voicemail",
     "category": "Productivity/VOIP",
     "author": "Vertel Sverige AB",
@@ -9,7 +9,6 @@
     "depends": ["pbx_base", "voip_oca"],
     "data": [
         "security/ir.model.access.csv",
-        "views/pbx_voicemail_views.xml",
         "views/res_users_views.xml",
         "views/pbx_operator_panel_views.xml",
     ],
