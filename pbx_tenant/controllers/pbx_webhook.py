@@ -27,6 +27,10 @@ class PbxWebhook(http.Controller):
         tenant = payload.get("tenant") or payload.get("domain")
         event = payload.get("event")
         topic = payload.get("topic", "")
+        # The Asterisk host's timezone, declared by the daemon. Its CDR
+        # backend has no timezone setting of its own, so the timestamps in
+        # the event cannot be normalised to UTC without this.
+        host_timezone = payload.get("timezone")
 
         if not tenant or not event:
             return request.make_json_response(
@@ -41,7 +45,9 @@ class PbxWebhook(http.Controller):
             )
 
         try:
-            request.env["pbx.webhook.service"].sudo().handle_event(tenant, topic, event)
+            request.env["pbx.webhook.service"].sudo().handle_event(
+                tenant, topic, event, host_timezone
+            )
         except Exception as e:
             _logger.exception("Webhook handling failed for %s", tenant)
             request.env.cr.rollback()

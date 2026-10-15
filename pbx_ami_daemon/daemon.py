@@ -53,6 +53,54 @@ def load_config(path: str) -> dict:
 
 
 # ──────────────────────────────────────────────────────────────────
+# Host timezone
+# ──────────────────────────────────────────────────────────────────
+
+
+def detect_host_timezone() -> str:
+    """Return the host's IANA timezone name (e.g. "Europe/Stockholm").
+
+    Asterisk's cdr_manager backend formats CDR timestamps with
+    ast_localtime(..., NULL), i.e. the HOST's local time — it has no
+    timezone setting of its own (unlike cdr_csv/cdr_odbc, which expose
+    usegmtime). The consumer therefore has to be told which timezone the
+    timestamps are in so it can normalise them to UTC.
+
+    Reading it here keeps the daemon the single source of truth: if the
+    host is moved to another timezone, the next event carries the new
+    value and nothing needs reconfiguring on the Odoo side.
+
+    Falls back to "UTC" when the host timezone cannot be determined —
+    which is also correct, because a host without an explicit timezone
+    runs in UTC.
+    """
+    # /etc/timezone is the canonical Debian/Ubuntu location.
+    try:
+        with open("/etc/timezone") as f:
+            name = f.read().strip()
+        if name:
+            return name
+    except OSError:
+        pass
+    # Fall back to resolving the /etc/localtime symlink.
+    try:
+        target = os.path.realpath("/etc/localtime")
+        marker = "/zoneinfo/"
+        if marker in target:
+            name = target.split(marker, 1)[1]
+            if name:
+                return name
+    except OSError:
+        pass
+    return "UTC"
+
+
+# Resolved once at startup — the host timezone does not change under us
+# without a restart, and reading it per event would be pointless I/O.
+HOST_TIMEZONE = detect_host_timezone()
+
+
+# ──────────────────────────────────────────────────────────────────
 # State Cache
 # ──────────────────────────────────────────────────────────────────
 
@@ -428,7 +476,15 @@ class WebhookPublisher:
             return
         token = self._token_for(tenant)
         payload = json.dumps(
-            {"tenant": tenant, "topic": routing_key, "event": data}
+            {
+                "tenant": tenant,
+                "topic": routing_key,
+                "event": data,
+                # The host timezone the event's timestamps are expressed in.
+                # Asterisk's cdr_manager has no timezone setting, so the
+                # consumer cannot infer it — it has to be declared.
+                "timezone": HOST_TIMEZONE,
+            }
         ).encode()
         req = urllib.request.Request(
             self.url,
@@ -867,6 +923,11 @@ async def amain(config_path: str):
     cfg_webhook = config.get("webhook", {})
     reconnect_interval = cfg_daemon.get("reconnect_interval", 5)
     health_port = cfg_daemon.get("health_port", 8080)
+
+    # Asterisk's cdr_manager emits timestamps in the host's local time and
+    # offers no setting to change that, so the timezone is announced with
+    # every event for the consumer to normalise to UTC.
+    logger.info("Host timezone reported to consumers: %s", HOST_TIMEZONE)
     tenants_config_path = cfg_tenants.get("config_path", "/etc/asterisk/tenants/")
 
     webhook = WebhookPublisher(

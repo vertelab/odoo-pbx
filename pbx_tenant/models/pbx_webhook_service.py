@@ -3,6 +3,7 @@
 
 import logging
 import re
+from datetime import datetime
 
 from odoo import fields, models
 
@@ -19,7 +20,14 @@ class PbxWebhookService(models.AbstractModel):
     _name = "pbx.webhook.service"
     _description = "PBX Webhook Event Service"
 
-    def handle_event(self, tenant_domain, topic, event):
+    def handle_event(self, tenant_domain, topic, event, host_timezone=None):
+        """Process one daemon event.
+
+        ``host_timezone`` is the IANA timezone the Asterisk host writes its
+        timestamps in, declared by the daemon with every event. Asterisk's
+        cdr_manager backend has no timezone setting of its own, so this is
+        the only way to know how to normalise its timestamps to UTC.
+        """
         # The instance only manages its own domain (settings) — but we
         # accept webhook events for the domain being called.
         if not self.env["res.company"].search_count(
@@ -84,7 +92,7 @@ class PbxWebhookService(models.AbstractModel):
         # 4) Call history: Cdr events → pbx.call (defensive)
         if event_name == "Cdr":
             try:
-                self._handle_cdr_call(tenant_domain, event)
+                self._handle_cdr_call(tenant_domain, event, host_timezone)
             except Exception as e:
                 _logger.warning("Call logging failed for %s: %s", tenant_domain, e)
 
@@ -150,7 +158,76 @@ class PbxWebhookService(models.AbstractModel):
         "3": "missed",
     }
 
-    def _handle_cdr_call(self, tenant_domain, event):
+    # `cdr_manager` formats its timestamps with ast_localtime(&cdr->start,
+    # &timeresult, NULL) — a NULL timezone means the host's LOCAL time, so the
+    # AMI Cdr event carries local time, not UTC (unlike the docs' wording for
+    # other backends). Odoo stores Datetime in UTC, so the raw value must be
+    # converted. Without this every CDR-based call is shifted by the UTC
+    # offset (+2h in CEST), which also breaks the "start_date desc" ordering
+    # of the call history: a call logged at 11:44 local claimed to have
+    # started at 13:42 local — after the row that recorded it.
+    _CDR_TIME_FORMATS = (
+        "%Y-%m-%d %H:%M:%S",
+        "%Y/%m/%d %H:%M:%S",
+        "%Y-%m-%dT%H:%M:%S",
+    )
+
+    def _cdr_timestamp(self, value, host_timezone=None):
+        """Convert an Asterisk CDR timestamp (host-local time) to naive UTC.
+
+        Returns a naive datetime in UTC, or None when the value is missing or
+        unparseable. Never raises — a malformed timestamp must not drop the
+        call record; the caller falls back to Datetime.now().
+        """
+        if not value:
+            return None
+        text = str(value).strip()
+        if not text:
+            return None
+        parsed = None
+        for fmt in self._CDR_TIME_FORMATS:
+            try:
+                parsed = datetime.strptime(text[:19], fmt)
+                break
+            except ValueError:
+                continue
+        if parsed is None:
+            _logger.warning("Unparseable CDR timestamp: %r", value)
+            return None
+        try:
+            import pytz
+
+            local = pytz.timezone(self._asterisk_timezone(host_timezone))
+            aware = local.localize(parsed, is_dst=None)
+            return aware.astimezone(pytz.utc).replace(tzinfo=None)
+        except Exception as e:  # ambiguous/nonexistent DST times, missing pytz
+            _logger.warning(
+                "Could not convert CDR timestamp %r (%s) — storing as-is",
+                value,
+                e,
+            )
+            return parsed
+
+    def _asterisk_timezone(self, host_timezone=None):
+        """Timezone the Asterisk host writes CDR timestamps in.
+
+        Preference order:
+          1. the value the daemon declared with this event (authoritative —
+             it is read from the host itself, so it cannot drift),
+          2. the ``pbx.asterisk.timezone`` setting (manual override for
+             deployments whose daemon predates the declaration),
+          3. Europe/Stockholm (our hosts' default).
+        """
+        if host_timezone:
+            return host_timezone
+        return (
+            self.env["ir.config_parameter"]
+            .sudo()
+            .get_param("pbx.asterisk.timezone", "Europe/Stockholm")
+            or "Europe/Stockholm"
+        )
+
+    def _handle_cdr_call(self, tenant_domain, event, host_timezone=None):
         """Log a call in pbx.call from an AMI Cdr event.
 
         One call produces several CDR records (one per leg). We log exactly
@@ -266,7 +343,10 @@ class PbxWebhookService(models.AbstractModel):
                     "pbx_handling": handling,
                     "extension_id": extension.id if extension else False,
                     "user_id": extension.user_id.id if extension else False,
-                    "stop_date": event.get("EndTime") or existing.stop_date,
+                    "stop_date": self._cdr_timestamp(
+                        event.get("EndTime"), host_timezone
+                    )
+                    or existing.stop_date,
                 }
             )
             return
@@ -275,8 +355,13 @@ class PbxWebhookService(models.AbstractModel):
                 "phone_number": str(number),
                 "callerid_name": name,
                 "direction": "outgoing" if outgoing else "incoming",
-                "start_date": event.get("StartTime") or fields.Datetime.now(),
-                "stop_date": event.get("EndTime"),
+                "start_date": self._cdr_timestamp(
+                    event.get("StartTime"), host_timezone
+                )
+                or fields.Datetime.now(),
+                "stop_date": self._cdr_timestamp(
+                    event.get("EndTime"), host_timezone
+                ),
                 "pbx_handling": handling,
                 "cdr_unique_id": cdr_key or False,
                 "user_id": extension.user_id.id if extension else False,
