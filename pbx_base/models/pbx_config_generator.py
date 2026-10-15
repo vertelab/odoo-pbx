@@ -428,11 +428,23 @@ class PbxConfigGenerator(models.AbstractModel):
                         "same => n,Dial(PJSIP/{username},{timeout})\n"
                     ).format(username=sub.username, timeout=to)
                     if i + 1 < len(sorted_subs):
-                        # Not format-ed — single braces so ${DIALSTATUS} ends up
-                        # correct in the output (double braces would become ${{DIALSTATUS}})
+                        # Move on to the next device unless the call was
+                        # actually settled. A device that is offline yields
+                        # CHANUNAVAIL, not NOANSWER — testing only for
+                        # "!= NOANSWER" therefore treated an unreachable
+                        # device as "done" and aborted the whole ring group,
+                        # so the remaining devices and the voicemail fallback
+                        # were never reached.
+                        #
+                        # Continue on the failure statuses (device offline,
+                        # congestion, no answer); stop only on ANSWER (the
+                        # bridge already happened) or BUSY (deliberate).
+                        # Not format-ed — single braces so ${DIALSTATUS} ends
+                        # up correct in the output (double braces would become
+                        # ${{DIALSTATUS}}).
                         dial_lines += (
-                            'same => n,GotoIf($["${DIALSTATUS}"'
-                            ' != "NOANSWER"]?done)\n'
+                            'same => n,GotoIf($["${DIALSTATUS}" = "ANSWER"]?done)\n'
+                            'same => n,GotoIf($["${DIALSTATUS}" = "BUSY"]?busy)\n'
                         )
 
             # Availability gate (respect_schedule/respect_calendar)

@@ -86,6 +86,39 @@ class TestFollowMeDeviceControl(TransactionCase):
         self.assertIn("PJSIP/u80211,15", dialplan)
         self.assertNotIn("PJSIP/u80212", dialplan)
 
+    def test_unreachable_device_does_not_abort_ring_group(self):
+        """An offline device must not end the whole ring group.
+
+        Regression: the sequential chain guarded each hop with
+        ``GotoIf($["${DIALSTATUS}" != "NOANSWER"]?done)``. An endpoint with
+        no registration yields CHANUNAVAIL — not NOANSWER — so the condition
+        was true and the dialplan jumped to ``done`` immediately. The
+        remaining devices and the voicemail fallback were never reached,
+        which is exactly the reported symptom: one device offline (u014)
+        made the whole number unreachable.
+        """
+        ext = self._make_ext(
+            public_number="8023",
+            ring_strategy="sequential",
+            sub_extension_ids=[
+                (0, 0, {"number": "80231", "type": "browser", "sequence": 1, "ring_timeout": 10}),
+                (0, 0, {"number": "80232", "type": "browser", "sequence": 2, "ring_timeout": 10}),
+                (0, 0, {"number": "80233", "type": "browser", "sequence": 3, "ring_timeout": 10}),
+            ],
+        )
+        dialplan = self.generator.generate_extensions("test.se", self.env.company)
+
+        # The old, broken guard must be gone.
+        self.assertNotIn('!= "NOANSWER"]?done', dialplan)
+
+        # Every hop after the first must be guarded by ANSWER/BUSY only, so
+        # CHANUNAVAIL falls through to the next device.
+        self.assertIn('GotoIf($["${DIALSTATUS}" = "ANSWER"]?done)', dialplan)
+        self.assertIn('GotoIf($["${DIALSTATUS}" = "BUSY"]?busy)', dialplan)
+
+        # And the fallback must still be reachable after the last device.
+        self.assertIn("Voicemail(8023@test.se,u)", dialplan)
+
     def test_parallel_max_timeout(self):
         ext = self._make_ext(
             public_number="8022",
