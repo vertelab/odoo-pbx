@@ -65,6 +65,15 @@ class PbxCall(models.Model):
         default=lambda self: self.env.company,
         index=True,
     )
+    cdr_unique_id = fields.Char(
+        string="CDR Unique ID",
+        index=True,
+        copy=False,
+        help="Asterisk CDR UniqueID for the leg this call was logged from. "
+             "Used to log one pbx.call per call: a ring group rings several "
+             "devices, so one inbound call produces one CDR Dial leg per "
+             "rung — all sharing the same UniqueID.",
+    )
 
     _sql_constraints = []
 
@@ -125,6 +134,7 @@ class PbxCall(models.Model):
                 "start_date": values.get("start_date") or fields.Datetime.now(),
                 "stop_date": values.get("stop_date"),
                 "pbx_handling": values.get("pbx_handling"),
+                "cdr_unique_id": values.get("cdr_unique_id") or False,
                 "user_id": values.get("user_id") or False,
                 "extension_id": values.get("extension_id") or False,
                 "company_id": values.get("company_id")

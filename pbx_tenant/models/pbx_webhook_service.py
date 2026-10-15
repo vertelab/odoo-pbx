@@ -132,20 +132,67 @@ class PbxWebhookService(models.AbstractModel):
                 tenant_domain, version, event.get("error"),
             )
 
+    # Asterisk CDR dispositions. The AMI Cdr event sends Disposition as text
+    # (ANSWERED / NO ANSWER / BUSY / CONGESTION / FAILED); the CSV backend in
+    # DOCUMENTATION mode writes numeric codes. Accept both so the handler is
+    # independent of the cdr backend in use.
+    _CDR_DISPOSITIONS = {
+        "ANSWERED": "answered",
+        "NO ANSWER": "missed",
+        "BUSY": "busy",
+        "CONGESTION": "missed",
+        "FAILED": "missed",
+        # Numeric (cdr_csv DOCUMENTATION) codes
+        "8": "answered",
+        "10": "answered",
+        "0": "missed",
+        "2": "busy",
+        "3": "missed",
+    }
+
     def _handle_cdr_call(self, tenant_domain, event):
         """Log a call in pbx.call from an AMI Cdr event.
 
-        One call produces one CDR record per leg; we only log the record
-        where the INTERNAL device's own channel (PJSIP/u<username>-…) is Channel
-        — trunk/other legs are skipped, so each call gives one record.
+        One call produces several CDR records (one per leg). We log exactly
+        one record per call, from the leg that dialled the INTERNAL device —
+        i.e. LastApplication = Dial with DestinationChannel = PJSIP/u<username>-…
+        (the extension that answered, or the last one rung if unanswered).
 
-        Direction: outbound when Source = the extension's own number (the call
-        started internally), otherwise inbound. pbx_handling is mapped from
-        Disposition (ANSWERED / NO ANSWER / BUSY / …).
+        The internal device sits in different fields depending on direction:
+
+        * Outbound: the extension originated the call, so Channel is
+          PJSIP/u011-… and DestinationChannel is the trunk leg. The dialling
+          leg is the one with the internal device in Channel.
+        * Inbound: the trunk received the call, so Channel is
+          PJSIP/<domain>-trunk-<slug>-… and DestinationChannel is
+          PJSIP/u011-… for each rung device (ring group / follow-me).
+
+        Looking only at Channel (the previous behaviour) therefore logged
+        outbound calls and silently dropped every inbound one — pbx.call had
+        no direction=incoming rows at all.
+
+        Direction: outbound when Source is the extension's own number, i.e.
+        the call started internally; otherwise inbound. pbx_handling is
+        mapped from Disposition.
         """
         channel = event.get("Channel", "") or ""
+        dest_channel = event.get("DestinationChannel", "") or ""
+        last_app = (event.get("LastApplication", "") or "").strip()
+        # The internal device is PJSIP/u<username>-… . Outbound legs carry it
+        # in Channel; inbound legs carry it in DestinationChannel. Only the
+        # Dial leg represents "this call reached extension X" — the trunk's
+        # own leg (Channel = trunk, no internal device) and the Local-channel
+        # wrappers are skipped, so one call yields one record.
         internal = re.search(r"PJSIP/(u[0-9]+)-", channel)
         if not internal:
+            if last_app != "Dial":
+                # Inbound non-dial legs (the trunk leg itself, voicemail
+                # fallback, etc.) carry no extension to attribute.
+                return
+            internal = re.search(r"PJSIP/(u[0-9]+)-", dest_channel)
+        if not internal:
+            # Trunk↔trunk or Local-only leg with no internal device — no
+            # extension to attribute the call to; skip.
             return
         username = internal.group(1)
         sub = self.env["pbx.sub_extension"].search(
@@ -175,18 +222,54 @@ class PbxWebhookService(models.AbstractModel):
         if not re.match(r"^\+?[0-9]+$", number):
             return
         name = event.get("CallerIDName", "") or ""
-        disposition = (event.get("Disposition", "") or "").upper()
-        handling_map = {
-            "ANSWERED": "answered",
-            "NO ANSWER": "missed",
-            "BUSY": "busy",
-            "CONGESTION": "missed",
-            "FAILED": "missed",
-        }
-        handling = handling_map.get(disposition, "missed")
+        disposition = (event.get("Disposition", "") or "").strip().upper()
+        handling = self._CDR_DISPOSITIONS.get(disposition, "missed")
         company = self.env["res.company"].search(
             [("pbx_domain", "=", tenant_domain)], limit=1
         )
+        # Deduplicate: a ring group / follow-me rings several devices, so one
+        # inbound call yields one Dial leg per rung device (each with the
+        # internal device in DestinationChannel). Without this every call
+        # would be logged once per rung.
+        #
+        # The call's identity is the trunk leg's channel suffix — every leg of
+        # one inbound call shares the same trunk channel (e.g.
+        # PJSIP/<domain>-trunk-<slug>-00000036). UniqueID is NOT usable here:
+        # each leg has its own, and the cdr_csv backend writes the literal
+        # "DOCUMENTATION" in its place.
+        cdr_key = ""
+        trunk_leg = re.search(
+            r"(PJSIP/[A-Za-z0-9.\-]*-trunk-[A-Za-z0-9.\-]*-[0-9a-f]+)",
+            "%s %s" % (channel, dest_channel),
+        )
+        if trunk_leg:
+            cdr_key = trunk_leg.group(1)
+        if not cdr_key:
+            # Outbound (or an internal-only call): the originating channel is
+            # unique per call, so it identifies the call on its own.
+            cdr_key = channel.strip()
+        existing = (
+            self.env["pbx.call"].search([("cdr_unique_id", "=", cdr_key)], limit=1)
+            if cdr_key
+            else self.env["pbx.call"]
+        )
+        if existing:
+            # The call is already logged. Ring-group legs arrive in ring
+            # order, so the first one is often an unanswered rung
+            # ("missed") while a later leg is the one that was answered.
+            # Upgrade the record when this leg carries the better outcome —
+            # never log a second row for the same call.
+            if handling != "answered" or existing.pbx_handling == "answered":
+                return
+            existing.write(
+                {
+                    "pbx_handling": handling,
+                    "extension_id": extension.id if extension else False,
+                    "user_id": extension.user_id.id if extension else False,
+                    "stop_date": event.get("EndTime") or existing.stop_date,
+                }
+            )
+            return
         self.env["pbx.call"].log_call(
             {
                 "phone_number": str(number),
@@ -195,6 +278,7 @@ class PbxWebhookService(models.AbstractModel):
                 "start_date": event.get("StartTime") or fields.Datetime.now(),
                 "stop_date": event.get("EndTime"),
                 "pbx_handling": handling,
+                "cdr_unique_id": cdr_key or False,
                 "user_id": extension.user_id.id if extension else False,
                 "extension_id": extension.id if extension else False,
                 "company_id": company.id if company else False,
