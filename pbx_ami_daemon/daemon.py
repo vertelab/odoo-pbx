@@ -1009,9 +1009,23 @@ async def amain(config_path: str):
                 except Exception:
                     logger.warning("Invalid result message body")
                     return
-                # tenant ur routing key: pbx.result.<domain>.Transcribe
-                parts = message.routing_key.split(".")
-                tenant = ".".join(parts[2:-1]) if len(parts) > 3 else ""
+                # The producer knows its tenant and puts it in the payload —
+                # prefer that. Deriving it from the routing key only works when
+                # the key carries the domain (pbx.result.<domain>.<Event>);
+                # pbx-transcriber publishes on a fixed pbx.result.transcribe,
+                # so the routing key yields an empty tenant and the webhook is
+                # rejected. Fall back to the routing key for producers that do
+                # embed the domain.
+                tenant = body.get("tenant") or ""
+                if not tenant:
+                    parts = message.routing_key.split(".")
+                    tenant = ".".join(parts[2:-1]) if len(parts) > 3 else ""
+                if not tenant:
+                    logger.warning(
+                        "Result without a tenant, dropping: routing_key=%s",
+                        message.routing_key,
+                    )
+                    return
                 await webhook.publish(tenant, message.routing_key, body)
 
         await result_queue.consume(on_result)
