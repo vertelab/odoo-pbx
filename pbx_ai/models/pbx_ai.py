@@ -103,10 +103,23 @@ class PbxAI(models.AbstractModel):
             return False
         if not attachment or not attachment.datas:
             return False
+        # The tenant is the company's pbx_domain — the same source every other
+        # part of the module uses (config generator, extension, device). The
+        # call itself carries no domain field, so asking it for one silently
+        # yielded "" and the transcriber echoed that back, which made the
+        # daemon drop the result as tenant-less.
+        tenant = voip_call.company_id.pbx_domain or ""
+        if not tenant:
+            _logger.warning(
+                "No pbx_domain on company %s — cannot publish transcribe job "
+                "for pbx.call %s",
+                voip_call.company_id.id, voip_call.id,
+            )
+            return False
         payload = {
             "job_id": "pbx-%s-%s" % (voip_call.id or 0, attachment.id or 0),
             "call_id": voip_call.id or 0,
-            "tenant": getattr(voip_call, "tenant_domain", "") or "",
+            "tenant": tenant,
             "audio_base64": attachment.datas.decode() if isinstance(
                 attachment.datas, bytes) else attachment.datas,
             "language": "sv",
