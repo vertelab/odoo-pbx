@@ -93,7 +93,10 @@ class PbxCoworkerAI(models.Model):
         with personal_coworker_id == this coworker."""
         for rec in self:
             ext = rec._get_pbx_extension()
-            if ext and ext.user_id and ext.user_id.personal_coworker_id != rec:
+            if not ext or not ext.user_id:
+                continue
+            owner = ext.user_id.personal_coworker_id
+            if owner and owner != rec:
                 raise models.ValidationError(
                     _("Extension %s belongs to a user with a different "
                       "personal AI coworker.") % (ext.public_number or ext.id))
