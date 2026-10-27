@@ -80,13 +80,22 @@ class PbxNumbering(models.AbstractModel):
 
     @api.model
     def _used_dialable_numbers(self, company):
-        """All taken dialable numbers in the company (across model borders)."""
+        """All taken dialable numbers in the company (across model borders).
+
+        `active_test=False` is deliberate: the uniqueness constraint on
+        `pbx.extension` is `unique(company_id, public_number)` and applies to
+        ARCHIVED rows too. A plain `search()` hides them, so the allocator
+        would hand out a number that `create()` then rejects with a
+        duplicate-key error (seen on luke18: extension 4 "Reception" is
+        archived but still owns "10"). An archived number is not free.
+        """
         used = set()
         for model_name, field in self.DIALABLE_MODELS:
             if model_name not in self.env:
                 continue
             model = self.env[model_name]
-            recs = model.search([("company_id", "=", company.id)])
+            recs = model.with_context(active_test=False).search(
+                [("company_id", "=", company.id)])
             for rec in recs:
                 val = rec[field]
                 if val:
@@ -119,7 +128,12 @@ class PbxNumbering(models.AbstractModel):
         w = self._get_extension_width(company)
         if include_existing:
             # 1) Existing free extension (without user): lowest numeric number.
-            free = self.env["pbx.extension"].search(
+            # `active_test=False` is deliberate: an archived extension still
+            # holds its number (the uniqueness constraint ignores `active`),
+            # so offering it as "free" and then writing to it would resurrect
+            # an archived record. Archived rows are not candidates.
+            free = self.env["pbx.extension"].with_context(
+                active_test=False).search(
                 [("company_id", "=", company.id), ("user_id", "=", False)],
                 order="public_number asc",
             )
@@ -131,6 +145,9 @@ class PbxNumbering(models.AbstractModel):
                     [("pbx_extension_id", "in", free.ids)]
                 ).mapped("pbx_extension_id")
                 free = free - used_by_emp
+            # Archived rows are NOT free: they still hold their number. Drop
+            # them so we never hand out (and resurrect) an archived extension.
+            free = free.filtered("active")
             for ext in free:
                 num = str(ext.public_number or "")
                 if num.isdigit():
