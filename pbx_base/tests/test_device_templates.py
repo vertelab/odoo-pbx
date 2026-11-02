@@ -157,3 +157,52 @@ class TestDeviceTemplates(TransactionCase):
             self.env.company.config_dirty,
             "a rotated password must trigger a config republish",
         )
+
+    # ------------------------------------------------------------------
+    # 8.1 — linking a user grants PBX Operator (self-service access)
+    # ------------------------------------------------------------------
+    def test_sync_user_link_grants_operator_group(self):
+        """8.1 — a user linked to an extension becomes a PBX Operator.
+
+        Self-service needs base.group_user only, but the operator panel and
+        the call widgets check group_pbx_operator. Granting it on link means
+        a provisioned user does not wait for an administrator.
+        """
+        operator = self.env.ref("pbx_base.group_pbx_operator")
+        user = self.env["res.users"].create(
+            {
+                "name": "Fresh Operator",
+                "login": "pbx_fresh_operator",
+                "email": "fresh@example.com",
+                "groups_id": [(6, 0, [self.env.ref("base.group_user").id])],
+            }
+        )
+        self.assertNotIn(operator, user.groups_id)
+
+        ext = self.env["pbx.extension"].create(
+            {
+                "company_id": self.env.company.id,
+                "public_number": "9074",
+                "user_id": user.id,
+            }
+        )
+        ext._sync_user_link()
+
+        self.assertIn(operator, user.groups_id)
+        self.assertEqual(user.pbx_extension_id, ext)
+
+    def test_sync_user_link_is_idempotent(self):
+        """8.1 — re-syncing does not duplicate the group or raise."""
+        operator = self.env.ref("pbx_base.group_pbx_operator")
+        ext = self.env["pbx.extension"].create(
+            {
+                "company_id": self.env.company.id,
+                "public_number": "9075",
+                "user_id": self.user.id,
+            }
+        )
+        ext._sync_user_link()
+        ext._sync_user_link()
+        self.assertEqual(
+            len(self.user.groups_id.filtered(lambda g: g == operator)), 1
+        )

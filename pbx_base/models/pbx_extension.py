@@ -148,8 +148,10 @@ class PbxExtension(models.Model):
         """Ensure user.pbx_extension_id points at this extension.
 
         Self-service (own extension/devices/calls) is available to every
-        internal user through base.group_user — no PBX group is required.
-        PBX Operator/Office/Admin are assigned manually by an administrator.
+        internal user through base.group_user. Linking a user to an extension
+        also grants PBX Operator, so a newly provisioned user can see the
+        operator panel without an administrator assigning the group by hand.
+        Office/Admin stay manual — they widen what the user may administer.
         """
         self.ensure_one()
         user = self.user_id
@@ -157,6 +159,9 @@ class PbxExtension(models.Model):
             return
         if user.pbx_extension_id != self:
             user.pbx_extension_id = self.id
+        operator = self.env.ref("pbx_base.group_pbx_operator", raise_if_not_found=False)
+        if operator and operator not in user.groups_id:
+            user.write({"groups_id": [(4, operator.id)]})
 
     def _sync_voip(self):
         """Sync the voip_oca settings on the linked user.
