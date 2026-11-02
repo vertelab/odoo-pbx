@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- PBX server the demo tenant runs on. -->
+        <record id="demo_pbx_server" model="pbx.server">
+            <field name="name">Asterisk Demo</field>
+            <field name="host">asterisk.demo.test</field>
+        </record>
+
+        <!-- Demo tenant with a Salt minion attached, so the Minion Sync
+             button can be exercised (and dry-run deployed) without a
+             production minion. `is_demo` keeps it out of production
+             operations on the Salt side. -->
+        <record id="demo_salt_minion" model="salt.minion">
+            <field name="name">pbx-demo-minion</field>
+            <field name="dc">lab</field>
+            <field name="customer">Vertel Demo</field>
+            <field name="is_demo" eval="True"/>
+        </record>
+
+        <record id="demo_tenant_partner_minion" model="res.partner">
+            <field name="name">Vertel Demo</field>
+            <field name="is_pbx_tenant" eval="True"/>
+            <field name="domain">demo.vertel.test</field>
+            <field name="server_id" ref="demo_pbx_server"/>
+            <field name="minion_id" ref="demo_salt_minion"/>
+            <field name="comment">Demo tenant with a Salt minion — Minion Sync can be
+                tried here (set pbx_admin.salt_dry_run to true to build the pillar
+                without calling salt-api).</field>
+        </record>
+
+    </data>
+</odoo>

@@ -12,6 +12,9 @@
         "views/hr_employee_views.xml",
         "views/hr_click_to_call_views.xml",
     ],
+    "demo": [
+        "demo/availability_demo_hr.xml",
+    ],
     "installable": True,
     "application": False,
 }

@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- pbx-availability demo data (task 3.2).
+
+         Two extensions that exercise the availability gate:
+           * 9080 — Office hours 08:00-17:00 Mon-Fri (resource.calendar via
+                    hr.employee) and a busy calendar event → the generated
+                    dialplan announces the next free time and goes to
+                    voicemail.
+           * 9081 — Same person type, but respect_schedule/respect_calendar
+                    are off → no gate at all.
+
+         The working-hours calendar is reached through
+         hr.employee.resource_calendar_id (pbx_extension._get_work_calendar).
+         hr is NOT a dependency of pbx_base, so the employee link is created
+         by demo/availability_demo_hr.xml, which pbx_hr loads instead. -->
+    <data noupdate="1">
+        <record id="demo_availability_calendar" model="resource.calendar">
+            <field name="name">Office hours 08-17 (pbx-availability demo)</field>
+            <field name="tz">Europe/Stockholm</field>
+            <field name="attendance_ids" eval="[
+                (0, 0, {'name': 'Morning', 'dayofweek': '0', 'hour_from': 8.0, 'hour_to': 12.0}),
+                (0, 0, {'name': 'Afternoon', 'dayofweek': '0', 'hour_from': 13.0, 'hour_to': 17.0}),
+                (0, 0, {'name': 'Morning', 'dayofweek': '1', 'hour_from': 8.0, 'hour_to': 12.0}),
+                (0, 0, {'name': 'Afternoon', 'dayofweek': '1', 'hour_from': 13.0, 'hour_to': 17.0}),
+                (0, 0, {'name': 'Morning', 'dayofweek': '2', 'hour_from': 8.0, 'hour_to': 12.0}),
+                (0, 0, {'name': 'Afternoon', 'dayofweek': '2', 'hour_from': 13.0, 'hour_to': 17.0}),
+                (0, 0, {'name': 'Morning', 'dayofweek': '3', 'hour_from': 8.0, 'hour_to': 12.0}),
+                (0, 0, {'name': 'Afternoon', 'dayofweek': '3', 'hour_from': 13.0, 'hour_to': 17.0}),
+                (0, 0, {'name': 'Morning', 'dayofweek': '4', 'hour_from': 8.0, 'hour_to': 12.0}),
+                (0, 0, {'name': 'Afternoon', 'dayofweek': '4', 'hour_from': 13.0, 'hour_to': 17.0}),
+            ]"/>
+        </record>
+
+        <record id="demo_availability_user" model="res.users">
+            <field name="name">Doris Availability</field>
+            <field name="login">doris.availability</field>
+            <field name="email">doris.availability@example.com</field>
+            <field name="group_ids" eval="[(4, ref('base.group_user'))]"/>
+        </record>
+
+        <record id="demo_availability_extension" model="pbx.extension">
+            <field name="public_number">9080</field>
+            <field name="user_id" ref="demo_availability_user"/>
+            <field name="callerid_name">Doris Availability</field>
+            <field name="respect_schedule" eval="True"/>
+            <field name="respect_calendar" eval="True"/>
+        </record>
+
+        <!-- A voicemail device so the `unavailable` path has a mailbox. -->
+        <record id="demo_availability_sub_voicemail" model="pbx.sub_extension">
+            <field name="extension_id" ref="demo_availability_extension"/>
+            <field name="type">voicemail</field>
+            <field name="label">Voicemail</field>
+            <field name="sequence">9</field>
+        </record>
+
+        <!-- Busy block today 10:00-11:00 (privacy=private, show_as=busy).
+             Relative to "now" so the demo is busy whenever it is installed
+             during office hours; get_availability() then returns the event's
+             stop time as next_available. -->
+        <record id="demo_availability_event" model="calendar.event">
+            <field name="name">Weekly sync (busy)</field>
+            <field name="user_id" ref="demo_availability_user"/>
+            <field name="partner_ids" eval="[(4, ref('demo_availability_user').partner_id)]"/>
+            <field name="start" eval="(datetime.datetime.now().replace(hour=10, minute=0, second=0, microsecond=0)).strftime('%Y-%m-%d %H:%M:%S')"/>
+            <field name="stop" eval="(datetime.datetime.now().replace(hour=11, minute=0, second=0, microsecond=0)).strftime('%Y-%m-%d %H:%M:%S')"/>
+            <field name="privacy">private</field>
+            <field name="show_as">busy</field>
+        </record>
+
+        <!-- Counter-example: both flags off → no gate in the dialplan. -->
+        <record id="demo_availability_extension_off" model="pbx.extension">
+            <field name="public_number">9081</field>
+            <field name="callerid_name">Always reachable</field>
+            <field name="respect_schedule" eval="False"/>
+            <field name="respect_calendar" eval="False"/>
+        </record>
+    </data>
+</odoo>

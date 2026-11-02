@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- pbx-availability demo, HR part (task 3.2).
+
+         The working-hours calendar is attached through
+         hr.employee.resource_calendar_id — the only path
+         pbx_extension._get_work_calendar() reads. hr is not a dependency of
+         pbx_base, so this file ships with pbx_hr (which depends on hr) and
+         references the records created by pbx_base's demo data. -->
+    <data noupdate="1">
+        <record id="demo_availability_employee" model="hr.employee">
+            <field name="name">Doris Availability</field>
+            <field name="user_id" ref="pbx_base.demo_availability_user"/>
+            <field name="resource_calendar_id" ref="pbx_base.demo_availability_calendar"/>
+        </record>
+    </data>
+</odoo>

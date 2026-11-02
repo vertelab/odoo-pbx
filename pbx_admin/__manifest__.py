@@ -15,6 +15,9 @@
         "views/res_config_settings_views.xml",
         "views/menus.xml",
     ],
+    "demo": [
+        "demo/saltstack_bridge_demo.xml",
+    ],
     "installable": True,
     "application": True,
 }
