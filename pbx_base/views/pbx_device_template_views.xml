@@ -6,9 +6,14 @@
         <field name="model">pbx.device.template</field>
         <field name="arch" type="xml">
             <list string="Device Templates" editable="bottom">
+                <field name="sequence" widget="handle"/>
                 <field name="name"/>
                 <field name="device_type"/>
-                <field name="transport"/>
+                <field name="vendor" optional="show"/>
+                <field name="model_match" optional="hide"/>
+                <field name="transport" optional="hide"/>
+                <field name="user_selectable" optional="show"/>
+                <field name="default_for_type" optional="show"/>
                 <field name="company_id" optional="hide"/>
                 <field name="active" optional="show"/>
             </list>
@@ -25,9 +30,17 @@
                         <group>
                             <field name="name"/>
                             <field name="device_type"/>
+                            <field name="vendor"/>
                             <field name="transport"/>
                             <field name="company_id" groups="base.group_multi_company"/>
                             <field name="active"/>
+                        </group>
+                        <group string="Catalog">
+                            <field name="sequence"/>
+                            <field name="user_selectable"/>
+                            <field name="default_for_type"/>
+                            <field name="model_match"
+                                   placeholder="e.g. T46S or T4xS*"/>
                         </group>
                         <group>
                             <field name="config_template" widget="jsonb" options="{'mode': 'tree', 'schema': {}}"/>
@@ -62,7 +75,18 @@
             <search>
                 <field name="name"/>
                 <field name="device_type"/>
-                <filter name="group_device_type" string="Type" context="{'group_by': 'device_type'}"/>
+                <field name="vendor"/>
+                <field name="model_match"/>
+                <filter name="filter_user_selectable" string="User selectable"
+                        domain="[('user_selectable', '=', True)]"/>
+                <filter name="filter_default" string="Defaults"
+                        domain="[('default_for_type', '=', True)]"/>
+                <group>
+                    <filter name="group_device_type" string="Type"
+                            context="{'group_by': 'device_type'}"/>
+                    <filter name="group_vendor" string="Vendor"
+                            context="{'group_by': 'vendor'}"/>
+                </group>
             </search>
         </field>
     </record>

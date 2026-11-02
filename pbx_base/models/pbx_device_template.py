@@ -68,10 +68,34 @@ class PbxDeviceTemplate(models.Model):
         ),
     )
 
+    # ── Catalog metadata (pbx-device-catalog) ────────────────────────
+    # Several templates may exist per device type: different software
+    # (sipdroid, Zoiper, Linphone) and hardware (Yealink, Fanvil) present the
+    # same SIP credentials with different field names and guides.
+    vendor = fields.Char(
+        help="Software or hardware vendor, e.g. Zoiper, Yealink.",
+    )
+    sequence = fields.Integer(
+        default=10,
+        help="Order in the catalog. Lower comes first.",
+    )
+    user_selectable = fields.Boolean(
+        default=True,
+        help="Show this template to end users on My Profile. Uncheck for "
+             "internal-only templates that should never be picked by hand.",
+    )
+    default_for_type = fields.Boolean(
+        help="Used when a device has no explicit template and no model match.",
+    )
+    model_match = fields.Char(
+        help="Glob matched against the device model, e.g. 'T46S' or 'T4xS*'. "
+             "Lets a hardware phone pick its own template automatically.",
+    )
+
     _sql_constraints = [
         (
-            "unique_device_type_company",
-            "UNIQUE(device_type, company_id)",
-            "Only one template per device type and company!",
+            "unique_device_type_name_company",
+            "UNIQUE(device_type, name, company_id)",
+            "A template with this name already exists for the device type!",
         ),
     ]

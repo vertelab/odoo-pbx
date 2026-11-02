@@ -1,6 +1,7 @@
 # Copyright 2026 Vertel Sverige AB
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 
+import fnmatch
 import json
 import re
 import secrets
@@ -223,24 +224,57 @@ class PbxSubExtension(models.Model):
         "extension_id.user_id",
         "extension_id.company_id",
     )
-    def _compute_config(self):
-        """Resolved SIP configuration from the device type template.
+    def _resolve_template(self):
+        """Pick the template for this device from the catalog.
 
-        Template priority: explicit template_id → company-specific per type →
-        global per type (company_id=False).
+        Resolution order (pbx-device-catalog 1.4):
+
+          1. the device's explicit ``template_id``
+          2. ``model_match`` — a glob matched against ``device_model``
+          3. ``default_for_type`` — company-specific first, global second
+          4. the first ``user_selectable`` template for the type
+
+        Returns an empty recordset when the catalog has nothing for the type.
+        """
+        self.ensure_one()
+        Template = self.env["pbx.device.template"]
+        if self.template_id:
+            return self.template_id
+
+        company_id = self.extension_id.company_id.id
+        domain = [
+            ("device_type", "=", self.type),
+            ("company_id", "in", [company_id, False]),
+            ("active", "=", True),
+        ]
+        catalog = Template.search(domain, order="sequence, id")
+
+        # 2. Model match — a hardware phone knows its own model.
+        model = (self.device_model or "").strip()
+        if model:
+            for template in catalog:
+                pattern = (template.model_match or "").strip()
+                if pattern and fnmatch.fnmatch(model, pattern):
+                    return template
+
+        # 3. The declared default, company-specific before global.
+        defaults = catalog.filtered("default_for_type")
+        if defaults:
+            return defaults.sorted(
+                lambda t: (t.company_id.id != company_id, t.sequence, t.id)
+            )[:1]
+
+        # 4. Last resort: the first template the user is allowed to pick.
+        selectable = catalog.filtered("user_selectable")
+        return selectable[:1]
+
+    def _compute_config(self):
+        """Resolved SIP configuration from the catalog template.
+
+        See ``_resolve_template`` for the resolution order.
         """
         for rec in self:
-            template = rec.template_id
-            if not template:
-                template = self.env["pbx.device.template"].search(
-                    [
-                        ("device_type", "=", rec.type),
-                        ("company_id", "in", [rec.extension_id.company_id.id, False]),
-                        ("active", "=", True),
-                    ],
-                    limit=1,
-                    order="company_id DESC NULLS LAST",
-                )
+            template = rec._resolve_template()
             if not template or not template.config_template:
                 rec.config = False
                 continue
@@ -291,11 +325,18 @@ class PbxSubExtension(models.Model):
                 if value in (False, None):
                     value = ""
                 value = str(value)
-            resolved[key] = {
+            entry = {
                 "label": spec.get("label", key),
                 "value": value,
                 "help": spec.get("help", ""),
             }
+            # Optional presentation hints (pbx-device-catalog 3.1). Only set
+            # when the template declares them, so the config stays compact.
+            if spec.get("section"):
+                entry["section"] = spec["section"]
+            if spec.get("render"):
+                entry["render"] = spec["render"]
+            resolved[key] = entry
         return resolved
 
     config_display = fields.Char(
@@ -338,8 +379,10 @@ class PbxSubExtension(models.Model):
     template_id = fields.Many2one(
         "pbx.device.template",
         string="Device Template",
+        domain="[('device_type', '=', type), ('user_selectable', '=', True)]",
         help="Device template that controls the SIP configuration. Choose a template → "
-             "the configuration is adapted to the device.",
+             "the configuration is adapted to the device. Empty → the catalog "
+             "picks one (model match → default for type → first selectable).",
     )
 
     @api.onchange("template_id")

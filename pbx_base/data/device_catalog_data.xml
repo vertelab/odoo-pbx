@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Device template catalog (pbx-device-catalog 2.1).
+
+         Several templates per device type, because the same SIP credentials
+         are presented with different field names and guides by different
+         software and hardware. The catalog lets an admin curate which ones
+         end users may pick, and lets a hardware phone pick its own template
+         from its model name.
+
+         Resolution order for a device (pbx.sub_extension._resolve_template):
+           1. explicit template_id
+           2. model_match glob against device_model
+           3. default_for_type (company first, then global)
+           4. first user_selectable template for the type
+
+         The default_for_type flag is set on the template that used to be the
+         only one per type, so existing behaviour is unchanged for devices
+         that never pick a template. `noupdate="1"`: an admin who curates the
+         catalog must not have it overwritten on upgrade. -->
+    <data noupdate="1">
+
+        <!-- ── Browser (Odoo VOIP) ─────────────────────────────────── -->
+        <record id="catalog_browser_odoo" model="pbx.device.template">
+            <field name="name">Odoo VOIP (webb)</field>
+            <field name="device_type">browser</field>
+            <field name="transport">wss</field>
+            <field name="company_id" eval="False"/>
+            <field name="vendor">Odoo</field>
+            <field name="sequence">10</field>
+            <field name="user_selectable" eval="True"/>
+            <field name="default_for_type" eval="True"/>
+            <field name="config_template">{
+                "sip_username": {"label": "Username", "source": "device", "field": "username", "section": "Account", "order": 1},
+                "sip_password": {"label": "Password", "source": "extension", "field": "password", "section": "Account", "render": "reveal", "order": 2},
+                "sip_server": {"label": "SIP-server", "source": "company", "field": "pbx_server_host", "section": "Network", "order": 3},
+                "sip_port": {"label": "Port", "source": "company", "field": "pbx_sip_port", "section": "Network", "order": 4},
+                "sip_domain": {"label": "Domain", "source": "company", "field": "pbx_domain", "section": "Network", "order": 5},
+                "turn": {"label": "TURN", "source": "config", "field": "pbx.turn.server", "only_if": "pbx_turn_enabled", "section": "Network", "order": 6},
+                "guide": {"label": "Guide", "source": "static", "value": "Use Odoo's built-in softphone on the VOIP tab.", "section": "Guide", "order": 99}
+            }</field>
+        </record>
+
+        <!-- ── Desktop softphones ──────────────────────────────────── -->
+        <record id="catalog_desktop_zoiper" model="pbx.device.template">
+            <field name="name">Zoiper</field>
+            <field name="device_type">desktop</field>
+            <field name="transport">udp</field>
+            <field name="company_id" eval="False"/>
+            <field name="vendor">Zoiper</field>
+            <field name="sequence">10</field>
+            <field name="user_selectable" eval="True"/>
+            <field name="default_for_type" eval="True"/>
+            <field name="config_template">{
+                "sip_username": {"label": "Username", "source": "device", "field": "username", "section": "Account", "order": 1},
+                "sip_password": {"label": "Password", "source": "extension", "field": "password", "section": "Account", "render": "reveal", "order": 2},
+                "sip_domain": {"label": "Domain", "source": "company", "field": "pbx_domain", "section": "Account", "order": 3},
+                "sip_server": {"label": "SIP-server", "source": "company", "field": "pbx_server_host", "section": "Network", "order": 4},
+                "sip_port": {"label": "Port", "source": "company", "field": "pbx_sip_port", "section": "Network", "order": 5},
+                "guide": {"label": "Guide", "source": "static", "value": "Settings → Accounts → Add account → SIP. Enter Domain as the domain, Username and Password from this page.", "section": "Guide", "order": 99}
+            }</field>
+        </record>
+
+        <record id="catalog_desktop_linphone" model="pbx.device.template">
+            <field name="name">Linphone</field>
+            <field name="device_type">desktop</field>
+            <field name="transport">udp</field>
+            <field name="company_id" eval="False"/>
+            <field name="vendor">Belledonne</field>
+            <field name="sequence">20</field>
+            <field name="user_selectable" eval="True"/>
+            <field name="config_template">{
+                "sip_username": {"label": "Username", "source": "device", "field": "username", "section": "Account", "order": 1},
+                "sip_password": {"label": "Password", "source": "extension", "field": "password", "section": "Account", "render": "reveal", "order": 2},
+                "sip_domain": {"label": "Domain", "source": "company", "field": "pbx_domain", "section": "Account", "order": 3},
+                "sip_server": {"label": "SIP-server", "source": "company", "field": "pbx_server_host", "section": "Network", "order": 4},
+                "sip_port": {"label": "Port", "source": "company", "field": "pbx_sip_port", "section": "Network", "order": 5},
+                "guide": {"label": "Guide", "source": "static", "value": "Assistant → Use a SIP account. SIP address is sip:USERNAME@DOMAIN.", "section": "Guide", "order": 99}
+            }</field>
+        </record>
+
+        <!-- ── Hardware phones ─────────────────────────────────────── -->
+        <record id="catalog_hardware_yealink_t4" model="pbx.device.template">
+            <field name="name">Yealink T4xS</field>
+            <field name="device_type">hardware</field>
+            <field name="transport">udp</field>
+            <field name="company_id" eval="False"/>
+            <field name="vendor">Yealink</field>
+            <field name="sequence">10</field>
+            <field name="user_selectable" eval="True"/>
+            <field name="default_for_type" eval="True"/>
+            <field name="model_match">T4*</field>
+            <field name="config_template">{
+                "sip_username": {"label": "Username", "source": "device", "field": "username", "section": "Account", "order": 1},
+                "sip_password": {"label": "Password", "source": "extension", "field": "password", "section": "Account", "render": "reveal", "order": 2},
+                "sip_server": {"label": "SIP-server", "source": "company", "field": "pbx_server_host", "section": "Network", "order": 3},
+                "sip_port": {"label": "Port", "source": "company", "field": "pbx_sip_port", "section": "Network", "order": 4},
+                "sip_domain": {"label": "Domain", "source": "company", "field": "pbx_domain", "section": "Network", "order": 5},
+                "guide": {"label": "Guide", "source": "static", "value": "Web UI → Account → Register. Account 1: User Name, Register Name and Password from this page; SIP Server is the Server address.", "section": "Guide", "order": 99}
+            }</field>
+        </record>
+
+        <record id="catalog_hardware_fanvil" model="pbx.device.template">
+            <field name="name">Fanvil</field>
+            <field name="device_type">hardware</field>
+            <field name="transport">udp</field>
+            <field name="company_id" eval="False"/>
+            <field name="vendor">Fanvil</field>
+            <field name="sequence">20</field>
+            <field name="user_selectable" eval="True"/>
+            <field name="model_match">X*</field>
+            <field name="config_template">{
+                "sip_username": {"label": "Username", "source": "device", "field": "username", "section": "Account", "order": 1},
+                "sip_password": {"label": "Password", "source": "extension", "field": "password", "section": "Account", "render": "reveal", "order": 2},
+                "sip_server": {"label": "SIP-server", "source": "company", "field": "pbx_server_host", "section": "Network", "order": 3},
+                "sip_port": {"label": "Port", "source": "company", "field": "pbx_sip_port", "section": "Network", "order": 4},
+                "sip_domain": {"label": "Domain", "source": "company", "field": "pbx_domain", "section": "Network", "order": 5},
+                "guide": {"label": "Guide", "source": "static", "value": "Web UI → Line → SIP. Account name, Display label, Register user name and Password from this page; SIP Server is the Server address.", "section": "Guide", "order": 99}
+            }</field>
+        </record>
+
+        <!-- ── Mobile ──────────────────────────────────────────────── -->
+        <record id="catalog_mobile_sipdroid" model="pbx.device.template">
+            <field name="name">sipdroid</field>
+            <field name="device_type">mobile</field>
+            <field name="transport">udp</field>
+            <field name="company_id" eval="False"/>
+            <field name="vendor">sipdroid</field>
+            <field name="sequence">10</field>
+            <field name="user_selectable" eval="True"/>
+            <field name="default_for_type" eval="True"/>
+            <field name="config_template">{
+                "sip_username": {"label": "Username", "source": "device", "field": "username", "section": "Account", "order": 1},
+                "sip_password": {"label": "Password", "source": "extension", "field": "password", "section": "Account", "render": "reveal", "order": 2},
+                "sip_server": {"label": "SIP-server", "source": "company", "field": "pbx_server_host", "section": "Network", "order": 3},
+                "sip_port": {"label": "Port", "source": "company", "field": "pbx_sip_port", "section": "Network", "order": 4},
+                "sip_domain": {"label": "Domain", "source": "company", "field": "pbx_domain", "section": "Network", "order": 5},
+                "guide": {"label": "Guide", "source": "static", "value": "Settings → SIP account. Authorization username and password from this page; Server is the Server address.", "section": "Guide", "order": 99}
+            }</field>
+        </record>
+
+        <record id="catalog_mobile_zoiper" model="pbx.device.template">
+            <field name="name">Zoiper (mobil)</field>
+            <field name="device_type">mobile</field>
+            <field name="transport">udp</field>
+            <field name="company_id" eval="False"/>
+            <field name="vendor">Zoiper</field>
+            <field name="sequence">20</field>
+            <field name="user_selectable" eval="True"/>
+            <field name="config_template">{
+                "sip_username": {"label": "Username", "source": "device", "field": "username", "section": "Account", "order": 1},
+                "sip_password": {"label": "Password", "source": "extension", "field": "password", "section": "Account", "render": "reveal", "order": 2},
+                "sip_domain": {"label": "Domain", "source": "company", "field": "pbx_domain", "section": "Account", "order": 3},
+                "sip_server": {"label": "SIP-server", "source": "company", "field": "pbx_server_host", "section": "Network", "order": 4},
+                "sip_port": {"label": "Port", "source": "company", "field": "pbx_sip_port", "section": "Network", "order": 5},
+                "guide": {"label": "Guide", "source": "static", "value": "Settings → Accounts → Add → SIP account. Username, Password and Domain from this page.", "section": "Guide", "order": 99}
+            }</field>
+        </record>
+
+        <!-- ── Voicemail ───────────────────────────────────────────── -->
+        <record id="catalog_voicemail_default" model="pbx.device.template">
+            <field name="name">Voicemail</field>
+            <field name="device_type">voicemail</field>
+            <field name="company_id" eval="False"/>
+            <field name="vendor">Asterisk</field>
+            <field name="sequence">10</field>
+            <field name="user_selectable" eval="False"/>
+            <field name="default_for_type" eval="True"/>
+            <field name="config_template">{
+                "mailbox": {"label": "Mailbox", "source": "extension", "field": "public_number", "section": "Voicemail", "order": 1},
+                "domain": {"label": "Domain", "source": "company", "field": "pbx_domain", "section": "Voicemail", "order": 2},
+                "guide": {"label": "Guide", "source": "static", "value": "Dial *98 from your own phone to reach your mailbox.", "section": "Guide", "order": 99}
+            }</field>
+        </record>
+
+    </data>
+</odoo>
