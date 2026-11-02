@@ -16,6 +16,7 @@ No new GitHub dependency — builds directly on aiohttp (the daemon is
 already async).
 """
 
+import asyncio
 import base64
 import json
 import logging
