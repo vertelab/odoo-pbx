@@ -16,7 +16,8 @@ import asyncio
 import unittest
 from unittest.mock import AsyncMock, MagicMock, patch
 
-from pbx_ami_daemon.ari import ARIClient, ARIChannel, CoworkerApp, Receptionist
+from pbx_ami_daemon.ari import (ARIClient, ARIChannel, CoworkerApp,
+                                Receptionist, StreamingSTT)
 
 
 def _channel(channel_id="chan-1"):
@@ -274,3 +275,63 @@ class TestStreamingFallback(unittest.TestCase):
         self._run_dialog(self.app, state, {"status": "ok", "reply": "ok"})
         self.assertEqual(state["stt_mode"], "turn")
         self.assertFalse(state["streaming_available"])
+
+
+class TestStreamingStart(unittest.TestCase):
+    """5.1 — externalMedia + WS-ström startas bara när Odoo säger att det går."""
+
+    def setUp(self):
+        client = MagicMock(spec=ARIClient)
+        client.rest = AsyncMock(return_value={})
+        client.app = "receptionist-test"
+        client.channels = {}
+        self.app = CoworkerApp(client, odoo_url="http://odoo.test")
+        self.app.audio.start = AsyncMock()
+        self.channel = _channel("chan-s")
+        client.channels["chan-s"] = self.channel
+
+    def test_no_stream_for_turn_mode(self):
+        """5.1 — stt_mode=turn startar ingen externalMedia."""
+        state = {"stt_mode": "turn", "streaming_available": True}
+        started = asyncio.run(self.app._maybe_start_streaming(self.channel, state))
+        self.assertFalse(started)
+        self.assertEqual(self.app.streams, {})
+
+    def test_no_stream_without_capability(self):
+        """5.4 — streaming valt men utan förmåga -> ingen anslutning."""
+        state = {"stt_mode": "streaming", "streaming_available": False}
+        started = asyncio.run(self.app._maybe_start_streaming(self.channel, state))
+        self.assertFalse(started)
+        self.assertEqual(self.app.streams, {})
+
+    def test_stream_started_with_capability(self):
+        """5.1 — med förmåga startas WS + externalMedia."""
+        state = {"stt_mode": "streaming", "streaming_available": True}
+
+        async def fake_connect(self_):
+            self_.connected = True
+            return True
+
+        with patch.object(StreamingSTT, "connect", fake_connect):
+            started = asyncio.run(
+                self.app._maybe_start_streaming(self.channel, state))
+        self.assertTrue(started)
+        self.assertIn("chan-s", self.app.streams)
+        # externalMedia-anropet ska ha gått ut
+        calls = [c for c in self.app.client.rest.call_args_list
+                 if "externalMedia" in str(c)]
+        self.assertTrue(calls, "externalMedia måste startas")
+
+    def test_failed_connect_falls_back_to_turn(self):
+        """5.4 — trasig STT-backend får aldrig tysta dialogen."""
+        state = {"stt_mode": "streaming", "streaming_available": True}
+
+        async def fake_connect(self_):
+            return False
+
+        with patch.object(StreamingSTT, "connect", fake_connect):
+            started = asyncio.run(
+                self.app._maybe_start_streaming(self.channel, state))
+        self.assertFalse(started)
+        self.assertFalse(state["streaming_available"])
+        self.assertEqual(self.app.streams, {})

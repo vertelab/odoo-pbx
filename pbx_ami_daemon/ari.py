@@ -104,7 +104,7 @@ class ARIClient:
     def __init__(self, base_url: str, ws_url: str, app: str,
                  api_key: str, on_stasis_start=None, on_dtmf=None,
                  on_stasis_end=None, on_recording_finished=None,
-                 on_playback_finished=None):
+                 on_playback_finished=None, on_media=None):
         self.base_url = base_url.rstrip("/")
         self.ws_url = ws_url
         self.app = app
@@ -114,6 +114,8 @@ class ARIClient:
         self.on_stasis_end = on_stasis_end
         self.on_recording_finished = on_recording_finished
         self.on_playback_finished = on_playback_finished
+        # externalMedia-ljud: (channel_id, pcm-bytes) per binär frame.
+        self.on_media = on_media
         self.channels: dict[str, ARIChannel] = {}
 
     async def rest(self, method: str, path: str, json: Optional[dict] = None):
@@ -159,6 +161,21 @@ class ARIClient:
             async with session.ws_connect(url) as ws:
                 logger.info("ARI connected: %s app=%s", url, self.app)
                 async for msg in ws:
+                    if msg.type == aiohttp.WSMsgType.BINARY:
+                        # externalMedia: rå PCM (slin16) från Asterisk.
+                        # Kanalen är den vi bad om i externalMedia-anropet
+                        # (ext-<id>) — vi skickar vidare till STT-strömmen
+                        # för den underliggande Stasis-kanalen.
+                        if self.on_media:
+                            try:
+                                # externalMedia-events bär ingen channel i
+                                # frame:n — Asterisk skickar rå PCM. Vi
+                                # skickar tomt id och låter mottagaren
+                                # matcha på den enda aktiva strömmen.
+                                await self.on_media(msg.data, "")
+                            except Exception as e:
+                                logger.warning("media-hantering fel: %s", e)
+                        continue
                     if msg.type == aiohttp.WSMsgType.TEXT:
                         try:
                             await self._handle_event(json.loads(msg.data))
@@ -200,6 +217,99 @@ class ARIClient:
 # ──────────────────────────────────────────────────────────────────
 # Receptionist logic — turn-based dialog (STT -> LLM -> TTS -> playback)
 # ──────────────────────────────────────────────────────────────────
+
+
+class StreamingSTT:
+    """Streaming-STT-klient: PCM → WS /stream → partial-transcripts.
+
+    pbx-transcriber (fors/luke) har ett `/stream`-endpoint som tar rå PCM
+    (16-bit mono) i binära frames och svarar med partial-transcripts. Den
+    här klassen håller WebSocket-anslutningen för EN kanal och ger
+    dialogen ett enkelt gränssnitt: `send(pcm)` och `partials()`.
+
+    Faller tillbaka på turn-vägen om anslutningen inte kan öppnas — en
+    trasig STT-backend får aldrig tysta dialogen.
+    """
+
+    def __init__(self, url: str, language: str = "sv",
+                 sample_rate: int = 16000):
+        self.url = url.rstrip("/")
+        self.language = language
+        self.sample_rate = sample_rate
+        self._session = None
+        self._ws = None
+        self._reader = None
+        self.last_text = ""
+        self.connected = False
+
+    async def connect(self) -> bool:
+        import aiohttp
+        try:
+            self._session = aiohttp.ClientSession()
+            self._ws = await self._session.ws_connect(
+                f"{self.url}/stream?sample_rate={self.sample_rate}"
+                f"&language={self.language}",
+                max_msg_size=0,
+            )
+            self.connected = True
+            self._reader = asyncio.create_task(self._read_loop())
+            logger.info("Streaming STT ansluten: %s", self.url)
+            return True
+        except Exception as e:
+            logger.warning("Streaming STT kunde inte ansluta (%s): %s",
+                           self.url, e)
+            await self.close()
+            return False
+
+    async def _read_loop(self):
+        """Läs partials i bakgrunden och håll senaste texten."""
+        import aiohttp
+        try:
+            async for msg in self._ws:
+                if msg.type == aiohttp.WSMsgType.TEXT:
+                    try:
+                        data = json.loads(msg.data)
+                    except Exception:
+                        continue
+                    if data.get("type") == "partial":
+                        self.last_text = data.get("text", "")
+        except Exception as e:
+            logger.debug("Streaming STT läsloop avslutad: %s", e)
+
+    async def send(self, pcm: bytes):
+        if not self._ws or self._ws.closed:
+            return
+        try:
+            await self._ws.send_bytes(pcm)
+        except Exception as e:
+            logger.warning("Streaming STT send misslyckades: %s", e)
+
+    async def flush(self):
+        """Säg till backend att turen är slut — sista partialen blir final."""
+        if not self._ws or self._ws.closed:
+            return
+        try:
+            await self._ws.send_str(json.dumps({"type": "flush"}))
+        except Exception:
+            pass
+
+    async def close(self):
+        if self._reader:
+            self._reader.cancel()
+            self._reader = None
+        if self._ws and not self._ws.closed:
+            try:
+                await self._ws.close()
+            except Exception:
+                pass
+        self._ws = None
+        if self._session:
+            try:
+                await self._session.close()
+            except Exception:
+                pass
+            self._session = None
+        self.connected = False
 
 
 class TTSAudioServer:
@@ -413,6 +523,15 @@ class Receptionist:
                         state["stt_mode"] = data.get("stt_mode", "turn")
                         state["streaming_available"] = bool(
                             data.get("streaming_available"))
+                        # 5.1/5.3: starta externalMedia + WS-strömmen första
+                        # gången Odoo säger att streaming är möjlig.
+                        if (state["stt_mode"] == "streaming"
+                                and state["streaming_available"]
+                                and state.get("channel_id") not in self.streams):
+                            ch = self.client.channels.get(
+                                state.get("channel_id", ""))
+                            if ch:
+                                await self._maybe_start_streaming(ch, state)
                         state["history"].append(
                             f"assistant: {data.get('reply', '')}")
                         tts_b64 = data.get("tts_audio_base64", "")
@@ -483,6 +602,71 @@ class CoworkerApp:
         self.conversations: dict[str, dict] = {}
         self.rec_names: dict[str, str] = {}
         self._tts_urls: dict[str, str] = {}
+        # Streaming-STT per kanal (5.1/5.3). Skapas först när Odoo sagt att
+        # coworkerns agent har streaming-förmåga — se _maybe_start_streaming.
+        self.streams: dict[str, "StreamingSTT"] = {}
+
+    async def _maybe_start_streaming(self, channel: ARIChannel, state: dict):
+        """Starta streaming-STT om dialogen ska använda den.
+
+        Beslutet kommer från Odoo (stt_mode + streaming_available i
+        dialogsvaret). Kan anslutningen inte öppnas stannar vi på turn —
+        en trasig STT-backend får aldrig tysta dialogen.
+        """
+        if state.get("stt_mode") != "streaming":
+            return False
+        if not state.get("streaming_available"):
+            logger.info("Streaming valt men saknar förmåga — turn används")
+            return False
+        if channel.channel_id in self.streams:
+            return True
+        stt = StreamingSTT(self.transcriber_url, language="sv")
+        if not await stt.connect():
+            state["streaming_available"] = False
+            return False
+        self.streams[channel.channel_id] = stt
+        # externalMedia: Asterisk skickar ljudet till en egen kanal som vi
+        # snoopar in i. Utan detta får vi ingen audio på Stasis-kanalen.
+        try:
+            await self.client.rest(
+                "POST",
+                f"/channels/{channel.channel_id}/externalMedia",
+                json={
+                    "app": self.client.app,
+                    "format": "slin16",
+                    "channelId": f"ext-{channel.channel_id}",
+                },
+            )
+            logger.info("externalMedia startad för %s", channel.channel_id)
+        except Exception as e:
+            logger.warning("externalMedia misslyckades: %s", e)
+            await stt.close()
+            self.streams.pop(channel.channel_id, None)
+            state["streaming_available"] = False
+            return False
+        return True
+
+    async def on_media(self, pcm: bytes, channel_id: str = ""):
+        """Binär frame från externalMedia → rätt kanals STT-ström.
+
+        externalMedia-kanalen heter `ext-<stasis-id>`; channel_id är den
+        råa kanal-id:n från eventet. Vi letar upp strömmen via suffixet och
+        faller tillbaka på den enda aktiva strömmen när matchningen inte
+        går att göra (en kanal per app i praktiken).
+        """
+        if channel_id.startswith("ext-"):
+            target = channel_id[len("ext-"):]
+            stt = self.streams.get(target)
+            if stt:
+                await stt.send(pcm)
+                return
+        if len(self.streams) == 1:
+            await next(iter(self.streams.values())).send(pcm)
+
+    async def _stop_streaming(self, channel_id: str):
+        stt = self.streams.pop(channel_id, None)
+        if stt:
+            await stt.close()
 
     async def start_audio_server(self):
         await self.audio.start()
@@ -643,6 +827,15 @@ class CoworkerApp:
                         state["stt_mode"] = data.get("stt_mode", "turn")
                         state["streaming_available"] = bool(
                             data.get("streaming_available"))
+                        # 5.1/5.3: starta externalMedia + WS-strömmen första
+                        # gången Odoo säger att streaming är möjlig.
+                        if (state["stt_mode"] == "streaming"
+                                and state["streaming_available"]
+                                and state.get("channel_id") not in self.streams):
+                            ch = self.client.channels.get(
+                                state.get("channel_id", ""))
+                            if ch:
+                                await self._maybe_start_streaming(ch, state)
                         state["history"].append(
                             f"assistant: {data.get('reply', '')}")
                         tts_b64 = data.get("tts_audio_base64", "")

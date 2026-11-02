@@ -1123,6 +1123,9 @@ async def amain(config_path: str):
                 client.on_stasis_end = receptionist.on_stasis_end
                 client.on_recording_finished = receptionist.on_recording_finished
                 client.on_playback_finished = receptionist.on_playback_finished
+                # externalMedia-ljud (5.1) — bara CoworkerApp har streams.
+                if hasattr(receptionist, "on_media"):
+                    client.on_media = receptionist.on_media
                 await receptionist.start_audio_server()
                 ari_clients.append(client)
 
