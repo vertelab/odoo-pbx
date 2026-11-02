@@ -406,6 +406,13 @@ class Receptionist:
                         timeout=aiohttp.ClientTimeout(total=120)) as resp:
                     data = await resp.json()
                     if data.get("status") == "ok":
+                        # 5.4: Odoo owns the decision — it knows the
+                        # coworker's stt_mode and whether the agent's model
+                        # has streaming. Without this the daemon would keep
+                        # using turn for a coworker configured for streaming.
+                        state["stt_mode"] = data.get("stt_mode", "turn")
+                        state["streaming_available"] = bool(
+                            data.get("streaming_available"))
                         state["history"].append(
                             f"assistant: {data.get('reply', '')}")
                         tts_b64 = data.get("tts_audio_base64", "")
@@ -505,6 +512,12 @@ class CoworkerApp:
             # it; 0 means "unknown" and the controller then skips the
             # transcript accumulation.
             "call_id": call_id,
+            # 5.4: which STT path this dialog uses. Decided on the first
+            # dialog response from Odoo (the coworker owns stt_mode, and only
+            # Odoo knows whether the agent's model can stream). Until then
+            # the turn path is assumed.
+            "stt_mode": "turn",
+            "streaming_available": False,
         }
         self.conversations[channel.channel_id] = state
         await channel.answer()
@@ -607,6 +620,10 @@ class CoworkerApp:
             "coworker_id": state.get("coworker_id", 0),
             "history": list(state["history"]),
             "turn": last_user,
+            # 5.4: this daemon build supports externalMedia, so Odoo may
+            # answer streaming_available=True. A build without it sends False
+            # and Odoo falls back to turn.
+            "streaming_supported": True,
         }
         try:
             headers = {}
@@ -619,6 +636,13 @@ class CoworkerApp:
                         timeout=aiohttp.ClientTimeout(total=120)) as resp:
                     data = await resp.json()
                     if data.get("status") == "ok":
+                        # 5.4: Odoo owns the decision — it knows the
+                        # coworker's stt_mode and whether the agent's model
+                        # has streaming. Without this the daemon would keep
+                        # using turn for a coworker configured for streaming.
+                        state["stt_mode"] = data.get("stt_mode", "turn")
+                        state["streaming_available"] = bool(
+                            data.get("streaming_available"))
                         state["history"].append(
                             f"assistant: {data.get('reply', '')}")
                         tts_b64 = data.get("tts_audio_base64", "")

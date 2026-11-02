@@ -67,6 +67,14 @@ class PbxAIDialog(http.Controller):
                 "status": "ok",
                 "reply": reply,
                 "tts_audio_base64": base64.b64encode(tts).decode() if tts else "",
+                # 5.4: tell the daemon which STT path this coworker wants and
+                # whether its agent can actually stream. The daemon falls back
+                # to turn when streaming is not available.
+                "stt_mode": coworker.stt_mode or "turn",
+                "streaming_available": bool(
+                    coworker._has_streaming_capability()
+                    and payload.get("streaming_supported")
+                ),
             }
         except Exception as e:
             _logger.exception("AI dialog failed for %s", tenant)

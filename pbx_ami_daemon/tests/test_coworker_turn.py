@@ -182,3 +182,95 @@ class TestReceptionistTenant(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TestStreamingFallback(unittest.TestCase):
+    """5.4 — the daemon honours Odoo's STT decision and falls back to turn.
+
+    Odoo owns the choice: the coworker carries stt_mode, and only Odoo knows
+    whether the agent's model has streaming. The daemon reports what it
+    supports and follows the answer.
+    """
+
+    def _run_dialog(self, app, state, response):
+        captured = {}
+
+        class FakeResponse:
+            async def __aenter__(self):
+                return self
+
+            async def __aexit__(self, *a):
+                return False
+
+            async def json(self):
+                return response
+
+        class FakeSession:
+            def __init__(self, *a, **kw):
+                pass
+
+            async def __aenter__(self):
+                return self
+
+            async def __aexit__(self, *a):
+                return False
+
+            def post(self, url, json=None, headers=None, timeout=None):
+                captured["payload"] = json
+                return FakeResponse()
+
+        with patch("aiohttp.ClientSession", FakeSession):
+            asyncio.run(app._dialog(state))
+        return captured["payload"]
+
+    def setUp(self):
+        client = MagicMock(spec=ARIClient)
+        self.app = CoworkerApp(client, odoo_url="http://odoo.test")
+        self.app.audio.start = AsyncMock()
+
+    def test_daemon_reports_streaming_support(self):
+        """5.4 — the daemon tells Odoo what it can do."""
+        state = {"coworker_id": 1, "history": [], "turn": 0, "ended": False,
+                 "call_id": 0, "channel_id": "c1"}
+        payload = self._run_dialog(
+            self.app, state, {"status": "ok", "reply": "ok"}
+        )
+        self.assertTrue(payload["streaming_supported"])
+
+    def test_streaming_available_when_odoo_says_so(self):
+        """5.4 — a streaming-capable coworker flips the state."""
+        state = {"coworker_id": 1, "history": [], "turn": 0, "ended": False,
+                 "call_id": 0, "channel_id": "c1", "stt_mode": "turn",
+                 "streaming_available": False}
+        self._run_dialog(
+            self.app,
+            state,
+            {"status": "ok", "reply": "ok", "stt_mode": "streaming",
+             "streaming_available": True},
+        )
+        self.assertEqual(state["stt_mode"], "streaming")
+        self.assertTrue(state["streaming_available"])
+
+    def test_falls_back_to_turn_when_capability_missing(self):
+        """5.4 — stt_mode=streaming but no capability -> turn."""
+        state = {"coworker_id": 1, "history": [], "turn": 0, "ended": False,
+                 "call_id": 0, "channel_id": "c1"}
+        self._run_dialog(
+            self.app,
+            state,
+            {"status": "ok", "reply": "ok", "stt_mode": "streaming",
+             "streaming_available": False},
+        )
+        self.assertEqual(state["stt_mode"], "streaming")
+        self.assertFalse(
+            state["streaming_available"],
+            "without capability the daemon must not attempt streaming",
+        )
+
+    def test_defaults_to_turn_without_stt_fields(self):
+        """5.4 — an older Odoo that does not send stt_mode keeps turn."""
+        state = {"coworker_id": 1, "history": [], "turn": 0, "ended": False,
+                 "call_id": 0, "channel_id": "c1"}
+        self._run_dialog(self.app, state, {"status": "ok", "reply": "ok"})
+        self.assertEqual(state["stt_mode"], "turn")
+        self.assertFalse(state["streaming_available"])
