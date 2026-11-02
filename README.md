@@ -59,6 +59,38 @@ Odoo generates the Asterisk configuration and publishes it via RabbitMQ
 The older format (`files` as a dict `{filename: content}`) is accepted as
 `tenant` files.
 
+### ARI-provisionering (pbx-ari-provisioning)
+
+Varje tenant (SIP-domän) får en egen ARI-användare, så en Stasis-applikation —
+AI-receptionisten — autentiserar per instans istället för med en global
+credential.
+
+**Skapa/rotera** i Odoo: Inställningar → PBX → *ARI (Asterisk REST Interface)*.
+Användarnamnet blir `receptionist-<domän>` med punkter utbytta mot bindestreck
+(`vertel.se` → `receptionist-vertel-se`), eftersom Asterisk inte tillåter
+punkter i ett sektionsnamn. Vid namnkollision mellan två tenants läggs `-2`,
+`-3` … på.
+
+**Genererad fil** — `ari.d/<domän>.conf`:
+
+```ini
+[receptionist-vertel-se]
+type=user
+read_only=no
+password=<secret>
+```
+
+Filen skickas bara med när credentials finns; en tom sektion utan lösenord
+skulle avvisas av Asterisk.
+
+**Daemonen** (`pbx_ami_daemon`) startar en ARI-klient per post i `ari.apps`
+i `config.yaml`. Utan `ari.apps` används den globala `ari.app` + `ari.api_key`
+som förut, så en eninstans-installation fungerar oförändrat.
+
+**Rotation** — knappen *Rotera hemlighet* genererar en ny secret och flaggar
+konfigurationen som dirty. Publicera om (Sync-ikonen) och starta om daemonen;
+alla Stasis-klienter tappar anslutningen tills dess.
+
 ### Version handling
 
 - Odoo increments `pbx.config.version.<domain>` (ICP) on every publish.
