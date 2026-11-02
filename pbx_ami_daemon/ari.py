@@ -34,8 +34,10 @@ class ARIChannel:
         self.client = client
         self.channel_id = channel_id
         self.data = data or {}
-        self.script = data.get("dialplan", {}).get("exten", "")
-        self.caller = data.get("caller", {}) or {}
+        # `data` is None when a channel is created without an ARI event (the
+        # dialplan lookup below must not read from the raw argument).
+        self.script = self.data.get("dialplan", {}).get("exten", "")
+        self.caller = self.data.get("caller", {}) or {}
         self.caller_num = self.caller.get("number", "")
 
     async def answer(self):
@@ -71,8 +73,14 @@ class ARIChannel:
         )
 
     async def record(self, name: str, format: str = "wav",
-                     max_silence: int = 2, max_duration: int = 15):
-        """Start recording with silence detection (turn)."""
+                     max_silence: int = 2, max_duration: int = 15,
+                     terminate_on: str = "#*"):
+        """Start recording with silence detection (turn).
+
+        `terminate_on` lets the caller end the turn with a key — the same
+        DTMF digits the dialog uses (0 = human, # = hang up). Without it a
+        caller who says nothing waits out the full max_duration.
+        """
         return await self.client.rest(
             "POST",
             f"/channels/{self.channel_id}/record",
@@ -81,6 +89,7 @@ class ARIChannel:
                 "format": format,
                 "max_silence_seconds": max_silence,
                 "max_duration_seconds": max_duration,
+                "terminate_on": terminate_on,
                 "beep": False,
             },
         )
@@ -255,11 +264,14 @@ class Receptionist:
                  webhook_token: str = "", coworker_id: int = 0,
                  transcriber_url: str = "http://localhost:8091",
                  tts_port: int = 8081, transfer_context: str = "",
-                 transfer_exten: str = ""):
+                 transfer_exten: str = "", tenant: str = ""):
         self.client = client
         self.odoo_url = odoo_url.rstrip("/")
         self.webhook_token = webhook_token
         self.coworker_id = coworker_id
+        # The tenant (SIP domain) this client serves. Needed for the webhook
+        # token lookup and for the dialog payload.
+        self.tenant = tenant
         self.transcriber_url = transcriber_url.rstrip("/")
         self.transfer_context = transfer_context
         self.transfer_exten = transfer_exten
@@ -280,6 +292,8 @@ class Receptionist:
         logger.info("StasisStart: %s (%s)", channel.channel_id,
                     channel.caller_num)
         state = {
+            "channel_id": channel.channel_id,
+            "call_id": 0,
             "history": [],
             "last_playback": None,
             "turn": 0,
@@ -368,12 +382,18 @@ class Receptionist:
 
     async def _dialog(self, state: dict) -> str:
         import aiohttp
+        last_user = ""
+        for line in reversed(state["history"]):
+            if line.startswith("user: "):
+                last_user = line
+                break
         payload = {
-            "tenant": "",
-            "channel_id": "",
+            "tenant": self.tenant,
+            "channel_id": state.get("channel_id", ""),
+            "call_id": state.get("call_id", 0),
             "coworker_id": self.coworker_id,
             "history": list(state["history"]),
-            "turn": "",
+            "turn": last_user,
         }
         try:
             headers = {}
@@ -467,11 +487,11 @@ class CoworkerApp:
 
     async def on_stasis_start(self, channel: ARIChannel, event: dict):
         args = event.get("args") or []
-        coworker_id = 0
-        for arg in args:
-            if str(arg).strip().isdigit():
-                coworker_id = int(arg)
-                break
+        # Stasis args: (coworker,<coworker_id>[,<call_id>]). The first numeric
+        # arg is the coworker, the second (if present) the pbx.call.
+        numbers = [int(str(a).strip()) for a in args if str(a).strip().isdigit()]
+        coworker_id = numbers[0] if numbers else 0
+        call_id = numbers[1] if len(numbers) > 1 else 0
         logger.info("CoworkerApp StasisStart: %s coworker=%s",
                     channel.channel_id, coworker_id)
         state = {
@@ -480,6 +500,11 @@ class CoworkerApp:
             "last_playback": None,
             "turn": 0,
             "ended": False,
+            # The pbx.call this dialog belongs to. Resolved from the Stasis
+            # args (coworker,<coworker_id>,<call_id>) when the dialplan passes
+            # it; 0 means "unknown" and the controller then skips the
+            # transcript accumulation.
+            "call_id": call_id,
         }
         self.conversations[channel.channel_id] = state
         await channel.answer()
@@ -526,8 +551,11 @@ class CoworkerApp:
         state["turn"] += 1
         rec_name = f"pbx-cw-{channel.channel_id}-{state['turn']}"
         self.rec_names[rec_name] = channel.channel_id
+        # Turn window (4.4): listen until the caller has been silent for 2 s,
+        # and give up after 8 s of talking — a longer utterance is cut off and
+        # the next turn picks up the rest.
         await channel.record(
-            rec_name, max_silence=2, max_duration=15)
+            rec_name, max_silence=2, max_duration=8)
 
     async def _process_turn(self, channel: ARIChannel, state: dict,
                             rec_name: str):
@@ -564,12 +592,21 @@ class CoworkerApp:
 
     async def _dialog(self, state: dict) -> str:
         import aiohttp
+        # `turn` carries the caller's latest utterance so the controller can
+        # append it to pbx.call.dialog_transcript (4.6). The history already
+        # holds the earlier turns.
+        last_user = ""
+        for line in reversed(state["history"]):
+            if line.startswith("user: "):
+                last_user = line
+                break
         payload = {
-            "tenant": "",
-            "channel_id": "",
+            "tenant": state.get("tenant", ""),
+            "channel_id": state.get("channel_id", ""),
+            "call_id": state.get("call_id", 0),
             "coworker_id": state.get("coworker_id", 0),
             "history": list(state["history"]),
-            "turn": "",
+            "turn": last_user,
         }
         try:
             headers = {}

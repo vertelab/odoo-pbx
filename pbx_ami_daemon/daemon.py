@@ -1086,11 +1086,16 @@ async def amain(config_path: str):
                         "app": app_name,
                         "api_key": entry.get("api_key")
                         or (f"{entry_user}:{entry_secret}" if entry_user else api_key),
+                        "tenant": entry.get("domain", ""),
                     }
                 )
             if not ari_specs:
                 ari_specs.append(
-                    {"app": cfg_ari.get("app", "receptionist"), "api_key": api_key}
+                    {
+                        "app": cfg_ari.get("app", "receptionist"),
+                        "api_key": api_key,
+                        "tenant": cfg_ari.get("domain", ""),
+                    }
                 )
 
             ari_clients = []
@@ -1111,6 +1116,7 @@ async def amain(config_path: str):
                     tts_port=int(cfg_ari.get("tts_port", 8081) or 8081),
                     transfer_context=cfg_ari.get("transfer_context", ""),
                     transfer_exten=cfg_ari.get("transfer_exten", ""),
+                    tenant=spec.get("tenant", ""),
                 )
                 client.on_stasis_start = receptionist.on_stasis_start
                 client.on_dtmf = receptionist.on_dtmf

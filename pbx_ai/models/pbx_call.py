@@ -29,6 +29,17 @@ class PbxCallAI(models.Model):
         string="Transcript",
         help="The transcription of the call (for display).",
     )
+    dialog_transcript = fields.Text(
+        string="Dialog Transcript",
+        help="Turn-by-turn transcript of a live AI dialog (pbx-ai-extension-"
+             "coworker). One line per turn, 'caller:' / 'ai:'. Accumulated "
+             "while the dialog runs, so the operator can read the conversation "
+             "and the post-call pipeline has the full text.",
+    )
+    dialog_turns = fields.Integer(
+        string="Dialog Turns",
+        help="Number of caller turns in the live AI dialog.",
+    )
 
     # Token usage from the LLM processing after transcription
     ai_tokens_in = fields.Integer(

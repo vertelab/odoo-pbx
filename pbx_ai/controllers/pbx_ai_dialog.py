@@ -59,6 +59,10 @@ class PbxAIDialog(http.Controller):
             reply = self._run_coworker(coworker, conversation, payload)
             tts = self._tts_audio(reply, coworker)
 
+            # Accumulate the dialog on the call (4.6). Best effort: a missing
+            # call_id or a locked row must never break the live dialog.
+            self._append_dialog_turn(payload, reply)
+
             return {
                 "status": "ok",
                 "reply": reply,
@@ -84,6 +88,39 @@ class PbxAIDialog(http.Controller):
                 return cw
         rec = request.env.ref(RECEPTIONIST_XMLID, raise_if_not_found=False)
         return rec.sudo() if rec else request.env["ai.coworker"]
+
+    def _append_dialog_turn(self, payload, reply):
+        """Append this turn to pbx.call.dialog_transcript (4.6).
+
+        The daemon sends the caller's utterance in `turn` and, optionally, the
+        call id. Each turn is one line so the operator panel can render the
+        conversation without parsing. Failures are logged, never raised — the
+        caller is mid-conversation.
+        """
+        call_id = int(payload.get("call_id") or 0)
+        if not call_id:
+            return
+        turn = (payload.get("turn") or "").strip()
+        if turn.startswith("user:"):
+            turn = turn[len("user:"):].strip()
+        try:
+            call = request.env["pbx.call"].sudo().browse(call_id)
+            if not call.exists():
+                return
+            lines = [line for line in (call.dialog_transcript or "").splitlines() if line]
+            if turn:
+                lines.append("caller: %s" % turn)
+            if reply:
+                lines.append("ai: %s" % reply.replace("\n", " ").strip())
+            call.write(
+                {
+                    "dialog_transcript": "\n".join(lines),
+                    "dialog_turns": (call.dialog_turns or 0) + (1 if turn else 0),
+                }
+            )
+        except Exception as e:
+            _logger.warning("Could not append dialog turn to pbx.call %s: %s",
+                            call_id, e)
 
     def _build_conversation(self, payload):
         """Build the conversation text with call context."""
