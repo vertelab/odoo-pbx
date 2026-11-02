@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <!-- Gear button shown next to `config_display` on the Devices list on
+         My Profile. Opens the per-parameter SIP configuration dialog. -->
+    <t t-name="pbx_tenant.PbxSipConfigButton">
+        <button
+            type="button"
+            class="btn btn-link o_pbx_sip_config_btn"
+            t-att-title="env._t('SIP configuration')"
+            t-on-click.stop.prevent="openDialog"
+        >
+            <i class="fa fa-cog" role="img" aria-label="SIP configuration"/>
+        </button>
+    </t>
+
+    <!-- One row per resolved parameter: label, value, help text.
+         Secret-looking parameters (password/secret) are masked until the
+         user reveals them. Falls back to the readable one-liner when the
+         device has no template (config is empty). -->
+    <t t-name="pbx_tenant.PbxSipConfigDialog">
+        <Dialog title="props.title" size="'md'">
+            <t t-if="props.rows.length">
+                <table class="table table-sm o_pbx_sip_config_table mb-0">
+                    <tbody>
+                        <tr t-foreach="props.rows" t-as="row" t-key="row.key">
+                            <th scope="row" class="o_pbx_sip_config_label">
+                                <t t-esc="row.label"/>
+                            </th>
+                            <td class="o_pbx_sip_config_value">
+                                <t t-if="row.secret and not isRevealed(row.key)">
+                                    <span class="text-muted">••••••••</span>
+                                    <button
+                                        type="button"
+                                        class="btn btn-link btn-sm p-0 ms-2"
+                                        t-on-click="() => this.toggleReveal(row.key)"
+                                    ><i class="fa fa-eye" role="img" aria-label="Show"/></button>
+                                </t>
+                                <t t-elif="row.secret">
+                                    <code t-esc="row.value"/>
+                                    <button
+                                        type="button"
+                                        class="btn btn-link btn-sm p-0 ms-2"
+                                        t-on-click="() => this.toggleReveal(row.key)"
+                                    ><i class="fa fa-eye-slash" role="img" aria-label="Hide"/></button>
+                                    <button
+                                        type="button"
+                                        class="btn btn-link btn-sm p-0 ms-1"
+                                        t-on-click="() => this.onCopy(row.value)"
+                                    ><i class="fa fa-copy" role="img" aria-label="Copy"/></button>
+                                </t>
+                                <t t-else="">
+                                    <code t-esc="row.value"/>
+                                    <button
+                                        type="button"
+                                        class="btn btn-link btn-sm p-0 ms-2"
+                                        t-on-click="() => this.onCopy(row.value)"
+                                    ><i class="fa fa-copy" role="img" aria-label="Copy"/></button>
+                                </t>
+                                <div t-if="row.help" class="text-muted small" t-esc="row.help"/>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </t>
+            <t t-elif="props.fallback">
+                <p class="text-muted mb-1">No device template — showing the plain
+                    configuration line:</p>
+                <code t-esc="props.fallback"/>
+            </t>
+            <t t-else="">
+                <p class="text-muted mb-0">No SIP configuration available for this
+                    device.</p>
+            </t>
+        </Dialog>
+    </t>
+
+</templates>
