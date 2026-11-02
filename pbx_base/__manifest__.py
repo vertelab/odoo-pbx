@@ -13,6 +13,8 @@
             "pbx_base/static/src/codec_list_header_buttons.js",
             "pbx_base/static/src/codec_list_header_buttons.xml",
             "pbx_base/static/src/sip_config/sip_config.js",
+            "pbx_base/static/src/rotate_password/rotate_password.esm.js",
+            "pbx_base/static/src/rotate_password/rotate_password.xml",
             "pbx_base/static/src/sip_config/sip_config.xml",
             "pbx_base/static/src/softphone/softphone.esm.js",
             "pbx_base/static/src/services/voip_oca_service.esm.js",

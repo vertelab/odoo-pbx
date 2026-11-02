@@ -63,6 +63,18 @@
                     </tbody>
                 </table>
             </t>
+            <div t-if="props.extensionId" class="mt-3 pt-2 border-top d-flex align-items-center">
+                <span class="text-muted small">The password applies to every device
+                    on the extension.</span>
+                <button
+                    type="button"
+                    class="btn btn-link p-0 ms-2 o_pbx_rotate_password"
+                    title="Generate a new SIP password"
+                    t-on-click="() => this.onRotatePassword(props.extensionId)"
+                >
+                    <i class="fa fa-refresh" role="img" aria-label="Generate a new SIP password"/>
+                </button>
+            </div>
             <t t-elif="props.fallback">
                 <p class="text-muted mb-1">No device template — showing the plain
                     configuration line:</p>

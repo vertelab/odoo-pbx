@@ -21,9 +21,7 @@
                                 <label for="password" string="SIP Password" class="col-form-label me-2"/>
                                 <field name="password" readonly="1"
                                        help="Shared SIP password for all devices. Generate a new one via the icon."/>
-                                <button name="action_generate_new_password" type="object"
-                                        icon="fa-refresh" title="Generate a new password"
-                                        class="btn btn-link p-0 ms-2"/>
+                                <widget name="pbx_rotate_password"/>
                             </div>
                         </group>
                         <group>

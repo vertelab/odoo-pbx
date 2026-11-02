@@ -17,6 +17,7 @@
 */
 
 import { Component, useState } from "@odoo/owl";
+import { ConfirmationDialog } from "@web/core/confirmation_dialog/confirmation_dialog";
 import { Dialog } from "@web/core/dialog/dialog";
 import { _t } from "@web/core/l10n/translation";
 import { registry } from "@web/core/registry";
@@ -29,6 +30,8 @@ export class PbxSipConfigDialog extends Component {
         title: { type: String, optional: true },
         rows: { type: Array, optional: true },
         fallback: { type: String, optional: true },
+        extensionId: { type: Number, optional: true },
+        onRotate: { type: Function, optional: true },
         close: Function,
     };
 
@@ -42,6 +45,13 @@ export class PbxSipConfigDialog extends Component {
 
     toggleReveal(key) {
         this.state.revealed[key] = !this.state.revealed[key];
+    }
+
+    /** Delegate to the button, which owns the confirmation dialog. */
+    onRotatePassword(extensionId) {
+        if (this.props.onRotate) {
+            this.props.onRotate(extensionId);
+        }
     }
 
     async onCopy(value) {
@@ -63,6 +73,7 @@ export class PbxSipConfigButton extends Component {
 
     setup() {
         this.dialogService = useService("dialog");
+        this.orm = useService("orm");
     }
 
     /** One row per resolved parameter: {key, label, value, help, secret}. */
@@ -94,11 +105,56 @@ export class PbxSipConfigButton extends Component {
         return display ? String(display) : "";
     }
 
+    /** The extension whose password the dialog can rotate. */
+    get extensionId() {
+        const ext = this.props.record.data.extension_id;
+        return Array.isArray(ext) ? ext[0] : ext;
+    }
+
     openDialog() {
         this.dialogService.add(PbxSipConfigDialog, {
             title: _t("SIP configuration"),
             rows: this.rows,
             fallback: this.fallback,
+            extensionId: this.extensionId,
+            onRotate: () => this.onRotatePassword(),
+        });
+    }
+
+    /**
+     * Rotate the shared SIP password. Guarded by a confirmation dialog —
+     * every device on the extension loses its registration.
+     */
+    onRotatePassword() {
+        const extensionId = this.extensionId;
+        if (!extensionId) {
+            return;
+        }
+        this.dialogService.add(ConfirmationDialog, {
+            title: _t("Generate a new SIP password?"),
+            body: _t(
+                "Every device on this extension loses its registration and " +
+                    "must be reconfigured with the new password. Continue?"
+            ),
+            confirmLabel: _t("Generate"),
+            cancelLabel: _t("Cancel"),
+            confirm: async () => {
+                try {
+                    await this.orm.call("pbx.extension", "action_generate_new_password", [
+                        [extensionId],
+                    ]);
+                    await this.props.record.model.load();
+                    this.env.services.notification.add(_t("SIP password rotated"), {
+                        type: "success",
+                    });
+                } catch (error) {
+                    this.env.services.notification.add(
+                        error?.data?.message || error?.message ||
+                            _t("Could not rotate the password"),
+                        { type: "danger" }
+                    );
+                }
+            },
         });
     }
 }
@@ -109,5 +165,8 @@ registry.category("fields").add("pbx_sip_config_button", {
     // `config` is not the field this widget renders — it is the structured
     // source the dialog reads. Declaring it here makes the web client load it
     // with the record instead of leaving it undefined.
-    relatedFields: [{ name: "config", type: "json" }],
+    relatedFields: [
+        { name: "config", type: "json" },
+        { name: "extension_id", type: "many2one" },
+    ],
 });

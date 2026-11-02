@@ -71,3 +71,89 @@ class TestDeviceTemplates(TransactionCase):
         sub = self._make_sub("voicemail", number="80499")
         self.assertFalse(sub.config)
         self.assertTrue(sub.config_display)  # fallback to sip_config_display
+
+    # ------------------------------------------------------------------
+    # 7.x — password rotation ("Generate new password")
+    # ------------------------------------------------------------------
+    def test_rotate_password_changes_shared_password(self):
+        """7.1 — rotation writes a new shared password and logs it.
+
+        Every device reads `extension.password`, so rotating it is the only
+        way to invalidate a leaked credential. The write hook flags the
+        config dirty and re-syncs voip_oca.
+        """
+        ext = self.env["pbx.extension"].create(
+            {
+                "company_id": self.env.company.id,
+                "public_number": "9070",
+                "user_id": self.user.id,
+            }
+        )
+        before = ext.password
+        self.assertTrue(before, "a new extension gets a generated password")
+
+        ext.action_generate_new_password()
+
+        self.assertNotEqual(ext.password, before)
+        self.assertTrue(ext.password)
+        # The rotation is auditable: a message is posted on the chatter.
+        self.assertTrue(
+            ext.message_ids.filtered(lambda m: "rotated" in (m.body or "").lower()),
+            "rotation must be logged on the extension chatter",
+        )
+
+    def test_rotate_password_denied_for_foreign_extension(self):
+        """7.5 — a plain user cannot rotate someone else's password."""
+        from odoo.exceptions import AccessError
+
+        other = self.env["res.users"].create(
+            {
+                "name": "Other User",
+                "login": "pbx_other_user",
+                "email": "other@example.com",
+                "groups_id": [(6, 0, [self.env.ref("base.group_user").id])],
+            }
+        )
+        ext = self.env["pbx.extension"].create(
+            {
+                "company_id": self.env.company.id,
+                "public_number": "9071",
+                "user_id": other.id,
+            }
+        )
+        with self.assertRaises(AccessError):
+            ext.with_user(self.user).action_generate_new_password()
+
+    def test_rotate_password_allowed_for_own_extension(self):
+        """7.1 — the owner may rotate their own extension's password."""
+        ext = self.env["pbx.extension"].create(
+            {
+                "company_id": self.env.company.id,
+                "public_number": "9072",
+                "user_id": self.user.id,
+            }
+        )
+        before = ext.password
+        ext.with_user(self.user).action_generate_new_password()
+        self.assertNotEqual(ext.password, before)
+
+    def test_rotation_flags_company_config_dirty(self):
+        """7.5 — rotation marks the company config dirty so the next publish runs.
+
+        The dirty flag lives on res.company (pbx.config.dirty.mixin), not on
+        the extension: the Sync icon reads it to know a publish is pending.
+        """
+        ext = self.env["pbx.extension"].create(
+            {
+                "company_id": self.env.company.id,
+                "public_number": "9073",
+                "user_id": self.user.id,
+            }
+        )
+        # Clear the flag the create already set, then rotate.
+        self.env.company.config_dirty = False
+        ext.action_generate_new_password()
+        self.assertTrue(
+            self.env.company.config_dirty,
+            "a rotated password must trigger a config republish",
+        )
