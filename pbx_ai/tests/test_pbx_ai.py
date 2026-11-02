@@ -88,3 +88,50 @@ class TestReceptionistTools(common.TransactionCase):
         })
         result = self.env['ai.coworker'].pbx_transfer_extension(1, ext.id)
         self.assertIn('transfer_to_extension', result)
+
+
+@tagged('post_install', '-at_install')
+class TestTicketCreateCallsHelpdesk(common.TransactionCase):
+    """6.4: pbx_ticket_create delegates to pbx_helpdesk and links the call.
+
+    The coworker tool must not reimplement ticket creation — it calls
+    pbx_helpdesk.create_ticket_from_call and stores the resulting ticket id
+    on the call, so the operator panel can jump to it.
+    """
+
+    def test_ticket_create_calls_helpdesk(self):
+        call = self.env['pbx.call'].create({
+            'phone_number': '0701112233',
+            'direction': 'inbound',
+            'pbx_handling': 'voicemail',
+        })
+        captured = {}
+
+        Helpdesk = type(self.env['pbx.helpdesk'])
+
+        def fake_create(self_, caller_number, caller_name, transcript):
+            captured['caller_number'] = caller_number
+            captured['caller_name'] = caller_name
+            captured['transcript'] = transcript
+            return [{'id': 4711, 'name': 'Fault report'}]
+
+        original = Helpdesk.create_ticket_from_call
+        Helpdesk.create_ticket_from_call = fake_create
+        try:
+            result = self.env['pbx.ai'].pbx_ticket_create(
+                call.id,
+                caller_number='0701112233',
+                caller_name='Test Caller',
+                transcript='The machine is broken',
+            )
+        finally:
+            Helpdesk.create_ticket_from_call = original
+
+        self.assertIn('4711', str(result))
+        self.assertEqual(captured['caller_number'], '0701112233')
+        self.assertEqual(captured['caller_name'], 'Test Caller')
+        self.assertEqual(captured['transcript'], 'The machine is broken')
+        # The call is linked to the ticket when the field exists (pbx_helpdesk
+        # may or may not extend pbx.call depending on the installation).
+        if 'helpdesk_ticket_id' in call._fields:
+            self.assertEqual(call.helpdesk_ticket_id, 4711)
