@@ -117,6 +117,90 @@ class ResCompany(models.Model):
         for rec in self:
             if not rec.pbx_provisioning_token:
                 rec.pbx_provisioning_token = secrets.token_urlsafe(24)
+
+    # ── ARI (Asterisk REST Interface) ────────────────────────────────
+    # One ARI user per tenant (SIP domain), so Stasis applications — the AI
+    # receptionist in particular — authenticate per instance instead of with
+    # a shared global credential. The user is emitted into ari.d/<domain>.conf
+    # by the config generator and consumed by pbx_ami_daemon.
+    pbx_ari_user = fields.Char(
+        string="ARI User",
+        groups="pbx_base.group_pbx_admin,base.group_system",
+        help="ARI user for this tenant. Defaults to receptionist-<domain> "
+             "(dots replaced by dashes).",
+    )
+    pbx_ari_secret = fields.Char(
+        string="ARI Secret",
+        groups="pbx_base.group_pbx_admin,base.group_system",
+        help="ARI password for this tenant. Generated on demand and written "
+             "to ari.d/<domain>.conf. Rotate it from the settings form.",
+    )
+    pbx_ari_app = fields.Char(
+        string="ARI Stasis App",
+        compute="_compute_pbx_ari_app",
+        help="Stasis application name the AI receptionist subscribes to: "
+             "receptionist-<domain>. Derived from pbx_ari_user.",
+    )
+
+    @api.depends("pbx_ari_user")
+    def _compute_pbx_ari_app(self):
+        for rec in self:
+            rec.pbx_ari_app = rec.pbx_ari_user or False
+
+    @api.model
+    def _pbx_sanitize_ari_name(self, domain):
+        """Turn a SIP domain into a valid Asterisk section/app name.
+
+        Asterisk section names may not contain dots, so vertel.se becomes
+        vertel-se. Anything outside [A-Za-z0-9_-] is replaced by a dash.
+        """
+        import re
+
+        name = re.sub(r"[^A-Za-z0-9_-]+", "-", (domain or "").strip())
+        return name.strip("-")
+
+    def _pbx_default_ari_user(self):
+        """The receptionist user name for this tenant."""
+        self.ensure_one()
+        sanitized = self._pbx_sanitize_ari_name(self.pbx_domain)
+        return "receptionist-%s" % sanitized if sanitized else "receptionist"
+
+    def _ensure_pbx_ari(self):
+        """Create the ARI user + secret if missing (idempotent).
+
+        The user name must be unique across tenants: two companies sharing a
+        sanitized name would otherwise overwrite each other's ari.d file and
+        one receptionist would answer for the other. A collision gets a
+        numeric suffix.
+        """
+        import secrets
+
+        for rec in self:
+            if rec.pbx_ari_user and rec.pbx_ari_secret:
+                continue
+            base = rec._pbx_default_ari_user()
+            candidate = base
+            suffix = 2
+            while self.sudo().search_count(
+                [("pbx_ari_user", "=", candidate), ("id", "!=", rec.id)]
+            ):
+                candidate = "%s-%d" % (base, suffix)
+                suffix += 1
+            rec.write(
+                {
+                    "pbx_ari_user": candidate,
+                    "pbx_ari_secret": secrets.token_urlsafe(24),
+                }
+            )
+            rec._pbx_mark_dirty()
+
+    def action_rotate_pbx_ari_secret(self):
+        """Generate a new ARI secret and flag the config for republish."""
+        import secrets
+
+        for rec in self:
+            rec.write({"pbx_ari_secret": secrets.token_urlsafe(24)})
+            rec._pbx_mark_dirty()
     config_dirty = fields.Boolean(
         string="PBX Config Dirty",
         default=False,

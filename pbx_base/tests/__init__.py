@@ -8,3 +8,4 @@ from . import test_device_templates
 from . import test_availability
 from . import test_codecs
 from . import test_device_catalog
+from . import test_ari_provisioning

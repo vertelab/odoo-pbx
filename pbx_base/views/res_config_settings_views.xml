@@ -67,6 +67,34 @@
                                     </div>
                                 </setting>
                             </div>
+                            <div class="col-lg-6">
+                                <setting string="ARI (Asterisk REST Interface)"
+                                         help="Credentials for Stasis applications — the AI receptionist authenticates per tenant instead of with a shared global user.">
+                                    <div class="content-group">
+                                        <div class="row mt16">
+                                            <label string="ARI User" for="pbx_ari_user" class="col-lg-6 o_light_label"/>
+                                            <field name="pbx_ari_user" class="col-lg-6"/>
+                                        </div>
+                                        <div class="row mt16">
+                                            <label string="ARI Secret" for="pbx_ari_secret" class="col-lg-6 o_light_label"/>
+                                            <field name="pbx_ari_secret" class="col-lg-6"/>
+                                        </div>
+                                        <div class="row mt16">
+                                            <label string="Stasis App" for="pbx_ari_app" class="col-lg-6 o_light_label"/>
+                                            <field name="pbx_ari_app" class="col-lg-6"/>
+                                        </div>
+                                        <div class="row mt16">
+                                            <button name="action_ensure_pbx_ari" type="object"
+                                                    string="Skapa ARI-uppgifter"
+                                                    class="btn btn-secondary col-lg-6"/>
+                                            <button name="action_rotate_pbx_ari_secret" type="object"
+                                                    string="Rotera hemlighet"
+                                                    class="btn btn-link col-lg-6"
+                                                    confirm="Alla Stasis-klienter tappar anslutningen tills konfigurationen är ompublicerad. Fortsätt?"/>
+                                        </div>
+                                    </div>
+                                </setting>
+                            </div>
                         </div>
 
                         <div class="row">

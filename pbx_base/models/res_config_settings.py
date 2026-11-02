@@ -115,6 +115,59 @@ class ResConfigSettings(models.TransientModel):
         "Provisioned by pbx_admin via odoo.conf.",
     )
 
+    # ── ARI (Asterisk REST Interface) ──
+    pbx_ari_user = fields.Char(
+        string="ARI User",
+        related="company_id.pbx_ari_user",
+        readonly=False,
+        help="ARI user for this tenant. Generated on demand as "
+             "receptionist-<domain>.",
+    )
+    pbx_ari_secret = fields.Char(
+        string="ARI Secret",
+        related="company_id.pbx_ari_secret",
+        readonly=False,
+        password="True",
+        help="ARI password. Written into ari.d/<domain>.conf. Rotate it with "
+             "the button next to the field.",
+    )
+    pbx_ari_app = fields.Char(
+        string="ARI Stasis App",
+        related="company_id.pbx_ari_app",
+        readonly=True,
+        help="The Stasis application the AI receptionist subscribes to.",
+    )
+
+    def action_ensure_pbx_ari(self):
+        """Create the ARI user + secret for the current company."""
+        self.ensure_one()
+        self.company_id._ensure_pbx_ari()
+        return {
+            "type": "ir.actions.client",
+            "tag": "display_notification",
+            "params": {
+                "title": "ARI",
+                "message": "ARI-uppgifter skapade för %s" % self.company_id.name,
+                "type": "success",
+                "sticky": False,
+            },
+        }
+
+    def action_rotate_pbx_ari_secret(self):
+        """Rotate the ARI secret and flag the config for republish."""
+        self.ensure_one()
+        self.company_id.action_rotate_pbx_ari_secret()
+        return {
+            "type": "ir.actions.client",
+            "tag": "display_notification",
+            "params": {
+                "title": "ARI",
+                "message": "ARI-hemligheten är roterad — publicera om konfigurationen",
+                "type": "warning",
+                "sticky": False,
+            },
+        }
+
     # ── RabbitMQ + webhook ──
     # Host and Vhost are derived from the PBX server and the SIP domain
     # respectively (removed from the form — see pbx_mq.publisher._get_config).
