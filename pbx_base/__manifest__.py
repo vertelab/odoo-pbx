@@ -42,6 +42,7 @@
     ],
     "demo": [
         "demo/availability_demo.xml",
+        "demo/device_templates_demo.xml",
     ],
     "installable": True,
     "application": False,
