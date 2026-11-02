@@ -24,7 +24,7 @@ class TestDeviceTemplates(TransactionCase):
             "device_type": device_type,
             "config_template": {
                 "sip_username": {"label": "Username", "source": "device", "field": "username", "order": 1},
-                "sip_password": {"label": "Password", "source": "device", "field": "secret", "order": 2},
+                "sip_password": {"label": "Password", "source": "extension", "field": "password", "order": 2},
                 "sip_server": {"label": "SIP Server", "source": "company", "field": "pbx_server_host", "order": 3},
                 "sip_port": {"label": "Port", "source": "company", "field": "pbx_sip_port", "order": 4},
                 "sip_domain": {"label": "Domain", "source": "company", "field": "pbx_domain", "order": 5},
@@ -55,7 +55,7 @@ class TestDeviceTemplates(TransactionCase):
         cfg = sub.config
         self.assertTrue(cfg, "config must be populated from the template")
         self.assertEqual(cfg["sip_username"]["value"], sub.username)
-        self.assertEqual(cfg["sip_password"]["value"], sub.secret)
+        self.assertEqual(cfg["sip_password"]["value"], sub.extension_id.password)
         self.assertEqual(cfg["sip_server"]["value"], "pbx.example.com")
         self.assertEqual(cfg["sip_domain"]["value"], "test.se")
         self.assertEqual(cfg["guide"]["value"], "Step 1")

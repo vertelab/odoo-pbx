@@ -240,7 +240,7 @@ class PbxConfigGenerator(models.AbstractModel):
                         public_number=ext.public_number,
                         callerid_name=ext.callerid_name or ext.user_id.name or "",
                         username=sub.username,
-                        secret=ext.password or sub.secret,
+                        secret=ext.password or "",
                         transport=sub.transport or "udp",
                         webrtc_options=(
                             self._webrtc_options() if sub.type == "browser" else ""

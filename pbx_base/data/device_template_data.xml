@@ -2,8 +2,8 @@
 <odoo>
     <!-- Default Device Templates (pbx-device-templates). Seed per enhetstyp —
          global (without company_id). Gives a resolved SIP configuration even without
-         demo data. NOTE: Design A changes the sip_password source to
-         extension/password (idag: device/secret). -->
+         demo data. Design A: every device uses the extension's shared SIP
+         password (source extension/password) — there is no per-device secret. -->
     <data noupdate="1">
         <record id="default_template_browser" model="pbx.device.template">
             <field name="name">Odoo VOIP (webb)</field>
@@ -12,7 +12,7 @@
             <field name="company_id" eval="False"/>
             <field name="config_template">{
                 "sip_username": {"label": "Username", "source": "device", "field": "username", "order": 1},
-                "sip_password": {"label": "Password", "source": "device", "field": "secret", "order": 2},
+                "sip_password": {"label": "Password", "source": "extension", "field": "password", "order": 2},
                 "sip_server": {"label": "SIP-server", "source": "company", "field": "pbx_server_host", "order": 3},
                 "sip_port": {"label": "Port", "source": "company", "field": "pbx_sip_port", "order": 4},
                 "sip_domain": {"label": "Domain", "source": "company", "field": "pbx_domain", "order": 5},
@@ -27,7 +27,7 @@
             <field name="company_id" eval="False"/>
             <field name="config_template">{
                 "sip_username": {"label": "Username", "source": "device", "field": "username", "order": 1},
-                "sip_password": {"label": "Password", "source": "device", "field": "secret", "order": 2},
+                "sip_password": {"label": "Password", "source": "extension", "field": "password", "order": 2},
                 "sip_server": {"label": "SIP-server", "source": "company", "field": "pbx_server_host", "order": 3},
                 "sip_port": {"label": "Port", "source": "company", "field": "pbx_sip_port", "order": 4},
                 "sip_domain": {"label": "Domain", "source": "company", "field": "pbx_domain", "order": 5},
@@ -42,7 +42,7 @@
             <field name="company_id" eval="False"/>
             <field name="config_template">{
                 "sip_username": {"label": "Private user ID", "source": "device", "field": "username", "order": 1},
-                "sip_password": {"label": "Password", "source": "device", "field": "secret", "order": 2},
+                "sip_password": {"label": "Password", "source": "extension", "field": "password", "order": 2},
                 "sip_server": {"label": "SIP-server", "source": "company", "field": "pbx_server_host", "order": 3},
                 "sip_port": {"label": "Port", "source": "company", "field": "pbx_sip_port", "order": 4},
                 "sip_domain": {"label": "Domain", "source": "company", "field": "pbx_domain", "order": 5},
@@ -57,7 +57,7 @@
             <field name="company_id" eval="False"/>
             <field name="config_template">{
                 "sip_username": {"label": "SIP User ID", "source": "device", "field": "username", "order": 1},
-                "sip_password": {"label": "Authenticate Password", "source": "device", "field": "secret", "order": 2},
+                "sip_password": {"label": "Authenticate Password", "source": "extension", "field": "password", "order": 2},
                 "sip_server": {"label": "SIP Server", "source": "company", "field": "pbx_server_host", "order": 3},
                 "sip_port": {"label": "SIP Port", "source": "company", "field": "pbx_sip_port", "order": 4},
                 "sip_domain": {"label": "SIP Domain", "source": "company", "field": "pbx_domain", "order": 5},
@@ -72,7 +72,7 @@
             <field name="company_id" eval="False"/>
             <field name="config_template">{
                 "sip_username": {"label": "Username", "source": "device", "field": "username", "order": 1},
-                "sip_password": {"label": "Password", "source": "device", "field": "secret", "order": 2},
+                "sip_password": {"label": "Password", "source": "extension", "field": "password", "order": 2},
                 "sip_server": {"label": "Registrar", "source": "company", "field": "pbx_server_host", "order": 3},
                 "sip_port": {"label": "Port", "source": "company", "field": "pbx_sip_port", "order": 4},
                 "sip_domain": {"label": "Domain (Realm)", "source": "company", "field": "pbx_domain", "order": 5},
@@ -87,7 +87,7 @@
             <field name="company_id" eval="False"/>
             <field name="config_template">{
                 "sip_username": {"label": "Username", "source": "device", "field": "username", "order": 1},
-                "sip_password": {"label": "Password", "source": "device", "field": "secret", "order": 2},
+                "sip_password": {"label": "Password", "source": "extension", "field": "password", "order": 2},
                 "sip_server": {"label": "SIP-server", "source": "company", "field": "pbx_server_host", "order": 3},
                 "sip_domain": {"label": "Domain", "source": "company", "field": "pbx_domain", "order": 4},
                 "turn": {"label": "STUN/TURN", "source": "config", "field": "pbx.turn.server", "only_if": "pbx_turn_enabled", "order": 5},
@@ -101,7 +101,7 @@
             <field name="company_id" eval="False"/>
             <field name="config_template">{
                 "sip_username": {"label": "Username", "source": "device", "field": "username", "order": 1},
-                "sip_password": {"label": "Password", "source": "device", "field": "secret", "order": 2},
+                "sip_password": {"label": "Password", "source": "extension", "field": "password", "order": 2},
                 "sip_server": {"label": "Host", "source": "company", "field": "pbx_server_host", "order": 3},
                 "sip_port": {"label": "Port", "source": "company", "field": "pbx_sip_port", "order": 4},
                 "sip_domain": {"label": "Domain", "source": "company", "field": "pbx_domain", "order": 5},
@@ -115,7 +115,7 @@
             <field name="company_id" eval="False"/>
             <field name="config_template">{
                 "sip_username": {"label": "Username", "source": "device", "field": "username", "order": 1},
-                "sip_password": {"label": "Password", "source": "device", "field": "secret", "order": 2},
+                "sip_password": {"label": "Password", "source": "extension", "field": "password", "order": 2},
                 "sip_server": {"label": "SIP-server", "source": "company", "field": "pbx_server_host", "order": 3},
                 "sip_domain": {"label": "Domain", "source": "company", "field": "pbx_domain", "order": 4},
                 "turn": {"label": "STUN/TURN", "source": "config", "field": "pbx.turn.server", "only_if": "pbx_turn_enabled", "order": 5},
@@ -129,7 +129,7 @@
             <field name="company_id" eval="False"/>
             <field name="config_template">{
                 "sip_username": {"label": "Username", "source": "device", "field": "username", "order": 1},
-                "sip_password": {"label": "Password", "source": "device", "field": "secret", "order": 2},
+                "sip_password": {"label": "Password", "source": "extension", "field": "password", "order": 2},
                 "sip_server": {"label": "SIP-server", "source": "company", "field": "pbx_server_host", "order": 3},
                 "sip_domain": {"label": "Domain", "source": "company", "field": "pbx_domain", "order": 4},
                 "turn": {"label": "STUN/TURN", "source": "config", "field": "pbx.turn.server", "only_if": "pbx_turn_enabled", "order": 5},

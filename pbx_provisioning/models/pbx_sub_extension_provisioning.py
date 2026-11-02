@@ -109,7 +109,7 @@ class PbxSubExtensionProvisioning(models.Model):
             "account.1.display_name = %s" % display,
             "account.1.auth_name = %s" % self.username,
             "account.1.user_name = %s" % self.username,
-            "account.1.password = %s" % self.secret,
+            "account.1.password = %s" % (ext.password or ""),
             "account.1.sip_server.1.address = %s" % (company.pbx_server_host or "localhost"),
             "account.1.sip_server.1.port = %s" % port,
             "account.1.sip_server.1.transport_type = %d" % self._yealink_transport_type(),
@@ -156,4 +156,7 @@ class PbxSubExtensionProvisioning(models.Model):
             "  </section>\n"
             "%s"
             "</config>\n"
-        ) % (self.number, domain, server, transport, self.username, self.secret, domain, stun)
+        ) % (
+            self.number, domain, server, transport, self.username,
+            self.extension_id.password or "", domain, stun,
+        )

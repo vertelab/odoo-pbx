@@ -61,7 +61,6 @@ class PbxSubExtension(models.Model):
         readonly=True,
         help="SIP username (auto-generated as u+number).",
     )
-    secret = fields.Char(default=lambda self: _generate_sip_secret())
     active = fields.Boolean(
         default=True,
         help="When unchecked, this device is excluded from the generated dialplan.",
@@ -192,7 +191,7 @@ class PbxSubExtension(models.Model):
                 return candidate
             i += 1
 
-    @api.depends("username", "secret", "transport", "extension_id.password", "extension_id.company_id")
+    @api.depends("username", "transport", "extension_id.password", "extension_id.company_id")
     def _compute_sip_config_display(self):
         for rec in self:
             company = rec.extension_id.company_id
@@ -204,16 +203,17 @@ class PbxSubExtension(models.Model):
                 turn = self.env["ir.config_parameter"].sudo().get_param("pbx.turn.server", "")
                 if turn:
                     stun = " | TURN: %s" % turn
-            shared = rec.extension_id.password or rec.secret
             rec.sip_config_display = (
                 "User: %s | Password: %s | Server: %s:%s | Domain: %s | "
-                "Protocol: %s%s" % (rec.username, shared, server, port, domain, rec.transport, stun)
+                "Protocol: %s%s" % (
+                    rec.username, rec.extension_id.password or "", server, port,
+                    domain, rec.transport, stun,
+                )
             )
 
     @api.depends(
         "type",
         "username",
-        "secret",
         "transport",
         "mac_address",
         "provisioning_token",
