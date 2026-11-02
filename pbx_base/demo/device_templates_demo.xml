@@ -133,5 +133,25 @@
             <field name="mac_address">00:15:65:AA:BB:CC</field>
         </record>
 
+        <!-- pbx-device-catalog 5.1 — the catalog in action:
+             * Adam's hardware phone reports model T46S, so it picks the
+               Yealink template through model_match without anyone choosing.
+             * Cecilia has two mobile templates to pick between (sipdroid is
+               the catalog default; she explicitly chose Zoiper on one of her
+               two mobiles). -->
+        <record id="demo_device_adam_hardware" model="pbx.sub_extension">
+            <field name="extension_id" ref="demo_ext_adam"/>
+            <field name="type">hardware</field>
+            <field name="label">Adam T46S</field>
+            <field name="sequence">2</field>
+            <field name="mac_address">00:15:65:11:22:33</field>
+            <field name="device_model">T46S</field>
+        </record>
+
+        <record id="demo_device_cecilia_mobile_2" model="pbx.sub_extension">
+            <field name="extension_id" ref="demo_ext_cecilia"/>
+            <field name="template_id" ref="pbx_base.catalog_mobile_zoiper"/>
+        </record>
+
     </data>
 </odoo>

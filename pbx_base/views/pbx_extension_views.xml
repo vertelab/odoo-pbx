@@ -40,6 +40,7 @@
                                     <field name="number" readonly="1"/>
                                     <field name="ring_timeout"/>
                                     <field name="transport"/>
+                                    <field name="template_id" optional="show"/>
                                     <field name="mac_address" optional="show"/>
                                     <field name="device_model" optional="hide"/>
                                     <field name="provisioning_token" readonly="1" optional="hide"/>

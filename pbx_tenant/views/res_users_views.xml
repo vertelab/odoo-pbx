@@ -41,6 +41,7 @@
                                 <field name="ring_timeout"/>
                                 <field name="config_display" readonly="1" widget="pbx_sip_config_button"/>
                                 <field name="config" column_invisible="1"/>
+                                <field name="template_id" optional="hide"/>
                                 <field name="active"/>
                             </list>
                         </field>
@@ -80,6 +81,7 @@
                                 <field name="ring_timeout"/>
                                 <field name="config_display" readonly="1" widget="pbx_sip_config_button"/>
                                 <field name="config" column_invisible="1"/>
+                                <field name="template_id" optional="hide"/>
                                 <field name="active"/>
                             </list>
                         </field>

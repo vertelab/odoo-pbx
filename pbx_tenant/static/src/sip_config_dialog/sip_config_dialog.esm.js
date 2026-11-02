@@ -32,6 +32,10 @@ export class PbxSipConfigDialog extends Component {
         fallback: { type: String, optional: true },
         extensionId: { type: Number, optional: true },
         onRotate: { type: Function, optional: true },
+        sections: { type: Array, optional: true },
+        templates: { type: Array, optional: true },
+        selectedTemplateId: { type: [Number, Boolean], optional: true },
+        onSelectTemplate: { type: Function, optional: true },
         close: Function,
     };
 
@@ -45,6 +49,14 @@ export class PbxSipConfigDialog extends Component {
 
     toggleReveal(key) {
         this.state.revealed[key] = !this.state.revealed[key];
+    }
+
+    /** Switch template: the button re-resolves config and reopens the dialog. */
+    onTemplateChange(ev) {
+        const value = ev.target.value;
+        if (this.props.onSelectTemplate) {
+            this.props.onSelectTemplate(value ? Number(value) : false);
+        }
     }
 
     /** Delegate to the button, which owns the confirmation dialog. */
@@ -76,7 +88,24 @@ export class PbxSipConfigButton extends Component {
         this.orm = useService("orm");
     }
 
-    /** One row per resolved parameter: {key, label, value, help, secret}. */
+    /**
+     * Rows grouped by the template's `section`, so the dialog reads as
+     * Account / Network / Guide instead of one flat list. Parameters without
+     * a section land under "Configuration".
+     */
+    get sections() {
+        const groups = new Map();
+        for (const row of this.rows) {
+            const name = row.section || _t("Configuration");
+            if (!groups.has(name)) {
+                groups.set(name, []);
+            }
+            groups.get(name).push(row);
+        }
+        return Array.from(groups, ([name, rows]) => ({ name, rows }));
+    }
+
+    /** One row per resolved parameter: {key, label, value, help, secret, section}. */
     get rows() {
         const data = this.props.record.data || {};
         const config = data.config;
@@ -94,6 +123,8 @@ export class PbxSipConfigButton extends Component {
                 label: param.label || key,
                 value,
                 help: param.help || "",
+                section: param.section || "",
+                render: param.render || "",
                 secret: /password|secret/i.test(key),
             };
         });
@@ -111,14 +142,49 @@ export class PbxSipConfigButton extends Component {
         return Array.isArray(ext) ? ext[0] : ext;
     }
 
-    openDialog() {
+    /** The user-selectable templates for this device's type. */
+    async loadTemplates() {
+        const type = this.props.record.data.type;
+        if (!type) {
+            return [];
+        }
+        return this.orm.searchRead(
+            "pbx.device.template",
+            [
+                ["device_type", "=", type],
+                ["user_selectable", "=", true],
+                ["active", "=", true],
+            ],
+            ["id", "name", "vendor"],
+            { order: "sequence, name" }
+        );
+    }
+
+    async openDialog() {
+        const templates = await this.loadTemplates();
         this.dialogService.add(PbxSipConfigDialog, {
             title: _t("SIP configuration"),
             rows: this.rows,
+            sections: this.sections,
             fallback: this.fallback,
             extensionId: this.extensionId,
+            templates,
+            selectedTemplateId: this.props.record.data.template_id || false,
             onRotate: () => this.onRotatePassword(),
+            onSelectTemplate: (id) => this.onSelectTemplate(id),
         });
+    }
+
+    /**
+     * Store the chosen template on the device and reopen the dialog with the
+     * freshly resolved configuration — no page reload needed.
+     */
+    async onSelectTemplate(templateId) {
+        await this.orm.write("pbx.sub_extension", [this.props.record.resId], {
+            template_id: templateId || false,
+        });
+        await this.props.record.model.load();
+        this.openDialog();
     }
 
     /**
