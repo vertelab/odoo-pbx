@@ -35,7 +35,9 @@ Working rules:
             ref('pbx_queue.model_pbx_queue'),
         ])]"/>
         <field name="filter_domain">[]</field>
-        <field name="injection_level">summary_and_key</field>
+        <!-- memory_level ersätter det borttagna ai.coworker.injection_level
+             (ai_agent_core e56194ad: L1 = summary_and_key). -->
+        <field name="memory_level">L1</field>
         <field name="hitl_threshold">always</field>
         <field name="orchestration_mode">single</field>
         <field name="tool_ids" eval="[(6, 0, [
